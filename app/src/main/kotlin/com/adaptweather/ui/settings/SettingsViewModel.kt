@@ -56,11 +56,11 @@ class SettingsViewModel(
     }
 
     fun setTemperatureUnit(unit: TemperatureUnit) {
-        viewModelScope.launch { settingsRepository.setUnits(unit, _state.value.distanceUnit) }
+        viewModelScope.launch { settingsRepository.setTemperatureUnit(unit) }
     }
 
     fun setDistanceUnit(unit: DistanceUnit) {
-        viewModelScope.launch { settingsRepository.setUnits(_state.value.temperatureUnit, unit) }
+        viewModelScope.launch { settingsRepository.setDistanceUnit(unit) }
     }
 
     private suspend fun refreshApiKeyStatus() {
