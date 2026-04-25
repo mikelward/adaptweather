@@ -2,7 +2,15 @@
 <resources>
     <string name="app_name">AdaptWeather</string>
 
+    <string name="today_title">Today</string>
+    <string name="today_open_settings">Open Settings</string>
+    <string name="today_empty_title">No insight yet</string>
+    <string name="today_empty_subtitle">The morning insight will appear here once it has been generated. Set up your Gemini key and location in Settings.</string>
+    <string name="today_recommended_items">Recommended items: %1$s</string>
+    <string name="today_generated_at">Generated at %1$s</string>
+
     <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
 
     <string name="settings_api_key_title">Gemini API key</string>
     <string name="settings_api_key_status_set">A key is configured. The key is encrypted at rest using the Android Keystore.</string>
