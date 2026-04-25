@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -80,6 +81,7 @@ dependencies {
     // is persisted in DataStore Preferences. EncryptedSharedPreferences is deprecated.
     implementation(libs.tink.android)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.kotlinx.serialization.json)
 
     // Ktor with the OkHttp engine for production HTTP. Tests in :core:data use MockEngine,
     // so the engine choice is :app's concern.
