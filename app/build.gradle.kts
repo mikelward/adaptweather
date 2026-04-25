@@ -58,6 +58,13 @@ android {
         unitTests.all {
             it.useJUnitPlatform()
         }
+        // Required because kotlinx-coroutines-android is on the unit-test classpath
+        // (transitively via androidx.lifecycle). Without this, AndroidDispatcherFactory
+        // calls the unmocked Looper.getMainLooper() and throws "not mocked", which
+        // poisons MainDispatcherLoader for the rest of the JVM. With defaults enabled,
+        // getMainLooper() returns null, AndroidDispatcherFactory fails cleanly, and
+        // Dispatchers.setMain installs a TestMainDispatcher as expected.
+        unitTests.isReturnDefaultValues = true
     }
 }
 
