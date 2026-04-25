@@ -82,6 +82,7 @@ private fun SettingsContent(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        NotificationPermissionBanner()
         ApiKeyCard(
             configured = state.apiKeyConfigured,
             onSave = onSetApiKey,
