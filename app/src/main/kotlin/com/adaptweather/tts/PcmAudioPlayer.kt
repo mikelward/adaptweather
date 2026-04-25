@@ -43,13 +43,28 @@ internal object PcmAudioPlayer {
             .build()
 
         try {
-            val written = track.write(pcm, 0, pcm.size)
-            if (written < 0) {
-                Log.w(TAG, "AudioTrack.write rejected the buffer (code=$written)")
+            // MODE_STATIC normally accepts the whole buffer in a single write because
+            // we sized the track to pcm.size — but the contract permits a positive
+            // short write, in which case we'd set the marker beyond the actual frame
+            // count and awaitMarker would never resume. Loop until the buffer is
+            // fully accepted; bail on any error code or zero-progress write.
+            var offset = 0
+            while (offset < pcm.size) {
+                val written = track.write(pcm, offset, pcm.size - offset)
+                if (written <= 0) {
+                    Log.w(TAG, "AudioTrack.write returned $written at offset $offset; aborting playback")
+                    return
+                }
+                offset += written
+            }
+            // 2 bytes per 16-bit sample, mono. Validate alignment defensively — a
+            // partial-write loop ending on an odd byte boundary would point the
+            // marker at a non-existent frame.
+            if (offset % 2 != 0) {
+                Log.w(TAG, "AudioTrack accepted an odd number of bytes ($offset); aborting playback")
                 return
             }
-            // 2 bytes per 16-bit sample, mono.
-            val totalFrames = pcm.size / 2
+            val totalFrames = offset / 2
             track.notificationMarkerPosition = totalFrames
             awaitMarker(track, totalFrames)
         } finally {
