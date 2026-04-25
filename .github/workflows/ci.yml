@@ -13,6 +13,9 @@ jobs:
   unit-tests:
     name: JVM unit tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -23,10 +26,12 @@ jobs:
           java-version: 21
 
       - name: Set up Android SDK
-        # AGP must be loadable for Gradle to configure :app, even when we only
-        # run pure-JVM tests. Configure-on-demand is incompatible with the
-        # configuration cache, so we just ensure the SDK is present.
+        # AGP must be loadable for Gradle to configure :app, even when only
+        # running :core:* tasks. Pre-installing platform 35 + build-tools 35.0.0
+        # avoids on-demand downloads at configure time.
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;35.0.0 platform-tools'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -34,9 +39,30 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Run unit tests
+        id: gradle
         run: |
           set -o pipefail
           ./gradlew :core:domain:test :core:data:test --stacktrace --info 2>&1 | tee /tmp/jvm-tests.log
+
+      - name: Post tail of gradle log on failure
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = '_(no log captured)_';
+            try {
+              const log = fs.readFileSync('/tmp/jvm-tests.log', 'utf8');
+              const tail = log.split('\n').slice(-200).join('\n');
+              body = '<!-- ci-jvm-tests --> JVM unit tests failed. Last 200 lines:\n\n```\n' + tail + '\n```';
+            } catch (e) {
+              body = 'JVM unit tests failed before gradle started: ' + e.message;
+            }
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body,
+            });
 
       - name: Upload test reports
         if: always()
@@ -52,6 +78,9 @@ jobs:
   android-build:
     name: Android debug build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -72,9 +101,30 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Assemble debug APK
+        id: gradle
         run: |
           set -o pipefail
           ./gradlew :app:assembleDebug --stacktrace --info 2>&1 | tee /tmp/android-build.log
+
+      - name: Post tail of gradle log on failure
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = '_(no log captured)_';
+            try {
+              const log = fs.readFileSync('/tmp/android-build.log', 'utf8');
+              const tail = log.split('\n').slice(-200).join('\n');
+              body = '<!-- ci-android-build --> Android debug build failed. Last 200 lines:\n\n```\n' + tail + '\n```';
+            } catch (e) {
+              body = 'Android debug build failed before gradle started: ' + e.message;
+            }
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body,
+            });
 
       - name: Upload build log
         if: always()
