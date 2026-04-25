@@ -22,6 +22,12 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Set up Android SDK
+        # AGP must be loadable for Gradle to configure :app, even when we only
+        # run pure-JVM tests. Configure-on-demand is incompatible with the
+        # configuration cache, so we just ensure the SDK is present.
+        uses: android-actions/setup-android@v3
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -61,7 +67,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Assemble debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace
+        run: ./gradlew :app:assembleDebug --stacktrace --info
 
       - name: Upload debug APK
         if: success()
