@@ -3,6 +3,7 @@ package com.adaptweather.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -83,6 +84,10 @@ class SettingsRepository(
         }
     }
 
+    suspend fun setUseDeviceLocation(enabled: Boolean) {
+        dataStore.edit { it[USE_DEVICE_LOCATION] = enabled }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -98,6 +103,7 @@ class SettingsRepository(
             ?: DistanceUnit.KILOMETERS
         val rules = parseRules(this[WARDROBE_RULES])
         val location = parseLocation(this)
+        val useDeviceLocation = this[USE_DEVICE_LOCATION] == true
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
@@ -106,6 +112,7 @@ class SettingsRepository(
             distanceUnit = distanceUnit,
             wardrobeRules = rules,
             location = location,
+            useDeviceLocation = useDeviceLocation,
         )
     }
 
@@ -138,6 +145,7 @@ class SettingsRepository(
         private val LOCATION_LAT = doublePreferencesKey("location_latitude")
         private val LOCATION_LON = doublePreferencesKey("location_longitude")
         private val LOCATION_NAME = stringPreferencesKey("location_display_name")
+        private val USE_DEVICE_LOCATION = booleanPreferencesKey("use_device_location")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

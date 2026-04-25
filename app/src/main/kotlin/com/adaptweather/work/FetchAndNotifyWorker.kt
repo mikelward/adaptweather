@@ -58,7 +58,7 @@ class FetchAndNotifyWorker(
             return Result.retry()
         }
 
-        val location = prefs.location ?: DEFAULT_LOCATION
+        val location = resolveLocation(prefs)
         val languageTag = java.util.Locale.getDefault().toLanguageTag()
         val today = LocalDate.now()
 
@@ -125,6 +125,18 @@ class FetchAndNotifyWorker(
             Log.e(TAG, "Unhandled error; failing.", t)
             Result.failure()
         }
+    }
+
+    private suspend fun resolveLocation(prefs: UserPreferences): Location {
+        if (prefs.useDeviceLocation) {
+            val device = runCatching { app.locationResolver.resolve() }.getOrNull()
+            if (device != null) {
+                Log.i(TAG, "Using device-resolved location at ${device.latitude}, ${device.longitude}.")
+                return device
+            }
+            Log.i(TAG, "Device location unavailable; falling back to settings location.")
+        }
+        return prefs.location ?: DEFAULT_LOCATION
     }
 
     private suspend fun deliver(insight: Insight, prefs: UserPreferences) {

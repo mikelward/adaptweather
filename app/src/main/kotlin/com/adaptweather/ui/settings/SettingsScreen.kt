@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -98,6 +99,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onSelectLocation = viewModel::selectLocation,
             onClearLocation = viewModel::clearLocation,
             onSearchLocations = viewModel::searchLocations,
+            onSetUseDeviceLocation = viewModel::setUseDeviceLocation,
         )
     }
 }
@@ -118,6 +120,7 @@ private fun SettingsContent(
     onSelectLocation: (Location) -> Unit,
     onClearLocation: () -> Unit,
     onSearchLocations: suspend (String) -> List<Location>,
+    onSetUseDeviceLocation: (Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -135,6 +138,8 @@ private fun SettingsContent(
         )
         LocationCard(
             current = state.location,
+            useDeviceLocation = state.useDeviceLocation,
+            onSetUseDeviceLocation = onSetUseDeviceLocation,
             onSelect = onSelectLocation,
             onClear = onClearLocation,
             onSearch = onSearchLocations,
@@ -196,12 +201,19 @@ private fun openUrl(context: android.content.Context, url: String) {
 @Composable
 private fun LocationCard(
     current: Location?,
+    useDeviceLocation: Boolean,
+    onSetUseDeviceLocation: (Boolean) -> Unit,
     onSelect: (Location) -> Unit,
     onClear: () -> Unit,
     onSearch: suspend (String) -> List<Location>,
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
     SectionCard(title = stringResource(R.string.settings_location_title)) {
+        DeviceLocationToggleRow(
+            checked = useDeviceLocation,
+            onCheckedChange = onSetUseDeviceLocation,
+        )
+
         Text(
             text = current?.displayName
                 ?: current?.let { "${it.latitude}, ${it.longitude}" }
@@ -209,7 +221,10 @@ private fun LocationCard(
             style = MaterialTheme.typography.bodyLarge,
         )
         Text(
-            text = stringResource(R.string.settings_location_description),
+            text = stringResource(
+                if (useDeviceLocation) R.string.settings_location_description_device_on
+                else R.string.settings_location_description,
+            ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -241,6 +256,79 @@ private fun LocationCard(
             onSearch = onSearch,
         )
     }
+}
+
+@Composable
+private fun DeviceLocationToggleRow(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    val context = LocalContext.current
+    val foregroundLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        // Only flip the toggle on if foreground was granted; otherwise the Worker would
+        // hit our isPermissionGranted check, return null, and quietly fall through to
+        // the settings location every day.
+        onCheckedChange(granted)
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.settings_location_use_device),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = { wantsOn ->
+                if (!wantsOn) {
+                    onCheckedChange(false)
+                    return@Switch
+                }
+                if (hasCoarseLocationPermission(context)) {
+                    onCheckedChange(true)
+                } else {
+                    foregroundLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                }
+            },
+        )
+    }
+
+    if (checked && !hasBackgroundLocationPermission(context)) {
+        TextButton(
+            onClick = { openAppDetails(context) },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_location_grant_background)) }
+    }
+}
+
+private fun hasCoarseLocationPermission(context: android.content.Context): Boolean =
+    androidx.core.content.ContextCompat.checkSelfPermission(
+        context,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+private fun hasBackgroundLocationPermission(context: android.content.Context): Boolean {
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) return true
+    return androidx.core.content.ContextCompat.checkSelfPermission(
+        context,
+        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+}
+
+private fun openAppDetails(context: android.content.Context) {
+    // Background location can't be requested via the runtime-permission dialog on
+    // Android 11+ — it must be granted from the system app-info screen. We deep-link
+    // there so the user only has to tap once to find it.
+    val intent = android.content.Intent(
+        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        android.net.Uri.fromParts("package", context.packageName, null),
+    ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+    runCatching { context.startActivity(intent) }
 }
 
 @Composable

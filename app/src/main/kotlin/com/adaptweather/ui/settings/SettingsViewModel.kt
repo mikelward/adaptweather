@@ -43,6 +43,7 @@ class SettingsViewModel(
                         distanceUnit = prefs.distanceUnit,
                         wardrobeRules = prefs.wardrobeRules,
                         location = prefs.location,
+                        useDeviceLocation = prefs.useDeviceLocation,
                     )
                 }
             }
@@ -104,6 +105,10 @@ class SettingsViewModel(
 
     fun clearLocation() {
         viewModelScope.launch { settingsRepository.clearLocation() }
+    }
+
+    fun setUseDeviceLocation(enabled: Boolean) {
+        viewModelScope.launch { settingsRepository.setUseDeviceLocation(enabled) }
     }
 
     /** Used by [LocationCard] inside a LaunchedEffect; safe to call from any dispatcher. */

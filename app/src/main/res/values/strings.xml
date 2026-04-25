@@ -23,8 +23,11 @@
     <string name="settings_api_key_clear">Clear stored key</string>
 
     <string name="settings_location_title">Location</string>
+    <string name="settings_location_use_device">Use device location</string>
+    <string name="settings_location_grant_background">Grant background location (system Settings)</string>
     <string name="settings_location_unset">No location set — defaulting to London</string>
     <string name="settings_location_description">The forecast is fetched for this place. Search by city name; results come from Open-Meteo\'s free geocoding service.</string>
+    <string name="settings_location_description_device_on">When enabled, AdaptWeather reads the device\'s coarse location at notify time (cell-tower / WiFi only — no GPS hardware fix). The location below is used as a fallback if the device read fails. Background location must be granted in system Settings or the morning Worker can\'t read it.</string>
     <string name="settings_location_set">Set location</string>
     <string name="settings_location_change">Change location</string>
     <string name="settings_location_clear">Clear location</string>
