@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +36,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adaptweather.R
 import com.adaptweather.core.domain.model.Insight
 import com.adaptweather.work.FetchAndNotifyWorker
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -84,12 +88,76 @@ private fun TodayContent(
             .padding(horizontal = 16.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        WorkStatusBanner(status = state.workStatus)
         if (state.insight == null) {
             EmptyState(onRefresh = onRefresh)
         } else {
             InsightCard(state.insight)
         }
     }
+}
+
+@Composable
+private fun WorkStatusBanner(status: WorkStatus) {
+    when (status) {
+        is WorkStatus.Idle -> Unit
+        is WorkStatus.Running -> {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp,
+                    )
+                    Text(
+                        text = stringResource(R.string.today_working),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 12.dp),
+                    )
+                }
+            }
+        }
+        is WorkStatus.Failed -> {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                ),
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = stringResource(R.string.today_failed_title),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    Text(
+                        text = describeFailure(status),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun describeFailure(failed: WorkStatus.Failed): String {
+    val message = when (failed.reason) {
+        FetchAndNotifyWorker.REASON_MISSING_API_KEY ->
+            stringResource(R.string.today_failed_missing_api_key)
+        FetchAndNotifyWorker.REASON_GEMINI_AUTH ->
+            stringResource(R.string.today_failed_gemini_auth)
+        FetchAndNotifyWorker.REASON_GEMINI_BLOCKED ->
+            stringResource(R.string.today_failed_gemini_blocked)
+        FetchAndNotifyWorker.REASON_UNEXPECTED_HTTP ->
+            stringResource(R.string.today_failed_unexpected_http)
+        FetchAndNotifyWorker.REASON_UNHANDLED, null ->
+            stringResource(R.string.today_failed_unhandled)
+        else -> failed.reason
+    }
+    return if (failed.detail.isNullOrBlank()) message else "$message (${failed.detail})"
 }
 
 @Composable

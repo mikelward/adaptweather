@@ -10,6 +10,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.adaptweather.AdaptWeatherApplication
 import com.adaptweather.core.data.insight.GeminiBlockedException
 import com.adaptweather.core.data.insight.GeminiEmptyResponseException
@@ -93,10 +94,10 @@ class FetchAndNotifyWorker(
             Result.success()
         } catch (e: MissingApiKeyException) {
             Log.w(TAG, "No Gemini API key configured; user must set one in Settings.")
-            Result.failure()
+            Result.failure(reason(REASON_MISSING_API_KEY))
         } catch (e: GeminiBlockedException) {
             Log.w(TAG, "Gemini refused the prompt: ${e.message}")
-            Result.failure()
+            Result.failure(reason(REASON_GEMINI_BLOCKED, e.message))
         } catch (e: GeminiEmptyResponseException) {
             Log.w(TAG, "Gemini returned no candidate text; will retry.")
             Result.retry()
@@ -105,13 +106,13 @@ class FetchAndNotifyWorker(
             val status = e.response.status
             if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
                 Log.w(TAG, "Auth failed against Gemini ($status); user must fix the key.")
-                Result.failure()
+                Result.failure(reason(REASON_GEMINI_AUTH, "$status"))
             } else if (status.value in 500..599) {
                 Log.w(TAG, "Server error $status; retrying.")
                 Result.retry()
             } else {
                 Log.e(TAG, "Unexpected HTTP status $status", e)
-                Result.failure()
+                Result.failure(reason(REASON_UNEXPECTED_HTTP, "$status"))
             }
         } catch (e: ConnectTimeoutException) {
             Log.w(TAG, "Connect timeout; retrying.", e); Result.retry()
@@ -123,9 +124,13 @@ class FetchAndNotifyWorker(
             Log.w(TAG, "Network IO failure; retrying.", e); Result.retry()
         } catch (t: Throwable) {
             Log.e(TAG, "Unhandled error; failing.", t)
-            Result.failure()
+            Result.failure(reason(REASON_UNHANDLED, t.javaClass.simpleName + ": " + (t.message ?: "")))
         }
     }
+
+    private fun reason(code: String, detail: String? = null) =
+        if (detail.isNullOrBlank()) workDataOf(KEY_REASON to code)
+        else workDataOf(KEY_REASON to code, KEY_REASON_DETAIL to detail)
 
     private suspend fun resolveLocation(prefs: UserPreferences): Location {
         if (prefs.useDeviceLocation) {
@@ -146,7 +151,7 @@ class FetchAndNotifyWorker(
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
             try {
-                app.ttsSpeaker.speak(insight.summary)
+                app.ttsSpeaker.speak(insight.spokenText())
             } catch (t: Throwable) {
                 // TTS engine failures shouldn't lose the insight; the notification path
                 // (when also enabled) already covered the user-visible delivery.
@@ -155,9 +160,35 @@ class FetchAndNotifyWorker(
         }
     }
 
+    /**
+     * The text that gets spoken aloud. The LLM is told to weave the items into its
+     * sentence but it's not guaranteed; appending them explicitly ensures the user
+     * always hears what their wardrobe rules suggest, even if the summary skips them.
+     */
+    private fun Insight.spokenText(): String {
+        if (recommendedItems.isEmpty()) return summary
+        val joined = when (recommendedItems.size) {
+            1 -> recommendedItems[0]
+            2 -> "${recommendedItems[0]} and ${recommendedItems[1]}"
+            else -> recommendedItems.dropLast(1).joinToString(", ") + ", and " + recommendedItems.last()
+        }
+        val separator = if (summary.endsWith(".") || summary.endsWith("!") || summary.endsWith("?")) " " else ". "
+        return "$summary${separator}Recommended: $joined."
+    }
+
     companion object {
         private const val TAG = "FetchAndNotifyWorker"
         const val UNIQUE_WORK_NAME = "daily_insight_fetch"
+
+        // Output Data keys for surfacing failure reasons in the UI.
+        const val KEY_REASON = "reason"
+        const val KEY_REASON_DETAIL = "reason_detail"
+
+        const val REASON_MISSING_API_KEY = "missing_api_key"
+        const val REASON_GEMINI_AUTH = "gemini_auth"
+        const val REASON_GEMINI_BLOCKED = "gemini_blocked"
+        const val REASON_UNEXPECTED_HTTP = "unexpected_http"
+        const val REASON_UNHANDLED = "unhandled"
 
         // Fallback when the user hasn't set a location yet — the pipeline still runs and
         // posts a (London) insight rather than silently failing. The Settings screen
