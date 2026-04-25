@@ -49,14 +49,15 @@ Code TODOs in source files are linked from here when they exist.
 - [x] **Severe weather alerts.** Open-Meteo's `/v1/warnings` is now wired up:
       alerts feed into `BuildPrompt`, and SEVERE / EXTREME alerts also fire a
       separate high-priority notification on a dedicated channel.
-- [ ] **Hourly / multi-day forecast UI** on Today. Currently Today only shows
-      the latest insight; useful to see the underlying data the LLM saw.
-- [ ] **Forecast accuracy & multi-model ideas** — confidence badge from
-      multi-model disagreement, end-of-day accuracy survey, user-flagged
+- [x] **Hourly forecast UI** on Today. Vico chart of temperature + feels-like
+      across today's hours. Multi-day extension still possible.
+- [ ] **Forecast accuracy ideas** — end-of-day accuracy survey, user-flagged
       incorrect forecasts, background multi-provider comparison. Sketched in
-      [docs/MODELS.md](MODELS.md). Idea 1 (confidence badge) is cheapest,
-      builds on data Open-Meteo already returns when you ask for several
-      models in one call.
+      [docs/MODELS.md](MODELS.md) (ideas 2-4). Idea 1 (confidence badge)
+      shipped — see below.
+- [x] **Multi-model confidence badge** (MODELS.md idea #1) — Today shows
+      a chip indicating how much ECMWF / GFS / ICON disagree about today's
+      apparent high and peak precip probability.
 
 ## Feature ideas (queued)
 
