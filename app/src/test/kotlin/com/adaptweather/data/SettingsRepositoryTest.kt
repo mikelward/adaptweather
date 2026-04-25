@@ -15,8 +15,14 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -26,6 +32,7 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.ZoneId
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsRepositoryTest {
     @TempDir lateinit var tempDir: Path
 
@@ -35,6 +42,9 @@ class SettingsRepositoryTest {
 
     @BeforeEach
     fun setUp() {
+        // See SecureKeyStoreTest.setUp for why we install a test Main dispatcher even
+        // though this class doesn't directly read Dispatchers.Main.
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         dataStore = PreferenceDataStoreFactory.create(
             produceFile = { File(tempDir.toFile(), "settings.preferences_pb") },
         )
@@ -42,6 +52,11 @@ class SettingsRepositoryTest {
             dataStore = dataStore,
             zoneIdProvider = { zone },
         )
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test

@@ -9,14 +9,21 @@ import com.adaptweather.core.data.insight.MissingApiKeyException
 import com.google.crypto.tink.Aead
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SecureKeyStoreTest {
     @TempDir lateinit var tempDir: Path
 
@@ -25,10 +32,20 @@ class SecureKeyStoreTest {
 
     @BeforeEach
     fun setUp() {
+        // The :app module ships kotlinx-coroutines-android transitively (via lifecycle).
+        // In unit tests, AndroidDispatcherFactory tries to call Looper.getMainLooper(),
+        // which is unmocked and throws. Setting a test Main dispatcher up front shadows
+        // that lookup so DataStore's internal coroutines run cleanly.
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         dataStore = PreferenceDataStoreFactory.create(
             produceFile = { File(tempDir.toFile(), "secure_key.preferences_pb") },
         )
         subject = SecureKeyStore(aead = ReversibleFakeAead, dataStore = dataStore)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
