@@ -7,8 +7,8 @@ package com.adaptweather.insight
  * The default written into a fresh install is `gemini-2.5-flash` — see
  * `UserPreferences.DEFAULT_GEMINI_MODEL`. Flash Lite is much cheaper for the daily
  * 25-word output but trades a small amount of quality. Pro is the highest quality
- * at higher latency and cost; reasonable when the user wants the polished prose
- * voice but probably overkill for the morning insight.
+ * at higher latency and cost; reasonable when the user wants more polished prose
+ * but probably overkill for the morning insight.
  */
 data class GeminiModelOption(val id: String, val displayName: String)
 

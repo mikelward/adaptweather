@@ -31,7 +31,7 @@
     <string name="settings_api_key_clear">Clear stored key</string>
 
     <string name="settings_gemini_model_title">Gemini model</string>
-    <string name="settings_gemini_model_description">Choose the model used to write the daily insight. Flash Lite is much cheaper than Flash for the same key. Pro is the highest quality but slowest and costliest — overkill for the morning summary, useful when you want polished prose.</string>
+    <string name="settings_gemini_model_description">Choose the model used to write the daily insight. Flash Lite is much cheaper than Flash while using the same API key. Pro is the highest quality but slowest and costliest — overkill for the morning summary, useful when you want polished prose.</string>
 
     <string name="settings_location_title">Location</string>
     <string name="settings_location_use_device">Use device location</string>

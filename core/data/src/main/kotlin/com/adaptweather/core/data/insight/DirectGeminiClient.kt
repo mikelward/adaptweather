@@ -1,5 +1,6 @@
 package com.adaptweather.core.data.insight
 
+import com.adaptweather.core.domain.model.UserPreferences
 import com.adaptweather.core.domain.repository.InsightGenerator
 import com.adaptweather.core.domain.usecase.Prompt
 import io.ktor.client.HttpClient
@@ -14,7 +15,6 @@ import io.ktor.http.path
 
 internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"
-internal const val DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
 
 /**
  * BYOK Gemini client: the user's key is read from [keyProvider] (Tink-encrypted
@@ -30,7 +30,7 @@ internal const val DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
 class DirectGeminiClient(
     private val httpClient: HttpClient,
     private val keyProvider: KeyProvider,
-    private val model: String = DEFAULT_GEMINI_MODEL,
+    private val model: String = UserPreferences.DEFAULT_GEMINI_MODEL,
     private val temperature: Double = 0.4,
     private val maxOutputTokens: Int = 100,
 ) : InsightGenerator {

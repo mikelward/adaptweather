@@ -21,8 +21,11 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.serialization.json.Json as KotlinxJson
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -44,6 +47,13 @@ class SettingsViewModelTest {
     // crashes on Android JVM unit tests because AndroidDispatcherFactory calls the
     // unmocked Looper.getMainLooper(). See SecureKeyStoreTest for the same workaround.
     private val dispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
+    // DataStore's default scope is `Dispatchers.IO + SupervisorJob()` — its internal
+    // actor coroutine outlives the test body and, when it resumes after `resetMain`,
+    // can't dispatch back through TestMainDispatcher (which delegates to the now-
+    // missing Dispatchers.Main) and crashes the JVM with "Module with the Main
+    // dispatcher is missing". Pinning DataStore to our test dispatcher and cancelling
+    // the scope in tearDown ensures DataStore's lifecycle is bounded by the test.
+    private lateinit var dataStoreScope: CoroutineScope
     private lateinit var settingsDataStore: DataStore<Preferences>
     private lateinit var keyDataStore: DataStore<Preferences>
     private lateinit var settingsRepository: SettingsRepository
@@ -53,10 +63,13 @@ class SettingsViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        dataStoreScope = CoroutineScope(dispatcher + SupervisorJob())
         settingsDataStore = PreferenceDataStoreFactory.create(
+            scope = dataStoreScope,
             produceFile = { File(tempDir.toFile(), "settings.preferences_pb") },
         )
         keyDataStore = PreferenceDataStoreFactory.create(
+            scope = dataStoreScope,
             produceFile = { File(tempDir.toFile(), "key.preferences_pb") },
         )
         settingsRepository = SettingsRepository(settingsDataStore)
@@ -82,6 +95,7 @@ class SettingsViewModelTest {
 
     @AfterEach
     fun tearDown() {
+        dataStoreScope.cancel()
         Dispatchers.resetMain()
     }
 
