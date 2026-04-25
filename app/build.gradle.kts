@@ -112,3 +112,16 @@ dependencies {
     testImplementation(libs.ktor.client.mock)
 }
 
+configurations.matching { it.name.startsWith("test") || it.name.startsWith("debugUnitTest") }.all {
+    // kotlinx-coroutines-android arrives transitively via androidx.lifecycle. Its
+    // AndroidDispatcherFactory is the highest-priority MainDispatcherFactory on the
+    // service-loader, and it calls Looper.getMainLooper() at static init time —
+    // which throws "not mocked" against the AGP stub Android jar and poisons
+    // MainDispatcherLoader for the rest of the JVM, breaking every coroutine test
+    // that touches Dispatchers.setMain. Excluding it from the test classpath only
+    // leaves kotlinx-coroutines-test, whose TestMainDispatcherFactory then wins the
+    // service-loader race cleanly. Production code is unaffected; the runtime
+    // classpath still has it (via implementation deps).
+    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
+}
+
