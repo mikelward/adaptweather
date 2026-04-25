@@ -1,8 +1,12 @@
 name: CI
 
 on:
+  # Don't trigger on pushes to feature branches — pull_request covers those.
+  # Without this, every commit on a PR branch fires CI twice (once for `push`
+  # to the branch, once for `pull_request`), and the two runs race on the
+  # shared Gradle cache so one frequently fails while the other passes.
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
 
 concurrency:
