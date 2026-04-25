@@ -44,7 +44,7 @@ class GenerateDailyInsightTest {
         temperatureMinC = 8.0,
         temperatureMaxC = 25.0,
         feelsLikeMinC = 6.0,
-        feelsLikeMaxC = 24.0,
+        feelsLikeMaxC = 25.0,
         precipitationProbabilityMaxPct = 60.0,
         precipitationMmTotal = 4.5,
         condition = WeatherCondition.RAIN,
