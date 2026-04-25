@@ -89,8 +89,16 @@ class FetchAndNotifyWorker(
         languageTag: String,
     ): Result {
         return try {
-            val insight = app.createGenerateDailyInsight(prefs.geminiModel)
+            val result = app.createGenerateDailyInsight(prefs.geminiModel)
                 .invoke(location, prefs, languageTag)
+            val insight = result.insight
+            // Severe alerts are out-of-band: post them as separate high-priority
+            // notifications on every fresh fetch, regardless of whether the daily
+            // summary itself is blank or suppressed.
+            result.alerts.filter { it.isHighPriority() }.forEach { alert ->
+                runCatching { app.weatherAlertNotifier.notify(alert) }
+                    .onFailure { Log.w(TAG, "Severe alert notification failed for ${alert.event}.", it) }
+            }
             runCatching { app.insightCache.store(insight) }
                 .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
             deliver(insight, prefs)

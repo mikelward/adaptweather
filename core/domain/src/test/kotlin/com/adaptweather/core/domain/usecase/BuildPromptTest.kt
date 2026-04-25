@@ -1,13 +1,16 @@
 package com.adaptweather.core.domain.usecase
 
+import com.adaptweather.core.domain.model.AlertSeverity
 import com.adaptweather.core.domain.model.DailyForecast
 import com.adaptweather.core.domain.model.HourlyForecast
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.WardrobeRule
+import com.adaptweather.core.domain.model.WeatherAlert
 import com.adaptweather.core.domain.model.WeatherCondition
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import org.junit.jupiter.api.Test
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -123,5 +126,48 @@ class BuildPromptTest {
         val prompt = subject(today, yesterday, emptyList(), emptyList(), TemperatureUnit.CELSIUS, "en-AU")
         prompt.userMessage.shouldContain("conditions: partly cloudy")
         prompt.userMessage.shouldContain("conditions: rain")
+    }
+
+    @Test
+    fun `system instruction calls out the severe-alert rule`() {
+        val prompt = subject(today, yesterday, emptyList(), emptyList(), TemperatureUnit.CELSIUS, "en-AU")
+        prompt.systemInstruction.shouldContain("Severe alert")
+        prompt.systemInstruction.shouldContain("\"Alert: <event>.\"")
+        prompt.systemInstruction.shouldContain("EXTREME outranks SEVERE")
+    }
+
+    @Test
+    fun `alerts block lists each alert with its severity label`() {
+        val severe = WeatherAlert(
+            event = "Severe Thunderstorm Warning",
+            severity = AlertSeverity.SEVERE,
+            headline = "Damaging hail expected",
+            description = null,
+            onset = Instant.parse("2026-04-25T15:00:00Z"),
+            expires = Instant.parse("2026-04-25T20:00:00Z"),
+        )
+        val moderate = WeatherAlert(
+            event = "Wind Advisory",
+            severity = AlertSeverity.MODERATE,
+            headline = null,
+            description = null,
+            onset = Instant.parse("2026-04-25T08:00:00Z"),
+            expires = Instant.parse("2026-04-25T18:00:00Z"),
+        )
+
+        val prompt = subject(
+            today, yesterday, emptyList(), emptyList(),
+            TemperatureUnit.CELSIUS, "en-AU",
+            alerts = listOf(severe, moderate),
+        )
+
+        prompt.userMessage.shouldContain("Severe Thunderstorm Warning [Severe]")
+        prompt.userMessage.shouldContain("Wind Advisory [Moderate]")
+    }
+
+    @Test
+    fun `alerts block reads (none) when no alerts are active`() {
+        val prompt = subject(today, yesterday, emptyList(), emptyList(), TemperatureUnit.CELSIUS, "en-AU")
+        prompt.userMessage.shouldContain("Severe-weather alerts: (none)")
     }
 }

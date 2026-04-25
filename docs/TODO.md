@@ -46,9 +46,9 @@ Code TODOs in source files are linked from here when they exist.
 
 ## Forecast & alerts
 
-- [ ] **Severe weather alerts.** Open-Meteo exposes a free alerts endpoint —
-      layer onto the daily insight, post a separate notification on
-      severe-grade events.
+- [x] **Severe weather alerts.** Open-Meteo's `/v1/warnings` is now wired up:
+      alerts feed into `BuildPrompt`, and SEVERE / EXTREME alerts also fire a
+      separate high-priority notification on a dedicated channel.
 - [ ] **Hourly / multi-day forecast UI** on Today. Currently Today only shows
       the latest insight; useful to see the underlying data the LLM saw.
 - [ ] **Forecast accuracy & multi-model ideas** — confidence badge from
