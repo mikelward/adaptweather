@@ -42,7 +42,7 @@ jobs:
         id: gradle
         run: |
           set -o pipefail
-          ./gradlew :core:domain:test :core:data:test --stacktrace --info 2>&1 | tee /tmp/jvm-tests.log
+          ./gradlew :core:domain:test :core:data:test :app:testDebugUnitTest --stacktrace --info 2>&1 | tee /tmp/jvm-tests.log
 
       - name: Post tail of gradle log on failure
         if: failure() && github.event_name == 'pull_request'
