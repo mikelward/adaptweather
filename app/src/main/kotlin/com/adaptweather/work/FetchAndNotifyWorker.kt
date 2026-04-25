@@ -18,6 +18,7 @@ import com.adaptweather.core.data.insight.MissingApiKeyException
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.Insight
 import com.adaptweather.core.domain.model.Location
+import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.UserPreferences
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -156,13 +157,29 @@ class FetchAndNotifyWorker(
             app.insightNotifier.notify(insight)
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
+            speakWithFallback(insight.spokenText(), prefs.ttsEngine)
+        }
+    }
+
+    /**
+     * Speaks via the user-preferred engine; on Gemini failure (network, quota, missing
+     * key) falls back to the on-device engine so the user still hears something. We
+     * never let a TTS error fail the worker — the notification path is the primary
+     * delivery channel and has already fired by this point.
+     */
+    private suspend fun speakWithFallback(text: String, engine: TtsEngine) {
+        if (engine == TtsEngine.GEMINI) {
             try {
-                app.ttsSpeaker.speak(insight.spokenText())
+                app.geminiTtsSpeaker.speak(text)
+                return
             } catch (t: Throwable) {
-                // TTS engine failures shouldn't lose the insight; the notification path
-                // (when also enabled) already covered the user-visible delivery.
-                Log.w(TAG, "TTS playback failed; insight is still posted as notification.", t)
+                Log.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
             }
+        }
+        try {
+            app.deviceTtsSpeaker.speak(text)
+        } catch (t: Throwable) {
+            Log.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
         }
     }
 

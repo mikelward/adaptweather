@@ -5,6 +5,7 @@ import com.adaptweather.core.domain.model.DistanceUnit
 import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
+import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.WardrobeRule
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -19,5 +20,6 @@ data class SettingsState(
     val wardrobeRules: List<WardrobeRule> = WardrobeRule.DEFAULTS,
     val location: Location? = null,
     val useDeviceLocation: Boolean = false,
+    val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val apiKeyConfigured: Boolean = false,
 )
