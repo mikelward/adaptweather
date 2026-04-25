@@ -11,6 +11,10 @@
     <string name="settings_api_key_save">Save key</string>
     <string name="settings_api_key_clear">Clear stored key</string>
 
+    <string name="settings_schedule_title">When to deliver the daily insight</string>
+    <string name="settings_schedule_time_label">Time</string>
+    <string name="settings_schedule_days_label">Days of the week</string>
+
     <string name="settings_delivery_title">How to deliver the daily insight</string>
     <string name="settings_delivery_notification_only">Notification only</string>
     <string name="settings_delivery_tts_only">Spoken aloud only</string>

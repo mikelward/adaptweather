@@ -26,6 +26,7 @@ class MainActivity : ComponentActivity() {
                         factory = SettingsViewModel.Factory(
                             settingsRepository = app.settingsRepository,
                             keyStore = app.secureKeyStore,
+                            rearmAlarm = app.dailyAlarmScheduler::schedule,
                         ),
                     )
                     SettingsScreen(viewModel = viewModel)
