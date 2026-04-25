@@ -57,6 +57,7 @@ private fun AdaptWeatherNav(app: AdaptWeatherApplication) {
                 factory = TodayViewModel.Factory(
                     insightCache = app.insightCache,
                     workManager = WorkManager.getInstance(app),
+                    settingsRepository = app.settingsRepository,
                 ),
             )
             TodayScreen(

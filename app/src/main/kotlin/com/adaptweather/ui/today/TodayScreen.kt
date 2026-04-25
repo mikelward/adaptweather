@@ -38,6 +38,8 @@ import com.adaptweather.core.domain.model.ConfidenceInfo
 import com.adaptweather.core.domain.model.ForecastConfidence
 import com.adaptweather.core.domain.model.HourlyForecast
 import com.adaptweather.core.domain.model.Insight
+import com.adaptweather.core.domain.model.TemperatureUnit
+import com.adaptweather.core.domain.model.symbol
 import com.adaptweather.work.FetchAndNotifyWorker
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -97,7 +99,7 @@ private fun TodayContent(
         } else {
             InsightCard(state.insight)
             if (state.insight.hourly.isNotEmpty()) {
-                ForecastCard(state.insight.hourly)
+                ForecastCard(state.insight.hourly, state.temperatureUnit)
             }
         }
     }
@@ -280,7 +282,7 @@ private fun ConfidenceChip(info: ConfidenceInfo) {
 }
 
 @Composable
-private fun ForecastCard(hourly: List<HourlyForecast>) {
+private fun ForecastCard(hourly: List<HourlyForecast>, temperatureUnit: TemperatureUnit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -290,9 +292,9 @@ private fun ForecastCard(hourly: List<HourlyForecast>) {
                 text = stringResource(R.string.today_forecast_title),
                 style = MaterialTheme.typography.titleSmall,
             )
-            ForecastChart(hourly = hourly)
+            ForecastChart(hourly = hourly, temperatureUnit = temperatureUnit)
             Text(
-                text = stringResource(R.string.today_forecast_legend),
+                text = stringResource(R.string.today_forecast_legend, temperatureUnit.symbol()),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

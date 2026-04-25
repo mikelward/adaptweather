@@ -13,7 +13,7 @@
     <string name="today_generated_at">Generated at %1$s</string>
 
     <string name="today_forecast_title">Hourly forecast</string>
-    <string name="today_forecast_legend">Temperature and feels-like by hour</string>
+    <string name="today_forecast_legend">Temperature and feels-like (%1$s) by hour</string>
 
     <string name="today_confidence_high">High confidence — major models agree</string>
     <string name="today_confidence_medium">Medium confidence</string>

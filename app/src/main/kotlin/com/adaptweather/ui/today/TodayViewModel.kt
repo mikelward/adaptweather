@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.adaptweather.core.domain.model.Insight
+import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.data.InsightCache
+import com.adaptweather.data.SettingsRepository
 import com.adaptweather.work.FetchAndNotifyWorker
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 data class TodayState(
     val insight: Insight? = null,
     val workStatus: WorkStatus = WorkStatus.Idle,
+    val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
 )
 
 sealed class WorkStatus {
@@ -27,12 +30,18 @@ sealed class WorkStatus {
 class TodayViewModel(
     insightCache: InsightCache,
     workManager: WorkManager,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
     val state: StateFlow<TodayState> = combine(
         insightCache.latest,
         workManager.getWorkInfosForUniqueWorkFlow(FetchAndNotifyWorker.UNIQUE_WORK_NAME),
-    ) { insight, workInfos ->
-        TodayState(insight = insight, workStatus = workInfos.toStatus())
+        settingsRepository.preferences,
+    ) { insight, workInfos, prefs ->
+        TodayState(
+            insight = insight,
+            workStatus = workInfos.toStatus(),
+            temperatureUnit = prefs.temperatureUnit,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 
     private fun List<WorkInfo>.toStatus(): WorkStatus {
@@ -53,13 +62,14 @@ class TodayViewModel(
     class Factory(
         private val insightCache: InsightCache,
         private val workManager: WorkManager,
+        private val settingsRepository: SettingsRepository,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(TodayViewModel::class.java)) {
                 "Unknown ViewModel: ${modelClass.name}"
             }
-            return TodayViewModel(insightCache, workManager) as T
+            return TodayViewModel(insightCache, workManager, settingsRepository) as T
         }
     }
 }
