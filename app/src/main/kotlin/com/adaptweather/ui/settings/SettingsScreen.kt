@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,9 +51,11 @@ import com.adaptweather.BuildConfig
 import com.adaptweather.R
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
+import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.WardrobeRule
 import com.adaptweather.work.FetchAndNotifyWorker
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -81,6 +84,9 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             onAddWardrobeRule = viewModel::addWardrobeRule,
             onReplaceWardrobeRule = viewModel::replaceWardrobeRule,
             onDeleteWardrobeRule = viewModel::deleteWardrobeRule,
+            onSelectLocation = viewModel::selectLocation,
+            onClearLocation = viewModel::clearLocation,
+            onSearchLocations = viewModel::searchLocations,
         )
     }
 }
@@ -98,6 +104,9 @@ private fun SettingsContent(
     onAddWardrobeRule: (WardrobeRule) -> Unit,
     onReplaceWardrobeRule: (Int, WardrobeRule) -> Unit,
     onDeleteWardrobeRule: (Int) -> Unit,
+    onSelectLocation: (Location) -> Unit,
+    onClearLocation: () -> Unit,
+    onSearchLocations: suspend (String) -> List<Location>,
 ) {
     Column(
         modifier = Modifier
@@ -112,6 +121,12 @@ private fun SettingsContent(
             configured = state.apiKeyConfigured,
             onSave = onSetApiKey,
             onClear = onClearApiKey,
+        )
+        LocationCard(
+            current = state.location,
+            onSelect = onSelectLocation,
+            onClear = onClearLocation,
+            onSearch = onSearchLocations,
         )
         ScheduleCard(
             time = state.scheduleTime,
@@ -131,6 +146,149 @@ private fun SettingsContent(
             DebugCard()
         }
     }
+}
+
+@Composable
+private fun LocationCard(
+    current: Location?,
+    onSelect: (Location) -> Unit,
+    onClear: () -> Unit,
+    onSearch: suspend (String) -> List<Location>,
+) {
+    var dialogOpen by remember { mutableStateOf(false) }
+    SectionCard(title = stringResource(R.string.settings_location_title)) {
+        Text(
+            text = current?.displayName
+                ?: current?.let { "${it.latitude}, ${it.longitude}" }
+                ?: stringResource(R.string.settings_location_unset),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            text = stringResource(R.string.settings_location_description),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Button(
+            onClick = { dialogOpen = true },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(
+                stringResource(
+                    if (current == null) R.string.settings_location_set
+                    else R.string.settings_location_change,
+                ),
+            )
+        }
+        if (current != null) {
+            TextButton(onClick = onClear, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.settings_location_clear))
+            }
+        }
+    }
+
+    if (dialogOpen) {
+        LocationSearchDialog(
+            onDismiss = { dialogOpen = false },
+            onSelect = {
+                onSelect(it)
+                dialogOpen = false
+            },
+            onSearch = onSearch,
+        )
+    }
+}
+
+@Composable
+private fun LocationSearchDialog(
+    onDismiss: () -> Unit,
+    onSelect: (Location) -> Unit,
+    onSearch: suspend (String) -> List<Location>,
+) {
+    var query by remember { mutableStateOf("") }
+    var results by remember { mutableStateOf<List<Location>>(emptyList()) }
+    var inFlight by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String?>(null) }
+    var selected by remember { mutableStateOf<Location?>(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                enabled = selected != null,
+                onClick = { selected?.let(onSelect) },
+            ) { Text(stringResource(android.R.string.ok)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.cancel))
+            }
+        },
+        title = { Text(stringResource(R.string.settings_location_search_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        label = { Text(stringResource(R.string.settings_location_query_label)) },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    val coroutineScope = rememberCoroutineScope()
+                    TextButton(
+                        enabled = query.isNotBlank() && !inFlight,
+                        onClick = {
+                            coroutineScope.launch {
+                                inFlight = true
+                                error = null
+                                try {
+                                    results = onSearch(query)
+                                    selected = null
+                                } catch (t: Throwable) {
+                                    error = t.message ?: t.javaClass.simpleName
+                                    results = emptyList()
+                                } finally {
+                                    inFlight = false
+                                }
+                            }
+                        },
+                        modifier = Modifier.padding(start = 8.dp),
+                    ) { Text(stringResource(R.string.settings_location_search)) }
+                }
+
+                when {
+                    inFlight -> Text(stringResource(R.string.settings_location_searching))
+                    error != null -> Text(
+                        text = error!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    results.isEmpty() && query.isNotBlank() ->
+                        Text(stringResource(R.string.settings_location_no_results))
+                    else -> results.forEach { result ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            RadioButton(
+                                selected = selected == result,
+                                onClick = { selected = result },
+                            )
+                            Text(
+                                text = result.displayName ?: "${result.latitude}, ${result.longitude}",
+                                modifier = Modifier.padding(start = 8.dp),
+                            )
+                        }
+                    }
+                }
+            }
+        },
+    )
 }
 
 @Composable

@@ -3,12 +3,23 @@ package com.adaptweather.ui.settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import com.adaptweather.core.data.location.OpenMeteoGeocodingClient
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.data.SecureKeyStore
 import com.adaptweather.data.SettingsRepository
 import com.google.crypto.tink.Aead
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.ByteReadChannel
+import kotlinx.serialization.json.Json as KotlinxJson
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -50,7 +61,23 @@ class SettingsViewModelTest {
         )
         settingsRepository = SettingsRepository(settingsDataStore)
         keyStore = SecureKeyStore(IdentityFakeAead, keyDataStore)
-        subject = SettingsViewModel(settingsRepository, keyStore, rearmAlarm = {})
+        // Geocoding client wired with a Mock engine that always returns an empty response;
+        // the tests in this class don't exercise location lookup.
+        val emptyGeocoding = HttpClient(
+            MockEngine {
+                respond(
+                    content = ByteReadChannel("""{"results":[]}"""),
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            },
+        ) { install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) } }
+        subject = SettingsViewModel(
+            settingsRepository,
+            keyStore,
+            rearmAlarm = {},
+            geocodingClient = OpenMeteoGeocodingClient(emptyGeocoding),
+        )
     }
 
     @AfterEach

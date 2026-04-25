@@ -3,8 +3,10 @@ package com.adaptweather.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.adaptweather.core.data.location.OpenMeteoGeocodingClient
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
+import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.WardrobeRule
@@ -23,6 +25,7 @@ class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val keyStore: SecureKeyStore,
     private val rearmAlarm: (Schedule) -> Unit,
+    private val geocodingClient: OpenMeteoGeocodingClient,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -39,6 +42,7 @@ class SettingsViewModel(
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
                         wardrobeRules = prefs.wardrobeRules,
+                        location = prefs.location,
                     )
                 }
             }
@@ -94,6 +98,17 @@ class SettingsViewModel(
         }
     }
 
+    fun selectLocation(location: Location) {
+        viewModelScope.launch { settingsRepository.setLocation(location) }
+    }
+
+    fun clearLocation() {
+        viewModelScope.launch { settingsRepository.clearLocation() }
+    }
+
+    /** Used by [LocationCard] inside a LaunchedEffect; safe to call from any dispatcher. */
+    suspend fun searchLocations(query: String): List<Location> = geocodingClient.search(query)
+
     fun setSchedule(time: LocalTime, days: Set<DayOfWeek>) {
         if (days.isEmpty()) return
         viewModelScope.launch {
@@ -115,13 +130,14 @@ class SettingsViewModel(
         private val settingsRepository: SettingsRepository,
         private val keyStore: SecureKeyStore,
         private val rearmAlarm: (Schedule) -> Unit,
+        private val geocodingClient: OpenMeteoGeocodingClient,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
                 "Unknown ViewModel: ${modelClass.name}"
             }
-            return SettingsViewModel(settingsRepository, keyStore, rearmAlarm) as T
+            return SettingsViewModel(settingsRepository, keyStore, rearmAlarm, geocodingClient) as T
         }
     }
 }

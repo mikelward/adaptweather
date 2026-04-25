@@ -3,12 +3,14 @@ package com.adaptweather.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
+import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.UserPreferences
@@ -65,6 +67,22 @@ class SettingsRepository(
         dataStore.edit { it[WARDROBE_RULES] = json.encodeToString(rules.map { rule -> rule.toDto() }) }
     }
 
+    suspend fun setLocation(location: Location) {
+        dataStore.edit { prefs ->
+            prefs[LOCATION_LAT] = location.latitude
+            prefs[LOCATION_LON] = location.longitude
+            location.displayName?.let { prefs[LOCATION_NAME] = it } ?: prefs.remove(LOCATION_NAME)
+        }
+    }
+
+    suspend fun clearLocation() {
+        dataStore.edit { prefs ->
+            prefs.remove(LOCATION_LAT)
+            prefs.remove(LOCATION_LON)
+            prefs.remove(LOCATION_NAME)
+        }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -79,6 +97,7 @@ class SettingsRepository(
         val distanceUnit = this[DISTANCE_UNIT]?.let { runCatching { DistanceUnit.valueOf(it) }.getOrNull() }
             ?: DistanceUnit.KILOMETERS
         val rules = parseRules(this[WARDROBE_RULES])
+        val location = parseLocation(this)
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
@@ -86,7 +105,20 @@ class SettingsRepository(
             temperatureUnit = temperatureUnit,
             distanceUnit = distanceUnit,
             wardrobeRules = rules,
+            location = location,
         )
+    }
+
+    private fun parseLocation(prefs: Preferences): Location? {
+        val lat = prefs[LOCATION_LAT] ?: return null
+        val lon = prefs[LOCATION_LON] ?: return null
+        return runCatching {
+            Location(
+                latitude = lat,
+                longitude = lon,
+                displayName = prefs[LOCATION_NAME],
+            )
+        }.getOrNull()
     }
 
     private fun parseRules(raw: String?): List<WardrobeRule> {
@@ -103,6 +135,9 @@ class SettingsRepository(
         private val TEMPERATURE_UNIT = stringPreferencesKey("temperature_unit")
         private val DISTANCE_UNIT = stringPreferencesKey("distance_unit")
         private val WARDROBE_RULES = stringPreferencesKey("wardrobe_rules_json")
+        private val LOCATION_LAT = doublePreferencesKey("location_latitude")
+        private val LOCATION_LON = doublePreferencesKey("location_longitude")
+        private val LOCATION_NAME = stringPreferencesKey("location_display_name")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

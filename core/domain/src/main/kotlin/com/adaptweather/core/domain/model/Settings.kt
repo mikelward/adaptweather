@@ -12,4 +12,9 @@ data class UserPreferences(
     val temperatureUnit: TemperatureUnit,
     val distanceUnit: DistanceUnit,
     val wardrobeRules: List<WardrobeRule>,
+    /**
+     * The location to fetch weather for. Null when the user has not configured one;
+     * callers should fall back to a sensible default or prompt the user.
+     */
+    val location: Location? = null,
 )
