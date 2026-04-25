@@ -25,6 +25,7 @@ import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.first
 import java.io.IOException
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 /**
@@ -59,9 +60,34 @@ class FetchAndNotifyWorker(
 
         val location = prefs.location ?: DEFAULT_LOCATION
         val languageTag = java.util.Locale.getDefault().toLanguageTag()
+        val today = LocalDate.now()
 
+        // 24h cost cap: if we already generated an insight for today, redeliver it
+        // rather than burning another Gemini call. Same path serves the morning alarm
+        // and any "Fire insight now" debug taps later in the day.
+        val cached = runCatching { app.insightCache.forToday(today) }.getOrNull()
+        if (cached != null) {
+            Log.i(TAG, "Using cached insight for ${cached.forDate}; skipping Gemini.")
+            return runCatching { deliver(cached, prefs) }
+                .map { Result.success() }
+                .getOrElse {
+                    Log.e(TAG, "Cached delivery failed; falling through to fresh generate.", it)
+                    fresh(location, prefs, languageTag)
+                }
+        }
+
+        return fresh(location, prefs, languageTag)
+    }
+
+    private suspend fun fresh(
+        location: Location,
+        prefs: UserPreferences,
+        languageTag: String,
+    ): Result {
         return try {
             val insight = app.generateDailyInsight(location, prefs, languageTag)
+            runCatching { app.insightCache.store(insight) }
+                .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
             deliver(insight, prefs)
             Log.i(TAG, "Insight delivered for ${insight.forDate}: ${insight.summary}")
             Result.success()
