@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -30,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.adaptweather.BuildConfig
 import com.adaptweather.R
 import com.adaptweather.core.domain.model.Insight
 import com.adaptweather.work.FetchAndNotifyWorker
@@ -43,11 +43,19 @@ import java.util.Locale
 @Composable
 fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.today_title)) },
                 actions = {
+                    IconButton(onClick = { triggerRefresh(context) }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.today_refresh),
+                        )
+                    }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.Default.Settings,
@@ -58,13 +66,16 @@ fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
             )
         },
     ) { padding ->
-        TodayContent(state = state, padding = padding)
+        TodayContent(state = state, padding = padding, onRefresh = { triggerRefresh(context) })
     }
 }
 
 @Composable
-private fun TodayContent(state: TodayState, padding: PaddingValues) {
-    val context = LocalContext.current
+private fun TodayContent(
+    state: TodayState,
+    padding: PaddingValues,
+    onRefresh: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,20 +85,7 @@ private fun TodayContent(state: TodayState, padding: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         if (state.insight == null) {
-            EmptyState(
-                onFireNow = if (BuildConfig.DEBUG) {
-                    {
-                        FetchAndNotifyWorker.enqueueOneShot(context.applicationContext)
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.settings_debug_fire_toast),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                } else {
-                    null
-                },
-            )
+            EmptyState(onRefresh = onRefresh)
         } else {
             InsightCard(state.insight)
         }
@@ -95,7 +93,7 @@ private fun TodayContent(state: TodayState, padding: PaddingValues) {
 }
 
 @Composable
-private fun EmptyState(onFireNow: (() -> Unit)?) {
+private fun EmptyState(onRefresh: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,10 +114,8 @@ private fun EmptyState(onFireNow: (() -> Unit)?) {
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )
-            if (onFireNow != null) {
-                Button(onClick = onFireNow) {
-                    Text(stringResource(R.string.settings_debug_fire_now))
-                }
+            Button(onClick = onRefresh) {
+                Text(stringResource(R.string.today_fetch_now))
             }
         }
     }
@@ -161,6 +157,15 @@ private fun InsightCard(insight: Insight) {
             )
         }
     }
+}
+
+private fun triggerRefresh(context: android.content.Context) {
+    FetchAndNotifyWorker.enqueueOneShot(context.applicationContext)
+    Toast.makeText(
+        context,
+        context.getString(R.string.today_refresh_toast),
+        Toast.LENGTH_SHORT,
+    ).show()
 }
 
 private val DATE_FORMAT: DateTimeFormatter =

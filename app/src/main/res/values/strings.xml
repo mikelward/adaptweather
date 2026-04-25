@@ -4,8 +4,11 @@
 
     <string name="today_title">Today</string>
     <string name="today_open_settings">Open Settings</string>
+    <string name="today_refresh">Refresh</string>
+    <string name="today_refresh_toast">Refreshing — the insight will appear shortly.</string>
     <string name="today_empty_title">No insight yet</string>
-    <string name="today_empty_subtitle">The morning insight will appear here once it has been generated. Set up your Gemini key and location in Settings.</string>
+    <string name="today_empty_subtitle">The morning insight will appear here once it has been generated. Set up your Gemini key and location in Settings, then tap Fetch now.</string>
+    <string name="today_fetch_now">Fetch now</string>
     <string name="today_recommended_items">Recommended items: %1$s</string>
     <string name="today_generated_at">Generated at %1$s</string>
 
