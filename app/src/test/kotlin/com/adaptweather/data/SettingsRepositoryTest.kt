@@ -100,7 +100,8 @@ class SettingsRepositoryTest {
 
     @Test
     fun `setUnits round-trips both`() = runTest {
-        subject.setUnits(TemperatureUnit.FAHRENHEIT, DistanceUnit.MILES)
+        subject.setTemperatureUnit(TemperatureUnit.FAHRENHEIT)
+        subject.setDistanceUnit(DistanceUnit.MILES)
 
         val prefs = subject.preferences.first()
         prefs.temperatureUnit shouldBe TemperatureUnit.FAHRENHEIT

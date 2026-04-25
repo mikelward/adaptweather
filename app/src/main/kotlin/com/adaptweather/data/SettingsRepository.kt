@@ -53,11 +53,12 @@ class SettingsRepository(
         dataStore.edit { it[DELIVERY_MODE] = mode.name }
     }
 
-    suspend fun setUnits(temperature: TemperatureUnit, distance: DistanceUnit) {
-        dataStore.edit { prefs ->
-            prefs[TEMPERATURE_UNIT] = temperature.name
-            prefs[DISTANCE_UNIT] = distance.name
-        }
+    suspend fun setTemperatureUnit(unit: TemperatureUnit) {
+        dataStore.edit { it[TEMPERATURE_UNIT] = unit.name }
+    }
+
+    suspend fun setDistanceUnit(unit: DistanceUnit) {
+        dataStore.edit { it[DISTANCE_UNIT] = unit.name }
     }
 
     suspend fun setWardrobeRules(rules: List<WardrobeRule>) {
