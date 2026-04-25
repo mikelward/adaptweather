@@ -6,7 +6,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.adaptweather.core.domain.model.HourlyForecast
 import com.adaptweather.core.domain.model.Insight
+import com.adaptweather.core.domain.model.WeatherCondition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -16,6 +18,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * Persists the most recently generated [Insight] so the daily worker can avoid hitting
@@ -56,12 +59,35 @@ class InsightCache(
         val recommendedItems: List<String>,
         val generatedAtEpochMillis: Long,
         val forDateEpochDays: Long,
+        // Default keeps v1 cached payloads readable: older slots without hourly will
+        // deserialize as an empty list, the chart hides itself, and the next worker
+        // run rewrites with hourly populated.
+        val hourly: List<HourlyDto> = emptyList(),
     ) {
         fun toDomain(): Insight = Insight(
             summary = summary,
             recommendedItems = recommendedItems,
             generatedAt = Instant.ofEpochMilli(generatedAtEpochMillis),
             forDate = LocalDate.ofEpochDay(forDateEpochDays),
+            hourly = hourly.map { it.toDomain() },
+        )
+    }
+
+    @Serializable
+    private data class HourlyDto(
+        val secondOfDay: Int,
+        val temperatureC: Double,
+        val feelsLikeC: Double,
+        val precipitationProbabilityPct: Double,
+        val condition: String,
+    ) {
+        fun toDomain(): HourlyForecast = HourlyForecast(
+            time = LocalTime.ofSecondOfDay(secondOfDay.toLong()),
+            temperatureC = temperatureC,
+            feelsLikeC = feelsLikeC,
+            precipitationProbabilityPct = precipitationProbabilityPct,
+            condition = runCatching { WeatherCondition.valueOf(condition) }
+                .getOrDefault(WeatherCondition.UNKNOWN),
         )
     }
 
@@ -70,6 +96,15 @@ class InsightCache(
         recommendedItems = recommendedItems,
         generatedAtEpochMillis = generatedAt.toEpochMilli(),
         forDateEpochDays = forDate.toEpochDay(),
+        hourly = hourly.map { it.toDto() },
+    )
+
+    private fun HourlyForecast.toDto(): HourlyDto = HourlyDto(
+        secondOfDay = time.toSecondOfDay(),
+        temperatureC = temperatureC,
+        feelsLikeC = feelsLikeC,
+        precipitationProbabilityPct = precipitationProbabilityPct,
+        condition = condition.name,
     )
 
     companion object {

@@ -50,6 +50,7 @@ class GenerateDailyInsight(
             recommendedItems = todayTriggered.map { it.item },
             generatedAt = clock.instant(),
             forDate = bundle.today.date,
+            hourly = bundle.today.hourly,
         )
         return DailyInsightResult(insight = insight, alerts = activeAlerts)
     }
