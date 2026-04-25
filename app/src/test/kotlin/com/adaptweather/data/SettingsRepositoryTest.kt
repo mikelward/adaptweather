@@ -18,6 +18,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -43,8 +44,9 @@ class SettingsRepositoryTest {
     @BeforeEach
     fun setUp() {
         // See SecureKeyStoreTest.setUp for why we install a test Main dispatcher even
-        // though this class doesn't directly read Dispatchers.Main.
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        // though this class doesn't directly read Dispatchers.Main, and why we pass an
+        // explicit scheduler instead of relying on the no-arg dispatcher constructor.
+        Dispatchers.setMain(UnconfinedTestDispatcher(TestCoroutineScheduler()))
         dataStore = PreferenceDataStoreFactory.create(
             produceFile = { File(tempDir.toFile(), "settings.preferences_pb") },
         )

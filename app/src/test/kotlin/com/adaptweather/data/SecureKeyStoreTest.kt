@@ -12,6 +12,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -35,8 +36,10 @@ class SecureKeyStoreTest {
         // The :app module ships kotlinx-coroutines-android transitively (via lifecycle).
         // In unit tests, AndroidDispatcherFactory tries to call Looper.getMainLooper(),
         // which is unmocked and throws. Setting a test Main dispatcher up front shadows
-        // that lookup so DataStore's internal coroutines run cleanly.
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        // that lookup. We pass an explicit TestCoroutineScheduler so the dispatcher
+        // constructor doesn't itself read Dispatchers.Main (which would trigger the same
+        // failure before setMain has a chance to install).
+        Dispatchers.setMain(UnconfinedTestDispatcher(TestCoroutineScheduler()))
         dataStore = PreferenceDataStoreFactory.create(
             produceFile = { File(tempDir.toFile(), "secure_key.preferences_pb") },
         )
