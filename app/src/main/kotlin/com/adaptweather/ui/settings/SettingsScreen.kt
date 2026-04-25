@@ -66,9 +66,11 @@ import com.adaptweather.tts.OpenAITtsSpeaker
 import com.adaptweather.tts.TtsVoiceOption
 import com.adaptweather.work.FetchAndNotifyWorker
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -1059,23 +1061,30 @@ private suspend fun runTtsPreview(
     openAiVoice: String,
 ) {
     val app = context.applicationContext as com.adaptweather.AdaptWeatherApplication
-    try {
-        val text = app.insightCache.latest.first()?.spokenText()
-            ?: context.getString(R.string.settings_tts_test_sample)
-        when (engine) {
-            TtsEngine.GEMINI ->
-                GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text)
-            TtsEngine.OPENAI ->
-                OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text)
-            TtsEngine.DEVICE ->
-                app.deviceTtsSpeaker.speak(text)
+    // Network synthesis and AudioTrack write are both blocking-ish work — Ktor
+    // suspends off-Main internally, but AudioTrack.write/play are JNI calls and
+    // we don't want a hot stack of preview work running on the UI dispatcher.
+    // Toast is documented as safe from any thread (it posts internally) so we
+    // don't need to hop back to Main for the failure path.
+    withContext(Dispatchers.IO) {
+        try {
+            val text = app.insightCache.latest.first()?.spokenText()
+                ?: context.getString(R.string.settings_tts_test_sample)
+            when (engine) {
+                TtsEngine.GEMINI ->
+                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text)
+                TtsEngine.OPENAI ->
+                    OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text)
+                TtsEngine.DEVICE ->
+                    app.deviceTtsSpeaker.speak(text)
+            }
+        } catch (_: CancellationException) {
+            // Expected when the user picks a different option mid-playback; not an error.
+        } catch (t: Throwable) {
+            val message = "${t.javaClass.simpleName}: ${t.message ?: "(no detail)"}"
+            android.util.Log.w("SettingsScreen", "TTS preview failed for $engine", t)
+            android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
         }
-    } catch (_: CancellationException) {
-        // Expected when the user picks a different option mid-playback; not an error.
-    } catch (t: Throwable) {
-        val message = "${t.javaClass.simpleName}: ${t.message ?: "(no detail)"}"
-        android.util.Log.w("SettingsScreen", "TTS preview failed for $engine", t)
-        android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
     }
 }
 

@@ -131,8 +131,8 @@ class SecureKeyStoreTest {
     }
 
     private companion object {
-        // Mirrors SecureKeyStore preference key names (private). Kept in sync deliberately
-        // so the test can assert against the on-disk preference name.
+        // Mirrors SecureKeyStore's private Gemini preference key name. Kept in sync
+        // deliberately so the test can assert against the on-disk preference name.
         val GEMINI_KEY_PREFERENCE = stringPreferencesKey("gemini_api_key_v1")
     }
 }
