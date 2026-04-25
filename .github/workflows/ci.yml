@@ -34,7 +34,9 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Run unit tests
-        run: ./gradlew :core:domain:test :core:data:test --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew :core:domain:test :core:data:test --stacktrace --info 2>&1 | tee /tmp/jvm-tests.log
 
       - name: Upload test reports
         if: always()
@@ -44,6 +46,7 @@ jobs:
           path: |
             **/build/reports/tests/
             **/build/test-results/
+            /tmp/jvm-tests.log
           retention-days: 14
 
   android-build:
@@ -60,6 +63,8 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;35.0.0 platform-tools'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -67,7 +72,17 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Assemble debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace --info
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleDebug --stacktrace --info 2>&1 | tee /tmp/android-build.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-log
+          path: /tmp/android-build.log
+          retention-days: 14
 
       - name: Upload debug APK
         if: success()
