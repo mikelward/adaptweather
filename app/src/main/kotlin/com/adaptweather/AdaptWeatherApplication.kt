@@ -17,6 +17,7 @@ import com.adaptweather.data.SettingsRepository
 import com.adaptweather.location.LocationResolver
 import com.adaptweather.notification.InsightNotifier
 import com.adaptweather.notification.NotificationChannelRegistrar
+import com.adaptweather.notification.WeatherAlertNotifier
 import com.adaptweather.tts.AndroidTtsSpeaker
 import com.adaptweather.tts.TtsSpeaker
 import io.ktor.client.HttpClient
@@ -46,6 +47,7 @@ class AdaptWeatherApplication : Application() {
     val insightCache: InsightCache by lazy { InsightCache.create(this) }
     val locationResolver: LocationResolver by lazy { LocationResolver(this) }
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
+    val weatherAlertNotifier: WeatherAlertNotifier by lazy { WeatherAlertNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
     val deviceTtsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
     val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }

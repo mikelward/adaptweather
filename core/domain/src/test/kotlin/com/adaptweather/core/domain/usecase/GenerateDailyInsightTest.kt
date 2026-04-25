@@ -1,5 +1,6 @@
 package com.adaptweather.core.domain.usecase
 
+import com.adaptweather.core.domain.model.AlertSeverity
 import com.adaptweather.core.domain.model.DailyForecast
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
@@ -8,6 +9,7 @@ import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.UserPreferences
 import com.adaptweather.core.domain.model.WardrobeRule
+import com.adaptweather.core.domain.model.WeatherAlert
 import com.adaptweather.core.domain.model.WeatherCondition
 import com.adaptweather.core.domain.repository.ForecastBundle
 import com.adaptweather.core.domain.repository.InsightGenerator
@@ -84,7 +86,7 @@ class GenerateDailyInsightTest {
         val gen = FakeInsightGenerator("  Cooler this morning but warmer than yesterday's peak — bring a jumper.  ")
         val subject = GenerateDailyInsight(weather, gen, clock = clock)
 
-        val insight = subject(london, prefs, languageTag = "en-AU")
+        val insight = subject(london, prefs, languageTag = "en-AU").insight
 
         insight.summary shouldBe "Cooler this morning but warmer than yesterday's peak — bring a jumper."
         insight.recommendedItems.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
@@ -129,8 +131,48 @@ class GenerateDailyInsightTest {
         val gen = FakeInsightGenerator("ok")
         val subject = GenerateDailyInsight(weather, gen, clock = clock)
 
-        val insight = subject(london, prefs, languageTag = "en-AU")
+        val result = subject(london, prefs, languageTag = "en-AU")
 
-        insight.recommendedItems shouldBe emptyList()
+        result.insight.recommendedItems shouldBe emptyList()
+    }
+
+    @Test
+    fun `severe alerts are surfaced in result and forwarded to the prompt`() = runTest {
+        val severe = WeatherAlert(
+            event = "Severe Thunderstorm Warning",
+            severity = AlertSeverity.SEVERE,
+            headline = "Damaging hail expected",
+            description = null,
+            onset = clockInstant,
+            expires = clockInstant.plusSeconds(3600),
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday, alerts = listOf(severe)))
+        val gen = FakeInsightGenerator("ok")
+        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+
+        val result = subject(london, prefs, languageTag = "en-AU")
+
+        result.alerts.shouldContainExactly(severe)
+        checkNotNull(gen.lastPrompt).userMessage.shouldContain("Severe Thunderstorm Warning")
+    }
+
+    @Test
+    fun `expired alerts are filtered before reaching the prompt and the result`() = runTest {
+        val stale = WeatherAlert(
+            event = "Wind Advisory",
+            severity = AlertSeverity.MODERATE,
+            headline = null,
+            description = null,
+            onset = clockInstant.minusSeconds(7200),
+            expires = clockInstant.minusSeconds(60),
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday, alerts = listOf(stale)))
+        val gen = FakeInsightGenerator("ok")
+        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+
+        val result = subject(london, prefs, languageTag = "en-AU")
+
+        result.alerts shouldBe emptyList()
+        checkNotNull(gen.lastPrompt).userMessage.shouldContain("Severe-weather alerts: (none)")
     }
 }

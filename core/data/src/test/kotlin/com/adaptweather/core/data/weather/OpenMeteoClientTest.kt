@@ -1,5 +1,6 @@
 package com.adaptweather.core.data.weather
 
+import com.adaptweather.core.domain.model.AlertSeverity
 import com.adaptweather.core.domain.model.Location
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
@@ -7,6 +8,7 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondError
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpHeaders
@@ -21,21 +23,48 @@ import org.junit.jupiter.api.Test
 class OpenMeteoClientTest {
     private val london = Location(latitude = 51.5074, longitude = -0.1278, displayName = "London")
 
-    private fun fixtureBytes(): ByteReadChannel {
-        val text = checkNotNull(javaClass.getResourceAsStream("/openmeteo_london.json")) {
-            "fixture missing"
+    private fun fixtureBytes(name: String): ByteReadChannel {
+        val text = checkNotNull(javaClass.getResourceAsStream(name)) {
+            "fixture $name missing"
         }.bufferedReader().readText()
         return ByteReadChannel(text)
     }
 
-    private fun mockClient(captureRequest: (HttpRequestData) -> Unit): HttpClient {
+    private fun mockClient(captureRequest: (HttpRequestData) -> Unit = {}): HttpClient {
         val engine = MockEngine { request ->
             captureRequest(request)
-            respond(
-                content = fixtureBytes(),
-                status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json"),
-            )
+            when (request.url.encodedPath) {
+                "/v1/forecast" -> respond(
+                    content = fixtureBytes("/openmeteo_london.json"),
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+                "/v1/warnings" -> respond(
+                    content = fixtureBytes("/openmeteo_warnings_london.json"),
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+                else -> error("unexpected path ${request.url.encodedPath}")
+            }
+        }
+        return HttpClient(engine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+        }
+    }
+
+    private fun mockClientWithWarningsFailure(): HttpClient {
+        val engine = MockEngine { request ->
+            when (request.url.encodedPath) {
+                "/v1/forecast" -> respond(
+                    content = fixtureBytes("/openmeteo_london.json"),
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+                "/v1/warnings" -> respondError(HttpStatusCode.InternalServerError)
+                else -> error("unexpected path ${request.url.encodedPath}")
+            }
         }
         return HttpClient(engine) {
             install(ContentNegotiation) {
@@ -46,16 +75,15 @@ class OpenMeteoClientTest {
 
     @Test
     fun `request hits open-meteo with required parameters`() = runTest {
-        var captured: HttpRequestData? = null
-        val client = OpenMeteoClient(mockClient { captured = it })
+        val captured = mutableListOf<HttpRequestData>()
+        val client = OpenMeteoClient(mockClient { captured += it })
 
         client.fetchForecast(london)
 
-        val req = checkNotNull(captured)
-        req.url.host shouldBe OPEN_METEO_HOST
-        req.url.encodedPath shouldBe "/v1/forecast"
+        val forecastReq = captured.first { it.url.encodedPath == "/v1/forecast" }
+        forecastReq.url.host shouldBe OPEN_METEO_HOST
 
-        val params = req.url.parameters
+        val params = forecastReq.url.parameters
         params["latitude"] shouldBe "51.5074"
         params["longitude"] shouldBe "-0.1278"
         params["past_days"] shouldBe "1"
@@ -80,13 +108,39 @@ class OpenMeteoClientTest {
     }
 
     @Test
-    fun `parses fixture into a forecast bundle`() = runTest {
-        val client = OpenMeteoClient(mockClient { })
+    fun `also queries the warnings endpoint with location and timezone`() = runTest {
+        val captured = mutableListOf<HttpRequestData>()
+        val client = OpenMeteoClient(mockClient { captured += it })
+
+        client.fetchForecast(london)
+
+        val warningsReq = captured.first { it.url.encodedPath == "/v1/warnings" }
+        warningsReq.url.host shouldBe OPEN_METEO_HOST
+        warningsReq.url.parameters["latitude"] shouldBe "51.5074"
+        warningsReq.url.parameters["longitude"] shouldBe "-0.1278"
+        warningsReq.url.parameters["timezone"] shouldBe "auto"
+    }
+
+    @Test
+    fun `parses fixture into a forecast bundle with alerts`() = runTest {
+        val client = OpenMeteoClient(mockClient())
 
         val bundle = client.fetchForecast(london)
 
         bundle.yesterday.temperatureMaxC shouldBe 18.0
         bundle.today.temperatureMaxC shouldBe 24.0
         bundle.today.hourly.size shouldBe 8
+        bundle.alerts.size shouldBe 3
+        bundle.alerts.first().severity shouldBe AlertSeverity.SEVERE
+    }
+
+    @Test
+    fun `warnings failure does not fail the forecast fetch`() = runTest {
+        val client = OpenMeteoClient(mockClientWithWarningsFailure())
+
+        val bundle = client.fetchForecast(london)
+
+        bundle.today.temperatureMaxC shouldBe 24.0
+        bundle.alerts shouldBe emptyList()
     }
 }
