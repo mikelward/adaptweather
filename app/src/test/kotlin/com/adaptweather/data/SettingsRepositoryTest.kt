@@ -171,6 +171,14 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `setGeminiModel round-trips and defaults to flash`() = runTest {
+        subject.preferences.first().geminiModel shouldBe "gemini-2.5-flash"
+
+        subject.setGeminiModel("gemini-2.5-pro")
+        subject.preferences.first().geminiModel shouldBe "gemini-2.5-pro"
+    }
+
+    @Test
     fun `zoneId is resolved fresh on each emission`() = runTest {
         val zones = mutableListOf(ZoneId.of("UTC"), ZoneId.of("America/New_York"))
         val rotating = SettingsRepository(

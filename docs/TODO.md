@@ -68,11 +68,9 @@ Code TODOs in source files are linked from here when they exist.
 - [ ] **Per-locale defaults** — Fahrenheit / miles when the system locale is
       en-US.
 - [ ] **Multiple schedule profiles** — weekday vs weekend.
-- [ ] **Gemini model picker** — Flash Lite (cheapest), Flash (default), Pro
-      (highest quality, slowest, costliest). Currently hardcoded to
-      `gemini-2.5-flash` in `core/data/.../insight/DirectGeminiClient.kt`.
-      Daily prompts are tiny (~25 words out) so Flash Lite would be ~5x cheaper
-      with little quality loss.
+- [x] **Gemini model picker** — Flash Lite (cheapest), Flash (default), Pro
+      (highest quality, slowest, costliest). User picks from Settings; the
+      Worker passes the chosen id into a per-call `DirectGeminiClient`.
 
 ## Testing & quality
 

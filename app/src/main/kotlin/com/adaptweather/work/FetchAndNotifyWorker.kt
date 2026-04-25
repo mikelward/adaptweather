@@ -89,7 +89,8 @@ class FetchAndNotifyWorker(
         languageTag: String,
     ): Result {
         return try {
-            val insight = app.generateDailyInsight(location, prefs, languageTag)
+            val insight = app.createGenerateDailyInsight(prefs.geminiModel)
+                .invoke(location, prefs, languageTag)
             runCatching { app.insightCache.store(insight) }
                 .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
             deliver(insight, prefs)
