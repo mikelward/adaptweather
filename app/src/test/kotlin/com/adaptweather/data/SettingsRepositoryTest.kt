@@ -154,6 +154,23 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `setGeminiVoice and setOpenAiVoice round-trip and are independent`() = runTest {
+        subject.setGeminiVoice("Puck")
+        subject.setOpenAiVoice("nova")
+
+        val prefs = subject.preferences.first()
+        prefs.geminiVoice shouldBe "Puck"
+        prefs.openAiVoice shouldBe "nova"
+    }
+
+    @Test
+    fun `voice prefs default to Kore and alloy when nothing stored`() = runTest {
+        val prefs = subject.preferences.first()
+        prefs.geminiVoice shouldBe "Kore"
+        prefs.openAiVoice shouldBe "alloy"
+    }
+
+    @Test
     fun `zoneId is resolved fresh on each emission`() = runTest {
         val zones = mutableListOf(ZoneId.of("UTC"), ZoneId.of("America/New_York"))
         val rotating = SettingsRepository(

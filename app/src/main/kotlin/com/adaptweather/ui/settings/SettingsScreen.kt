@@ -57,7 +57,15 @@ import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.WardrobeRule
+import com.adaptweather.tts.GEMINI_VOICES
+import com.adaptweather.tts.GeminiTtsSpeaker
+import com.adaptweather.tts.OPENAI_VOICES
+import com.adaptweather.tts.OpenAITtsSpeaker
+import com.adaptweather.tts.TtsVoiceOption
 import com.adaptweather.work.FetchAndNotifyWorker
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -102,6 +110,10 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onSearchLocations = viewModel::searchLocations,
             onSetUseDeviceLocation = viewModel::setUseDeviceLocation,
             onSetTtsEngine = viewModel::setTtsEngine,
+            onSetGeminiVoice = viewModel::setGeminiVoice,
+            onSetOpenAiVoice = viewModel::setOpenAiVoice,
+            onSetOpenAiKey = viewModel::setOpenAiKey,
+            onClearOpenAiKey = viewModel::clearOpenAiKey,
         )
     }
 }
@@ -124,6 +136,10 @@ private fun SettingsContent(
     onSearchLocations: suspend (String) -> List<Location>,
     onSetUseDeviceLocation: (Boolean) -> Unit,
     onSetTtsEngine: (TtsEngine) -> Unit,
+    onSetGeminiVoice: (String) -> Unit,
+    onSetOpenAiVoice: (String) -> Unit,
+    onSetOpenAiKey: (String) -> Unit,
+    onClearOpenAiKey: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -153,7 +169,17 @@ private fun SettingsContent(
             onChange = onSetSchedule,
         )
         DeliveryModeCard(state.deliveryMode, onSetDeliveryMode)
-        TtsEngineCard(state.ttsEngine, onSetTtsEngine)
+        TtsEngineCard(
+            selected = state.ttsEngine,
+            onSelect = onSetTtsEngine,
+            geminiVoice = state.geminiVoice,
+            onGeminiVoice = onSetGeminiVoice,
+            openAiVoice = state.openAiVoice,
+            onOpenAiVoice = onSetOpenAiVoice,
+            openAiKeyConfigured = state.openAiKeyConfigured,
+            onSetOpenAiKey = onSetOpenAiKey,
+            onClearOpenAiKey = onClearOpenAiKey,
+        )
         TemperatureUnitCard(state.temperatureUnit, onSetTemperatureUnit)
         DistanceUnitCard(state.distanceUnit, onSetDistanceUnit)
         WardrobeRulesCard(
@@ -833,7 +859,28 @@ private fun DeliveryModeCard(
 private fun TtsEngineCard(
     selected: TtsEngine,
     onSelect: (TtsEngine) -> Unit,
+    geminiVoice: String,
+    onGeminiVoice: (String) -> Unit,
+    openAiVoice: String,
+    onOpenAiVoice: (String) -> Unit,
+    openAiKeyConfigured: Boolean,
+    onSetOpenAiKey: (String) -> Unit,
+    onClearOpenAiKey: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    // Ongoing preview job is held in remember-state so each new selection cancels
+    // the previous before starting a new one. Otherwise rapid taps would queue up
+    // overlapping playbacks.
+    var previewJob by remember { mutableStateOf<Job?>(null) }
+
+    fun preview(engine: TtsEngine, gVoice: String, oVoice: String) {
+        previewJob?.cancel()
+        previewJob = coroutineScope.launch {
+            runTtsPreview(context, engine, gVoice, oVoice)
+        }
+    }
+
     SectionCard(title = stringResource(R.string.settings_tts_engine_title)) {
         Text(
             text = stringResource(R.string.settings_tts_engine_description),
@@ -844,47 +891,179 @@ private fun TtsEngineCard(
             RadioRow(
                 label = stringResource(ttsEngineLabel(engine)),
                 selected = engine == selected,
-                onSelect = { onSelect(engine) },
+                onSelect = {
+                    onSelect(engine)
+                    preview(engine, geminiVoice, openAiVoice)
+                },
             )
         }
-        if (selected == TtsEngine.GEMINI) {
-            TestGeminiVoiceButton()
+        when (selected) {
+            TtsEngine.GEMINI -> {
+                VoicePicker(
+                    title = stringResource(R.string.settings_tts_voice_label),
+                    voices = GEMINI_VOICES,
+                    selectedId = geminiVoice,
+                    onSelect = {
+                        onGeminiVoice(it)
+                        preview(TtsEngine.GEMINI, it, openAiVoice)
+                    },
+                )
+                TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
+            }
+            TtsEngine.OPENAI -> {
+                KeyEntryFields(
+                    configured = openAiKeyConfigured,
+                    statusText = stringResource(
+                        if (openAiKeyConfigured) R.string.settings_openai_key_status_set
+                        else R.string.settings_openai_key_status_unset,
+                    ),
+                    placeholder = stringResource(R.string.settings_openai_key_placeholder),
+                    saveLabel = stringResource(R.string.settings_openai_key_save),
+                    clearLabel = stringResource(R.string.settings_openai_key_clear),
+                    onSave = onSetOpenAiKey,
+                    onClear = onClearOpenAiKey,
+                )
+                VoicePicker(
+                    title = stringResource(R.string.settings_tts_voice_label),
+                    voices = OPENAI_VOICES,
+                    selectedId = openAiVoice,
+                    onSelect = {
+                        onOpenAiVoice(it)
+                        preview(TtsEngine.OPENAI, geminiVoice, it)
+                    },
+                )
+                TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
+            }
+            TtsEngine.DEVICE -> Unit
         }
     }
 }
 
 @Composable
-private fun TestGeminiVoiceButton() {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    var inFlight by remember { mutableStateOf(false) }
-    Button(
-        enabled = !inFlight,
-        onClick = {
-            coroutineScope.launch {
-                inFlight = true
-                val app = context.applicationContext as com.adaptweather.AdaptWeatherApplication
-                try {
-                    app.geminiTtsSpeaker.speak(
-                        context.getString(R.string.settings_tts_test_sample),
-                    )
-                } catch (t: Throwable) {
-                    val message = "${t.javaClass.simpleName}: ${t.message ?: "(no detail)"}"
-                    android.util.Log.w("SettingsScreen", "Gemini TTS test failed", t)
-                    android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
-                } finally {
-                    inFlight = false
-                }
-            }
-        },
+private fun VoicePicker(
+    title: String,
+    voices: List<TtsVoiceOption>,
+    selectedId: String,
+    onSelect: (String) -> Unit,
+) {
+    var dialogOpen by remember { mutableStateOf(false) }
+    val current = voices.firstOrNull { it.id == selectedId }
+    OutlinedButton(
+        onClick = { dialogOpen = true },
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Text(
-            stringResource(
-                if (inFlight) R.string.settings_tts_test_in_flight
-                else R.string.settings_tts_test,
-            ),
+        Text("$title: ${current?.displayName ?: selectedId}")
+    }
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen = false },
+            title = { Text(title) },
+            text = {
+                Column {
+                    voices.forEach { option ->
+                        RadioRow(
+                            label = option.displayName,
+                            selected = option.id == selectedId,
+                            onSelect = {
+                                onSelect(option.id)
+                                dialogOpen = false
+                            },
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { dialogOpen = false }) {
+                    Text(stringResource(R.string.settings_tts_voice_dismiss))
+                }
+            },
         )
+    }
+}
+
+@Composable
+private fun TestVoiceButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+    ) { Text(stringResource(R.string.settings_tts_test)) }
+}
+
+/**
+ * Plays a preview through the chosen engine + voice. Source text is the latest
+ * cached insight if there is one (so the user hears what the actual morning
+ * delivery would sound like), otherwise a short fixed sample.
+ *
+ * Errors are surfaced as a Toast so the user can see *why* the voice failed
+ * (most often: missing or wrong API key for the chosen provider).
+ */
+private suspend fun runTtsPreview(
+    context: android.content.Context,
+    engine: TtsEngine,
+    geminiVoice: String,
+    openAiVoice: String,
+) {
+    val app = context.applicationContext as com.adaptweather.AdaptWeatherApplication
+    try {
+        val text = app.insightCache.latest.first()?.spokenText()
+            ?: context.getString(R.string.settings_tts_test_sample)
+        when (engine) {
+            TtsEngine.GEMINI ->
+                GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text)
+            TtsEngine.OPENAI ->
+                OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text)
+            TtsEngine.DEVICE ->
+                app.deviceTtsSpeaker.speak(text)
+        }
+    } catch (_: CancellationException) {
+        // Expected when the user picks a different option mid-playback; not an error.
+    } catch (t: Throwable) {
+        val message = "${t.javaClass.simpleName}: ${t.message ?: "(no detail)"}"
+        android.util.Log.w("SettingsScreen", "TTS preview failed for $engine", t)
+        android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+    }
+}
+
+@Composable
+private fun KeyEntryFields(
+    configured: Boolean,
+    statusText: String,
+    placeholder: String,
+    saveLabel: String,
+    clearLabel: String,
+    onSave: (String) -> Unit,
+    onClear: () -> Unit,
+) {
+    Text(text = statusText, style = MaterialTheme.typography.bodyMedium)
+
+    var input by remember { mutableStateOf("") }
+    OutlinedTextField(
+        value = input,
+        onValueChange = { input = it },
+        singleLine = true,
+        visualTransformation = if (input.isEmpty()) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        placeholder = { Text(placeholder) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Button(
+            onClick = {
+                if (input.isNotBlank()) {
+                    onSave(input)
+                    input = ""
+                }
+            },
+            enabled = input.isNotBlank(),
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(saveLabel) }
+
+        if (configured) {
+            TextButton(onClick = onClear, modifier = Modifier.fillMaxWidth()) {
+                Text(clearLabel)
+            }
+        }
     }
 }
 
@@ -946,6 +1125,7 @@ private fun deliveryModeLabel(mode: DeliveryMode): Int = when (mode) {
 private fun ttsEngineLabel(engine: TtsEngine): Int = when (engine) {
     TtsEngine.DEVICE -> R.string.settings_tts_engine_device
     TtsEngine.GEMINI -> R.string.settings_tts_engine_gemini
+    TtsEngine.OPENAI -> R.string.settings_tts_engine_openai
 }
 
 private fun temperatureUnitLabel(unit: TemperatureUnit): Int = when (unit) {

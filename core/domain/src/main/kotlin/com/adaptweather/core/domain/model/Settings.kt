@@ -12,10 +12,12 @@ enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
  * - [DEVICE] uses Android's on-device TextToSpeech engine. Free, fully offline once
  *   voices are installed, but quality varies by vendor.
  * - [GEMINI] uses Gemini's audio-output model (`gemini-2.5-flash-preview-tts`) over
- *   the BYOK key. Near-human quality, requires network at speak-time, costs a small
- *   amount per character. Falls back to [DEVICE] if the call fails.
+ *   the BYOK Gemini key. Near-human quality, requires network at speak-time, costs
+ *   a small amount per character. Falls back to [DEVICE] if the call fails.
+ * - [OPENAI] uses OpenAI's `audio/speech` endpoint over a separate BYOK OpenAI key.
+ *   Comparable quality to Gemini; falls back to [DEVICE] on failure.
  */
-enum class TtsEngine { DEVICE, GEMINI }
+enum class TtsEngine { DEVICE, GEMINI, OPENAI }
 
 data class UserPreferences(
     val schedule: Schedule,
@@ -36,4 +38,20 @@ data class UserPreferences(
      */
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
-)
+    /**
+     * Prebuilt Gemini voice name (e.g. "Kore", "Puck"). Only consulted when
+     * [ttsEngine] == [TtsEngine.GEMINI]. Stored as a free-form string so adding
+     * voices doesn't require a domain enum migration.
+     */
+    val geminiVoice: String = DEFAULT_GEMINI_VOICE,
+    /**
+     * OpenAI voice name (e.g. "alloy", "echo"). Only consulted when [ttsEngine]
+     * == [TtsEngine.OPENAI].
+     */
+    val openAiVoice: String = DEFAULT_OPENAI_VOICE,
+) {
+    companion object {
+        const val DEFAULT_GEMINI_VOICE = "Kore"
+        const val DEFAULT_OPENAI_VOICE = "alloy"
+    }
+}

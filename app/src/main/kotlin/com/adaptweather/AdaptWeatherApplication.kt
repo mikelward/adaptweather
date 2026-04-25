@@ -6,6 +6,7 @@ import com.adaptweather.alarm.DailyAlarmScheduler
 import com.adaptweather.core.data.insight.DirectGeminiClient
 import com.adaptweather.core.data.location.OpenMeteoGeocodingClient
 import com.adaptweather.core.data.tts.GeminiTtsClient
+import com.adaptweather.core.data.tts.OpenAITtsClient
 import com.adaptweather.core.data.weather.OpenMeteoClient
 import com.adaptweather.core.domain.repository.InsightGenerator
 import com.adaptweather.core.domain.repository.WeatherRepository
@@ -17,7 +18,6 @@ import com.adaptweather.location.LocationResolver
 import com.adaptweather.notification.InsightNotifier
 import com.adaptweather.notification.NotificationChannelRegistrar
 import com.adaptweather.tts.AndroidTtsSpeaker
-import com.adaptweather.tts.GeminiTtsSpeaker
 import com.adaptweather.tts.TtsSpeaker
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -34,6 +34,11 @@ import kotlinx.serialization.json.Json
  * Lightweight DI: lazy singletons for things that depend on Android Context or that
  * the Worker / UI / receivers all share. Will move to Hilt once we have more than a
  * handful of consumers.
+ *
+ * The TTS *clients* are exposed (Gemini, OpenAI) but not the speakers — speakers wrap
+ * a per-call voice choice, so they're constructed at the call site from current
+ * preferences. The clients themselves are heavy (share the OkHttp engine) so they
+ * stay singletons.
  */
 class AdaptWeatherApplication : Application() {
     val secureKeyStore: SecureKeyStore by lazy { SecureKeyStore.create(this) }
@@ -43,8 +48,9 @@ class AdaptWeatherApplication : Application() {
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
     val deviceTtsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
-    val geminiTtsSpeaker: TtsSpeaker by lazy {
-        GeminiTtsSpeaker(GeminiTtsClient(httpClient, secureKeyStore))
+    val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }
+    val openAiTtsClient: OpenAITtsClient by lazy {
+        OpenAITtsClient(httpClient, secureKeyStore.openAiKeyProvider)
     }
 
     private val httpClient: HttpClient by lazy {

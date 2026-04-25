@@ -93,6 +93,14 @@ class SettingsRepository(
         dataStore.edit { it[TTS_ENGINE] = engine.name }
     }
 
+    suspend fun setGeminiVoice(voice: String) {
+        dataStore.edit { it[GEMINI_VOICE] = voice }
+    }
+
+    suspend fun setOpenAiVoice(voice: String) {
+        dataStore.edit { it[OPENAI_VOICE] = voice }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -111,6 +119,10 @@ class SettingsRepository(
         val useDeviceLocation = this[USE_DEVICE_LOCATION] == true
         val ttsEngine = this[TTS_ENGINE]?.let { runCatching { TtsEngine.valueOf(it) }.getOrNull() }
             ?: TtsEngine.DEVICE
+        val geminiVoice = this[GEMINI_VOICE]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_GEMINI_VOICE
+        val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_OPENAI_VOICE
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
@@ -121,6 +133,8 @@ class SettingsRepository(
             location = location,
             useDeviceLocation = useDeviceLocation,
             ttsEngine = ttsEngine,
+            geminiVoice = geminiVoice,
+            openAiVoice = openAiVoice,
         )
     }
 
@@ -155,6 +169,8 @@ class SettingsRepository(
         private val LOCATION_NAME = stringPreferencesKey("location_display_name")
         private val USE_DEVICE_LOCATION = booleanPreferencesKey("use_device_location")
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
+        private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
+        private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)
