@@ -5,6 +5,7 @@ import android.util.Log
 import com.adaptweather.alarm.DailyAlarmScheduler
 import com.adaptweather.core.data.insight.DirectGeminiClient
 import com.adaptweather.core.data.location.OpenMeteoGeocodingClient
+import com.adaptweather.core.data.tts.GeminiTtsClient
 import com.adaptweather.core.data.weather.OpenMeteoClient
 import com.adaptweather.core.domain.repository.InsightGenerator
 import com.adaptweather.core.domain.repository.WeatherRepository
@@ -16,6 +17,7 @@ import com.adaptweather.location.LocationResolver
 import com.adaptweather.notification.InsightNotifier
 import com.adaptweather.notification.NotificationChannelRegistrar
 import com.adaptweather.tts.AndroidTtsSpeaker
+import com.adaptweather.tts.GeminiTtsSpeaker
 import com.adaptweather.tts.TtsSpeaker
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -40,7 +42,10 @@ class AdaptWeatherApplication : Application() {
     val locationResolver: LocationResolver by lazy { LocationResolver(this) }
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
-    val ttsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
+    val deviceTtsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
+    val geminiTtsSpeaker: TtsSpeaker by lazy {
+        GeminiTtsSpeaker(GeminiTtsClient(httpClient, secureKeyStore))
+    }
 
     private val httpClient: HttpClient by lazy {
         HttpClient(OkHttp) {

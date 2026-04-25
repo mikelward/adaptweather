@@ -14,6 +14,7 @@ import com.adaptweather.core.domain.model.DistanceUnit
 import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
+import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.UserPreferences
 import com.adaptweather.core.domain.model.WardrobeRule
 import kotlinx.coroutines.flow.Flow
@@ -88,6 +89,10 @@ class SettingsRepository(
         dataStore.edit { it[USE_DEVICE_LOCATION] = enabled }
     }
 
+    suspend fun setTtsEngine(engine: TtsEngine) {
+        dataStore.edit { it[TTS_ENGINE] = engine.name }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -104,6 +109,8 @@ class SettingsRepository(
         val rules = parseRules(this[WARDROBE_RULES])
         val location = parseLocation(this)
         val useDeviceLocation = this[USE_DEVICE_LOCATION] == true
+        val ttsEngine = this[TTS_ENGINE]?.let { runCatching { TtsEngine.valueOf(it) }.getOrNull() }
+            ?: TtsEngine.DEVICE
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
@@ -113,6 +120,7 @@ class SettingsRepository(
             wardrobeRules = rules,
             location = location,
             useDeviceLocation = useDeviceLocation,
+            ttsEngine = ttsEngine,
         )
     }
 
@@ -146,6 +154,7 @@ class SettingsRepository(
         private val LOCATION_LON = doublePreferencesKey("location_longitude")
         private val LOCATION_NAME = stringPreferencesKey("location_display_name")
         private val USE_DEVICE_LOCATION = booleanPreferencesKey("use_device_location")
+        private val TTS_ENGINE = stringPreferencesKey("tts_engine")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

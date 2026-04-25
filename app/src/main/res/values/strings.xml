@@ -54,6 +54,11 @@
     <string name="settings_delivery_tts_only">Spoken aloud only</string>
     <string name="settings_delivery_notification_and_tts">Notification and spoken aloud</string>
 
+    <string name="settings_tts_engine_title">Voice engine</string>
+    <string name="settings_tts_engine_description">Gemini\'s voice is much more natural but needs a network call and uses your Gemini API key for synthesis (one short call per spoken insight). Falls back to the device voice if it fails.</string>
+    <string name="settings_tts_engine_device">Device (offline, free)</string>
+    <string name="settings_tts_engine_gemini">Gemini (high quality, online)</string>
+
     <string name="settings_temperature_unit_title">Temperature unit</string>
     <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
     <string name="settings_temperature_unit_fahrenheit">Fahrenheit (°F)</string>

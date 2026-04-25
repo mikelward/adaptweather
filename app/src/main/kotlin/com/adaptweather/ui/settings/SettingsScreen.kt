@@ -55,6 +55,7 @@ import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
 import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.TemperatureUnit
+import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.WardrobeRule
 import com.adaptweather.work.FetchAndNotifyWorker
 import kotlinx.coroutines.launch
@@ -100,6 +101,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onClearLocation = viewModel::clearLocation,
             onSearchLocations = viewModel::searchLocations,
             onSetUseDeviceLocation = viewModel::setUseDeviceLocation,
+            onSetTtsEngine = viewModel::setTtsEngine,
         )
     }
 }
@@ -121,6 +123,7 @@ private fun SettingsContent(
     onClearLocation: () -> Unit,
     onSearchLocations: suspend (String) -> List<Location>,
     onSetUseDeviceLocation: (Boolean) -> Unit,
+    onSetTtsEngine: (TtsEngine) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -150,6 +153,7 @@ private fun SettingsContent(
             onChange = onSetSchedule,
         )
         DeliveryModeCard(state.deliveryMode, onSetDeliveryMode)
+        TtsEngineCard(state.ttsEngine, onSetTtsEngine)
         TemperatureUnitCard(state.temperatureUnit, onSetTemperatureUnit)
         DistanceUnitCard(state.distanceUnit, onSetDistanceUnit)
         WardrobeRulesCard(
@@ -826,6 +830,27 @@ private fun DeliveryModeCard(
 }
 
 @Composable
+private fun TtsEngineCard(
+    selected: TtsEngine,
+    onSelect: (TtsEngine) -> Unit,
+) {
+    SectionCard(title = stringResource(R.string.settings_tts_engine_title)) {
+        Text(
+            text = stringResource(R.string.settings_tts_engine_description),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        TtsEngine.entries.forEach { engine ->
+            RadioRow(
+                label = stringResource(ttsEngineLabel(engine)),
+                selected = engine == selected,
+                onSelect = { onSelect(engine) },
+            )
+        }
+    }
+}
+
+@Composable
 private fun TemperatureUnitCard(
     selected: TemperatureUnit,
     onSelect: (TemperatureUnit) -> Unit,
@@ -878,6 +903,11 @@ private fun deliveryModeLabel(mode: DeliveryMode): Int = when (mode) {
     DeliveryMode.NOTIFICATION_ONLY -> R.string.settings_delivery_notification_only
     DeliveryMode.TTS_ONLY -> R.string.settings_delivery_tts_only
     DeliveryMode.NOTIFICATION_AND_TTS -> R.string.settings_delivery_notification_and_tts
+}
+
+private fun ttsEngineLabel(engine: TtsEngine): Int = when (engine) {
+    TtsEngine.DEVICE -> R.string.settings_tts_engine_device
+    TtsEngine.GEMINI -> R.string.settings_tts_engine_gemini
 }
 
 private fun temperatureUnitLabel(unit: TemperatureUnit): Int = when (unit) {

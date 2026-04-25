@@ -9,6 +9,7 @@ import com.adaptweather.core.domain.model.DistanceUnit
 import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
+import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.WardrobeRule
 import com.adaptweather.data.SecureKeyStore
 import com.adaptweather.data.SettingsRepository
@@ -44,6 +45,7 @@ class SettingsViewModel(
                         wardrobeRules = prefs.wardrobeRules,
                         location = prefs.location,
                         useDeviceLocation = prefs.useDeviceLocation,
+                        ttsEngine = prefs.ttsEngine,
                     )
                 }
             }
@@ -109,6 +111,10 @@ class SettingsViewModel(
 
     fun setUseDeviceLocation(enabled: Boolean) {
         viewModelScope.launch { settingsRepository.setUseDeviceLocation(enabled) }
+    }
+
+    fun setTtsEngine(engine: TtsEngine) {
+        viewModelScope.launch { settingsRepository.setTtsEngine(engine) }
     }
 
     /** Used by [LocationCard] inside a LaunchedEffect; safe to call from any dispatcher. */
