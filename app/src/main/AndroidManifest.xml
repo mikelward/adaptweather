@@ -46,6 +46,27 @@
             </intent-filter>
         </activity>
 
+        <!-- Internal — only the OS delivers via PendingIntent. -->
+        <receiver
+            android:name=".alarm.AlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.adaptweather.alarm.FIRE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- System broadcasts that should re-arm the daily alarm. -->
+        <receiver
+            android:name=".alarm.ScheduleRefreshReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
