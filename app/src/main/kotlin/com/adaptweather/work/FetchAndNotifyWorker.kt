@@ -145,6 +145,12 @@ class FetchAndNotifyWorker(
     }
 
     private suspend fun deliver(insight: Insight, prefs: UserPreferences) {
+        // Silent run: when nothing meaningful changed, the prompt rules tell Gemini to
+        // emit an empty string. Don't post a blank notification or speak silence.
+        if (insight.summary.isBlank()) {
+            Log.i(TAG, "Insight summary is blank; skipping notification + TTS.")
+            return
+        }
         val mode = prefs.deliveryMode
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
             app.insightNotifier.notify(insight)

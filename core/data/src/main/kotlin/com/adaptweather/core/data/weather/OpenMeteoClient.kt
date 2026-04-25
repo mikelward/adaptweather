@@ -32,11 +32,12 @@ class OpenMeteoClient(private val httpClient: HttpClient) : WeatherRepository {
             parameter("timezone", "auto")
             parameter(
                 "daily",
-                "temperature_2m_min,temperature_2m_max,precipitation_probability_max,precipitation_sum,weather_code",
+                "temperature_2m_min,temperature_2m_max,apparent_temperature_min,apparent_temperature_max," +
+                    "precipitation_probability_max,precipitation_sum,weather_code",
             )
             parameter(
                 "hourly",
-                "temperature_2m,precipitation_probability,weather_code",
+                "temperature_2m,apparent_temperature,precipitation_probability,weather_code",
             )
         }.body()
 
