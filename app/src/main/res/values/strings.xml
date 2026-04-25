@@ -13,7 +13,7 @@
     <string name="today_generated_at">Generated at %1$s</string>
 
     <string name="today_forecast_title">Hourly forecast</string>
-    <string name="today_forecast_legend">Temperature and feels-like by hour</string>
+    <string name="today_forecast_legend">Temperature and feels-like (%1$s) by hour</string>
 
     <string name="today_working">Working — fetching forecast and generating today\'s insight…</string>
     <string name="today_failed_title">Last attempt failed</string>
