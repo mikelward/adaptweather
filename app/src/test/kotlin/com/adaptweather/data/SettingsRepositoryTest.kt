@@ -10,6 +10,7 @@ import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
+import com.adaptweather.core.domain.model.UserPreferences
 import com.adaptweather.core.domain.model.WardrobeRule
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
@@ -171,8 +172,8 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `setGeminiModel round-trips and defaults to flash`() = runTest {
-        subject.preferences.first().geminiModel shouldBe "gemini-2.5-flash"
+    fun `setGeminiModel round-trips and defaults to the configured default model`() = runTest {
+        subject.preferences.first().geminiModel shouldBe UserPreferences.DEFAULT_GEMINI_MODEL
 
         subject.setGeminiModel("gemini-2.5-pro")
         subject.preferences.first().geminiModel shouldBe "gemini-2.5-pro"
