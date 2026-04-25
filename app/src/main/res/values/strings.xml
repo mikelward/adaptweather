@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AdaptWeather</string>
-    <string name="placeholder_home_message">AdaptWeather — your daily weather difference, every morning.</string>
+
+    <string name="settings_title">Settings</string>
+
+    <string name="settings_api_key_title">Gemini API key</string>
+    <string name="settings_api_key_status_set">A key is configured. The key is encrypted at rest using the Android Keystore.</string>
+    <string name="settings_api_key_status_unset">No key configured. The daily insight needs a Gemini API key from aistudio.google.com.</string>
+    <string name="settings_api_key_placeholder">Paste your API key</string>
+    <string name="settings_api_key_save">Save key</string>
+    <string name="settings_api_key_clear">Clear stored key</string>
+
+    <string name="settings_delivery_title">How to deliver the daily insight</string>
+    <string name="settings_delivery_notification_only">Notification only</string>
+    <string name="settings_delivery_tts_only">Spoken aloud only</string>
+    <string name="settings_delivery_notification_and_tts">Notification and spoken aloud</string>
+
+    <string name="settings_temperature_unit_title">Temperature unit</string>
+    <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">Fahrenheit (°F)</string>
+
+    <string name="settings_distance_unit_title">Distance unit</string>
+    <string name="settings_distance_unit_kilometers">Kilometres</string>
+    <string name="settings_distance_unit_miles">Miles</string>
 </resources>
