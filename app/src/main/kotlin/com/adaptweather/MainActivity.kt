@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.work.WorkManager
 import com.adaptweather.ui.settings.SettingsScreen
 import com.adaptweather.ui.settings.SettingsViewModel
 import com.adaptweather.ui.theme.AdaptWeatherTheme
@@ -53,7 +54,10 @@ private fun AdaptWeatherNav(app: AdaptWeatherApplication) {
     when (screen) {
         Screen.Today -> {
             val today: TodayViewModel = viewModel(
-                factory = TodayViewModel.Factory(insightCache = app.insightCache),
+                factory = TodayViewModel.Factory(
+                    insightCache = app.insightCache,
+                    workManager = WorkManager.getInstance(app),
+                ),
             )
             TodayScreen(
                 viewModel = today,

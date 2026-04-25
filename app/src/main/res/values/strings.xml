@@ -12,6 +12,14 @@
     <string name="today_recommended_items">Recommended items: %1$s</string>
     <string name="today_generated_at">Generated at %1$s</string>
 
+    <string name="today_working">Working — fetching forecast and generating today\'s insight…</string>
+    <string name="today_failed_title">Last attempt failed</string>
+    <string name="today_failed_missing_api_key">No Gemini API key configured. Set one in Settings.</string>
+    <string name="today_failed_gemini_auth">Gemini rejected the API key. Check it on aistudio.google.com and re-enter.</string>
+    <string name="today_failed_gemini_blocked">Gemini refused the prompt for safety reasons.</string>
+    <string name="today_failed_unexpected_http">Unexpected HTTP error from Gemini.</string>
+    <string name="today_failed_unhandled">An unexpected error occurred.</string>
+
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
 
