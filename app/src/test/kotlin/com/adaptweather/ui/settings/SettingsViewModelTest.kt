@@ -50,7 +50,7 @@ class SettingsViewModelTest {
         )
         settingsRepository = SettingsRepository(settingsDataStore)
         keyStore = SecureKeyStore(IdentityFakeAead, keyDataStore)
-        subject = SettingsViewModel(settingsRepository, keyStore)
+        subject = SettingsViewModel(settingsRepository, keyStore, rearmAlarm = {})
     }
 
     @AfterEach

@@ -5,18 +5,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
+import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.data.SecureKeyStore
 import com.adaptweather.data.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val keyStore: SecureKeyStore,
+    private val rearmAlarm: (Schedule) -> Unit,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -27,6 +32,8 @@ class SettingsViewModel(
             settingsRepository.preferences.collect { prefs ->
                 _state.update {
                     it.copy(
+                        scheduleTime = prefs.schedule.time,
+                        scheduleDays = prefs.schedule.days,
                         deliveryMode = prefs.deliveryMode,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
@@ -63,6 +70,18 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepository.setDistanceUnit(unit) }
     }
 
+    fun setSchedule(time: LocalTime, days: Set<DayOfWeek>) {
+        if (days.isEmpty()) return
+        viewModelScope.launch {
+            settingsRepository.setSchedule(time, days)
+            // Re-arm the alarm immediately so the next occurrence picks up the new wall-clock.
+            // The repository resolves zoneId fresh on each emission, so the schedule we read
+            // back is the new one with the current zone.
+            val updated = settingsRepository.preferences.first().schedule
+            rearmAlarm(updated)
+        }
+    }
+
     private suspend fun refreshApiKeyStatus() {
         val configured = runCatching { keyStore.get().isNotBlank() }.getOrDefault(false)
         _state.update { it.copy(apiKeyConfigured = configured) }
@@ -71,13 +90,14 @@ class SettingsViewModel(
     class Factory(
         private val settingsRepository: SettingsRepository,
         private val keyStore: SecureKeyStore,
+        private val rearmAlarm: (Schedule) -> Unit,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
                 "Unknown ViewModel: ${modelClass.name}"
             }
-            return SettingsViewModel(settingsRepository, keyStore) as T
+            return SettingsViewModel(settingsRepository, keyStore, rearmAlarm) as T
         }
     }
 }

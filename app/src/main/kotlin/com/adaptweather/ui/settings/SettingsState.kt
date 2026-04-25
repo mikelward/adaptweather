@@ -2,13 +2,18 @@ package com.adaptweather.ui.settings
 
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
+import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 /**
- * What [SettingsScreen] needs to render. Settings that are not yet user-editable
- * (schedule, wardrobe rules) are intentionally absent and will land in follow-up PRs.
+ * What [SettingsScreen] needs to render. The wardrobe-rules editor is not yet user-
+ * editable and will land in a follow-up PR.
  */
 data class SettingsState(
+    val scheduleTime: LocalTime = LocalTime.of(7, 0),
+    val scheduleDays: Set<DayOfWeek> = Schedule.EVERY_DAY,
     val deliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     val distanceUnit: DistanceUnit = DistanceUnit.KILOMETERS,
