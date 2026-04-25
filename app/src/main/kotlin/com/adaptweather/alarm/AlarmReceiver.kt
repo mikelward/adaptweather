@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.adaptweather.AdaptWeatherApplication
+import com.adaptweather.work.FetchAndNotifyWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -12,18 +13,20 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
- * Fires when the daily-insight alarm goes off. v1 placeholder behaviour: log the event
- * and immediately re-arm the alarm for the next day. The follow-up PR will enqueue a
- * WorkManager OneTimeWorkRequest that fetches forecast → calls Gemini → posts the
- * notification, then re-arms.
+ * Fires when the daily-insight alarm goes off. The receiver does two things:
  *
- * Re-arming inside the receiver (rather than only from the worker) keeps the alarm
- * chain alive even if the worker fails before it can schedule the next one.
+ * 1. Enqueues a WorkManager OneTimeWorkRequest ([FetchAndNotifyWorker]) which actually
+ *    does the fetch + Gemini call + notification under network/retry constraints.
+ * 2. Re-arms the alarm for the next day. Re-arming here (rather than only inside the
+ *    Worker) keeps the alarm chain alive even if the Worker is permanently failing.
  */
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != ACTION_FIRE) return
         Log.i(TAG, "AlarmReceiver fired (action=${intent.action})")
+
+        // Enqueue the Worker synchronously — it does its own off-thread work.
+        FetchAndNotifyWorker.enqueueOneShot(context.applicationContext)
 
         val pending = goAsync()
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)

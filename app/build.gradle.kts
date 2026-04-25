@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.tink.android)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.work.runtime.ktx)
 
     // Ktor with the OkHttp engine for production HTTP. Tests in :core:data use MockEngine,
     // so the engine choice is :app's concern.
