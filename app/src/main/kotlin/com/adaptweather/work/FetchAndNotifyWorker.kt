@@ -14,7 +14,10 @@ import com.adaptweather.AdaptWeatherApplication
 import com.adaptweather.core.data.insight.GeminiBlockedException
 import com.adaptweather.core.data.insight.GeminiEmptyResponseException
 import com.adaptweather.core.data.insight.MissingApiKeyException
+import com.adaptweather.core.domain.model.DeliveryMode
+import com.adaptweather.core.domain.model.Insight
 import com.adaptweather.core.domain.model.Location
+import com.adaptweather.core.domain.model.UserPreferences
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -59,7 +62,7 @@ class FetchAndNotifyWorker(
 
         return try {
             val insight = app.generateDailyInsight(location, prefs, languageTag)
-            app.insightNotifier.notify(insight)
+            deliver(insight, prefs)
             Log.i(TAG, "Insight delivered for ${insight.forDate}: ${insight.summary}")
             Result.success()
         } catch (e: MissingApiKeyException) {
@@ -95,6 +98,22 @@ class FetchAndNotifyWorker(
         } catch (t: Throwable) {
             Log.e(TAG, "Unhandled error; failing.", t)
             Result.failure()
+        }
+    }
+
+    private suspend fun deliver(insight: Insight, prefs: UserPreferences) {
+        val mode = prefs.deliveryMode
+        if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
+            app.insightNotifier.notify(insight)
+        }
+        if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
+            try {
+                app.ttsSpeaker.speak(insight.summary)
+            } catch (t: Throwable) {
+                // TTS engine failures shouldn't lose the insight; the notification path
+                // (when also enabled) already covered the user-visible delivery.
+                Log.w(TAG, "TTS playback failed; insight is still posted as notification.", t)
+            }
         }
     }
 

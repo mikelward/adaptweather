@@ -12,6 +12,8 @@ import com.adaptweather.data.SecureKeyStore
 import com.adaptweather.data.SettingsRepository
 import com.adaptweather.notification.InsightNotifier
 import com.adaptweather.notification.NotificationChannelRegistrar
+import com.adaptweather.tts.AndroidTtsSpeaker
+import com.adaptweather.tts.TtsSpeaker
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -33,6 +35,7 @@ class AdaptWeatherApplication : Application() {
     val settingsRepository: SettingsRepository by lazy { SettingsRepository.create(this) }
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
+    val ttsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
 
     private val httpClient: HttpClient by lazy {
         HttpClient(OkHttp) {
