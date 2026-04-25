@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Notification icons must be silhouetted: white-on-transparent. The system applies the
+    accent / channel colour at runtime. A simple sun-and-cloud glyph keeps it recognisable
+    at small status-bar sizes.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,5 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,18 c-2,0 -3.5,-1.5 -3.5,-3.5 c0,-2 1.5,-3.5 3.5,-3.5 c0.3,-2 2,-3.5 4,-3.5 c2,0 3.7,1.5 4,3.5 c1.5,0.3 2.5,1.5 2.5,3.5 c0,2 -1.5,3.5 -3.5,3.5 z" />
+</vector>

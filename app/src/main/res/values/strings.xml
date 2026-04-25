@@ -23,4 +23,8 @@
     <string name="settings_distance_unit_title">Distance unit</string>
     <string name="settings_distance_unit_kilometers">Kilometres</string>
     <string name="settings_distance_unit_miles">Miles</string>
+
+    <string name="notification_channel_daily_insight_name">Daily insight</string>
+    <string name="notification_channel_daily_insight_description">The morning weather summary you opted in to.</string>
+    <string name="notification_daily_insight_title">Today\'s weather</string>
 </resources>
