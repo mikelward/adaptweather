@@ -58,6 +58,9 @@
     <string name="settings_tts_engine_description">Gemini\'s voice is much more natural but needs a network call and uses your Gemini API key for synthesis (one short call per spoken insight). Falls back to the device voice if it fails.</string>
     <string name="settings_tts_engine_device">Device (offline, free)</string>
     <string name="settings_tts_engine_gemini">Gemini (high quality, online)</string>
+    <string name="settings_tts_test">Test Gemini voice</string>
+    <string name="settings_tts_test_in_flight">Testing — please wait…</string>
+    <string name="settings_tts_test_sample">Hello — this is the Gemini text to speech voice.</string>
 
     <string name="settings_temperature_unit_title">Temperature unit</string>
     <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
