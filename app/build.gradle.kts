@@ -52,6 +52,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
@@ -69,11 +75,24 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
 
+    // Encrypted on-device storage of the user's Gemini API key.
+    // Tink wraps an Android-Keystore master key around a Tink AEAD keyset; ciphertext
+    // is persisted in DataStore Preferences. EncryptedSharedPreferences is deprecated.
+    implementation(libs.tink.android)
+    implementation(libs.androidx.datastore.preferences)
+
     // Ktor with the OkHttp engine for production HTTP. Tests in :core:data use MockEngine,
     // so the engine choice is :app's concern.
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+
+    testImplementation(platform("org.junit:junit-bom:5.11.3"))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.datastore.preferences.core)
 }
 
