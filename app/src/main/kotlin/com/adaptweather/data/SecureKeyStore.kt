@@ -17,11 +17,12 @@ import kotlinx.coroutines.flow.map
 import java.util.Base64
 
 /**
- * Encrypted on-device storage of the user's Gemini API key.
+ * Encrypted on-device storage of the user's API keys.
  *
- * The key is encrypted with a Tink AEAD primitive whose keyset is itself encrypted
+ * Each key is encrypted with a Tink AEAD primitive whose keyset is itself encrypted
  * by an Android-Keystore master key — so the secret material never appears in
- * SharedPreferences in plaintext. Ciphertext is persisted in DataStore Preferences.
+ * SharedPreferences in plaintext. Ciphertext is persisted in DataStore Preferences
+ * under per-provider preference keys (Gemini in one slot, OpenAI in another).
  *
  * EncryptedSharedPreferences is deprecated as of androidx.security:security-crypto
  * 1.1.0-alpha07 — Tink + DataStore is its modern replacement.
@@ -34,39 +35,67 @@ import java.util.Base64
  * the stored value. This handles the Keystore master key rotating (factory reset,
  * device-to-device transfer that doesn't preserve hardware-backed keys, etc.) by asking
  * the user to re-enter their key, rather than looping on a corrupt ciphertext.
+ *
+ * `SecureKeyStore` itself implements [KeyProvider] for backwards compatibility — `get()`
+ * returns the Gemini key, since that's the historical contract used by `DirectGeminiClient`
+ * and `GeminiTtsClient`. The OpenAI key is exposed through [openAiKeyProvider].
  */
 class SecureKeyStore(
     private val aead: Aead,
     private val dataStore: DataStore<Preferences>,
 ) : KeyProvider {
 
-    override suspend fun get(): String {
-        val ciphertextB64 = dataStore.data.map { it[GEMINI_KEY] }.first()
+    override suspend fun get(): String = read(GEMINI_PREF_KEY, GEMINI_AAD)
+
+    suspend fun set(key: String) = write(GEMINI_PREF_KEY, GEMINI_AAD, key)
+
+    suspend fun clear() = remove(GEMINI_PREF_KEY)
+
+    suspend fun getOpenAi(): String = read(OPENAI_PREF_KEY, OPENAI_AAD)
+
+    suspend fun setOpenAi(key: String) = write(OPENAI_PREF_KEY, OPENAI_AAD, key)
+
+    suspend fun clearOpenAi() = remove(OPENAI_PREF_KEY)
+
+    /**
+     * KeyProvider view onto the OpenAI key. Used to wire `OpenAITtsClient` while
+     * keeping the underlying SecureKeyStore as the single source of truth for
+     * encrypted on-device storage.
+     */
+    val openAiKeyProvider: KeyProvider = object : KeyProvider {
+        override suspend fun get(): String = getOpenAi()
+    }
+
+    private suspend fun read(prefKey: Preferences.Key<String>, aad: ByteArray): String {
+        val ciphertextB64 = dataStore.data.map { it[prefKey] }.first()
             ?: throw MissingApiKeyException()
         return try {
             val ciphertext = Base64.getDecoder().decode(ciphertextB64)
-            aead.decrypt(ciphertext, AAD).toString(Charsets.UTF_8)
+            aead.decrypt(ciphertext, aad).toString(Charsets.UTF_8)
         } catch (_: Exception) {
             // Corrupt ciphertext or unrecoverable Keystore state — drop the bad value so
             // the next attempt prompts the user to re-enter their key cleanly.
-            clear()
+            remove(prefKey)
             throw MissingApiKeyException()
         }
     }
 
-    suspend fun set(key: String) {
-        val ciphertext = aead.encrypt(key.toByteArray(Charsets.UTF_8), AAD)
+    private suspend fun write(prefKey: Preferences.Key<String>, aad: ByteArray, key: String) {
+        val ciphertext = aead.encrypt(key.toByteArray(Charsets.UTF_8), aad)
         val ciphertextB64 = Base64.getEncoder().encodeToString(ciphertext)
-        dataStore.edit { it[GEMINI_KEY] = ciphertextB64 }
+        dataStore.edit { it[prefKey] = ciphertextB64 }
     }
 
-    suspend fun clear() {
-        dataStore.edit { it.remove(GEMINI_KEY) }
+    private suspend fun remove(prefKey: Preferences.Key<String>) {
+        dataStore.edit { it.remove(prefKey) }
     }
 
     companion object {
-        private val GEMINI_KEY = stringPreferencesKey("gemini_api_key_v1")
-        private val AAD = "adaptweather:gemini_api_key:v1".toByteArray(Charsets.UTF_8)
+        private val GEMINI_PREF_KEY = stringPreferencesKey("gemini_api_key_v1")
+        private val GEMINI_AAD = "adaptweather:gemini_api_key:v1".toByteArray(Charsets.UTF_8)
+
+        private val OPENAI_PREF_KEY = stringPreferencesKey("openai_api_key_v1")
+        private val OPENAI_AAD = "adaptweather:openai_api_key:v1".toByteArray(Charsets.UTF_8)
 
         private const val MASTER_KEY_URI = "android-keystore://adaptweather_master_key"
         private const val KEYSET_PREFS = "adaptweather_master_prefs"

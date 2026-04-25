@@ -46,6 +46,8 @@ class SettingsViewModel(
                         location = prefs.location,
                         useDeviceLocation = prefs.useDeviceLocation,
                         ttsEngine = prefs.ttsEngine,
+                        geminiVoice = prefs.geminiVoice,
+                        openAiVoice = prefs.openAiVoice,
                     )
                 }
             }
@@ -65,6 +67,28 @@ class SettingsViewModel(
             keyStore.clear()
             refreshApiKeyStatus()
         }
+    }
+
+    fun setOpenAiKey(key: String) {
+        viewModelScope.launch {
+            keyStore.setOpenAi(key.trim())
+            refreshApiKeyStatus()
+        }
+    }
+
+    fun clearOpenAiKey() {
+        viewModelScope.launch {
+            keyStore.clearOpenAi()
+            refreshApiKeyStatus()
+        }
+    }
+
+    fun setGeminiVoice(voice: String) {
+        viewModelScope.launch { settingsRepository.setGeminiVoice(voice) }
+    }
+
+    fun setOpenAiVoice(voice: String) {
+        viewModelScope.launch { settingsRepository.setOpenAiVoice(voice) }
     }
 
     fun setDeliveryMode(mode: DeliveryMode) {
@@ -133,8 +157,9 @@ class SettingsViewModel(
     }
 
     private suspend fun refreshApiKeyStatus() {
-        val configured = runCatching { keyStore.get().isNotBlank() }.getOrDefault(false)
-        _state.update { it.copy(apiKeyConfigured = configured) }
+        val gemini = runCatching { keyStore.get().isNotBlank() }.getOrDefault(false)
+        val openAi = runCatching { keyStore.getOpenAi().isNotBlank() }.getOrDefault(false)
+        _state.update { it.copy(apiKeyConfigured = gemini, openAiKeyConfigured = openAi) }
     }
 
     class Factory(

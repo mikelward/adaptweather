@@ -20,6 +20,8 @@ import com.adaptweather.core.domain.model.Insight
 import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.UserPreferences
+import com.adaptweather.tts.GeminiTtsSpeaker
+import com.adaptweather.tts.OpenAITtsSpeaker
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -157,46 +159,41 @@ class FetchAndNotifyWorker(
             app.insightNotifier.notify(insight)
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(insight.spokenText(), prefs.ttsEngine)
+            speakWithFallback(insight.spokenText(), prefs)
         }
     }
 
     /**
-     * Speaks via the user-preferred engine; on Gemini failure (network, quota, missing
-     * key) falls back to the on-device engine so the user still hears something. We
-     * never let a TTS error fail the worker — the notification path is the primary
-     * delivery channel and has already fired by this point.
+     * Speaks via the user-preferred engine; on Gemini / OpenAI failure (network,
+     * quota, missing key) falls back to the on-device engine so the user still
+     * hears something. We never let a TTS error fail the worker — the notification
+     * path is the primary delivery channel and has already fired by this point.
      */
-    private suspend fun speakWithFallback(text: String, engine: TtsEngine) {
-        if (engine == TtsEngine.GEMINI) {
-            try {
-                app.geminiTtsSpeaker.speak(text)
-                return
-            } catch (t: Throwable) {
-                Log.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
+    private suspend fun speakWithFallback(text: String, prefs: UserPreferences) {
+        when (prefs.ttsEngine) {
+            TtsEngine.GEMINI -> {
+                try {
+                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = prefs.geminiVoice).speak(text)
+                    return
+                } catch (t: Throwable) {
+                    Log.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
+                }
             }
+            TtsEngine.OPENAI -> {
+                try {
+                    OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text)
+                    return
+                } catch (t: Throwable) {
+                    Log.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
+                }
+            }
+            TtsEngine.DEVICE -> Unit
         }
         try {
             app.deviceTtsSpeaker.speak(text)
         } catch (t: Throwable) {
             Log.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
         }
-    }
-
-    /**
-     * The text that gets spoken aloud. The LLM is told to weave the items into its
-     * sentence but it's not guaranteed; appending them explicitly ensures the user
-     * always hears what their wardrobe rules suggest, even if the summary skips them.
-     */
-    private fun Insight.spokenText(): String {
-        if (recommendedItems.isEmpty()) return summary
-        val joined = when (recommendedItems.size) {
-            1 -> recommendedItems[0]
-            2 -> "${recommendedItems[0]} and ${recommendedItems[1]}"
-            else -> recommendedItems.dropLast(1).joinToString(", ") + ", and " + recommendedItems.last()
-        }
-        val separator = if (summary.endsWith(".") || summary.endsWith("!") || summary.endsWith("?")) " " else ". "
-        return "$summary${separator}Recommended: $joined."
     }
 
     companion object {
