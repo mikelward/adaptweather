@@ -27,7 +27,13 @@ import java.util.Base64
  * 1.1.0-alpha07 — Tink + DataStore is its modern replacement.
  *
  * Constructor takes an [Aead] and a [DataStore] so the class is unit-testable with
- * a fake AEAD and an in-memory DataStore. Production callers use [SecureKeyStore.create].
+ * a fake AEAD and a test DataStore (e.g. temp-file-backed via PreferenceDataStoreFactory).
+ * Production callers use [SecureKeyStore.create].
+ *
+ * `get()` reports any decode or decrypt failure as [MissingApiKeyException] and clears
+ * the stored value. This handles the Keystore master key rotating (factory reset,
+ * device-to-device transfer that doesn't preserve hardware-backed keys, etc.) by asking
+ * the user to re-enter their key, rather than looping on a corrupt ciphertext.
  */
 class SecureKeyStore(
     private val aead: Aead,
@@ -37,8 +43,15 @@ class SecureKeyStore(
     override suspend fun get(): String {
         val ciphertextB64 = dataStore.data.map { it[GEMINI_KEY] }.first()
             ?: throw MissingApiKeyException()
-        val ciphertext = Base64.getDecoder().decode(ciphertextB64)
-        return aead.decrypt(ciphertext, AAD).toString(Charsets.UTF_8)
+        return try {
+            val ciphertext = Base64.getDecoder().decode(ciphertextB64)
+            aead.decrypt(ciphertext, AAD).toString(Charsets.UTF_8)
+        } catch (_: Exception) {
+            // Corrupt ciphertext or unrecoverable Keystore state — drop the bad value so
+            // the next attempt prompts the user to re-enter their key cleanly.
+            clear()
+            throw MissingApiKeyException()
+        }
     }
 
     suspend fun set(key: String) {

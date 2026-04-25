@@ -3,6 +3,8 @@ package com.adaptweather.data
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.adaptweather.core.data.insight.MissingApiKeyException
 import com.google.crypto.tink.Aead
 import io.kotest.assertions.throwables.shouldThrow
@@ -62,12 +64,30 @@ class SecureKeyStoreTest {
         val plaintext = "AIzaSyVerySecretValue"
         subject.set(plaintext)
 
-        val storedB64 = dataStore.data.first().asMap().values.single() as String
+        val storedB64 = dataStore.data.first()[GEMINI_KEY_PREFERENCE]
         // ReversibleFakeAead reverses the bytes, so the stored value must be a
         // base64 string that decodes to the reversed plaintext — confirming we
         // pass through the AEAD before persisting.
         storedB64 shouldBe java.util.Base64.getEncoder()
             .encodeToString(plaintext.toByteArray(Charsets.UTF_8).reversedArray())
+    }
+
+    @Test
+    fun `corrupt ciphertext is cleared and reported as MissingApiKeyException`() = runTest {
+        // Simulate a Keystore master-key rotation: the stored ciphertext is no longer
+        // decodeable. The store should drop the bad value and tell callers there's no key.
+        dataStore.edit { it[GEMINI_KEY_PREFERENCE] = "@@@not-valid-base64@@@" }
+
+        shouldThrow<MissingApiKeyException> { subject.get() }
+
+        // And subsequent reads no longer see the corrupt value.
+        dataStore.data.first()[GEMINI_KEY_PREFERENCE] shouldBe null
+    }
+
+    private companion object {
+        // Mirrors SecureKeyStore.GEMINI_KEY (private). Kept in sync deliberately so the
+        // test can assert against the on-disk preference name.
+        val GEMINI_KEY_PREFERENCE = stringPreferencesKey("gemini_api_key_v1")
     }
 }
 
