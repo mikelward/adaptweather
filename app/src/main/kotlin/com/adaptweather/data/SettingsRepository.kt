@@ -15,6 +15,8 @@ import com.adaptweather.core.domain.model.UserPreferences
 import com.adaptweather.core.domain.model.WardrobeRule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.DayOfWeek
 import java.time.LocalTime
