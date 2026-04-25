@@ -12,6 +12,7 @@ import com.adaptweather.core.domain.usecase.GenerateDailyInsight
 import com.adaptweather.data.InsightCache
 import com.adaptweather.data.SecureKeyStore
 import com.adaptweather.data.SettingsRepository
+import com.adaptweather.location.LocationResolver
 import com.adaptweather.notification.InsightNotifier
 import com.adaptweather.notification.NotificationChannelRegistrar
 import com.adaptweather.tts.AndroidTtsSpeaker
@@ -36,6 +37,7 @@ class AdaptWeatherApplication : Application() {
     val secureKeyStore: SecureKeyStore by lazy { SecureKeyStore.create(this) }
     val settingsRepository: SettingsRepository by lazy { SettingsRepository.create(this) }
     val insightCache: InsightCache by lazy { InsightCache.create(this) }
+    val locationResolver: LocationResolver by lazy { LocationResolver(this) }
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
     val ttsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }

@@ -13,8 +13,15 @@ data class UserPreferences(
     val distanceUnit: DistanceUnit,
     val wardrobeRules: List<WardrobeRule>,
     /**
-     * The location to fetch weather for. Null when the user has not configured one;
-     * callers should fall back to a sensible default or prompt the user.
+     * The fixed location to fetch weather for when [useDeviceLocation] is false (or as a
+     * fallback when device location can't be resolved). Null when the user has not
+     * configured one.
      */
     val location: Location? = null,
+    /**
+     * When true, the worker tries to read the device's coarse location at notify time
+     * (network provider — no GPS hardware fix needed) and falls back to [location] /
+     * platform default if the read fails or permission is not granted.
+     */
+    val useDeviceLocation: Boolean = false,
 )

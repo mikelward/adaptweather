@@ -18,5 +18,6 @@ data class SettingsState(
     val distanceUnit: DistanceUnit = DistanceUnit.KILOMETERS,
     val wardrobeRules: List<WardrobeRule> = WardrobeRule.DEFAULTS,
     val location: Location? = null,
+    val useDeviceLocation: Boolean = false,
     val apiKeyConfigured: Boolean = false,
 )

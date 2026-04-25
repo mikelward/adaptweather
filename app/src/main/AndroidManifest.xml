@@ -6,8 +6,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- Location at notify time (coarse is sufficient for weather). -->
+    <!-- Location at notify time (coarse is sufficient for weather).
+         BACKGROUND is required so the WorkManager worker can read location when the
+         app is not in the foreground. The user must grant it explicitly via the
+         system Settings deep-link prompted from our LocationCard. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <!-- Daily notification. POST_NOTIFICATIONS is runtime on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
