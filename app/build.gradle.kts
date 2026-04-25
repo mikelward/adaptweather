@@ -107,5 +107,8 @@ dependencies {
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.datastore.preferences.core)
+    // SettingsViewModelTest stubs the geocoding client with a Ktor MockEngine so the
+    // tests don't need network. Same library that :core:data already uses.
+    testImplementation(libs.ktor.client.mock)
 }
 
