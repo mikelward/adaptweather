@@ -29,25 +29,33 @@ internal object OpenMeteoMapper {
         return ForecastBundle(today = today, yesterday = yesterday)
     }
 
-    private fun DailyData.toForecast(index: Int, date: LocalDate, hourly: List<HourlyForecast>): DailyForecast =
-        DailyForecast(
+    private fun DailyData.toForecast(index: Int, date: LocalDate, hourly: List<HourlyForecast>): DailyForecast {
+        val rawMin = temperatureMin[index] ?: 0.0
+        val rawMax = temperatureMax[index] ?: 0.0
+        return DailyForecast(
             date = date,
-            temperatureMinC = temperatureMin[index] ?: 0.0,
-            temperatureMaxC = temperatureMax[index] ?: 0.0,
+            temperatureMinC = rawMin,
+            temperatureMaxC = rawMax,
+            // Fall back to raw temp if Open-Meteo didn't provide apparent — better than 0 °C.
+            feelsLikeMinC = feelsLikeMin[index] ?: rawMin,
+            feelsLikeMaxC = feelsLikeMax[index] ?: rawMax,
             precipitationProbabilityMaxPct = (precipitationProbabilityMax[index] ?: 0).toDouble(),
             precipitationMmTotal = precipitationSum[index] ?: 0.0,
             condition = WmoCodeMapper.map(weatherCode[index]),
             hourly = hourly,
         )
+    }
 
     private fun HourlyData.forDate(date: LocalDate): List<HourlyForecast> {
         val out = ArrayList<HourlyForecast>(24)
         for (i in time.indices) {
             val ts = LocalDateTime.parse(time[i])
             if (ts.toLocalDate() != date) continue
+            val raw = temperature[i] ?: 0.0
             out += HourlyForecast(
                 time = LocalTime.of(ts.hour, ts.minute),
-                temperatureC = temperature[i] ?: 0.0,
+                temperatureC = raw,
+                feelsLikeC = feelsLike[i] ?: raw,
                 precipitationProbabilityPct = (precipitationProbability[i] ?: 0).toDouble(),
                 condition = WmoCodeMapper.map(weatherCode[i]),
             )

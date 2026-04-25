@@ -22,6 +22,8 @@ internal data class DailyData(
     @SerialName("time") val time: List<String>,
     @SerialName("temperature_2m_min") val temperatureMin: List<Double?>,
     @SerialName("temperature_2m_max") val temperatureMax: List<Double?>,
+    @SerialName("apparent_temperature_min") val feelsLikeMin: List<Double?>,
+    @SerialName("apparent_temperature_max") val feelsLikeMax: List<Double?>,
     @SerialName("precipitation_probability_max") val precipitationProbabilityMax: List<Int?>,
     @SerialName("precipitation_sum") val precipitationSum: List<Double?>,
     @SerialName("weather_code") val weatherCode: List<Int?>,
@@ -31,6 +33,7 @@ internal data class DailyData(
 internal data class HourlyData(
     @SerialName("time") val time: List<String>,
     @SerialName("temperature_2m") val temperature: List<Double?>,
+    @SerialName("apparent_temperature") val feelsLike: List<Double?>,
     @SerialName("precipitation_probability") val precipitationProbability: List<Int?>,
     @SerialName("weather_code") val weatherCode: List<Int?>,
 )

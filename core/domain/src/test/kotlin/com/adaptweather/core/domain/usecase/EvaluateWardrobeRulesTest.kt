@@ -17,6 +17,8 @@ class EvaluateWardrobeRulesTest {
             date = date,
             temperatureMinC = min,
             temperatureMaxC = max,
+            feelsLikeMinC = min,
+            feelsLikeMaxC = max,
             precipitationProbabilityMaxPct = precip,
             precipitationMmTotal = 0.0,
             condition = WeatherCondition.CLEAR,

@@ -27,18 +27,20 @@ class GenerateDailyInsight(
         languageTag: String,
     ): Insight {
         val bundle = weatherRepository.fetchForecast(location)
-        val triggered = evaluateWardrobeRules(bundle.today, prefs.wardrobeRules)
+        val yesterdayTriggered = evaluateWardrobeRules(bundle.yesterday, prefs.wardrobeRules)
+        val todayTriggered = evaluateWardrobeRules(bundle.today, prefs.wardrobeRules)
         val prompt = buildPrompt(
             today = bundle.today,
             yesterday = bundle.yesterday,
-            triggeredRules = triggered,
+            yesterdayTriggeredRules = yesterdayTriggered,
+            todayTriggeredRules = todayTriggered,
             temperatureUnit = prefs.temperatureUnit,
             languageTag = languageTag,
         )
         val summary = insightGenerator.generate(prompt).trim()
         return Insight(
             summary = summary,
-            recommendedItems = triggered.map { it.item },
+            recommendedItems = todayTriggered.map { it.item },
             generatedAt = clock.instant(),
             forDate = bundle.today.date,
         )

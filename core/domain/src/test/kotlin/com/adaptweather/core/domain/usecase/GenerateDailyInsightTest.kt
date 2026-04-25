@@ -32,6 +32,8 @@ class GenerateDailyInsightTest {
         date = LocalDate.of(2026, 4, 24),
         temperatureMinC = 12.0,
         temperatureMaxC = 18.0,
+        feelsLikeMinC = 10.0,
+        feelsLikeMaxC = 17.0,
         precipitationProbabilityMaxPct = 5.0,
         precipitationMmTotal = 0.0,
         condition = WeatherCondition.PARTLY_CLOUDY,
@@ -41,6 +43,8 @@ class GenerateDailyInsightTest {
         date = LocalDate.of(2026, 4, 25),
         temperatureMinC = 8.0,
         temperatureMaxC = 25.0,
+        feelsLikeMinC = 6.0,
+        feelsLikeMaxC = 24.0,
         precipitationProbabilityMaxPct = 60.0,
         precipitationMmTotal = 4.5,
         condition = WeatherCondition.RAIN,
@@ -114,7 +118,13 @@ class GenerateDailyInsightTest {
 
     @Test
     fun `recommended items reflect rule evaluation, not raw rule list`() = runTest {
-        val mildToday = today.copy(temperatureMinC = 19.0, temperatureMaxC = 22.0, precipitationProbabilityMaxPct = 10.0)
+        val mildToday = today.copy(
+            temperatureMinC = 19.0,
+            temperatureMaxC = 22.0,
+            feelsLikeMinC = 19.0,
+            feelsLikeMaxC = 22.0,
+            precipitationProbabilityMaxPct = 10.0,
+        )
         val weather = FakeWeatherRepository(ForecastBundle(mildToday, yesterday))
         val gen = FakeInsightGenerator("ok")
         val subject = GenerateDailyInsight(weather, gen, clock = clock)
