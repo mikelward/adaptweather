@@ -145,7 +145,41 @@ private fun SettingsContent(
         if (BuildConfig.DEBUG) {
             DebugCard()
         }
+        AboutCard()
     }
+}
+
+@Composable
+private fun AboutCard() {
+    val context = LocalContext.current
+    SectionCard(title = stringResource(R.string.settings_about_title)) {
+        Text(
+            text = stringResource(
+                R.string.settings_about_version,
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            text = stringResource(R.string.settings_about_privacy),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        TextButton(
+            onClick = { openUrl(context, "https://github.com/mikelward/adaptweather") },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_about_source)) }
+        TextButton(
+            onClick = { openUrl(context, "https://dontkillmyapp.com") },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_about_dontkillmyapp)) }
+    }
+}
+
+private fun openUrl(context: android.content.Context, url: String) {
+    val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+    runCatching { context.startActivity(intent) }
 }
 
 @Composable
