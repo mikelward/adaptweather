@@ -51,6 +51,12 @@ Code TODOs in source files are linked from here when they exist.
       severe-grade events.
 - [ ] **Hourly / multi-day forecast UI** on Today. Currently Today only shows
       the latest insight; useful to see the underlying data the LLM saw.
+- [ ] **Forecast accuracy & multi-model ideas** — confidence badge from
+      multi-model disagreement, end-of-day accuracy survey, user-flagged
+      incorrect forecasts, background multi-provider comparison. Sketched in
+      [docs/MODELS.md](MODELS.md). Idea 1 (confidence badge) is cheapest,
+      builds on data Open-Meteo already returns when you ask for several
+      models in one call.
 
 ## Feature ideas (queued)
 
