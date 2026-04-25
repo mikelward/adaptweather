@@ -57,6 +57,8 @@ import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.TtsEngine
 import com.adaptweather.core.domain.model.WardrobeRule
+import com.adaptweather.insight.GEMINI_MODELS
+import com.adaptweather.insight.GeminiModelOption
 import com.adaptweather.tts.GEMINI_VOICES
 import com.adaptweather.tts.GeminiTtsSpeaker
 import com.adaptweather.tts.OPENAI_VOICES
@@ -114,6 +116,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onSetOpenAiVoice = viewModel::setOpenAiVoice,
             onSetOpenAiKey = viewModel::setOpenAiKey,
             onClearOpenAiKey = viewModel::clearOpenAiKey,
+            onSetGeminiModel = viewModel::setGeminiModel,
         )
     }
 }
@@ -140,6 +143,7 @@ private fun SettingsContent(
     onSetOpenAiVoice: (String) -> Unit,
     onSetOpenAiKey: (String) -> Unit,
     onClearOpenAiKey: () -> Unit,
+    onSetGeminiModel: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -154,6 +158,10 @@ private fun SettingsContent(
             configured = state.apiKeyConfigured,
             onSave = onSetApiKey,
             onClear = onClearApiKey,
+        )
+        GeminiModelCard(
+            selected = state.geminiModel,
+            onSelect = onSetGeminiModel,
         )
         LocationCard(
             current = state.location,
@@ -836,6 +844,53 @@ private fun ApiKeyCard(
                 ) { Text(stringResource(R.string.settings_api_key_clear)) }
             }
         }
+    }
+}
+
+@Composable
+private fun GeminiModelCard(
+    selected: String,
+    onSelect: (String) -> Unit,
+) {
+    var dialogOpen by remember { mutableStateOf(false) }
+    val current = GEMINI_MODELS.firstOrNull { it.id == selected }
+    SectionCard(title = stringResource(R.string.settings_gemini_model_title)) {
+        Text(
+            text = stringResource(R.string.settings_gemini_model_description),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        OutlinedButton(
+            onClick = { dialogOpen = true },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(current?.displayName ?: selected)
+        }
+    }
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen = false },
+            title = { Text(stringResource(R.string.settings_gemini_model_title)) },
+            text = {
+                Column {
+                    GEMINI_MODELS.forEach { option: GeminiModelOption ->
+                        RadioRow(
+                            label = option.displayName,
+                            selected = option.id == selected,
+                            onSelect = {
+                                onSelect(option.id)
+                                dialogOpen = false
+                            },
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { dialogOpen = false }) {
+                    Text(stringResource(R.string.settings_tts_voice_dismiss))
+                }
+            },
+        )
     }
 }
 

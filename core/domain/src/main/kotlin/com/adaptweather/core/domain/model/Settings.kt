@@ -49,9 +49,16 @@ data class UserPreferences(
      * == [TtsEngine.OPENAI].
      */
     val openAiVoice: String = DEFAULT_OPENAI_VOICE,
+    /**
+     * Gemini model id used to generate the daily prose (e.g.
+     * `gemini-2.5-flash`). Stored as a free-form string so adding new models
+     * doesn't require a domain-enum migration.
+     */
+    val geminiModel: String = DEFAULT_GEMINI_MODEL,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"
         const val DEFAULT_OPENAI_VOICE = "alloy"
+        const val DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
     }
 }

@@ -101,6 +101,10 @@ class SettingsRepository(
         dataStore.edit { it[OPENAI_VOICE] = voice }
     }
 
+    suspend fun setGeminiModel(model: String) {
+        dataStore.edit { it[GEMINI_MODEL] = model }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -123,6 +127,8 @@ class SettingsRepository(
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
         val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_OPENAI_VOICE
+        val geminiModel = this[GEMINI_MODEL]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_GEMINI_MODEL
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
@@ -135,6 +141,7 @@ class SettingsRepository(
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
+            geminiModel = geminiModel,
         )
     }
 
@@ -171,6 +178,7 @@ class SettingsRepository(
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
+        private val GEMINI_MODEL = stringPreferencesKey("gemini_model")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)
