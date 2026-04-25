@@ -16,7 +16,10 @@ serialization = "1.7.3"
 tink = "1.15.0"
 datastore = "1.1.1"
 work = "2.10.0"
-vico = "2.4.3"
+# Pinned to the 2.0.x line: Vico 2.2+ pulls androidx.core:core-ktx 1.16+ and
+# 2.3+ pulls 1.17+, both of which require AGP 8.9+ / compileSdk 36. The app is
+# on AGP 8.7.3 / compileSdk 35; bump Vico in lockstep with an AGP upgrade.
+vico = "2.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
