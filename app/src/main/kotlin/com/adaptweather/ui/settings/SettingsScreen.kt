@@ -847,6 +847,44 @@ private fun TtsEngineCard(
                 onSelect = { onSelect(engine) },
             )
         }
+        if (selected == TtsEngine.GEMINI) {
+            TestGeminiVoiceButton()
+        }
+    }
+}
+
+@Composable
+private fun TestGeminiVoiceButton() {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var inFlight by remember { mutableStateOf(false) }
+    Button(
+        enabled = !inFlight,
+        onClick = {
+            coroutineScope.launch {
+                inFlight = true
+                val app = context.applicationContext as com.adaptweather.AdaptWeatherApplication
+                try {
+                    app.geminiTtsSpeaker.speak(
+                        context.getString(R.string.settings_tts_test_sample),
+                    )
+                } catch (t: Throwable) {
+                    val message = "${t.javaClass.simpleName}: ${t.message ?: "(no detail)"}"
+                    android.util.Log.w("SettingsScreen", "Gemini TTS test failed", t)
+                    android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+                } finally {
+                    inFlight = false
+                }
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(
+            stringResource(
+                if (inFlight) R.string.settings_tts_test_in_flight
+                else R.string.settings_tts_test,
+            ),
+        )
     }
 }
 
