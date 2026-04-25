@@ -50,11 +50,18 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+            const path = '/tmp/jvm-tests.log';
             let body = '_(no log captured)_';
             try {
-              const log = fs.readFileSync('/tmp/jvm-tests.log', 'utf8');
-              const tail = log.split('\n').slice(-200).join('\n');
-              body = '<!-- ci-jvm-tests --> JVM unit tests failed. Last 200 lines:\n\n```\n' + tail + '\n```';
+              const log = fs.readFileSync(path, 'utf8');
+              const lines = log.split('\n');
+              const errorLines = lines.filter(l =>
+                /^(e:|w:| {2}error:|FAILURE:|\* What went wrong:|Caused by:|Compilation error)/.test(l)
+              ).slice(0, 80);
+              const tail = lines.slice(-300).join('\n');
+              body = '<!-- ci-jvm-tests --> JVM unit tests failed.\n\n' +
+                '### Likely error lines\n```\n' + (errorLines.join('\n') || '(none matched)') + '\n```\n' +
+                '### Last 300 lines\n```\n' + tail + '\n```';
             } catch (e) {
               body = 'JVM unit tests failed before gradle started: ' + e.message;
             }
@@ -115,8 +122,14 @@ jobs:
             let body = '_(no log captured)_';
             try {
               const log = fs.readFileSync('/tmp/android-build.log', 'utf8');
-              const tail = log.split('\n').slice(-200).join('\n');
-              body = '<!-- ci-android-build --> Android debug build failed. Last 200 lines:\n\n```\n' + tail + '\n```';
+              const lines = log.split('\n');
+              const errorLines = lines.filter(l =>
+                /^(e:|w:| {2}error:|FAILURE:|\* What went wrong:|Caused by:|Compilation error)/.test(l)
+              ).slice(0, 80);
+              const tail = lines.slice(-300).join('\n');
+              body = '<!-- ci-android-build --> Android debug build failed.\n\n' +
+                '### Likely error lines\n```\n' + (errorLines.join('\n') || '(none matched)') + '\n```\n' +
+                '### Last 300 lines\n```\n' + tail + '\n```';
             } catch (e) {
               body = 'Android debug build failed before gradle started: ' + e.message;
             }
