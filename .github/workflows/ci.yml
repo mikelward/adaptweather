@@ -27,8 +27,8 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Run :core:domain tests
-        run: ./gradlew :core:domain:test --stacktrace
+      - name: Run unit tests
+        run: ./gradlew :core:domain:test :core:data:test --stacktrace
 
       - name: Upload test reports
         if: always()

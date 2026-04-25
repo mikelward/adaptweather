@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "adaptweather"
 
 include(":core:domain")
+include(":core:data")

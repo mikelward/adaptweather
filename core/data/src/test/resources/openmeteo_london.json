@@ -1,0 +1,40 @@
+{
+  "latitude": 51.5074,
+  "longitude": -0.1278,
+  "timezone": "Europe/London",
+  "timezone_abbreviation": "BST",
+  "utc_offset_seconds": 3600,
+  "daily_units": {
+    "time": "iso8601",
+    "temperature_2m_min": "°C",
+    "temperature_2m_max": "°C",
+    "precipitation_probability_max": "%",
+    "precipitation_sum": "mm",
+    "weather_code": "wmo code"
+  },
+  "daily": {
+    "time": ["2026-04-24", "2026-04-25"],
+    "temperature_2m_min": [12.0, 16.0],
+    "temperature_2m_max": [18.0, 24.0],
+    "precipitation_probability_max": [5, 60],
+    "precipitation_sum": [0.0, 4.5],
+    "weather_code": [2, 63]
+  },
+  "hourly_units": {
+    "time": "iso8601",
+    "temperature_2m": "°C",
+    "precipitation_probability": "%",
+    "weather_code": "wmo code"
+  },
+  "hourly": {
+    "time": [
+      "2026-04-24T22:00", "2026-04-24T23:00",
+      "2026-04-25T00:00", "2026-04-25T03:00", "2026-04-25T06:00",
+      "2026-04-25T09:00", "2026-04-25T12:00", "2026-04-25T15:00",
+      "2026-04-25T18:00", "2026-04-25T21:00"
+    ],
+    "temperature_2m": [13.0, 12.5, 12.0, 13.0, 16.0, 18.0, 22.0, 22.0, 19.0, 17.0],
+    "precipitation_probability": [0, 0, 0, 0, 5, 10, 30, 60, 30, 5],
+    "weather_code": [2, 2, 2, 2, 2, 2, 3, 63, 51, 2]
+  }
+}
