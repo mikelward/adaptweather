@@ -31,12 +31,10 @@
     <application
         android:name=".AdaptWeatherApplication"
         android:allowBackup="false"
-        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AdaptWeather"
-        tools:targetApi="31">
+        android:theme="@style/Theme.AdaptWeather">
 
         <activity
             android:name=".MainActivity"
