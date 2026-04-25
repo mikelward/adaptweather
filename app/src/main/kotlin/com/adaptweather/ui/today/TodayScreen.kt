@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adaptweather.R
+import com.adaptweather.core.domain.model.HourlyForecast
 import com.adaptweather.core.domain.model.Insight
 import com.adaptweather.work.FetchAndNotifyWorker
 import androidx.compose.foundation.layout.Row
@@ -93,6 +94,9 @@ private fun TodayContent(
             EmptyState(onRefresh = onRefresh)
         } else {
             InsightCard(state.insight)
+            if (state.insight.hourly.isNotEmpty()) {
+                ForecastCard(state.insight.hourly)
+            }
         }
     }
 }
@@ -220,6 +224,27 @@ private fun InsightCard(insight: Insight) {
                     R.string.today_generated_at,
                     GENERATED_AT_FORMAT.format(insight.generatedAt.atZone(ZoneId.systemDefault())),
                 ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ForecastCard(hourly: List<HourlyForecast>) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.today_forecast_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            ForecastChart(hourly = hourly)
+            Text(
+                text = stringResource(R.string.today_forecast_legend),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

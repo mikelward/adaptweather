@@ -12,6 +12,9 @@
     <string name="today_recommended_items">Recommended items: %1$s</string>
     <string name="today_generated_at">Generated at %1$s</string>
 
+    <string name="today_forecast_title">Hourly forecast</string>
+    <string name="today_forecast_legend">Temperature and feels-like (°C) by hour</string>
+
     <string name="today_working">Working — fetching forecast and generating today\'s insight…</string>
     <string name="today_failed_title">Last attempt failed</string>
     <string name="today_failed_missing_api_key">No Gemini API key configured. Set one in Settings.</string>

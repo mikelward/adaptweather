@@ -14,6 +14,7 @@ data class Insight(
     val recommendedItems: List<String>,
     val generatedAt: Instant,
     val forDate: LocalDate,
+    val hourly: List<HourlyForecast> = emptyList(),
 ) {
     /**
      * The text that gets spoken aloud. The LLM is told to weave the items into its
