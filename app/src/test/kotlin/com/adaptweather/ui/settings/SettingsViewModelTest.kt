@@ -13,6 +13,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -28,7 +29,10 @@ import java.nio.file.Path
 class SettingsViewModelTest {
     @TempDir lateinit var tempDir: Path
 
-    private val dispatcher = UnconfinedTestDispatcher()
+    // Explicit scheduler avoids the dispatcher's internal Dispatchers.Main lookup, which
+    // crashes on Android JVM unit tests because AndroidDispatcherFactory calls the
+    // unmocked Looper.getMainLooper(). See SecureKeyStoreTest for the same workaround.
+    private val dispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
     private lateinit var settingsDataStore: DataStore<Preferences>
     private lateinit var keyDataStore: DataStore<Preferences>
     private lateinit var settingsRepository: SettingsRepository
