@@ -30,13 +30,12 @@ internal const val OPEN_METEO_HOST = "api.open-meteo.com"
  * forecast calls in parallel. Same best-effort policy: confidence is null when the
  * extra calls fail.
  */
-class OpenMeteoClient(
-    private val httpClient: HttpClient,
-    confidenceFetcher: MultiModelConfidenceFetcher? = null,
-) : WeatherRepository {
+class OpenMeteoClient(private val httpClient: HttpClient) : WeatherRepository {
 
-    private val confidenceFetcher: MultiModelConfidenceFetcher =
-        confidenceFetcher ?: MultiModelConfidenceFetcher(httpClient)
+    // Constructed once per client. Exposing it on the public constructor would
+    // leak the internal type; if we ever need a test seam, add an internal-only
+    // secondary constructor instead.
+    private val confidenceFetcher = MultiModelConfidenceFetcher(httpClient)
 
     override suspend fun fetchForecast(location: Location): ForecastBundle = coroutineScope {
         // Primary forecast and the side-band fetches all kick off in parallel — confidence
