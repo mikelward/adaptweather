@@ -11,6 +11,18 @@
     <string name="settings_api_key_save">Save key</string>
     <string name="settings_api_key_clear">Clear stored key</string>
 
+    <string name="settings_location_title">Location</string>
+    <string name="settings_location_unset">No location set — defaulting to London</string>
+    <string name="settings_location_description">The forecast is fetched for this place. Search by city name; results come from Open-Meteo\'s free geocoding service.</string>
+    <string name="settings_location_set">Set location</string>
+    <string name="settings_location_change">Change location</string>
+    <string name="settings_location_clear">Clear location</string>
+    <string name="settings_location_search_title">Search for a location</string>
+    <string name="settings_location_query_label">City or place</string>
+    <string name="settings_location_search">Search</string>
+    <string name="settings_location_searching">Searching…</string>
+    <string name="settings_location_no_results">No matches.</string>
+
     <string name="settings_schedule_title">When to deliver the daily insight</string>
     <string name="settings_schedule_time_label">Time</string>
     <string name="settings_schedule_days_label">Days of the week</string>

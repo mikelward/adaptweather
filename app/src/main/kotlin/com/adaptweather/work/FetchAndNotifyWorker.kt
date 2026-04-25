@@ -57,7 +57,7 @@ class FetchAndNotifyWorker(
             return Result.retry()
         }
 
-        val location = resolveLocation()
+        val location = prefs.location ?: DEFAULT_LOCATION
         val languageTag = java.util.Locale.getDefault().toLanguageTag()
 
         return try {
@@ -117,15 +117,18 @@ class FetchAndNotifyWorker(
         }
     }
 
-    private fun resolveLocation(): Location {
-        // TODO: replace with the GPS-at-notify-time resolver once the location-permission
-        // UX lands. London is a sensible v1 default and lets the rest of the pipeline run.
-        return Location(latitude = 51.5074, longitude = -0.1278, displayName = "London")
-    }
-
     companion object {
         private const val TAG = "FetchAndNotifyWorker"
         const val UNIQUE_WORK_NAME = "daily_insight_fetch"
+
+        // Fallback when the user hasn't set a location yet — the pipeline still runs and
+        // posts a (London) insight rather than silently failing. The Settings screen
+        // surfaces an empty-location card so the user can change it.
+        private val DEFAULT_LOCATION = Location(
+            latitude = 51.5074,
+            longitude = -0.1278,
+            displayName = "London (default)",
+        )
 
         fun enqueueOneShot(context: Context) {
             val constraints = Constraints.Builder()

@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "id": 2643743,
+      "name": "London",
+      "latitude": 51.50853,
+      "longitude": -0.12574,
+      "elevation": 25.0,
+      "feature_code": "PPLC",
+      "country_code": "GB",
+      "country": "United Kingdom",
+      "admin1": "England",
+      "timezone": "Europe/London",
+      "population": 8961989
+    },
+    {
+      "id": 6058560,
+      "name": "London",
+      "latitude": 42.98339,
+      "longitude": -81.23304,
+      "elevation": 251.0,
+      "feature_code": "PPL",
+      "country_code": "CA",
+      "country": "Canada",
+      "admin1": "Ontario",
+      "timezone": "America/Toronto",
+      "population": 346765
+    }
+  ],
+  "generationtime_ms": 0.4
+}

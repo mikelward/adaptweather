@@ -2,6 +2,7 @@ package com.adaptweather.ui.settings
 
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
+import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
 import com.adaptweather.core.domain.model.WardrobeRule
@@ -16,5 +17,6 @@ data class SettingsState(
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     val distanceUnit: DistanceUnit = DistanceUnit.KILOMETERS,
     val wardrobeRules: List<WardrobeRule> = WardrobeRule.DEFAULTS,
+    val location: Location? = null,
     val apiKeyConfigured: Boolean = false,
 )

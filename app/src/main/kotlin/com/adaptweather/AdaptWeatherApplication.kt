@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.adaptweather.alarm.DailyAlarmScheduler
 import com.adaptweather.core.data.insight.DirectGeminiClient
+import com.adaptweather.core.data.location.OpenMeteoGeocodingClient
 import com.adaptweather.core.data.weather.OpenMeteoClient
 import com.adaptweather.core.domain.repository.InsightGenerator
 import com.adaptweather.core.domain.repository.WeatherRepository
@@ -46,6 +47,7 @@ class AdaptWeatherApplication : Application() {
     }
 
     val weatherRepository: WeatherRepository by lazy { OpenMeteoClient(httpClient) }
+    val geocodingClient: OpenMeteoGeocodingClient by lazy { OpenMeteoGeocodingClient(httpClient) }
     val insightGenerator: InsightGenerator by lazy { DirectGeminiClient(httpClient, secureKeyStore) }
     val generateDailyInsight: GenerateDailyInsight by lazy {
         GenerateDailyInsight(weatherRepository, insightGenerator)

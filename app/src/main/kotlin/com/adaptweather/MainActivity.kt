@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
                             settingsRepository = app.settingsRepository,
                             keyStore = app.secureKeyStore,
                             rearmAlarm = app.dailyAlarmScheduler::schedule,
+                            geocodingClient = app.geocodingClient,
                         ),
                     )
                     SettingsScreen(viewModel = viewModel)
