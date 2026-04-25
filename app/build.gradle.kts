@@ -6,6 +6,13 @@ plugins {
 }
 
 android {
+    // TODO(release): pin the final namespace + applicationId BEFORE the first
+    // distribution outside this dev team. Once a sideloaded build with applicationId
+    // X is in the wild, switching to Y means installs of Y are a different app —
+    // users have to uninstall + reinstall and lose their encrypted Gemini key,
+    // schedule, location, and wardrobe rules. Convention is reverse-DNS based on
+    // a domain you own (e.g. dev.mikelward.adaptweather) and a confirmed product
+    // name; "AdaptWeather" itself is also up for grabs.
     namespace = "com.adaptweather"
     compileSdk = 35
 
