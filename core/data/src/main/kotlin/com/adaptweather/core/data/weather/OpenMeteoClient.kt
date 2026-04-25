@@ -11,6 +11,8 @@ import io.ktor.client.request.parameter
 import io.ktor.http.URLProtocol
 import io.ktor.http.path
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 internal const val OPEN_METEO_HOST = "api.open-meteo.com"
 
@@ -23,10 +25,36 @@ internal const val OPEN_METEO_HOST = "api.open-meteo.com"
  * is best-effort: if it fails (4xx, 5xx, network), we return the forecast with an empty
  * alerts list rather than failing the whole fetch — a missing alerts feed must not
  * suppress the daily insight.
+ *
+ * Cross-model confidence is computed by a third path that fires several model-specific
+ * forecast calls in parallel. Same best-effort policy: confidence is null when the
+ * extra calls fail.
  */
-class OpenMeteoClient(private val httpClient: HttpClient) : WeatherRepository {
-    override suspend fun fetchForecast(location: Location): ForecastBundle {
-        val response: OpenMeteoResponse = httpClient.get {
+class OpenMeteoClient(
+    private val httpClient: HttpClient,
+    confidenceFetcher: MultiModelConfidenceFetcher? = null,
+) : WeatherRepository {
+
+    private val confidenceFetcher: MultiModelConfidenceFetcher =
+        confidenceFetcher ?: MultiModelConfidenceFetcher(httpClient)
+
+    override suspend fun fetchForecast(location: Location): ForecastBundle = coroutineScope {
+        // Primary forecast and the side-band fetches all kick off in parallel — confidence
+        // adds three more model calls, so doing them concurrently with the alerts call
+        // hides their latency behind the primary fetch.
+        val primary = async { fetchPrimary(location) }
+        val alerts = async { fetchAlerts(location) }
+        val confidence = async { confidenceFetcher.fetch(location) }
+
+        val bundle = OpenMeteoMapper.toBundle(primary.await())
+        bundle.copy(
+            alerts = alerts.await(),
+            confidence = confidence.await(),
+        )
+    }
+
+    private suspend fun fetchPrimary(location: Location): OpenMeteoResponse =
+        httpClient.get {
             url {
                 protocol = URLProtocol.HTTPS
                 host = OPEN_METEO_HOST
@@ -47,10 +75,6 @@ class OpenMeteoClient(private val httpClient: HttpClient) : WeatherRepository {
                 "temperature_2m,apparent_temperature,precipitation_probability,weather_code",
             )
         }.body()
-
-        val bundle = OpenMeteoMapper.toBundle(response)
-        return bundle.copy(alerts = fetchAlerts(location))
-    }
 
     private suspend fun fetchAlerts(location: Location): List<WeatherAlert> = try {
         val response: OpenMeteoWarningsResponse = httpClient.get {

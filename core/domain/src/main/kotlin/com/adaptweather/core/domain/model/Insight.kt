@@ -15,6 +15,12 @@ data class Insight(
     val generatedAt: Instant,
     val forDate: LocalDate,
     val hourly: List<HourlyForecast> = emptyList(),
+    /**
+     * Cross-model agreement at fetch time, when available. Null when the
+     * multi-model confidence call failed or the implementation doesn't compute
+     * it. UI should treat null as "unknown" rather than "high".
+     */
+    val confidence: ConfidenceInfo? = null,
 ) {
     /**
      * The text that gets spoken aloud. The LLM is told to weave the items into its

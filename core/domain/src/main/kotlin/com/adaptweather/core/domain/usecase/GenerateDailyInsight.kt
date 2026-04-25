@@ -51,6 +51,7 @@ class GenerateDailyInsight(
             generatedAt = clock.instant(),
             forDate = bundle.today.date,
             hourly = bundle.today.hourly,
+            confidence = bundle.confidence,
         )
         return DailyInsightResult(insight = insight, alerts = activeAlerts)
     }

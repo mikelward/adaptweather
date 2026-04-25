@@ -33,7 +33,7 @@ information we can surface, and it's free.
 
 ## Ideas
 
-### 1. Multi-model "forecast confidence" badge
+### 1. Multi-model "forecast confidence" badge ✅ shipped
 
 Fetch 3-5 models in the daily forecast call. Compute disagreement (e.g.
 range of `temperature_2m_max` across models, or stdev of
@@ -48,6 +48,14 @@ check again before heading out" to the daily prose. Otherwise stay quiet.
 
 Cost: free (one Open-Meteo call, a bit more JSON).
 Complexity: small (parse extra arrays + a confidence helper).
+
+**As shipped:** three parallel calls to ECMWF (`ecmwf_ifs04`), GFS
+(`gfs_seamless`), and DWD ICON (`icon_seamless`) — each requesting only
+`apparent_temperature_max` and `precipitation_probability_max`. Best-effort:
+any failure falls through to a null badge. Thresholds in
+`MultiModelConfidenceFetcher` are first-pass guesses (≤1.5°C/15pp = HIGH,
+≤3°C/30pp = MEDIUM, else LOW); refine with real data. The "feed into
+LLM prompt" half is still TODO.
 
 ### 2. End-of-day accuracy survey
 

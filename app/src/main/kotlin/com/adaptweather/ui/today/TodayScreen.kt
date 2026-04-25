@@ -34,6 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adaptweather.R
+import com.adaptweather.core.domain.model.ConfidenceInfo
+import com.adaptweather.core.domain.model.ForecastConfidence
 import com.adaptweather.core.domain.model.HourlyForecast
 import com.adaptweather.core.domain.model.Insight
 import com.adaptweather.work.FetchAndNotifyWorker
@@ -205,6 +207,7 @@ private fun InsightCard(insight: Insight) {
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            insight.confidence?.let { ConfidenceChip(it) }
             Text(
                 text = insight.summary,
                 style = MaterialTheme.typography.headlineSmall,
@@ -226,6 +229,51 @@ private fun InsightCard(insight: Insight) {
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+/**
+ * Compact "How sure are we?" chip rendered inside [InsightCard]. Background color
+ * tracks the level so the user gets the cue at a glance — green-ish for HIGH,
+ * neutral for MEDIUM, error-tinted for LOW. Detail text shows the actual spread
+ * across the consulted models so the user can judge for themselves.
+ */
+@Composable
+private fun ConfidenceChip(info: ConfidenceInfo) {
+    val (bgColor, fgColor) = when (info.level) {
+        ForecastConfidence.HIGH -> MaterialTheme.colorScheme.secondaryContainer to
+            MaterialTheme.colorScheme.onSecondaryContainer
+        ForecastConfidence.MEDIUM -> MaterialTheme.colorScheme.surfaceVariant to
+            MaterialTheme.colorScheme.onSurfaceVariant
+        ForecastConfidence.LOW -> MaterialTheme.colorScheme.errorContainer to
+            MaterialTheme.colorScheme.onErrorContainer
+    }
+    val labelRes = when (info.level) {
+        ForecastConfidence.HIGH -> R.string.today_confidence_high
+        ForecastConfidence.MEDIUM -> R.string.today_confidence_medium
+        ForecastConfidence.LOW -> R.string.today_confidence_low
+    }
+    Card(
+        colors = CardDefaults.cardColors(containerColor = bgColor, contentColor = fgColor),
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Text(
+                text = stringResource(labelRes),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            Text(
+                text = stringResource(
+                    R.string.today_confidence_spread,
+                    info.tempSpreadC,
+                    info.precipSpreadPp,
+                    info.modelsConsulted.size,
+                ),
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
