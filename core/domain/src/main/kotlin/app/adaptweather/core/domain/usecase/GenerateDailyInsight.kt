@@ -42,6 +42,11 @@ class GenerateDailyInsight(
             languageTag = languageTag,
             alerts = activeAlerts,
         )
+        // TODO: revisit whether the Gemini call still earns its keep. Now that the
+        // band sentence is pre-computed and the wardrobe / precipitation phrases are
+        // template-fills, the LLM's only real job is translating the four fixed
+        // sentences into the user's languageTag. If we move to strings.xml (or
+        // commit to English) we can render the summary directly and drop the call.
         val summary = insightGenerator.generate(prompt).trim()
         val insight = Insight(
             summary = summary,
