@@ -1131,10 +1131,10 @@ private fun TtsEngineCard(
                     selected = voiceLocale,
                     onSelect = {
                         onSetVoiceLocale(it)
-                        preview(selected, geminiVoice, openAiVoice)
+                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice)
                     },
                 )
-                TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
+                TestVoiceButton { preview(selected, geminiVoice, openAiVoice, elevenLabsVoice) }
             }
         }
     }
