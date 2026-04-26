@@ -94,10 +94,8 @@ class GeminiTtsClientTest {
 
         val audio = client.synthesize(text = "hello")
 
-        // SUCCESS_BODY encodes the four bytes 0xDE 0xAD 0xBE 0xEF in big-endian
-        // L16 (per RFC 2586). The client byte-swaps each 16-bit sample so AudioTrack
-        // (which only consumes little-endian PCM16) plays them correctly.
-        audio.bytes.toList() shouldBe listOf(0xAD.toByte(), 0xDE.toByte(), 0xEF.toByte(), 0xBE.toByte())
+        // SUCCESS_BODY encodes the four bytes 0xDE 0xAD 0xBE 0xEF.
+        audio.bytes.toList() shouldBe listOf(0xDE.toByte(), 0xAD.toByte(), 0xBE.toByte(), 0xEF.toByte())
         audio.sampleRate shouldBe 24_000
     }
 
