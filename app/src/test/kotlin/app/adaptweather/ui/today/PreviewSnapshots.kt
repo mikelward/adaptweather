@@ -15,8 +15,8 @@ import org.robolectric.annotation.GraphicsMode
 
 //
 // Calls every preview wrapper in `TodayPreviews.kt` and captures the result to
-// PNG under `app/src/test/snapshots/roborazzi/` — a *tracked* path, so GitHub
-// renders image diffs natively in the PR's "Files changed" view. CI commits
+// PNG under `app/snapshots/` — a *tracked* path, so GitHub renders image
+// diffs natively in the PR's "Files changed" view. CI commits
 // any new/updated PNGs back to the PR branch (see ci.yml), so reviewers see
 // pixel changes inline without downloading anything. `roborazzi.test.record=true`
 // in the build script means each run re-records; the diff "gate" is just
@@ -46,15 +46,22 @@ class PreviewSnapshots {
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     // Override Roborazzi's default `<package>.<class>.<method>.png` naming with
-    // just `<method>.png`. The PNGs all live under `app/src/test/snapshots/roborazzi/`
-    // already, so the package + class prefix was pure noise on every filename and
-    // every `git mv` if the test class ever got renamed or moved.
+    // just `<method>.png`. The PNGs all live under `app/snapshots/` already, so
+    // the package + class prefix was pure noise on every filename and every
+    // `git mv` if the test class ever got renamed or moved.
     @get:Rule
     val testName = TestName()
 
+    // `captureRoboImage(filePath = ...)` resolves a bare filename against the test
+    // working dir (the `:app` module root), bypassing `roborazzi.output.dir` from
+    // the build script. Prefix it explicitly so PNGs land under the tracked
+    // snapshots directory and CI's `git add app/snapshots` finds them.
+    private val outputDir: String = System.getProperty("roborazzi.output.dir")
+        ?: error("roborazzi.output.dir not set; configure in app/build.gradle.kts testOptions")
+
     private fun capture(content: @Composable () -> Unit) {
         composeRule.setContent { content() }
-        composeRule.onRoot().captureRoboImage(filePath = "${testName.methodName}.png")
+        composeRule.onRoot().captureRoboImage(filePath = "$outputDir/${testName.methodName}.png")
     }
 
     @Test fun outfit_tshirt_shorts() = capture { OutfitTShirtShortsPreview() }

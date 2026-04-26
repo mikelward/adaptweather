@@ -124,7 +124,7 @@ jobs:
           retention-days: 14
 
       - name: Commit regenerated UI snapshots back to PR branch
-        # Roborazzi renders every @Preview to PNG under app/src/test/snapshots/
+        # Roborazzi renders every @Preview to PNG under app/snapshots/
         # (a tracked path). When a UI change shifts pixels, this step commits
         # the new PNGs back to the PR branch so the diff shows up natively in
         # GitHub's "Files changed" image view — no artifact download needed.
@@ -149,8 +149,8 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          if [ -d app/src/test/snapshots ]; then
-            git add app/src/test/snapshots
+          if [ -d app/snapshots ]; then
+            git add app/snapshots
           fi
           if git diff --cached --quiet; then
             echo "No snapshot changes."
@@ -179,7 +179,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const path = 'app/src/test/snapshots/roborazzi';
+            const path = 'app/snapshots';
             let count = 0;
             try {
               count = fs.readdirSync(path).filter(f => f.endsWith('.png')).length;
@@ -195,7 +195,7 @@ jobs:
             const body = `<!-- ui-snapshots-status -->
             **UI snapshots:** ${status}
 
-            Head: \`${headSha}\` · Browse: [\`app/src/test/snapshots/roborazzi/\`](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/${context.payload.pull_request.head.ref}/app/src/test/snapshots/roborazzi)`;
+            Head: \`${headSha}\` · Browse: [\`app/snapshots/\`](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/${context.payload.pull_request.head.ref}/app/snapshots)`;
             const marker = '<!-- ui-snapshots-status -->';
             const { data: comments } = await github.rest.issues.listComments({
               ...context.repo,
@@ -225,7 +225,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ui-preview-snapshots
-          path: app/src/test/snapshots/roborazzi/
+          path: app/snapshots/
           if-no-files-found: ignore
           retention-days: 14
 
