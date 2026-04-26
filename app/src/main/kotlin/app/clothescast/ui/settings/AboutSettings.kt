@@ -65,7 +65,7 @@ private fun AboutCard() {
             style = MaterialTheme.typography.bodyMedium,
         )
         TextButton(
-            onClick = { openUrl(context, "https://github.com/mikelward/adaptweather") },
+            onClick = { openUrl(context, "https://github.com/mikelward/clothescast") },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.settings_about_source)) }
         TextButton(
