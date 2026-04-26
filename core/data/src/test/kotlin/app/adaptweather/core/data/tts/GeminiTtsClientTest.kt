@@ -47,7 +47,7 @@ class GeminiTtsClientTest {
     }
 
     @Test
-    fun `posts to the GA tts model endpoint with the api key header`() = runTest {
+    fun `posts to the default tts model endpoint with the api key header`() = runTest {
         var captured: HttpRequestData? = null
         val client = GeminiTtsClient(
             httpClient = mockClient(SUCCESS_BODY) { captured = it },
@@ -58,7 +58,7 @@ class GeminiTtsClientTest {
 
         val req = checkNotNull(captured)
         req.url.host shouldBe GEMINI_HOST
-        req.url.encodedPath shouldBe "/v1beta/models/gemini-2.5-flash-tts:generateContent"
+        req.url.encodedPath shouldBe "/v1beta/models/gemini-2.5-flash-preview-tts:generateContent"
         req.headers["x-goog-api-key"] shouldBe "test-key"
     }
 
