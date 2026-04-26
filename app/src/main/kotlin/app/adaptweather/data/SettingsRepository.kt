@@ -16,6 +16,7 @@ import app.adaptweather.core.domain.model.Schedule
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.UserPreferences
+import app.adaptweather.core.domain.model.VoiceLocale
 import app.adaptweather.core.domain.model.WardrobeRule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -105,6 +106,10 @@ class SettingsRepository(
         dataStore.edit { it[GEMINI_MODEL] = model }
     }
 
+    suspend fun setVoiceLocale(locale: VoiceLocale) {
+        dataStore.edit { it[VOICE_LOCALE] = locale.name }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -129,6 +134,8 @@ class SettingsRepository(
             ?: UserPreferences.DEFAULT_OPENAI_VOICE
         val geminiModel = this[GEMINI_MODEL]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_GEMINI_MODEL
+        val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
+            ?: VoiceLocale.SYSTEM
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
@@ -142,6 +149,7 @@ class SettingsRepository(
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
             geminiModel = geminiModel,
+            voiceLocale = voiceLocale,
         )
     }
 
@@ -179,6 +187,7 @@ class SettingsRepository(
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
         private val GEMINI_MODEL = stringPreferencesKey("gemini_model")
+        private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

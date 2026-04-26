@@ -19,6 +19,24 @@ enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
  */
 enum class TtsEngine { DEVICE, GEMINI, OPENAI }
 
+/**
+ * User-selectable accent for the device TTS voice. Only the on-device
+ * [TtsEngine.DEVICE] engine actually exposes accent variants — the Gemini and
+ * OpenAI voices speak whatever language the input text is in and don't have a
+ * separate accent control today.
+ *
+ * [SYSTEM] means "follow the phone's locale" — which is the right default for
+ * almost everyone, since their device language already encodes their accent
+ * preference. The explicit en-* options are for users whose phone locale doesn't
+ * match the accent they want to hear (e.g. an en-AU speaker on an en-US phone).
+ */
+enum class VoiceLocale(val bcp47: String?) {
+    SYSTEM(null),
+    EN_US("en-US"),
+    EN_GB("en-GB"),
+    EN_AU("en-AU"),
+}
+
 data class UserPreferences(
     val schedule: Schedule,
     val deliveryMode: DeliveryMode,
@@ -55,6 +73,7 @@ data class UserPreferences(
      * doesn't require a domain-enum migration.
      */
     val geminiModel: String = DEFAULT_GEMINI_MODEL,
+    val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

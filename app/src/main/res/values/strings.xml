@@ -72,6 +72,11 @@
     <string name="settings_tts_engine_openai">OpenAI (high quality, online)</string>
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
+    <string name="settings_tts_voice_locale_label">English variant</string>
+    <string name="settings_tts_voice_locale_system">Follow phone language</string>
+    <string name="settings_tts_voice_locale_en_us">English (United States)</string>
+    <string name="settings_tts_voice_locale_en_gb">English (United Kingdom)</string>
+    <string name="settings_tts_voice_locale_en_au">English (Australia)</string>
     <string name="settings_tts_test">Test voice</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
     <string name="settings_tts_test_sample">Hello — this is the AdaptWeather voice preview.</string>

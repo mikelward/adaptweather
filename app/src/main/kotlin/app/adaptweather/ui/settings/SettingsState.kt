@@ -7,6 +7,7 @@ import app.adaptweather.core.domain.model.Schedule
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.UserPreferences
+import app.adaptweather.core.domain.model.VoiceLocale
 import app.adaptweather.core.domain.model.WardrobeRule
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -25,6 +26,7 @@ data class SettingsState(
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
     val openAiVoice: String = UserPreferences.DEFAULT_OPENAI_VOICE,
     val geminiModel: String = UserPreferences.DEFAULT_GEMINI_MODEL,
+    val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,
 )
