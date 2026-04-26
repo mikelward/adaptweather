@@ -145,7 +145,8 @@ class GeminiTtsHttpException(val status: HttpStatusCode, body: ByteArray) :
     companion object {
         private fun buildMessage(status: HttpStatusCode, body: ByteArray): String {
             val raw = runCatching { body.toString(Charsets.UTF_8) }.getOrNull().orEmpty()
-            val excerpt = extractErrorMessage(raw) ?: raw.take(MAX_EXCERPT_CHARS)
+            val excerpt = extractErrorMessage(raw)
+                ?: raw.take(MAX_EXCERPT_CHARS).ifBlank { "(empty body)" }
             return "Gemini TTS HTTP ${status.value}: $excerpt"
         }
 
