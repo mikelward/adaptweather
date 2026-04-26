@@ -46,14 +46,15 @@ class RenderInsightSummaryTest {
 
     @Test
     fun `band sentence is always emitted`() {
-        val out = subject(mildToday, yesterday, emptyList())
-        out shouldBe "Today will be mild."
+        // Other rules might also fire on this fixture; this test only cares that the
+        // band sentence is present.
+        subject(mildToday, yesterday, emptyList()).shouldContain("Today will be mild.")
     }
 
     @Test
     fun `band sentence emits a low-to-high range when min and max fall in different bands`() {
         val today = mildToday.copy(feelsLikeMinC = 15.0, feelsLikeMaxC = 23.0)
-        subject(today, yesterday, emptyList()) shouldBe "Today will be cool-mild."
+        subject(today, yesterday, emptyList()).shouldContain("Today will be cool-mild.")
     }
 
     @Test
