@@ -57,7 +57,18 @@ class FetchAndNotifyWorker(
 
         val location = resolveLocation(prefs)
         val today = LocalDate.now()
-        val forceRefresh = inputData.getBoolean(KEY_FORCE_REFRESH, false)
+
+        // Honour force-refresh only when it's still the day the user tapped on. If
+        // the request was enqueued near midnight and only ran after the date rolled
+        // over (offline retries, deferred backoff), the *new* day's cache should
+        // win — otherwise we'd silently bypass it and burn an extra Gemini call on
+        // a stale tap.
+        val requestedEpochDay = inputData.getLong(KEY_REQUESTED_EPOCH_DAY, Long.MIN_VALUE)
+        val forceRequested = inputData.getBoolean(KEY_FORCE_REFRESH, false)
+        val forceRefresh = forceRequested && requestedEpochDay == today.toEpochDay()
+        if (forceRequested && !forceRefresh) {
+            Log.i(TAG, "Ignoring force refresh from a previous day (requested=$requestedEpochDay, today=${today.toEpochDay()}).")
+        }
 
         // 24h cost cap: if we already generated an insight for today, redeliver it
         // rather than refetching. Same path serves the morning alarm and any
@@ -216,6 +227,13 @@ class FetchAndNotifyWorker(
         /** Set true via [enqueueOneShot] when the user explicitly taps Refresh. */
         private const val KEY_FORCE_REFRESH = "force_refresh"
 
+        /**
+         * Epoch-day of the calendar date the force-refresh was requested for. Used
+         * to drop a stale force flag if the worker only runs after midnight (e.g. a
+         * tap at 23:59 that retried offline until 00:05).
+         */
+        private const val KEY_REQUESTED_EPOCH_DAY = "requested_epoch_day"
+
         // Fallback when the user hasn't set a location yet — the pipeline still runs and
         // posts a (London) insight rather than silently failing. The Settings screen
         // surfaces an empty-location card so the user can change it.
@@ -233,7 +251,12 @@ class FetchAndNotifyWorker(
             val request = OneTimeWorkRequestBuilder<FetchAndNotifyWorker>()
                 .setConstraints(constraints)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
-                .setInputData(workDataOf(KEY_FORCE_REFRESH to force))
+                .setInputData(
+                    workDataOf(
+                        KEY_FORCE_REFRESH to force,
+                        KEY_REQUESTED_EPOCH_DAY to LocalDate.now().toEpochDay(),
+                    )
+                )
                 .build()
 
             // Alarm-driven enqueues use KEEP so a still-retrying run isn't duplicated.
