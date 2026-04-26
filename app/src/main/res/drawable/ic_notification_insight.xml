@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Notification icons must be silhouetted: white-on-transparent. The system applies the
-    accent / channel colour at runtime. A simple sun-and-cloud glyph keeps it recognisable
-    at small status-bar sizes.
+    accent / channel colour at runtime. A t-shirt silhouette with a sun-shaped cutout in
+    the middle keeps the ClothesCast brand visible at status-bar sizes.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
@@ -11,8 +11,7 @@
     android:viewportHeight="24">
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M12,5 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M8,18 c-2,0 -3.5,-1.5 -3.5,-3.5 c0,-2 1.5,-3.5 3.5,-3.5 c0.3,-2 2,-3.5 4,-3.5 c2,0 3.7,1.5 4,3.5 c1.5,0.3 2.5,1.5 2.5,3.5 c0,2 -1.5,3.5 -3.5,3.5 z" />
+        android:fillType="evenOdd"
+        android:pathData="M9.8,5.8 Q7.6,5.8 5.3,7.1 Q4,8.4 4,11.1 Q4.9,12.4 7.1,12 L6.7,20 Q12,20.7 17.3,20 L16.9,12 Q19.1,12.4 20,11.1 Q20,8.4 18.7,7.1 Q16.4,5.8 14.2,5.8 Q12,7.6 9.8,5.8 Z
+                         M12,13.8 m-2.5,0 a2.5,2.5 0 1,1 5,0 a2.5,2.5 0 1,1 -5,0" />
 </vector>

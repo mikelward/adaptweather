@@ -21,7 +21,7 @@ to remember to grab the artifact from CI.
 [console.firebase.google.com](https://console.firebase.google.com) → **Add
 project**.
 
-- Name: anything sensible — "AdaptWeather". The display name is just for the
+- Name: anything sensible — "ClothesCast". The display name is just for the
   Firebase console; it has no effect on the app.
 - Skip Google Analytics when prompted (we don't use it).
 
@@ -32,7 +32,7 @@ Inside the project, click the Android icon to add an app.
 - **Android package name**: `app.adaptweather.debug` *(this is the debug
   variant's applicationId — not `app.adaptweather`. The `.debug` suffix
   matters; without it, FAD will reject uploads.)*
-- **App nickname**: "AdaptWeather Debug" or similar.
+- **App nickname**: "ClothesCast Debug" or similar.
 - **Debug signing certificate SHA-1**: optional, only needed for Firebase
   Auth / App Check. We don't use either, so skip.
 

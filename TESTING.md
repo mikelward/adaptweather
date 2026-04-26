@@ -1,6 +1,6 @@
 # Testing
 
-This document describes the test stack used in AdaptWeather, what each library
+This document describes the test stack used in ClothesCast, what each library
 contributes, when to reach for it, and what's deliberately not in scope.
 
 ## Constraints
