@@ -16,12 +16,12 @@
         android:strokeWidth="2.5"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="M38,18 L38,12 L58,12 L58,18 L84,30 L88,70 L76,70 L68,42 L68,86 L28,86 L28,42 L20,70 L8,70 L12,30 Z" />
+        android:pathData="M38,18 L38,8 L58,8 L58,18 L84,30 L80,70 L72,70 L68,42 L68,86 L28,86 L28,42 L24,70 L16,70 L12,30 Z" />
     <path
         android:strokeColor="#BF360C"
         android:strokeWidth="1.8"
         android:strokeLineCap="round"
-        android:pathData="M8,70 L20,70 M76,70 L88,70" />
+        android:pathData="M16,70 L24,70 M72,70 L80,70" />
     <path
         android:strokeColor="#BF360C"
         android:strokeWidth="1.5"
