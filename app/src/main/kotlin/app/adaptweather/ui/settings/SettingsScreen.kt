@@ -56,12 +56,14 @@ import app.adaptweather.core.domain.model.DistanceUnit
 import app.adaptweather.core.domain.model.Location
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.TtsEngine
+import app.adaptweather.core.domain.model.VoiceLocale
 import app.adaptweather.core.domain.model.WardrobeRule
 import app.adaptweather.tts.GEMINI_VOICES
 import app.adaptweather.tts.GeminiTtsSpeaker
 import app.adaptweather.tts.OPENAI_VOICES
 import app.adaptweather.tts.OpenAITtsSpeaker
 import app.adaptweather.tts.TtsVoiceOption
+import app.adaptweather.tts.resolve
 import app.adaptweather.work.FetchAndNotifyWorker
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -116,6 +118,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onSetOpenAiVoice = viewModel::setOpenAiVoice,
             onSetOpenAiKey = viewModel::setOpenAiKey,
             onClearOpenAiKey = viewModel::clearOpenAiKey,
+            onSetVoiceLocale = viewModel::setVoiceLocale,
         )
     }
 }
@@ -142,6 +145,7 @@ private fun SettingsContent(
     onSetOpenAiVoice: (String) -> Unit,
     onSetOpenAiKey: (String) -> Unit,
     onClearOpenAiKey: () -> Unit,
+    onSetVoiceLocale: (VoiceLocale) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -183,6 +187,8 @@ private fun SettingsContent(
             onOpenAiVoice = onSetOpenAiVoice,
             geminiKeyConfigured = state.apiKeyConfigured,
             openAiKeyConfigured = state.openAiKeyConfigured,
+            voiceLocale = state.voiceLocale,
+            onSetVoiceLocale = onSetVoiceLocale,
         )
         TemperatureUnitCard(state.temperatureUnit, onSetTemperatureUnit)
         DistanceUnitCard(state.distanceUnit, onSetDistanceUnit)
@@ -889,6 +895,8 @@ private fun TtsEngineCard(
     onOpenAiVoice: (String) -> Unit,
     geminiKeyConfigured: Boolean,
     openAiKeyConfigured: Boolean,
+    voiceLocale: VoiceLocale,
+    onSetVoiceLocale: (VoiceLocale) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -900,7 +908,7 @@ private fun TtsEngineCard(
     fun preview(engine: TtsEngine, gVoice: String, oVoice: String) {
         previewJob?.cancel()
         previewJob = coroutineScope.launch {
-            runTtsPreview(context, engine, gVoice, oVoice)
+            runTtsPreview(context, engine, gVoice, oVoice, voiceLocale)
         }
     }
 
@@ -955,7 +963,16 @@ private fun TtsEngineCard(
                 )
                 TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
             }
-            TtsEngine.DEVICE -> Unit
+            TtsEngine.DEVICE -> {
+                VoiceLocalePicker(
+                    selected = voiceLocale,
+                    onSelect = {
+                        onSetVoiceLocale(it)
+                        preview(selected, geminiVoice, openAiVoice)
+                    },
+                )
+                TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
+            }
         }
     }
 }
@@ -972,6 +989,53 @@ private fun MissingKeyHint(engineName: String) {
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.error,
     )
+}
+
+@Composable
+private fun VoiceLocalePicker(
+    selected: VoiceLocale,
+    onSelect: (VoiceLocale) -> Unit,
+) {
+    var dialogOpen by remember { mutableStateOf(false) }
+    val title = stringResource(R.string.settings_tts_voice_locale_label)
+    OutlinedButton(
+        onClick = { dialogOpen = true },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text("$title: ${stringResource(voiceLocaleLabel(selected))}")
+    }
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen = false },
+            title = { Text(title) },
+            text = {
+                Column {
+                    VoiceLocale.entries.forEach { option ->
+                        RadioRow(
+                            label = stringResource(voiceLocaleLabel(option)),
+                            selected = option == selected,
+                            onSelect = {
+                                onSelect(option)
+                                dialogOpen = false
+                            },
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { dialogOpen = false }) {
+                    Text(stringResource(R.string.settings_tts_voice_dismiss))
+                }
+            },
+        )
+    }
+}
+
+private fun voiceLocaleLabel(locale: VoiceLocale): Int = when (locale) {
+    VoiceLocale.SYSTEM -> R.string.settings_tts_voice_locale_system
+    VoiceLocale.EN_US -> R.string.settings_tts_voice_locale_en_us
+    VoiceLocale.EN_GB -> R.string.settings_tts_voice_locale_en_gb
+    VoiceLocale.EN_AU -> R.string.settings_tts_voice_locale_en_au
 }
 
 @Composable
@@ -1037,6 +1101,7 @@ private suspend fun runTtsPreview(
     engine: TtsEngine,
     geminiVoice: String,
     openAiVoice: String,
+    voiceLocale: VoiceLocale,
 ) {
     val app = context.applicationContext as app.adaptweather.AdaptWeatherApplication
     // Network synthesis and AudioTrack write are both blocking-ish work — Ktor
@@ -1045,14 +1110,15 @@ private suspend fun runTtsPreview(
     withContext(Dispatchers.IO) {
         val text = app.insightCache.latest.first()?.spokenText()
             ?: context.getString(R.string.settings_tts_test_sample)
+        val locale = voiceLocale.resolve()
         try {
             when (engine) {
                 TtsEngine.GEMINI ->
-                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text)
+                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text, locale)
                 TtsEngine.OPENAI ->
-                    OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text)
+                    OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text, locale)
                 TtsEngine.DEVICE ->
-                    app.deviceTtsSpeaker.speak(text)
+                    app.deviceTtsSpeaker.speak(text, locale)
             }
         } catch (_: CancellationException) {
             // Expected when the user picks a different option mid-playback; not an error.
@@ -1070,7 +1136,7 @@ private suspend fun runTtsPreview(
             // and can confirm audio output is working — mirrors FetchAndNotifyWorker.
             if (engine != TtsEngine.DEVICE) {
                 try {
-                    app.deviceTtsSpeaker.speak(text)
+                    app.deviceTtsSpeaker.speak(text, locale)
                 } catch (_: CancellationException) {
                     // user moved on; fine
                 } catch (fallback: Throwable) {
