@@ -4,12 +4,23 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Sun -->
+    <!-- T-shirt body + sleeves, with a U-shaped neckline. -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,40 m-14,0 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0" />
-    <!-- Cloud -->
+        android:fillColor="#1565C0"
+        android:pathData="M28,40 L22,54 L36,58 L36,82 L72,82 L72,58 L86,54 L80,40 L64,40 Q54,52 44,40 Z" />
+    <!-- Sun rays (8-point burst), drawn behind the disc. -->
     <path
-        android:fillColor="#E3ECFF"
-        android:pathData="M40,68 c-6,0 -10,-4 -10,-10 c0,-6 4,-10 10,-10 c1,-7 7,-12 14,-12 c7,0 13,5 14,12 c5,1 8,5 8,10 c0,6 -4,10 -10,10 z" />
+        android:fillColor="#FFD600"
+        android:pathData="M54,56 L52,60 L56,60 Z
+                         M54,80 L52,76 L56,76 Z
+                         M42,68 L46,66 L46,70 Z
+                         M66,68 L62,66 L62,70 Z
+                         M46,60 L49,63 L46,64 Z
+                         M62,60 L59,63 L62,64 Z
+                         M46,76 L49,73 L46,72 Z
+                         M62,76 L59,73 L62,72 Z" />
+    <!-- Sun disc -->
+    <path
+        android:fillColor="#FFD600"
+        android:pathData="M54,68 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
 </vector>

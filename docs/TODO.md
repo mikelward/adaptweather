@@ -1,4 +1,4 @@
-# AdaptWeather — TODO
+# ClothesCast — TODO
 
 Living to-do list. Items are roughly ordered by priority within each section.
 Code TODOs in source files are linked from here when they exist.
@@ -10,7 +10,9 @@ Code TODOs in source files are linked from here when they exist.
       sideload destroys settings — Android treats the new applicationId as a
       different app — so this had to land before any Firebase App Distribution
       rollout.
-- [ ] **Pick a stable product name.** "AdaptWeather" is a working title.
+- [x] **Pick a stable product name.** Settled on "ClothesCast" (user-visible
+      strings + icon updated; package/applicationId still `app.adaptweather` to
+      avoid breaking existing installs).
 
 ## Distribution
 
