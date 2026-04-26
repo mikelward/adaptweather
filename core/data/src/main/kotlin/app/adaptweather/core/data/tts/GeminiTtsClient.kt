@@ -9,9 +9,13 @@ import io.ktor.client.call.body
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.http.path
 import java.util.Base64
 
@@ -42,7 +46,7 @@ class GeminiTtsClient(
             if (it.isBlank()) throw MissingApiKeyException()
         }
 
-        val response: TtsResponse = httpClient.post {
+        val httpResponse: HttpResponse = httpClient.post {
             url {
                 protocol = URLProtocol.HTTPS
                 host = GEMINI_HOST
@@ -63,7 +67,18 @@ class GeminiTtsClient(
                     ),
                 ),
             )
-        }.body()
+        }
+
+        // Without an explicit status check we'd quietly deserialize a 4xx error body
+        // (e.g. {"error": {"code": 403, "message": "..."}}) as a TtsResponse with
+        // default empty `candidates`, hiding the actual reason behind the generic
+        // empty-response exception. Mirror OpenAITtsClient's approach: pull the body
+        // on a non-success status, surface it.
+        if (!httpResponse.status.isSuccess()) {
+            throw GeminiTtsHttpException(httpResponse.status, httpResponse.bodyAsBytes())
+        }
+
+        val response: TtsResponse = httpResponse.body()
 
         response.promptFeedback?.blockReason?.let {
             throw GeminiTtsBlockedException("Gemini TTS prompt blocked: $it")
@@ -112,3 +127,25 @@ class GeminiTtsEmptyResponseException(finishReason: String?) :
     )
 
 class GeminiTtsBlockedException(message: String) : IllegalStateException(message)
+
+/**
+ * HTTP failure surfaced with a short body excerpt so the diagnostic Toast in
+ * Settings shows the actual reason (auth failure / quota / model unavailable /
+ * deprecated preview model). Without this, Ktor would deserialize the error JSON
+ * as a TtsResponse with default empty candidates and we'd report the generic
+ * empty-response error with no diagnostic.
+ */
+class GeminiTtsHttpException(val status: HttpStatusCode, body: ByteArray) :
+    IllegalStateException(buildMessage(status, body)) {
+
+    companion object {
+        private fun buildMessage(status: HttpStatusCode, body: ByteArray): String {
+            val excerpt = runCatching { body.toString(Charsets.UTF_8) }
+                .getOrDefault("(unparseable body)")
+                .take(MAX_EXCERPT_CHARS)
+            return "Gemini TTS HTTP ${status.value}: $excerpt"
+        }
+
+        private const val MAX_EXCERPT_CHARS = 240
+    }
+}
