@@ -15,19 +15,18 @@ import java.util.Locale
  * The prompt sent to Gemini.
  *
  * Phrasing follows a deterministic rule set so the daily notification is always brief
- * and information-dense. The LLM only fires when at least one rule has something to
- * say; if every rule yields nothing, the worker skips the notification entirely.
+ * and information-dense.
  *
  * Rules (each yields 0 or 1 sentence):
  * 1. **Severe-weather alert**: if any active alert is SEVERE or EXTREME, output
  *    "Alert: <event>." for the highest-severity one.
- * 2. **Temperature**: if max OR min feels-like differs from yesterday by ≥ 3°C, output
- *    "It will be N° warmer/cooler today." (using the larger delta).
- * 3. **Wardrobe**: if today's triggered items differ from yesterday's, output
- *    "Wear <items>."
- * 4. **Precipitation**: if today's peak chance is ≥ 30%, output "<Type> at <HH:MM>."
- *
- * Calendar-event filtering and the 7pm out-of-hours briefing are not yet wired up.
+ * 2. **Temperature band**: classify today's feels-like low and high into bands
+ *    (freezing / cold / cool / mild / warm / hot) and output either
+ *    "Today will be <band>." or "Today will be <coldband> to <hotband>.".
+ *    This sentence is always emitted.
+ * 3. **Wardrobe**: if any wardrobe rule triggers today, output "Wear <items>.".
+ *    Always emitted when the list is non-empty — no comparison against yesterday.
+ * 4. **Precipitation**: if today's peak chance is ≥ 30%, output "<Type> at <HH:MM>.".
  */
 data class Prompt(
     val systemInstruction: String,
@@ -37,8 +36,6 @@ data class Prompt(
 class BuildPrompt {
     operator fun invoke(
         today: DailyForecast,
-        yesterday: DailyForecast,
-        yesterdayTriggeredRules: List<WardrobeRule>,
         todayTriggeredRules: List<WardrobeRule>,
         temperatureUnit: TemperatureUnit,
         languageTag: String,
@@ -47,8 +44,6 @@ class BuildPrompt {
         val system = systemInstruction(languageTag)
         val user = buildUserMessage(
             today = today,
-            yesterday = yesterday,
-            yesterdayItems = yesterdayTriggeredRules.map { it.item },
             todayItems = todayTriggeredRules.map { it.item },
             temperatureUnit = temperatureUnit,
             alerts = alerts,
@@ -67,38 +62,31 @@ class BuildPrompt {
            or EXTREME, output exactly "Alert: <event>." using the event name of the
            highest-severity alert (EXTREME outranks SEVERE; ties take the first listed).
            Otherwise omit. If multiple alerts share the top severity, mention only one.
-        2. Temperature change: if today's high differs from yesterday's by at least 3°,
-           OR today's low differs from yesterday's by at least 3°, output exactly
-           "It will be N° warmer today." or "It will be N° cooler today.", using the
-           larger absolute delta rounded to the nearest integer. Otherwise omit.
-        3. Wardrobe change: today's triggered items and yesterday's are listed below.
-           If they differ, output exactly "Wear <items>." with items separated by commas
-           (Oxford comma for three or more). Otherwise omit.
+        2. Temperature band: a band label (e.g. "cool") or a "<low> to <high>" range
+           (e.g. "cold to mild") is provided below as "feels-like band". Output exactly
+           "Today will be <band>." Always emit this sentence.
+        3. Wardrobe: today's triggered wardrobe items are listed below. If the list is
+           non-empty, output exactly "Wear <items>." with items separated by commas
+           (Oxford comma for three or more). Always emit when the list is non-empty —
+           do not compare against any previous day. Otherwise omit.
         4. Precipitation: if today's peak precipitation chance is at least 30%, output
            exactly "<Type> at <HH:MM>." (e.g. "Rain at 15:00."). Otherwise omit.
 
         Concatenate the resulting sentences with a single space between each.
         No labels, no quotes, no preamble, no greetings, no emojis.
-        If every rule produced nothing, output an empty string with no whitespace.
         Output language: $languageTag.
     """.trimIndent()
 
     private fun buildUserMessage(
         today: DailyForecast,
-        yesterday: DailyForecast,
-        yesterdayItems: List<String>,
         todayItems: List<String>,
         temperatureUnit: TemperatureUnit,
         alerts: List<WeatherAlert>,
     ): String = buildString {
-        appendLine("Yesterday (${yesterday.date}):")
-        appendLine("- feels-like high: ${tempStr(yesterday.feelsLikeMaxC, temperatureUnit)}")
-        appendLine("- feels-like low: ${tempStr(yesterday.feelsLikeMinC, temperatureUnit)}")
-        appendLine("- conditions: ${conditionStr(yesterday.condition)}")
-        appendLine()
         appendLine("Today (${today.date}):")
         appendLine("- feels-like high: ${tempStr(today.feelsLikeMaxC, temperatureUnit)}")
         appendLine("- feels-like low: ${tempStr(today.feelsLikeMinC, temperatureUnit)}")
+        appendLine("- feels-like band: ${bandRangeLabel(today)}")
         appendLine("- conditions: ${conditionStr(today.condition)}")
         appendLine("- max precipitation chance: ${today.precipitationProbabilityMaxPct.toInt()}%")
         val peakHour = peakPrecipHour(today)
@@ -107,10 +95,15 @@ class BuildPrompt {
             appendLine("- precipitation peak hour: ${peakHour.time}")
         }
         appendLine()
-        appendLine("Yesterday's wardrobe items: ${yesterdayItems.formatList()}")
         appendLine("Today's wardrobe items: ${todayItems.formatList()}")
         appendLine()
         appendLine("Severe-weather alerts: ${alertsBlock(alerts)}")
+    }
+
+    private fun bandRangeLabel(today: DailyForecast): String {
+        val low = TemperatureBand.forCelsius(today.feelsLikeMinC)
+        val high = TemperatureBand.forCelsius(today.feelsLikeMaxC)
+        return if (low == high) low.label else "${low.label} to ${high.label}"
     }
 
     /**
@@ -152,4 +145,30 @@ class BuildPrompt {
         condition.name.lowercase().replace('_', ' ')
 
     private data class PeakHour(val time: LocalTime, val condition: WeatherCondition)
+}
+
+/**
+ * Bands classify a feels-like temperature (°C) into a glanceable label. Boundaries are
+ * inclusive at the lower edge: 12.0°C is "cool", 11.9°C is "cold". Used to phrase the
+ * temperature-band sentence in the daily insight as a single label or a low-to-high
+ * range.
+ */
+internal enum class TemperatureBand(val label: String) {
+    FREEZING("freezing"),
+    COLD("cold"),
+    COOL("cool"),
+    MILD("mild"),
+    WARM("warm"),
+    HOT("hot");
+
+    companion object {
+        fun forCelsius(c: Double): TemperatureBand = when {
+            c < 4.0 -> FREEZING
+            c < 12.0 -> COLD
+            c < 18.0 -> COOL
+            c < 24.0 -> MILD
+            c < 28.0 -> WARM
+            else -> HOT
+        }
+    }
 }
