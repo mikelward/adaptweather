@@ -48,6 +48,31 @@ jobs:
           set -o pipefail
           ./gradlew :core:domain:test :core:data:test :app:testDebugUnitTest --stacktrace --info 2>&1 | tee /tmp/jvm-tests.log
 
+      - name: Clear prior CI comments for this job
+        # Runs on both pass and fail. A green run on a fix commit removes the
+        # earlier failure comment, so the PR conversation doesn't accumulate
+        # stale stack traces every time someone pushes a typo and then fixes it.
+        # Skipped on cancellation so a manually-cancelled run doesn't wipe the
+        # comment from a still-real failure.
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- ci-jvm-tests -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            for (const c of comments) {
+              if (c.user.type === 'Bot' && c.body && c.body.includes(marker)) {
+                await github.rest.issues.deleteComment({
+                  ...context.repo,
+                  comment_id: c.id,
+                });
+              }
+            }
+
       - name: Post tail of gradle log on failure
         if: failure() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -116,6 +141,28 @@ jobs:
         run: |
           set -o pipefail
           ./gradlew :app:assembleDebug --stacktrace --info 2>&1 | tee /tmp/android-build.log
+
+      - name: Clear prior CI comments for this job
+        # Same rationale as the JVM job — drops stale failure comments on a
+        # clean re-run so the PR doesn't accumulate.
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- ci-android-build -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            for (const c of comments) {
+              if (c.user.type === 'Bot' && c.body && c.body.includes(marker)) {
+                await github.rest.issues.deleteComment({
+                  ...context.repo,
+                  comment_id: c.id,
+                });
+              }
+            }
 
       - name: Post tail of gradle log on failure
         if: failure() && github.event_name == 'pull_request'
