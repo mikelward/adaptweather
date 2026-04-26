@@ -18,6 +18,7 @@ import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.UserPreferences
 import app.adaptweather.core.domain.model.VoiceLocale
 import app.adaptweather.core.domain.model.WardrobeRule
+import app.adaptweather.tts.defaultOpenAiVoiceFor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -130,12 +131,14 @@ class SettingsRepository(
             ?: TtsEngine.DEVICE
         val geminiVoice = this[GEMINI_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
-        val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
-            ?: UserPreferences.DEFAULT_OPENAI_VOICE
         val geminiModel = this[GEMINI_MODEL]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_GEMINI_MODEL
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
+        // OpenAI default depends on locale (en-GB → fable; everything else → nova).
+        // Resolve only after voiceLocale is known so the picked voice matches.
+        val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
+            ?: defaultOpenAiVoiceFor(voiceLocale)
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),

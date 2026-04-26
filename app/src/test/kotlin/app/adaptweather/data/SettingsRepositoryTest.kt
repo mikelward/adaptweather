@@ -11,6 +11,7 @@ import app.adaptweather.core.domain.model.DistanceUnit
 import app.adaptweather.core.domain.model.Schedule
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.UserPreferences
+import app.adaptweather.core.domain.model.VoiceLocale
 import app.adaptweather.core.domain.model.WardrobeRule
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
@@ -165,10 +166,31 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `voice prefs default to Kore and alloy when nothing stored`() = runTest {
-        val prefs = subject.preferences.first()
-        prefs.geminiVoice shouldBe "Kore"
-        prefs.openAiVoice shouldBe "alloy"
+    fun `gemini voice defaults to Kore when nothing stored`() = runTest {
+        subject.preferences.first().geminiVoice shouldBe "Kore"
+    }
+
+    @Test
+    fun `openAiVoice defaults to nova for non-British locale preferences`() = runTest {
+        subject.setVoiceLocale(VoiceLocale.EN_US)
+        subject.preferences.first().openAiVoice shouldBe "nova"
+
+        subject.setVoiceLocale(VoiceLocale.EN_AU)
+        subject.preferences.first().openAiVoice shouldBe "nova"
+    }
+
+    @Test
+    fun `openAiVoice defaults to fable for the en-GB locale preference`() = runTest {
+        subject.setVoiceLocale(VoiceLocale.EN_GB)
+        subject.preferences.first().openAiVoice shouldBe "fable"
+    }
+
+    @Test
+    fun `explicitly chosen openAiVoice overrides the locale-derived default`() = runTest {
+        subject.setVoiceLocale(VoiceLocale.EN_GB)
+        subject.setOpenAiVoice("alloy")
+
+        subject.preferences.first().openAiVoice shouldBe "alloy"
     }
 
     @Test
