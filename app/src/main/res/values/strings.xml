@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AdaptWeather</string>
+    <string name="app_name">ClothesCast</string>
 
     <string name="today_title">Today</string>
     <string name="today_open_settings">Open Settings</string>
@@ -50,7 +50,7 @@
     <string name="settings_location_grant_background">Grant background location (system Settings)</string>
     <string name="settings_location_unset">No location set — defaulting to London</string>
     <string name="settings_location_description">The forecast is fetched for this place. Search by city name; results come from Open-Meteo\'s free geocoding service.</string>
-    <string name="settings_location_description_device_on">When enabled, AdaptWeather reads the device\'s coarse location at notify time (cell-tower / WiFi only — no GPS hardware fix). The location below is used as a fallback if the device read fails. Background location must be granted in system Settings or the morning Worker can\'t read it.</string>
+    <string name="settings_location_description_device_on">When enabled, ClothesCast reads the device\'s coarse location at notify time (cell-tower / WiFi only — no GPS hardware fix). The location below is used as a fallback if the device read fails. Background location must be granted in system Settings or the morning Worker can\'t read it.</string>
     <string name="settings_location_set">Set location</string>
     <string name="settings_location_change">Change location</string>
     <string name="settings_location_clear">Clear location</string>
@@ -86,7 +86,7 @@
          configured. %1$s is the engine name ("Gemini" / "OpenAI"). -->
     <string name="settings_tts_no_key_hint">No %1$s key configured — add one in API keys above to enable this engine.</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
-    <string name="settings_tts_test_sample">Hello — this is the AdaptWeather voice preview.</string>
+    <string name="settings_tts_test_sample">Hello — this is the ClothesCast voice preview.</string>
 
     <string name="settings_openai_key_status_set">An OpenAI key is configured.</string>
     <string name="settings_openai_key_status_unset">No OpenAI key configured. Get one at platform.openai.com to use OpenAI voices.</string>
@@ -103,7 +103,7 @@
     <string name="settings_distance_unit_miles">Miles</string>
 
     <string name="settings_wardrobe_title">Wardrobe rules</string>
-    <string name="settings_wardrobe_description">If a forecast crosses one of these thresholds, AdaptWeather mentions the item in the daily insight.</string>
+    <string name="settings_wardrobe_description">If a forecast crosses one of these thresholds, ClothesCast mentions the item in the daily insight.</string>
     <string name="settings_wardrobe_empty">No rules configured. Tap Add to create one.</string>
     <string name="settings_wardrobe_add">Add rule</string>
     <string name="settings_wardrobe_edit">Edit</string>
@@ -133,7 +133,7 @@
     <string name="notification_weather_alert_title">Weather alert: %1$s</string>
 
     <string name="settings_notification_permission_title">Notifications are blocked</string>
-    <string name="settings_notification_permission_description">Without notification permission, the daily insight has nowhere to go. Grant it so AdaptWeather can post tomorrow morning.</string>
+    <string name="settings_notification_permission_description">Without notification permission, the daily insight has nowhere to go. Grant it so ClothesCast can post tomorrow morning.</string>
     <string name="settings_notification_permission_grant">Grant notification permission</string>
 
     <string name="settings_calendar_title">Calendar</string>
@@ -155,7 +155,7 @@
          interpunct is the same separator the chart legend uses; the build-type name itself
          comes straight from BuildConfig.BUILD_TYPE and isn't translated. -->
     <string name="settings_about_build_type_suffix"> · %1$s build</string>
-    <string name="settings_about_privacy">Your Gemini API key (used for spoken-aloud TTS) is encrypted at rest using a key bound to the Android Keystore. Forecasts come from Open-Meteo (no key, no account); the daily summary text is rendered locally on-device. AdaptWeather does not have a backend — nothing is sent to any server we control.</string>
+    <string name="settings_about_privacy">Your Gemini API key (used for spoken-aloud TTS) is encrypted at rest using a key bound to the Android Keystore. Forecasts come from Open-Meteo (no key, no account); the daily summary text is rendered locally on-device. ClothesCast does not have a backend — nothing is sent to any server we control.</string>
     <string name="settings_about_source">Source code on GitHub</string>
     <string name="settings_about_dontkillmyapp">Background restrictions (dontkillmyapp.com)</string>
 </resources>
