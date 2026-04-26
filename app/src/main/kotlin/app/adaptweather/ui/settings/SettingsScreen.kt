@@ -63,6 +63,7 @@ import app.adaptweather.tts.GeminiTtsSpeaker
 import app.adaptweather.tts.OPENAI_VOICES
 import app.adaptweather.tts.OpenAITtsSpeaker
 import app.adaptweather.tts.TtsVoiceOption
+import app.adaptweather.tts.resolve
 import app.adaptweather.work.FetchAndNotifyWorker
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -1109,7 +1110,7 @@ private suspend fun runTtsPreview(
     withContext(Dispatchers.IO) {
         val text = app.insightCache.latest.first()?.spokenText()
             ?: context.getString(R.string.settings_tts_test_sample)
-        val locale = voiceLocale.toJavaLocale() ?: Locale.getDefault()
+        val locale = voiceLocale.resolve()
         try {
             when (engine) {
                 TtsEngine.GEMINI ->

@@ -20,15 +20,25 @@ enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
 enum class TtsEngine { DEVICE, GEMINI, OPENAI }
 
 /**
- * User-selectable accent for the device TTS voice. Only the on-device
- * [TtsEngine.DEVICE] engine actually exposes accent variants — the Gemini and
- * OpenAI voices speak whatever language the input text is in and don't have a
- * separate accent control today.
+ * User-selectable accent / language preference for spoken playback. Used in
+ * two ways:
  *
- * [SYSTEM] means "follow the phone's locale" — which is the right default for
- * almost everyone, since their device language already encodes their accent
- * preference. The explicit en-* options are for users whose phone locale doesn't
- * match the accent they want to hear (e.g. an en-AU speaker on an en-US phone).
+ *  - For [TtsEngine.DEVICE] it picks the actual voice to speak in (the
+ *    Android TextToSpeech engine has separate en-US / en-GB / en-AU voices).
+ *  - For [TtsEngine.OPENAI] it influences the *default* voice when the user
+ *    hasn't explicitly chosen one — en-GB picks `fable` (the only British
+ *    voice), everything else picks `nova`. Once the user explicitly picks
+ *    a voice in Settings, that choice wins regardless of locale.
+ *
+ * Gemini's prebuilt voices are language-agnostic personalities, so this
+ * preference doesn't change the Gemini voice — but the resolved [java.util.Locale]
+ * is still passed through to all engines for consistency at the call sites.
+ *
+ * [SYSTEM] means "follow the phone's locale" — the right default for almost
+ * everyone, since their device language already encodes their accent
+ * preference. The explicit en-* options are for users whose phone locale
+ * doesn't match the accent they want to hear (e.g. an en-AU speaker on an
+ * en-US phone).
  */
 enum class VoiceLocale(val bcp47: String?) {
     SYSTEM(null),
