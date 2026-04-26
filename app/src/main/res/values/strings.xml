@@ -36,6 +36,13 @@
     <string name="onboarding_notifications_title">Notifications</string>
     <string name="onboarding_notifications_description">Required to deliver the daily insight. Grant once and ClothesCast will post tomorrow morning.</string>
     <string name="onboarding_notifications_grant">Grant notification permission</string>
+    <string name="onboarding_location_title">Location</string>
+    <string name="onboarding_location_description">Used to fetch the right forecast. Granting location lets ClothesCast read your device\'s coarse location each morning; otherwise pick a city manually.</string>
+    <string name="onboarding_location_grant">Grant location permission</string>
+    <string name="onboarding_location_denied_hint">Location permission denied. You can pick a city manually instead.</string>
+    <string name="onboarding_location_enter_manual">Enter location manually</string>
+    <string name="onboarding_location_using_device">Using your device\'s location each morning.</string>
+
     <string name="onboarding_gemini_title">Gemini API key</string>
     <string name="onboarding_gemini_description">Used by ClothesCast for spoken-aloud voices and forecast generation. Get one free at aistudio.google.com. The key is encrypted at rest using the Android Keystore.</string>
     <string name="onboarding_step_done">Done</string>

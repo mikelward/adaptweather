@@ -52,14 +52,22 @@ class MainActivity : ComponentActivity() {
 private fun AdaptWeatherNav(app: AdaptWeatherApplication) {
     val context = LocalContext.current
 
-    // Decide initial screen once on first composition. Notification check is sync;
-    // the Gemini-key read goes through one DataStore Preferences fetch, which is
-    // microseconds in practice — runBlocking here keeps the UX flicker-free
+    // Decide initial screen once on first composition. Permission checks are sync;
+    // DataStore reads (Gemini key + preferences) go through one Preferences fetch
+    // each, microseconds in practice — runBlocking here keeps the UX flicker-free
     // (no flash of Today before snapping to Onboarding) at a negligible startup cost.
     val initialScreen = remember {
         val notificationOk = NotificationPermission.isGranted(context)
         val keyOk = runBlocking { app.secureKeyStore.geminiKeyConfiguredFlow.first() }
-        if (notificationOk && keyOk) Screen.Today else Screen.Onboarding
+        val prefs = runBlocking { app.settingsRepository.preferences.first() }
+        // Location is "configured" if either branch is filled in — device-location
+        // toggle on (with permission) or a manual city stored.
+        val coarseGranted = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val locationOk = (prefs.useDeviceLocation && coarseGranted) || prefs.location != null
+        if (notificationOk && keyOk && locationOk) Screen.Today else Screen.Onboarding
     }
 
     var screen by rememberSaveable { mutableStateOf(initialScreen) }
@@ -113,6 +121,8 @@ private fun AdaptWeatherNav(app: AdaptWeatherApplication) {
             val onboarding: OnboardingViewModel = viewModel(
                 factory = OnboardingViewModel.Factory(
                     secureKeyStore = app.secureKeyStore,
+                    settingsRepository = app.settingsRepository,
+                    geocodingClient = app.geocodingClient,
                 ),
             )
             OnboardingScreen(

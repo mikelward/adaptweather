@@ -191,8 +191,13 @@ private fun hasBackgroundLocationPermission(context: android.content.Context): B
     ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 }
 
+/**
+ * Search-by-city-name dialog used by the data-sources page and the onboarding
+ * screen's location step. Shows a query field, runs [onSearch] on demand, and
+ * lets the user pick exactly one of the geocoder results.
+ */
 @Composable
-private fun LocationSearchDialog(
+internal fun LocationSearchDialog(
     onDismiss: () -> Unit,
     onSelect: (Location) -> Unit,
     onSearch: suspend (String) -> List<Location>,
