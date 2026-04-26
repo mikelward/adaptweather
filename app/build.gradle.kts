@@ -144,13 +144,13 @@ android {
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
-            // PNGs land *under source control* at app/src/test/snapshots/roborazzi/
-            // so GitHub renders image diffs natively in PR "Files changed" view —
-            // no artifact download required to see what changed. CI commits any
+            // PNGs land *under source control* at app/snapshots/ so GitHub
+            // renders image diffs natively in PR "Files changed" view — no
+            // artifact download required to see what changed. CI commits any
             // new/updated PNGs back to the PR branch (see ci.yml).
             it.systemProperty(
                 "roborazzi.output.dir",
-                file("src/test/snapshots/roborazzi").absolutePath,
+                file("snapshots").absolutePath,
             )
             // Always (re-)record snapshots when tests run. The diff gate is "the
             // PNGs in the repo changed and CI committed an update" — reviewers
