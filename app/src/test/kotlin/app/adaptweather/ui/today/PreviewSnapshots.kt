@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestName
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
@@ -44,9 +45,16 @@ class PreviewSnapshots {
     @get:Rule
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
+    // Override Roborazzi's default `<package>.<class>.<method>.png` naming with
+    // just `<method>.png`. The PNGs all live under `app/src/test/snapshots/roborazzi/`
+    // already, so the package + class prefix was pure noise on every filename and
+    // every `git mv` if the test class ever got renamed or moved.
+    @get:Rule
+    val testName = TestName()
+
     private fun capture(content: @Composable () -> Unit) {
         composeRule.setContent { content() }
-        composeRule.onRoot().captureRoboImage()
+        composeRule.onRoot().captureRoboImage(filePath = "${testName.methodName}.png")
     }
 
     @Test fun outfit_tshirt_shorts() = capture { OutfitTShirtShortsPreview() }
