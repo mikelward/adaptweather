@@ -154,14 +154,23 @@ jobs:
         # upgrades on the next install.
         env:
           DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+          DEBUG_KEYSTORE_PASSWORD: ${{ secrets.DEBUG_KEYSTORE_PASSWORD }}
         run: |
           if [ -z "$DEBUG_KEYSTORE_BASE64" ]; then
             echo "No DEBUG_KEYSTORE_BASE64 secret available; build will use AGP-default debug keystore."
             exit 0
           fi
-          echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > /tmp/debug.keystore
-          # Sanity check the decoded file is a real keystore, not random bytes.
-          test -s /tmp/debug.keystore
+          # printf rather than echo: portable across shells and doesn't append
+          # a trailing newline that some base64 implementations choke on.
+          printf '%s' "$DEBUG_KEYSTORE_BASE64" | base64 --decode > /tmp/debug.keystore
+          # Validate the decoded file is actually a usable PKCS12/JKS keystore
+          # with the configured password, rather than just non-empty bytes.
+          # Catches "wrong base64", "wrong password", "uploaded a JPEG by
+          # mistake" — at the early-fail step, not at signing-step time.
+          if ! keytool -list -keystore /tmp/debug.keystore -storepass "$DEBUG_KEYSTORE_PASSWORD" >/dev/null 2>&1; then
+            echo "::error::Decoded keystore at /tmp/debug.keystore is not a valid keystore or password is wrong."
+            exit 1
+          fi
           echo "DEBUG_KEYSTORE_FILE=/tmp/debug.keystore" >> "$GITHUB_ENV"
 
       - name: Assemble debug APK
@@ -237,3 +246,33 @@ jobs:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 14
+
+      - name: Distribute via Firebase App Distribution
+        # On push to main only — feature-branch CI runs would otherwise spam
+        # testers with WIP builds. Skipped when secrets aren't set so the build
+        # still finishes on a fresh repo / fork.
+        if: |
+          success() &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main' &&
+          env.FIREBASE_APP_ID != '' &&
+          env.FIREBASE_SERVICE_ACCOUNT_JSON != ''
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          # Tester group must exist in Firebase App Distribution console — see
+          # docs/firebase-app-distribution.md. "testers" is the convention; rename
+          # there + here together if you change it.
+          groups: testers
+          file: app/build/outputs/apk/debug/app-debug.apk
+          # Push notification on the tester's phone shows the first ~60 chars
+          # of these notes, so put the most useful info first. Commit subject
+          # is normally that.
+          releaseNotes: |
+            ${{ github.event.head_commit.message }}
+            ---
+            Build: ${{ github.run_number }} · ${{ github.sha }}
