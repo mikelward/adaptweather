@@ -354,7 +354,11 @@ private fun ForecastCard(hourly: List<HourlyForecast>, temperatureUnit: Temperat
 }
 
 private fun triggerRefresh(context: android.content.Context) {
-    FetchAndNotifyWorker.enqueueOneShot(context.applicationContext)
+    // force=true so an explicit user tap bypasses the same-day cache and
+    // actually regenerates. Without this, Refresh on the same calendar day
+    // just redelivers the morning's payload — surprising when the user has
+    // changed wardrobe rules, location, or the underlying forecast has moved.
+    FetchAndNotifyWorker.enqueueOneShot(context.applicationContext, force = true)
     Toast.makeText(
         context,
         context.getString(R.string.today_refresh_toast),

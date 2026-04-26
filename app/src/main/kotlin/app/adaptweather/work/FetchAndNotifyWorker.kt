@@ -57,11 +57,27 @@ class FetchAndNotifyWorker(
 
         val location = resolveLocation(prefs)
         val today = LocalDate.now()
+        val forceRefresh = inputData.getBoolean(KEY_FORCE_REFRESH, false)
 
         // 24h cost cap: if we already generated an insight for today, redeliver it
         // rather than refetching. Same path serves the morning alarm and any
         // "Fire insight now" debug taps later in the day.
-        val cached = runCatching { app.insightCache.forToday(today) }.getOrNull()
+        //
+        // The Today screen's Refresh button sets [KEY_FORCE_REFRESH] = true so an
+        // explicit user tap always regenerates — without that flag, tapping Refresh
+        // on the same calendar day just redelivers the same cached payload, which
+        // is surprising for the user.
+        //
+        // TODO: opportunistic auto-refresh — when the user opens the app and the
+        // cached insight is more than ~1h old, regenerate (bypassing the same-day
+        // cache). Avoids a full Refresh tap when the wardrobe / forecast has moved
+        // since the morning generation.
+        val cached = if (forceRefresh) {
+            Log.i(TAG, "Force refresh requested; bypassing today's cache.")
+            null
+        } else {
+            runCatching { app.insightCache.forToday(today) }.getOrNull()
+        }
         if (cached != null) {
             Log.i(TAG, "Using cached insight for ${cached.forDate}.")
             return runCatching { deliver(cached, prefs) }
@@ -197,6 +213,9 @@ class FetchAndNotifyWorker(
         const val REASON_UNEXPECTED_HTTP = "unexpected_http"
         const val REASON_UNHANDLED = "unhandled"
 
+        /** Set true via [enqueueOneShot] when the user explicitly taps Refresh. */
+        private const val KEY_FORCE_REFRESH = "force_refresh"
+
         // Fallback when the user hasn't set a location yet — the pipeline still runs and
         // posts a (London) insight rather than silently failing. The Settings screen
         // surfaces an empty-location card so the user can change it.
@@ -206,7 +225,7 @@ class FetchAndNotifyWorker(
             displayName = "London (default)",
         )
 
-        fun enqueueOneShot(context: Context) {
+        fun enqueueOneShot(context: Context, force: Boolean = false) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -214,12 +233,15 @@ class FetchAndNotifyWorker(
             val request = OneTimeWorkRequestBuilder<FetchAndNotifyWorker>()
                 .setConstraints(constraints)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
+                .setInputData(workDataOf(KEY_FORCE_REFRESH to force))
                 .build()
 
-            // KEEP: if a previous run is still in flight (e.g. retrying), don't start
-            // a duplicate. The next 7am alarm will enqueue afresh.
+            // Alarm-driven enqueues use KEEP so a still-retrying run isn't duplicated.
+            // User-initiated force enqueues use REPLACE — the user just tapped Refresh
+            // expecting a fresh fetch, so cancel any in-flight retry and start over.
+            val policy = if (force) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.KEEP
             WorkManager.getInstance(context)
-                .enqueueUniqueWork(UNIQUE_WORK_NAME, ExistingWorkPolicy.KEEP, request)
+                .enqueueUniqueWork(UNIQUE_WORK_NAME, policy, request)
         }
     }
 }
