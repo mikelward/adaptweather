@@ -17,11 +17,6 @@
     <string name="today_outfit_top_thick_jacket">Thick jacket</string>
     <string name="today_outfit_bottom_shorts">Shorts</string>
     <string name="today_outfit_bottom_long_pants">Long pants</string>
-    <!-- Content description for the outfit cartoon figure on the Today screen.
-         Read aloud by screen readers; never displayed visually. Format args
-         are the localised top label (e.g. "Sweater") and bottom label (e.g.
-         "Long pants"). -->
-    <string name="today_outfit_description">Today\'s outfit: %1$s and %2$s</string>
 
     <string name="today_forecast_title">Hourly forecast</string>
     <string name="today_forecast_legend">Temperature and feels-like (%1$s) by hour</string>

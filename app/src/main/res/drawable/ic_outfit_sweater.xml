@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Glanceable sweater / jumper icon. Same family as ic_outfit_tshirt.xml
+    (flat fill + darker outline), distinguished by long sleeves with cuffs
+    and a turtleneck collar. Warm coral fill so a glance at the home screen
+    immediately reads "warm layer".
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <path
+        android:fillColor="#FF8A65"
+        android:strokeColor="#BF360C"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M38,18 L38,12 L58,12 L58,18 L84,30 L88,70 L76,70 L68,42 L68,86 L28,86 L28,42 L20,70 L8,70 L12,30 Z" />
+    <path
+        android:strokeColor="#BF360C"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:pathData="M8,70 L20,70 M76,70 L88,70" />
+    <path
+        android:strokeColor="#BF360C"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M34,60 L62,60" />
+</vector>
