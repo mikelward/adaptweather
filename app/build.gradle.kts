@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.roborazzi)
 }
 
 /**
@@ -143,6 +144,20 @@ android {
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
+            // PNGs land *under source control* at app/snapshots/ so GitHub
+            // renders image diffs natively in PR "Files changed" view — no
+            // artifact download required to see what changed. CI commits any
+            // new/updated PNGs back to the PR branch (see ci.yml).
+            it.systemProperty(
+                "roborazzi.output.dir",
+                file("snapshots").absolutePath,
+            )
+            // Always (re-)record snapshots when tests run. The diff gate is "the
+            // PNGs in the repo changed and CI committed an update" — reviewers
+            // see the pixel diff directly in the PR. When the catalogue is
+            // mature, switch to verifyRoborazzi* on stable surfaces for a
+            // hard-fail regression gate.
+            it.systemProperty("roborazzi.test.record", "true")
         }
         // Required because kotlinx-coroutines-android is on the unit-test classpath
         // (transitively via androidx.lifecycle). Without this, AndroidDispatcherFactory
@@ -151,6 +166,9 @@ android {
         // getMainLooper() returns null, AndroidDispatcherFactory fails cleanly, and
         // Dispatchers.setMain installs a TestMainDispatcher as expected.
         unitTests.isReturnDefaultValues = true
+        // Roborazzi/Robolectric need real Android resources (drawables, strings,
+        // themes) on the unit-test classpath to render Compose previews to PNG.
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -197,6 +215,19 @@ dependencies {
     // SettingsViewModelTest stubs the geocoding client with a Ktor MockEngine so the
     // tests don't need network. Same library that :core:data already uses.
     testImplementation(libs.ktor.client.mock)
+
+    // Snapshot rendering of @Preview composables to PNG. Robolectric provides the
+    // Android runtime; Roborazzi captures the rendered Surface; the JUnit 4 +
+    // ui-test-junit4 stack is what AndroidJUnit4 needs. Vintage engine bridges
+    // the JUnit 4 tests onto the existing JUnit 5 platform so they run alongside
+    // the rest of the unit tests in the same `:app:testDebugUnitTest` task.
+    testImplementation(libs.junit4)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
 configurations.matching { it.name.startsWith("test") || it.name.startsWith("debugUnitTest") }.all {

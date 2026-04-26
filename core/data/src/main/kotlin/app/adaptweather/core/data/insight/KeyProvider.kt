@@ -12,4 +12,5 @@ interface KeyProvider {
 }
 
 /** Thrown when no API key has been configured by the user. */
-class MissingApiKeyException : IllegalStateException("Gemini API key has not been configured")
+class MissingApiKeyException(provider: String = "Gemini") :
+    IllegalStateException("$provider API key has not been configured")

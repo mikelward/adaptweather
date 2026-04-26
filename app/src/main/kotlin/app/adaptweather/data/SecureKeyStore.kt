@@ -36,22 +36,22 @@ import java.util.Base64
  * device-to-device transfer that doesn't preserve hardware-backed keys, etc.) by asking
  * the user to re-enter their key, rather than looping on a corrupt ciphertext.
  *
- * `SecureKeyStore` itself implements [KeyProvider] for backwards compatibility — `get()`
- * returns the Gemini key, since that's the historical contract used by `DirectGeminiClient`
- * and `GeminiTtsClient`. The OpenAI key is exposed through [openAiKeyProvider].
+ * `SecureKeyStore` itself implements [KeyProvider] — `get()` returns the Gemini key,
+ * matching the contract `GeminiTtsClient` consumes. The OpenAI key is exposed through
+ * [openAiKeyProvider].
  */
 class SecureKeyStore(
     private val aead: Aead,
     private val dataStore: DataStore<Preferences>,
 ) : KeyProvider {
 
-    override suspend fun get(): String = read(GEMINI_PREF_KEY, GEMINI_AAD)
+    override suspend fun get(): String = read(GEMINI_PREF_KEY, GEMINI_AAD, "Gemini")
 
     suspend fun set(key: String) = write(GEMINI_PREF_KEY, GEMINI_AAD, key)
 
     suspend fun clear() = remove(GEMINI_PREF_KEY)
 
-    suspend fun getOpenAi(): String = read(OPENAI_PREF_KEY, OPENAI_AAD)
+    suspend fun getOpenAi(): String = read(OPENAI_PREF_KEY, OPENAI_AAD, "OpenAI")
 
     suspend fun setOpenAi(key: String) = write(OPENAI_PREF_KEY, OPENAI_AAD, key)
 
@@ -66,9 +66,9 @@ class SecureKeyStore(
         override suspend fun get(): String = getOpenAi()
     }
 
-    private suspend fun read(prefKey: Preferences.Key<String>, aad: ByteArray): String {
+    private suspend fun read(prefKey: Preferences.Key<String>, aad: ByteArray, provider: String): String {
         val ciphertextB64 = dataStore.data.map { it[prefKey] }.first()
-            ?: throw MissingApiKeyException()
+            ?: throw MissingApiKeyException(provider)
         return try {
             val ciphertext = Base64.getDecoder().decode(ciphertextB64)
             aead.decrypt(ciphertext, aad).toString(Charsets.UTF_8)
@@ -76,7 +76,7 @@ class SecureKeyStore(
             // Corrupt ciphertext or unrecoverable Keystore state — drop the bad value so
             // the next attempt prompts the user to re-enter their key cleanly.
             remove(prefKey)
-            throw MissingApiKeyException()
+            throw MissingApiKeyException(provider)
         }
     }
 

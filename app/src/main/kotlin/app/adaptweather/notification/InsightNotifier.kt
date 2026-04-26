@@ -34,6 +34,12 @@ class InsightNotifier(private val context: Context) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
+        // TODO(notification-figure): when [insight.outfit] is non-null, render the
+        // outfit icons (the same ic_outfit_* drawables the Today screen shows in
+        // OutfitPreviewCard) into a Bitmap sized for Notification.LARGE_ICON_SIZE
+        // and attach via .setLargeIcon(bitmap), so the notification carries the
+        // same glanceable "what to wear today" cue without the user having to
+        // open the app.
         val notification = NotificationCompat.Builder(context, CHANNEL_DAILY_INSIGHT)
             .setSmallIcon(R.drawable.ic_notification_insight)
             .setContentTitle(context.getString(R.string.notification_daily_insight_title))

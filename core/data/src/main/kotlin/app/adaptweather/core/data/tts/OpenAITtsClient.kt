@@ -12,6 +12,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 const val DEFAULT_OPENAI_TTS_MODEL: String = "tts-1"
 const val DEFAULT_OPENAI_TTS_VOICE: String = "alloy"
@@ -37,7 +40,7 @@ class OpenAITtsClient(
         voice: String = DEFAULT_OPENAI_TTS_VOICE,
     ): PcmAudio {
         val key = keyProvider.get().also {
-            if (it.isBlank()) throw MissingApiKeyException()
+            if (it.isBlank()) throw MissingApiKeyException("OpenAI")
         }
 
         val response: HttpResponse = httpClient.post(SPEECH_URL) {
@@ -78,18 +81,26 @@ class OpenAITtsEmptyResponseException :
 /**
  * HTTP failure surfaced with a short body excerpt so the diagnostic Toast in
  * Settings shows the actual reason (auth failure / quota / model unavailable).
+ * Pulls just `error.message` out of OpenAI's standard error envelope when
+ * present; falls back to a truncated raw excerpt otherwise.
  */
 class OpenAITtsHttpException(val status: HttpStatusCode, body: ByteArray) :
     IllegalStateException(buildMessage(status, body)) {
 
     companion object {
         private fun buildMessage(status: HttpStatusCode, body: ByteArray): String {
-            val excerpt = runCatching { body.toString(Charsets.UTF_8) }
-                .getOrDefault("(unparseable body)")
-                .take(MAX_EXCERPT_CHARS)
+            val raw = runCatching { body.toString(Charsets.UTF_8) }.getOrNull().orEmpty()
+            val excerpt = extractErrorMessage(raw)
+                ?: raw.take(MAX_EXCERPT_CHARS).ifBlank { "(empty body)" }
             return "OpenAI TTS HTTP ${status.value}: $excerpt"
         }
 
-        private const val MAX_EXCERPT_CHARS = 240
+        private fun extractErrorMessage(body: String): String? = runCatching {
+            val root = Json.parseToJsonElement(body) as? JsonObject
+            val error = root?.get("error") as? JsonObject
+            (error?.get("message") as? JsonPrimitive)?.content?.take(MAX_EXCERPT_CHARS)
+        }.getOrNull()
+
+        private const val MAX_EXCERPT_CHARS = 160
     }
 }

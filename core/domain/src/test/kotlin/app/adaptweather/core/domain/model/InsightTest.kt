@@ -8,49 +8,25 @@ import java.time.LocalDate
 class InsightTest {
 
     private val base = Insight(
-        summary = "It will be 4° warmer today.",
-        recommendedItems = emptyList(),
+        summary = "Today will be cool to mild. Wear a jumper and jacket.",
+        recommendedItems = listOf("jumper", "jacket"),
         generatedAt = Instant.parse("2026-04-25T07:00:00Z"),
         forDate = LocalDate.of(2026, 4, 25),
     )
 
     @Test
-    fun `spokenText returns just the summary when no items`() {
-        base.spokenText() shouldBe "It will be 4° warmer today."
+    fun `spokenText returns the summary verbatim`() {
+        // The summary already includes the wardrobe sentence, so spokenText must not
+        // append a second "Recommended: ..." block — that produced the two-level
+        // hierarchy we deliberately removed.
+        base.spokenText() shouldBe base.summary
     }
 
     @Test
-    fun `spokenText appends a single item with proper separator`() {
-        base.copy(recommendedItems = listOf("jumper")).spokenText() shouldBe
-            "It will be 4° warmer today. Recommended: jumper."
-    }
-
-    @Test
-    fun `spokenText joins two items with and`() {
-        base.copy(recommendedItems = listOf("jumper", "umbrella")).spokenText() shouldBe
-            "It will be 4° warmer today. Recommended: jumper and umbrella."
-    }
-
-    @Test
-    fun `spokenText oxford-joins three or more items`() {
-        base.copy(recommendedItems = listOf("jumper", "scarf", "umbrella")).spokenText() shouldBe
-            "It will be 4° warmer today. Recommended: jumper, scarf, and umbrella."
-    }
-
-    @Test
-    fun `spokenText uses single space when summary already ends in punctuation`() {
-        // Summary already ending in a period should not get ". ." appended.
+    fun `spokenText still returns the summary when no items were recommended`() {
         base.copy(
-            summary = "Bring a brolly!",
-            recommendedItems = listOf("umbrella"),
-        ).spokenText() shouldBe "Bring a brolly! Recommended: umbrella."
-    }
-
-    @Test
-    fun `spokenText adds period+space when summary lacks terminal punctuation`() {
-        base.copy(
-            summary = "Cooler today",
-            recommendedItems = listOf("jumper"),
-        ).spokenText() shouldBe "Cooler today. Recommended: jumper."
+            summary = "Today will be mild.",
+            recommendedItems = emptyList(),
+        ).spokenText() shouldBe "Today will be mild."
     }
 }

@@ -25,7 +25,6 @@ data class SettingsState(
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
     val openAiVoice: String = UserPreferences.DEFAULT_OPENAI_VOICE,
-    val geminiModel: String = UserPreferences.DEFAULT_GEMINI_MODEL,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,

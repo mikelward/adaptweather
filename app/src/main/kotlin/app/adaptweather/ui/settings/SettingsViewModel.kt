@@ -49,7 +49,6 @@ class SettingsViewModel(
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
                         openAiVoice = prefs.openAiVoice,
-                        geminiModel = prefs.geminiModel,
                         voiceLocale = prefs.voiceLocale,
                     )
                 }
@@ -92,10 +91,6 @@ class SettingsViewModel(
 
     fun setOpenAiVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setOpenAiVoice(voice) }
-    }
-
-    fun setGeminiModel(model: String) {
-        viewModelScope.launch { settingsRepository.setGeminiModel(model) }
     }
 
     fun setDeliveryMode(mode: DeliveryMode) {

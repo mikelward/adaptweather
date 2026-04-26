@@ -21,20 +21,18 @@ data class Insight(
      * it. UI should treat null as "unknown" rather than "high".
      */
     val confidence: ConfidenceInfo? = null,
+    /**
+     * The big-picture top + bottom shown as icons on the home screen. Null on
+     * insights from older app versions deserialised from cache; the next worker
+     * run repopulates it.
+     */
+    val outfit: OutfitSuggestion? = null,
 ) {
     /**
-     * The text that gets spoken aloud. The LLM is told to weave the items into its
-     * sentence but it's not guaranteed; appending them explicitly ensures the listener
-     * always hears what their wardrobe rules suggest, even if the summary skips them.
+     * The text that gets spoken aloud. The summary already includes the wardrobe
+     * sentence, so this is just the summary itself. Kept as a method so callers
+     * (notification + TTS) have a single phrasing entry point if it ever needs to
+     * diverge from the rendered summary again.
      */
-    fun spokenText(): String {
-        if (recommendedItems.isEmpty()) return summary
-        val joined = when (recommendedItems.size) {
-            1 -> recommendedItems[0]
-            2 -> "${recommendedItems[0]} and ${recommendedItems[1]}"
-            else -> recommendedItems.dropLast(1).joinToString(", ") + ", and " + recommendedItems.last()
-        }
-        val separator = if (summary.endsWith(".") || summary.endsWith("!") || summary.endsWith("?")) " " else ". "
-        return "$summary${separator}Recommended: $joined."
-    }
+    fun spokenText(): String = summary
 }

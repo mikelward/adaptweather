@@ -1,7 +1,5 @@
 package app.adaptweather.core.data.tts
 
-import app.adaptweather.core.data.insight.GEMINI_API_VERSION
-import app.adaptweather.core.data.insight.GEMINI_HOST
 import app.adaptweather.core.data.insight.KeyProvider
 import app.adaptweather.core.data.insight.MissingApiKeyException
 import io.ktor.client.HttpClient
@@ -9,18 +7,28 @@ import io.ktor.client.call.body
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.http.path
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import java.util.Base64
 
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
 const val DEFAULT_GEMINI_TTS_VOICE: String = "Kore"
 
+internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
+internal const val GEMINI_API_VERSION = "v1beta"
+
 /**
- * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Same host,
- * same auth header, same BYOK key as [app.adaptweather.core.data.insight.DirectGeminiClient].
+ * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Uses the
+ * standard Generative Language host with a BYOK `x-goog-api-key` header.
  *
  * The model returns a single 16-bit signed PCM audio stream at a sample rate carried
  * in the `mimeType` (`audio/L16;codec=pcm;rate=24000`). [PcmAudio.sampleRate] parses
@@ -42,7 +50,7 @@ class GeminiTtsClient(
             if (it.isBlank()) throw MissingApiKeyException()
         }
 
-        val response: TtsResponse = httpClient.post {
+        val httpResponse: HttpResponse = httpClient.post {
             url {
                 protocol = URLProtocol.HTTPS
                 host = GEMINI_HOST
@@ -63,12 +71,27 @@ class GeminiTtsClient(
                     ),
                 ),
             )
-        }.body()
+        }
 
-        val inline = response.candidates.firstOrNull()
-            ?.content?.parts?.firstOrNull { it.inlineData != null }
+        // Without an explicit status check we'd quietly deserialize a 4xx error body
+        // (e.g. {"error": {"code": 403, "message": "..."}}) as a TtsResponse with
+        // default empty `candidates`, hiding the actual reason behind the generic
+        // empty-response exception. Mirror OpenAITtsClient's approach: pull the body
+        // on a non-success status, surface it.
+        if (!httpResponse.status.isSuccess()) {
+            throw GeminiTtsHttpException(httpResponse.status, httpResponse.bodyAsBytes())
+        }
+
+        val response: TtsResponse = httpResponse.body()
+
+        response.promptFeedback?.blockReason?.let {
+            throw GeminiTtsBlockedException("Gemini TTS prompt blocked: $it")
+        }
+
+        val candidate = response.candidates.firstOrNull()
+        val inline = candidate?.content?.parts?.firstOrNull { it.inlineData != null }
             ?.inlineData
-            ?: throw GeminiTtsEmptyResponseException()
+            ?: throw GeminiTtsEmptyResponseException(candidate?.finishReason)
 
         val pcm = Base64.getDecoder().decode(inline.data)
         val sampleRate = parseSampleRate(inline.mimeType) ?: DEFAULT_SAMPLE_RATE_HZ
@@ -98,5 +121,41 @@ data class PcmAudio(val bytes: ByteArray, val sampleRate: Int) {
     override fun hashCode(): Int = 31 * bytes.contentHashCode() + sampleRate
 }
 
-class GeminiTtsEmptyResponseException :
-    IllegalStateException("Gemini TTS returned no inline-audio part")
+class GeminiTtsEmptyResponseException(finishReason: String?) :
+    IllegalStateException(
+        if (finishReason.isNullOrBlank()) {
+            "Gemini TTS returned no inline-audio part"
+        } else {
+            "Gemini TTS returned no inline-audio part (finishReason=$finishReason)"
+        },
+    )
+
+class GeminiTtsBlockedException(message: String) : IllegalStateException(message)
+
+/**
+ * HTTP failure surfaced with a short body excerpt so the diagnostic Toast in
+ * Settings shows the actual reason (auth failure / quota / model unavailable /
+ * deprecated preview model). Pulls just `error.message` out of Gemini's standard
+ * error envelope; falls back to a truncated raw excerpt when the body isn't
+ * shaped that way.
+ */
+class GeminiTtsHttpException(val status: HttpStatusCode, body: ByteArray) :
+    IllegalStateException(buildMessage(status, body)) {
+
+    companion object {
+        private fun buildMessage(status: HttpStatusCode, body: ByteArray): String {
+            val raw = runCatching { body.toString(Charsets.UTF_8) }.getOrNull().orEmpty()
+            val excerpt = extractErrorMessage(raw)
+                ?: raw.take(MAX_EXCERPT_CHARS).ifBlank { "(empty body)" }
+            return "Gemini TTS HTTP ${status.value}: $excerpt"
+        }
+
+        private fun extractErrorMessage(body: String): String? = runCatching {
+            val root = Json.parseToJsonElement(body) as? JsonObject
+            val error = root?.get("error") as? JsonObject
+            (error?.get("message") as? JsonPrimitive)?.content?.take(MAX_EXCERPT_CHARS)
+        }.getOrNull()
+
+        private const val MAX_EXCERPT_CHARS = 160
+    }
+}

@@ -7,10 +7,16 @@
     <string name="today_refresh">Refresh</string>
     <string name="today_refresh_toast">Refreshing — the insight will appear shortly.</string>
     <string name="today_empty_title">No insight yet</string>
-    <string name="today_empty_subtitle">The morning insight will appear here once it has been generated. Set up your Gemini key and location in Settings, then tap Fetch now.</string>
+    <string name="today_empty_subtitle">The morning insight will appear here once it has been generated. Set your location in Settings, then tap Fetch now.</string>
     <string name="today_fetch_now">Fetch now</string>
-    <string name="today_recommended_items">Recommended items: %1$s</string>
     <string name="today_generated_at">Generated at %1$s</string>
+
+    <string name="today_outfit_title">What to wear</string>
+    <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_sweater">Sweater</string>
+    <string name="today_outfit_top_thick_jacket">Thick jacket</string>
+    <string name="today_outfit_bottom_shorts">Shorts</string>
+    <string name="today_outfit_bottom_long_pants">Long pants</string>
 
     <string name="today_forecast_title">Hourly forecast</string>
     <string name="today_forecast_legend">Temperature and feels-like (%1$s) by hour</string>
@@ -20,26 +26,24 @@
     <string name="today_confidence_low">Low confidence — forecasts disagree</string>
     <string name="today_confidence_spread">Spread: %1$.1f°C, %2$.0fpp precip across %3$d models</string>
 
-    <string name="today_working">Working — fetching forecast and generating today\'s insight…</string>
+    <string name="today_working">Working — fetching today\'s forecast…</string>
     <string name="today_failed_title">Last attempt failed</string>
-    <string name="today_failed_missing_api_key">No Gemini API key configured. Set one in Settings.</string>
-    <string name="today_failed_gemini_auth">Gemini rejected the API key. Check it on aistudio.google.com and re-enter.</string>
-    <string name="today_failed_gemini_blocked">Gemini refused the prompt for safety reasons.</string>
-    <string name="today_failed_unexpected_http">Unexpected HTTP error from Gemini.</string>
+    <string name="today_failed_unexpected_http">Unexpected HTTP error from the forecast service.</string>
     <string name="today_failed_unhandled">An unexpected error occurred.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
 
-    <string name="settings_api_key_title">Gemini API key</string>
-    <string name="settings_api_key_status_set">A key is configured. The key is encrypted at rest using the Android Keystore.</string>
-    <string name="settings_api_key_status_unset">No key configured. The daily insight needs a Gemini API key from aistudio.google.com.</string>
-    <string name="settings_api_key_placeholder">Paste your API key</string>
-    <string name="settings_api_key_save">Save key</string>
-    <string name="settings_api_key_clear">Clear stored key</string>
+    <string name="settings_api_keys_title">API keys</string>
+    <string name="settings_api_keys_description">Configure the API keys for the online voice engines you want to use. Keys are encrypted at rest using the Android Keystore.</string>
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
 
-    <string name="settings_gemini_model_title">Gemini model</string>
-    <string name="settings_gemini_model_description">Choose the model used to write the daily insight. Flash Lite is much cheaper than Flash while using the same API key. Pro is the highest quality but slowest and costliest — overkill for the morning summary, useful when you want polished prose.</string>
+    <string name="settings_api_key_status_set">A Gemini key is configured.</string>
+    <string name="settings_api_key_status_unset">No Gemini key configured. Get one at aistudio.google.com to use Gemini voices.</string>
+    <string name="settings_api_key_placeholder">Paste your Gemini API key</string>
+    <string name="settings_api_key_save">Save Gemini key</string>
+    <string name="settings_api_key_clear">Clear stored Gemini key</string>
 
     <string name="settings_location_title">Location</string>
     <string name="settings_location_use_device">Use device location</string>
@@ -78,10 +82,13 @@
     <string name="settings_tts_voice_locale_en_gb">English (United Kingdom)</string>
     <string name="settings_tts_voice_locale_en_au">English (Australia)</string>
     <string name="settings_tts_test">Test voice</string>
+    <!-- Shown next to the engine picker when the chosen engine's API key isn't
+         configured. %1$s is the engine name ("Gemini" / "OpenAI"). -->
+    <string name="settings_tts_no_key_hint">No %1$s key configured — add one in API keys above to enable this engine.</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
     <string name="settings_tts_test_sample">Hello — this is the AdaptWeather voice preview.</string>
 
-    <string name="settings_openai_key_status_set">An OpenAI key is configured. The key is encrypted at rest using the Android Keystore.</string>
+    <string name="settings_openai_key_status_set">An OpenAI key is configured.</string>
     <string name="settings_openai_key_status_unset">No OpenAI key configured. Get one at platform.openai.com to use OpenAI voices.</string>
     <string name="settings_openai_key_placeholder">Paste your OpenAI API key</string>
     <string name="settings_openai_key_save">Save OpenAI key</string>
@@ -141,7 +148,7 @@
          interpunct is the same separator the chart legend uses; the build-type name itself
          comes straight from BuildConfig.BUILD_TYPE and isn't translated. -->
     <string name="settings_about_build_type_suffix"> · %1$s build</string>
-    <string name="settings_about_privacy">Your Gemini API key is encrypted at rest using a key bound to the Android Keystore. Forecasts come from Open-Meteo (no key, no account); the daily summary text is generated by Gemini. AdaptWeather does not have a backend — nothing is sent to any server we control.</string>
+    <string name="settings_about_privacy">Your Gemini API key (used for spoken-aloud TTS) is encrypted at rest using a key bound to the Android Keystore. Forecasts come from Open-Meteo (no key, no account); the daily summary text is rendered locally on-device. AdaptWeather does not have a backend — nothing is sent to any server we control.</string>
     <string name="settings_about_source">Source code on GitHub</string>
     <string name="settings_about_dontkillmyapp">Background restrictions (dontkillmyapp.com)</string>
 </resources>

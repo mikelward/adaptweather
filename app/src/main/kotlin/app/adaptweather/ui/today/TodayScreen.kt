@@ -28,7 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,11 +43,10 @@ import app.adaptweather.core.domain.model.ConfidenceInfo
 import app.adaptweather.core.domain.model.ForecastConfidence
 import app.adaptweather.core.domain.model.HourlyForecast
 import app.adaptweather.core.domain.model.Insight
+import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.symbol
 import app.adaptweather.work.FetchAndNotifyWorker
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -97,6 +101,7 @@ private fun TodayContent(
         if (state.insight == null) {
             EmptyState(onRefresh = onRefresh)
         } else {
+            state.insight.outfit?.let { OutfitPreviewCard(it) }
             InsightCard(state.insight)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
@@ -106,7 +111,7 @@ private fun TodayContent(
 }
 
 @Composable
-private fun WorkStatusBanner(status: WorkStatus) {
+internal fun WorkStatusBanner(status: WorkStatus) {
     when (status) {
         is WorkStatus.Idle -> Unit
         is WorkStatus.Running -> {
@@ -153,12 +158,6 @@ private fun WorkStatusBanner(status: WorkStatus) {
 @Composable
 private fun describeFailure(failed: WorkStatus.Failed): String {
     val message = when (failed.reason) {
-        FetchAndNotifyWorker.REASON_MISSING_API_KEY ->
-            stringResource(R.string.today_failed_missing_api_key)
-        FetchAndNotifyWorker.REASON_GEMINI_AUTH ->
-            stringResource(R.string.today_failed_gemini_auth)
-        FetchAndNotifyWorker.REASON_GEMINI_BLOCKED ->
-            stringResource(R.string.today_failed_gemini_blocked)
         FetchAndNotifyWorker.REASON_UNEXPECTED_HTTP ->
             stringResource(R.string.today_failed_unexpected_http)
         FetchAndNotifyWorker.REASON_UNHANDLED, null ->
@@ -169,7 +168,7 @@ private fun describeFailure(failed: WorkStatus.Failed): String {
 }
 
 @Composable
-private fun EmptyState(onRefresh: () -> Unit) {
+internal fun EmptyState(onRefresh: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -197,8 +196,70 @@ private fun EmptyState(onRefresh: () -> Unit) {
     }
 }
 
+/**
+ * Glanceable "What to wear" card. Shows the top + bottom as flat-colour GNOME-style
+ * icons stacked vertically — shirt above pants — so the pair reads as a head-to-toe
+ * outfit instead of two unrelated items. Icons are fixed-colour SVGs (not Material-themed)
+ * so each garment stays recognisable in light or dark mode.
+ */
 @Composable
-private fun InsightCard(insight: Insight) {
+internal fun OutfitPreviewCard(outfit: OutfitSuggestion) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.today_outfit_title),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Image(
+                painter = painterResource(id = topIconRes(outfit.top)),
+                contentDescription = stringResource(topLabelRes(outfit.top)),
+                modifier = Modifier.height(112.dp),
+            )
+            Image(
+                painter = painterResource(id = bottomIconRes(outfit.bottom)),
+                contentDescription = stringResource(bottomLabelRes(outfit.bottom)),
+                modifier = Modifier.height(112.dp),
+            )
+            Text(
+                text = stringResource(topLabelRes(outfit.top)) +
+                    " · " +
+                    stringResource(bottomLabelRes(outfit.bottom)),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+private fun topIconRes(top: OutfitSuggestion.Top): Int = when (top) {
+    OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt
+    OutfitSuggestion.Top.SWEATER -> R.drawable.ic_outfit_sweater
+    OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_outfit_thick_jacket
+}
+
+private fun topLabelRes(top: OutfitSuggestion.Top): Int = when (top) {
+    OutfitSuggestion.Top.TSHIRT -> R.string.today_outfit_top_tshirt
+    OutfitSuggestion.Top.SWEATER -> R.string.today_outfit_top_sweater
+    OutfitSuggestion.Top.THICK_JACKET -> R.string.today_outfit_top_thick_jacket
+}
+
+private fun bottomIconRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
+    OutfitSuggestion.Bottom.SHORTS -> R.drawable.ic_outfit_shorts
+    OutfitSuggestion.Bottom.LONG_PANTS -> R.drawable.ic_outfit_long_pants
+}
+
+private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
+    OutfitSuggestion.Bottom.SHORTS -> R.string.today_outfit_bottom_shorts
+    OutfitSuggestion.Bottom.LONG_PANTS -> R.string.today_outfit_bottom_long_pants
+}
+
+@Composable
+internal fun InsightCard(insight: Insight) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -214,16 +275,6 @@ private fun InsightCard(insight: Insight) {
                 text = insight.summary,
                 style = MaterialTheme.typography.headlineSmall,
             )
-            if (insight.recommendedItems.isNotEmpty()) {
-                Text(
-                    text = stringResource(
-                        R.string.today_recommended_items,
-                        insight.recommendedItems.joinToString(", "),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
             Text(
                 text = stringResource(
                     R.string.today_generated_at,
@@ -243,7 +294,7 @@ private fun InsightCard(insight: Insight) {
  * across the consulted models so the user can judge for themselves.
  */
 @Composable
-private fun ConfidenceChip(info: ConfidenceInfo) {
+internal fun ConfidenceChip(info: ConfidenceInfo) {
     val (bgColor, fgColor) = when (info.level) {
         ForecastConfidence.HIGH -> MaterialTheme.colorScheme.secondaryContainer to
             MaterialTheme.colorScheme.onSecondaryContainer

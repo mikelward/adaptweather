@@ -103,10 +103,6 @@ class SettingsRepository(
         dataStore.edit { it[OPENAI_VOICE] = voice }
     }
 
-    suspend fun setGeminiModel(model: String) {
-        dataStore.edit { it[GEMINI_MODEL] = model }
-    }
-
     suspend fun setVoiceLocale(locale: VoiceLocale) {
         dataStore.edit { it[VOICE_LOCALE] = locale.name }
     }
@@ -131,8 +127,6 @@ class SettingsRepository(
             ?: TtsEngine.DEVICE
         val geminiVoice = this[GEMINI_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
-        val geminiModel = this[GEMINI_MODEL]?.takeIf { it.isNotBlank() }
-            ?: UserPreferences.DEFAULT_GEMINI_MODEL
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
         // OpenAI default depends on locale (en-GB → fable; everything else → nova).
@@ -151,7 +145,6 @@ class SettingsRepository(
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
-            geminiModel = geminiModel,
             voiceLocale = voiceLocale,
         )
     }
@@ -189,7 +182,6 @@ class SettingsRepository(
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
-        private val GEMINI_MODEL = stringPreferencesKey("gemini_model")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")

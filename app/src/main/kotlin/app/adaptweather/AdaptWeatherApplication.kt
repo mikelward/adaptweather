@@ -3,12 +3,10 @@ package app.adaptweather
 import android.app.Application
 import android.util.Log
 import app.adaptweather.alarm.DailyAlarmScheduler
-import app.adaptweather.core.data.insight.DirectGeminiClient
 import app.adaptweather.core.data.location.OpenMeteoGeocodingClient
 import app.adaptweather.core.data.tts.GeminiTtsClient
 import app.adaptweather.core.data.tts.OpenAITtsClient
 import app.adaptweather.core.data.weather.OpenMeteoClient
-import app.adaptweather.core.domain.repository.InsightGenerator
 import app.adaptweather.core.domain.repository.WeatherRepository
 import app.adaptweather.core.domain.usecase.GenerateDailyInsight
 import app.adaptweather.data.InsightCache
@@ -66,19 +64,7 @@ class AdaptWeatherApplication : Application() {
     val weatherRepository: WeatherRepository by lazy { OpenMeteoClient(httpClient) }
     val geocodingClient: OpenMeteoGeocodingClient by lazy { OpenMeteoGeocodingClient(httpClient) }
 
-    /**
-     * Build a [GenerateDailyInsight] use case bound to the user-chosen Gemini
-     * model. The model id is part of the URL path on each call so we pass it in
-     * here rather than caching a singleton — same shape as how TTS speakers are
-     * constructed per-call from the user-chosen voice.
-     *
-     * The httpClient + secure key store are shared across calls; only the thin
-     * [DirectGeminiClient] wrapper is reconstructed.
-     */
-    fun createGenerateDailyInsight(model: String): GenerateDailyInsight {
-        val generator: InsightGenerator = DirectGeminiClient(httpClient, secureKeyStore, model = model)
-        return GenerateDailyInsight(weatherRepository, generator)
-    }
+    val generateDailyInsight: GenerateDailyInsight by lazy { GenerateDailyInsight(weatherRepository) }
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
