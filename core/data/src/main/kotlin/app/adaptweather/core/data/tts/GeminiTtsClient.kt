@@ -65,10 +65,14 @@ class GeminiTtsClient(
             )
         }.body()
 
-        val inline = response.candidates.firstOrNull()
-            ?.content?.parts?.firstOrNull { it.inlineData != null }
+        response.promptFeedback?.blockReason?.let {
+            throw GeminiTtsBlockedException("Gemini TTS prompt blocked: $it")
+        }
+
+        val candidate = response.candidates.firstOrNull()
+        val inline = candidate?.content?.parts?.firstOrNull { it.inlineData != null }
             ?.inlineData
-            ?: throw GeminiTtsEmptyResponseException()
+            ?: throw GeminiTtsEmptyResponseException(candidate?.finishReason)
 
         val pcm = Base64.getDecoder().decode(inline.data)
         val sampleRate = parseSampleRate(inline.mimeType) ?: DEFAULT_SAMPLE_RATE_HZ
@@ -98,5 +102,13 @@ data class PcmAudio(val bytes: ByteArray, val sampleRate: Int) {
     override fun hashCode(): Int = 31 * bytes.contentHashCode() + sampleRate
 }
 
-class GeminiTtsEmptyResponseException :
-    IllegalStateException("Gemini TTS returned no inline-audio part")
+class GeminiTtsEmptyResponseException(finishReason: String?) :
+    IllegalStateException(
+        if (finishReason.isNullOrBlank()) {
+            "Gemini TTS returned no inline-audio part"
+        } else {
+            "Gemini TTS returned no inline-audio part (finishReason=$finishReason)"
+        },
+    )
+
+class GeminiTtsBlockedException(message: String) : IllegalStateException(message)
