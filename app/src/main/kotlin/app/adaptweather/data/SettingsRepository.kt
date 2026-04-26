@@ -103,6 +103,10 @@ class SettingsRepository(
         dataStore.edit { it[OPENAI_VOICE] = voice }
     }
 
+    suspend fun setElevenLabsVoice(voice: String) {
+        dataStore.edit { it[ELEVENLABS_VOICE] = voice }
+    }
+
     suspend fun setVoiceLocale(locale: VoiceLocale) {
         dataStore.edit { it[VOICE_LOCALE] = locale.name }
     }
@@ -137,6 +141,8 @@ class SettingsRepository(
         // Resolve only after voiceLocale is known so the picked voice matches.
         val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
             ?: defaultOpenAiVoiceFor(voiceLocale)
+        val elevenLabsVoice = this[ELEVENLABS_VOICE]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_ELEVENLABS_VOICE
         val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
 
         return UserPreferences(
@@ -150,6 +156,7 @@ class SettingsRepository(
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
+            elevenLabsVoice = elevenLabsVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
         )
@@ -188,6 +195,7 @@ class SettingsRepository(
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
+        private val ELEVENLABS_VOICE = stringPreferencesKey("elevenlabs_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")
 

@@ -57,6 +57,12 @@ class SecureKeyStore(
 
     suspend fun clearOpenAi() = remove(OPENAI_PREF_KEY)
 
+    suspend fun getElevenLabs(): String = read(ELEVENLABS_PREF_KEY, ELEVENLABS_AAD, "ElevenLabs")
+
+    suspend fun setElevenLabs(key: String) = write(ELEVENLABS_PREF_KEY, ELEVENLABS_AAD, key)
+
+    suspend fun clearElevenLabs() = remove(ELEVENLABS_PREF_KEY)
+
     /**
      * KeyProvider view onto the OpenAI key. Used to wire `OpenAITtsClient` while
      * keeping the underlying SecureKeyStore as the single source of truth for
@@ -64,6 +70,11 @@ class SecureKeyStore(
      */
     val openAiKeyProvider: KeyProvider = object : KeyProvider {
         override suspend fun get(): String = getOpenAi()
+    }
+
+    /** KeyProvider view onto the ElevenLabs key. */
+    val elevenLabsKeyProvider: KeyProvider = object : KeyProvider {
+        override suspend fun get(): String = getElevenLabs()
     }
 
     private suspend fun read(prefKey: Preferences.Key<String>, aad: ByteArray, provider: String): String {
@@ -96,6 +107,9 @@ class SecureKeyStore(
 
         private val OPENAI_PREF_KEY = stringPreferencesKey("openai_api_key_v1")
         private val OPENAI_AAD = "adaptweather:openai_api_key:v1".toByteArray(Charsets.UTF_8)
+
+        private val ELEVENLABS_PREF_KEY = stringPreferencesKey("elevenlabs_api_key_v1")
+        private val ELEVENLABS_AAD = "adaptweather:elevenlabs_api_key:v1".toByteArray(Charsets.UTF_8)
 
         private const val MASTER_KEY_URI = "android-keystore://adaptweather_master_key"
         private const val KEYSET_PREFS = "adaptweather_master_prefs"

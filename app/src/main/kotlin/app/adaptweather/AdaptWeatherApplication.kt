@@ -5,6 +5,7 @@ import android.util.Log
 import app.adaptweather.alarm.DailyAlarmScheduler
 import app.adaptweather.calendar.CalendarContractEventReader
 import app.adaptweather.core.data.location.OpenMeteoGeocodingClient
+import app.adaptweather.core.data.tts.ElevenLabsTtsClient
 import app.adaptweather.core.data.tts.GeminiTtsClient
 import app.adaptweather.core.data.tts.OpenAITtsClient
 import app.adaptweather.core.data.weather.OpenMeteoClient
@@ -54,6 +55,9 @@ class AdaptWeatherApplication : Application() {
     val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }
     val openAiTtsClient: OpenAITtsClient by lazy {
         OpenAITtsClient(httpClient, secureKeyStore.openAiKeyProvider)
+    }
+    val elevenLabsTtsClient: ElevenLabsTtsClient by lazy {
+        ElevenLabsTtsClient(httpClient, secureKeyStore.elevenLabsKeyProvider)
     }
 
     private val httpClient: HttpClient by lazy {
