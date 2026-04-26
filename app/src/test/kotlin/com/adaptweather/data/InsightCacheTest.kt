@@ -5,7 +5,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.adaptweather.core.domain.model.HourlyForecast
 import com.adaptweather.core.domain.model.Insight
+import com.adaptweather.core.domain.model.WeatherCondition
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +25,7 @@ import java.io.File
 import java.nio.file.Path
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class InsightCacheTest {
@@ -97,5 +100,54 @@ class InsightCacheTest {
         }
 
         subject.latest.first() shouldBe null
+    }
+
+    @Test
+    fun `hourly entries round-trip through the cache`() = runTest {
+        val hourly = listOf(
+            HourlyForecast(
+                time = LocalTime.of(7, 0),
+                temperatureC = 9.5,
+                feelsLikeC = 7.2,
+                precipitationProbabilityPct = 10.0,
+                condition = WeatherCondition.PARTLY_CLOUDY,
+            ),
+            HourlyForecast(
+                time = LocalTime.of(13, 0),
+                temperatureC = 14.0,
+                feelsLikeC = 13.0,
+                precipitationProbabilityPct = 60.0,
+                condition = WeatherCondition.RAIN,
+            ),
+        )
+        val withHourly = sample.copy(hourly = hourly)
+
+        subject.store(withHourly)
+
+        subject.latest.first() shouldBe withHourly
+    }
+
+    @Test
+    fun `legacy v1 payloads without hourly decode to an empty hourly list`() = runTest {
+        // Simulates a payload written before the hourly field existed: same key,
+        // no `hourly` member. The cache must treat the missing field as empty
+        // rather than crashing — otherwise existing users would see a blank
+        // Today screen until the next worker run.
+        val legacyJson = """
+            {
+              "summary": "Cooler than yesterday — bring a jumper.",
+              "recommendedItems": ["jumper", "umbrella"],
+              "generatedAtEpochMillis": ${now.toEpochMilli()},
+              "forDateEpochDays": ${today.toEpochDay()}
+            }
+        """.trimIndent()
+        dataStore.edit {
+            it[stringPreferencesKey("latest_insight_v1")] = legacyJson
+        }
+
+        val read = subject.latest.first()
+
+        read shouldBe sample
+        read?.hourly shouldBe emptyList()
     }
 }

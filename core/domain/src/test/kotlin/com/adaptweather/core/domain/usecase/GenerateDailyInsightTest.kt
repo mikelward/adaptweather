@@ -4,6 +4,7 @@ import com.adaptweather.core.domain.model.AlertSeverity
 import com.adaptweather.core.domain.model.DailyForecast
 import com.adaptweather.core.domain.model.DeliveryMode
 import com.adaptweather.core.domain.model.DistanceUnit
+import com.adaptweather.core.domain.model.HourlyForecast
 import com.adaptweather.core.domain.model.Location
 import com.adaptweather.core.domain.model.Schedule
 import com.adaptweather.core.domain.model.TemperatureUnit
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneOffset
 
 class GenerateDailyInsightTest {
@@ -154,6 +156,38 @@ class GenerateDailyInsightTest {
 
         result.alerts.shouldContainExactly(severe)
         checkNotNull(gen.lastPrompt).userMessage.shouldContain("Severe Thunderstorm Warning")
+    }
+
+    @Test
+    fun `today's hourly forecast is forwarded into the produced insight`() = runTest {
+        // The Today screen's chart reads hourly data off the cached Insight, so the
+        // use case is the only place that can populate it. Without this assertion,
+        // a regression that quietly drops bundle.today.hourly would only surface as
+        // a missing chart at runtime.
+        val hourly = listOf(
+            HourlyForecast(
+                time = LocalTime.of(8, 0),
+                temperatureC = 10.0,
+                feelsLikeC = 8.0,
+                precipitationProbabilityPct = 5.0,
+                condition = WeatherCondition.CLEAR,
+            ),
+            HourlyForecast(
+                time = LocalTime.of(15, 0),
+                temperatureC = 24.0,
+                feelsLikeC = 24.0,
+                precipitationProbabilityPct = 70.0,
+                condition = WeatherCondition.RAIN,
+            ),
+        )
+        val todayWithHourly = today.copy(hourly = hourly)
+        val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
+        val gen = FakeInsightGenerator("ok")
+        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+
+        val result = subject(london, prefs, languageTag = "en-AU")
+
+        result.insight.hourly.shouldContainExactly(hourly)
     }
 
     @Test
