@@ -155,10 +155,25 @@ jobs:
         env:
           DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
           DEBUG_KEYSTORE_PASSWORD: ${{ secrets.DEBUG_KEYSTORE_PASSWORD }}
+          DEBUG_KEY_ALIAS: ${{ secrets.DEBUG_KEY_ALIAS }}
+          DEBUG_KEY_PASSWORD: ${{ secrets.DEBUG_KEY_PASSWORD }}
         run: |
           if [ -z "$DEBUG_KEYSTORE_BASE64" ]; then
             echo "No DEBUG_KEYSTORE_BASE64 secret available; build will use AGP-default debug keystore."
             exit 0
+          fi
+          # If one stable-keystore secret is set, all four must be set. Otherwise
+          # gradle later errors with "Partial debug-keystore configuration", but
+          # the decode step itself would also throw a confusing keytool message
+          # in the meantime. Catch it here with an explicit list of what's
+          # missing so the failure is unambiguous.
+          missing=""
+          [ -z "$DEBUG_KEYSTORE_PASSWORD" ] && missing="$missing DEBUG_KEYSTORE_PASSWORD"
+          [ -z "$DEBUG_KEY_ALIAS" ]         && missing="$missing DEBUG_KEY_ALIAS"
+          [ -z "$DEBUG_KEY_PASSWORD" ]      && missing="$missing DEBUG_KEY_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::DEBUG_KEYSTORE_BASE64 is set but the following companion secrets are missing or empty:$missing"
+            exit 1
           fi
           # printf rather than echo: portable across shells and doesn't append
           # a trailing newline that some base64 implementations choke on.
@@ -168,7 +183,7 @@ jobs:
           # Catches "wrong base64", "wrong password", "uploaded a JPEG by
           # mistake" — at the early-fail step, not at signing-step time.
           if ! keytool -list -keystore /tmp/debug.keystore -storepass "$DEBUG_KEYSTORE_PASSWORD" >/dev/null 2>&1; then
-            echo "::error::Decoded keystore at /tmp/debug.keystore is not a valid keystore or password is wrong."
+            echo "::error::Decoded keystore at /tmp/debug.keystore is not a valid keystore or DEBUG_KEYSTORE_PASSWORD is wrong."
             exit 1
           fi
           echo "DEBUG_KEYSTORE_FILE=/tmp/debug.keystore" >> "$GITHUB_ENV"
@@ -260,7 +275,11 @@ jobs:
         env:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        # Pinned to a specific commit SHA (rather than the floating @v1 tag) so
+        # a compromised upstream release can't silently swap in malicious code
+        # on our next CI run. Bump deliberately. SHA below is wzieba/Firebase-
+        # Distribution-Github-Action v1.7.1.
+        uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6 # v1.7.1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
