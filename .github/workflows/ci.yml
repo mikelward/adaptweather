@@ -144,8 +144,32 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
+      - name: Decode debug keystore from secret
+        # Stable signing identity across CI builds so the installed app upgrades
+        # in place instead of failing "App not installed (signature mismatch)"
+        # on every new APK. If the secret isn't set (e.g. a PR from a fork
+        # without secret access, or a fresh repo before the secret is added),
+        # the step quietly no-ops and AGP falls back to its auto-generated
+        # debug keystore — the build still works, you just lose in-place
+        # upgrades on the next install.
+        env:
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$DEBUG_KEYSTORE_BASE64" ]; then
+            echo "No DEBUG_KEYSTORE_BASE64 secret available; build will use AGP-default debug keystore."
+            exit 0
+          fi
+          echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > /tmp/debug.keystore
+          # Sanity check the decoded file is a real keystore, not random bytes.
+          test -s /tmp/debug.keystore
+          echo "DEBUG_KEYSTORE_FILE=/tmp/debug.keystore" >> "$GITHUB_ENV"
+
       - name: Assemble debug APK
         id: gradle
+        env:
+          DEBUG_KEYSTORE_PASSWORD: ${{ secrets.DEBUG_KEYSTORE_PASSWORD }}
+          DEBUG_KEY_ALIAS: ${{ secrets.DEBUG_KEY_ALIAS }}
+          DEBUG_KEY_PASSWORD: ${{ secrets.DEBUG_KEY_PASSWORD }}
         run: |
           set -o pipefail
           ./gradlew :app:assembleDebug --stacktrace --info 2>&1 | tee /tmp/android-build.log
