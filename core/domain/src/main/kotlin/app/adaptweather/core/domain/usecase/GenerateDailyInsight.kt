@@ -2,6 +2,7 @@ package app.adaptweather.core.domain.usecase
 
 import app.adaptweather.core.domain.model.Insight
 import app.adaptweather.core.domain.model.Location
+import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.core.domain.model.UserPreferences
 import app.adaptweather.core.domain.model.WeatherAlert
 import app.adaptweather.core.domain.repository.InsightGenerator
@@ -52,6 +53,7 @@ class GenerateDailyInsight(
             forDate = bundle.today.date,
             hourly = bundle.today.hourly,
             confidence = bundle.confidence,
+            outfit = OutfitSuggestion.fromForecast(bundle.today),
         )
         return DailyInsightResult(insight = insight, alerts = activeAlerts)
     }

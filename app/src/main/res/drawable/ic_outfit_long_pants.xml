@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Glanceable long-pants icon. Two full-length legs with a waistband at the
+    top. Indigo fill keeps it distinct from the shorts' tan so the bottom-half
+    of the outfit row reads at a glance.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <path
+        android:fillColor="#5C6BC0"
+        android:strokeColor="#1A237E"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M16,12 L80,12 L78,86 L58,86 L52,30 Q48,36 44,30 L38,86 L18,86 Z" />
+    <path
+        android:strokeColor="#1A237E"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M16,22 L80,22" />
+</vector>

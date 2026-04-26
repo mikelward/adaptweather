@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,10 +39,13 @@ import app.adaptweather.core.domain.model.ConfidenceInfo
 import app.adaptweather.core.domain.model.ForecastConfidence
 import app.adaptweather.core.domain.model.HourlyForecast
 import app.adaptweather.core.domain.model.Insight
+import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.symbol
 import app.adaptweather.work.FetchAndNotifyWorker
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -97,6 +101,7 @@ private fun TodayContent(
         if (state.insight == null) {
             EmptyState(onRefresh = onRefresh)
         } else {
+            state.insight.outfit?.let { OutfitPreviewCard(it) }
             InsightCard(state.insight)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
@@ -195,6 +200,84 @@ internal fun EmptyState(onRefresh: () -> Unit) {
             }
         }
     }
+}
+
+/**
+ * Big, glanceable two-icon preview of today's outfit (one top + one bottom). Sits
+ * above the wordy [InsightCard] so the user can answer "what do I wear?" without
+ * reading. Icons are fixed-colour SVGs in the GNOME / flat-design spirit; we
+ * don't tint them with the Material scheme so each garment stays recognisable
+ * at a glance.
+ */
+@Composable
+private fun OutfitPreviewCard(outfit: OutfitSuggestion) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.today_outfit_title),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Top,
+            ) {
+                OutfitGarment(
+                    iconRes = topIconRes(outfit.top),
+                    labelRes = topLabelRes(outfit.top),
+                )
+                OutfitGarment(
+                    iconRes = bottomIconRes(outfit.bottom),
+                    labelRes = bottomLabelRes(outfit.bottom),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun OutfitGarment(iconRes: Int, labelRes: Int) {
+    val label = stringResource(labelRes)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = label,
+            modifier = Modifier.height(112.dp),
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+private fun topIconRes(top: OutfitSuggestion.Top): Int = when (top) {
+    OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt
+    OutfitSuggestion.Top.SWEATER -> R.drawable.ic_outfit_sweater
+    OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_outfit_thick_jacket
+}
+
+private fun topLabelRes(top: OutfitSuggestion.Top): Int = when (top) {
+    OutfitSuggestion.Top.TSHIRT -> R.string.today_outfit_top_tshirt
+    OutfitSuggestion.Top.SWEATER -> R.string.today_outfit_top_sweater
+    OutfitSuggestion.Top.THICK_JACKET -> R.string.today_outfit_top_thick_jacket
+}
+
+private fun bottomIconRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
+    OutfitSuggestion.Bottom.SHORTS -> R.drawable.ic_outfit_shorts
+    OutfitSuggestion.Bottom.LONG_PANTS -> R.drawable.ic_outfit_long_pants
+}
+
+private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
+    OutfitSuggestion.Bottom.SHORTS -> R.string.today_outfit_bottom_shorts
+    OutfitSuggestion.Bottom.LONG_PANTS -> R.string.today_outfit_bottom_long_pants
 }
 
 @Composable
