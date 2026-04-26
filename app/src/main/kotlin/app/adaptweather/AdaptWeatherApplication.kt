@@ -16,6 +16,7 @@ import app.adaptweather.data.SecureKeyStore
 import app.adaptweather.data.SettingsRepository
 import app.adaptweather.location.LocationResolver
 import app.adaptweather.notification.InsightNotifier
+import app.adaptweather.notification.MissingApiKeyNotifier
 import app.adaptweather.notification.NotificationChannelRegistrar
 import app.adaptweather.notification.WeatherAlertNotifier
 import app.adaptweather.tts.AndroidTtsSpeaker
@@ -48,6 +49,7 @@ class AdaptWeatherApplication : Application() {
     val locationResolver: LocationResolver by lazy { LocationResolver(this) }
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
     val weatherAlertNotifier: WeatherAlertNotifier by lazy { WeatherAlertNotifier(this) }
+    val missingApiKeyNotifier: MissingApiKeyNotifier by lazy { MissingApiKeyNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
     val deviceTtsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
     val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }

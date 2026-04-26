@@ -116,6 +116,9 @@
     <string name="notification_channel_daily_insight_description">The morning weather summary you opted in to.</string>
     <string name="notification_daily_insight_title">Today\'s weather</string>
 
+    <string name="notification_missing_api_key_title">AdaptWeather needs an API key</string>
+    <string name="notification_missing_api_key_text">Set up your Gemini API key in Settings to receive daily weather insights.</string>
+
     <string name="notification_channel_weather_alerts_name">Severe weather alerts</string>
     <string name="notification_channel_weather_alerts_description">High-priority alerts for severe or extreme weather events affecting your area. Delivered as soon as the daily fetch detects them.</string>
     <string name="notification_weather_alert_title">Weather alert: %1$s</string>

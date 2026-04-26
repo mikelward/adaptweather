@@ -106,6 +106,10 @@ class FetchAndNotifyWorker(
             Result.success()
         } catch (e: MissingApiKeyException) {
             Log.w(TAG, "No Gemini API key configured; user must set one in Settings.")
+            // Surface this to the user — without it the morning is silent and they have
+            // no idea why no insight arrived.
+            runCatching { app.missingApiKeyNotifier.post() }
+                .onFailure { Log.w(TAG, "Failed to post missing-API-key notification.", it) }
             Result.failure(reason(REASON_MISSING_API_KEY))
         } catch (e: GeminiBlockedException) {
             Log.w(TAG, "Gemini refused the prompt: ${e.message}")
