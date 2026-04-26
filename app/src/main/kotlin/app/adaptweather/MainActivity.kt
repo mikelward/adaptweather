@@ -14,15 +14,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.WorkManager
+import app.adaptweather.notification.NotificationPermission
+import app.adaptweather.ui.onboarding.OnboardingScreen
+import app.adaptweather.ui.onboarding.OnboardingViewModel
+import app.adaptweather.ui.settings.SettingsRoute
 import app.adaptweather.ui.settings.SettingsScreen
 import app.adaptweather.ui.settings.SettingsViewModel
 import app.adaptweather.ui.theme.AdaptWeatherTheme
 import app.adaptweather.ui.today.TodayScreen
 import app.adaptweather.ui.today.TodayViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
-private enum class Screen { Today, Settings }
+private enum class Screen { Today, Settings, Onboarding }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,12 +50,27 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun AdaptWeatherNav(app: AdaptWeatherApplication) {
-    // Two-screen state machine. Compose Navigation would be overkill for this; the
-    // back stack is at most one entry deep.
-    var screen by rememberSaveable { mutableStateOf(Screen.Today) }
+    val context = LocalContext.current
+
+    // Decide initial screen once on first composition. Notification check is sync;
+    // the Gemini-key read goes through one DataStore Preferences fetch, which is
+    // microseconds in practice — runBlocking here keeps the UX flicker-free
+    // (no flash of Today before snapping to Onboarding) at a negligible startup cost.
+    val initialScreen = remember {
+        val notificationOk = NotificationPermission.isGranted(context)
+        val keyOk = runBlocking { app.secureKeyStore.geminiKeyConfiguredFlow.first() }
+        if (notificationOk && keyOk) Screen.Today else Screen.Onboarding
+    }
+
+    var screen by rememberSaveable { mutableStateOf(initialScreen) }
+    // Holds the SettingsRoute we want to land on when entering Settings programmatically
+    // (e.g. from onboarding's "Continue"). Saved as a name string so rememberSaveable
+    // doesn't need a custom Saver. Consumed once and reset to null on the way out.
+    var settingsInitialRoute by rememberSaveable { mutableStateOf<String?>(null) }
 
     BackHandler(enabled = screen == Screen.Settings) {
         screen = Screen.Today
+        settingsInitialRoute = null
     }
 
     when (screen) {
@@ -62,7 +84,10 @@ private fun AdaptWeatherNav(app: AdaptWeatherApplication) {
             )
             TodayScreen(
                 viewModel = today,
-                onNavigateToSettings = { screen = Screen.Settings },
+                onNavigateToSettings = {
+                    settingsInitialRoute = null
+                    screen = Screen.Settings
+                },
             )
         }
         Screen.Settings -> {
@@ -76,7 +101,30 @@ private fun AdaptWeatherNav(app: AdaptWeatherApplication) {
             )
             SettingsScreen(
                 viewModel = settings,
-                onNavigateBack = { screen = Screen.Today },
+                onNavigateBack = {
+                    screen = Screen.Today
+                    settingsInitialRoute = null
+                },
+                initialRoute = settingsInitialRoute
+                    ?.let { runCatching { SettingsRoute.valueOf(it) }.getOrNull() },
+            )
+        }
+        Screen.Onboarding -> {
+            val onboarding: OnboardingViewModel = viewModel(
+                factory = OnboardingViewModel.Factory(
+                    secureKeyStore = app.secureKeyStore,
+                ),
+            )
+            OnboardingScreen(
+                viewModel = onboarding,
+                onContinue = {
+                    settingsInitialRoute = SettingsRoute.Schedule.name
+                    screen = Screen.Settings
+                },
+                onSkip = {
+                    settingsInitialRoute = null
+                    screen = Screen.Today
+                },
             )
         }
     }
