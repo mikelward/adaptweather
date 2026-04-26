@@ -27,6 +27,18 @@ internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"
 
 /**
+ * Natural-language style instruction prepended to every TTS request. Gemini
+ * documents the input text as a style-steerable prompt — preambles like this
+ * are interpreted as direction and not spoken back. We use it to suppress the
+ * lo-fi "vinyl crackle" character the model otherwise bakes into the output
+ * across the full clip (OpenAI TTS, going through the same player at the same
+ * 24 kHz, has none of it — so this is server-side, not playback-side).
+ */
+internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
+    "Read the following in a clean, crisp studio voice with no audio effects, " +
+        "background noise, or vinyl-style texture:\n\n"
+
+/**
  * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Uses the
  * standard Generative Language host with a BYOK `x-goog-api-key` header.
  *
@@ -65,7 +77,9 @@ class GeminiTtsClient(
             contentType(ContentType.Application.Json)
             setBody(
                 TtsRequest(
-                    contents = listOf(TtsContent(parts = listOf(TtsTextPart(text)))),
+                    contents = listOf(
+                        TtsContent(parts = listOf(TtsTextPart(GEMINI_TTS_STYLE_DIRECTIVE + text))),
+                    ),
                     generationConfig = TtsGenerationConfig(
                         responseModalities = listOf("AUDIO"),
                         speechConfig = SpeechConfig(
