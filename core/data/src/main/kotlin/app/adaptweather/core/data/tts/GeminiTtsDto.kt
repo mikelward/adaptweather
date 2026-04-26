@@ -1,5 +1,7 @@
 package app.adaptweather.core.data.tts
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,7 +25,15 @@ internal data class TtsContent(val parts: List<TtsTextPart>)
 internal data class TtsTextPart(val text: String)
 
 @Serializable
+@OptIn(ExperimentalSerializationApi::class)
 internal data class TtsGenerationConfig(
+    // `@EncodeDefault(ALWAYS)` forces the field onto the wire even when its
+    // runtime value equals the declared default. Without it, kotlinx's default
+    // `encodeDefaults = false` silently drops the field and Gemini falls back
+    // to its server-side default of `responseModalities = ["TEXT"]`, which a
+    // TTS model can't satisfy — error: "The requested combination of response
+    // modalities (TEXT) is not supported by the model."
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val responseModalities: List<String> = listOf("AUDIO"),
     val speechConfig: SpeechConfig,
 )
