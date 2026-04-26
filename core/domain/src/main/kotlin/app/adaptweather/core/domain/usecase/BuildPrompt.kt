@@ -63,10 +63,12 @@ class BuildPrompt {
         All temperatures provided to you are pre-computed "feels like" (apparent) values.
 
         Apply these five rules in order. Each rule yields zero or one sentence.
+        The literal token "(none)" in any list below means the list is empty —
+        treat it as no items, never as a literal value to print.
 
-        1. Severe alert: if a severe-weather alert is listed below with severity SEVERE
-           or EXTREME, output exactly "Alert: <event>." using the event name of the
-           highest-severity alert (EXTREME outranks SEVERE; ties take the first listed).
+        1. Severe alert: if a severe-weather alert is listed below with severity Severe
+           or Extreme, output exactly "Alert: <event>." using the event name of the
+           highest-severity alert (Extreme outranks Severe; ties take the first listed).
            Otherwise omit. If multiple alerts share the top severity, mention only one.
         2. Temperature band: a band label (e.g. "cool") or a "<low> to <high>" range
            (e.g. "cold to mild") is provided below as "feels-like band". Output exactly
@@ -78,7 +80,7 @@ class BuildPrompt {
         4. Wardrobe: today's triggered wardrobe items are listed below. If the list is
            non-empty, output exactly "Wear <items>." with items separated by commas
            (Oxford comma for three or more). Always emit when the list is non-empty —
-           do not compare against any previous day. Otherwise omit.
+           do not compare against any previous day. If the list is "(none)", omit.
         5. Precipitation: if today's peak precipitation chance is at least 30%, output
            exactly "<Type> at <HH:MM>." (e.g. "Rain at 15:00."). Otherwise omit.
 
