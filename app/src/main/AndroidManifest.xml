@@ -55,7 +55,7 @@
             android:name=".alarm.AlarmReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.adaptweather.alarm.FIRE" />
+                <action android:name="app.adaptweather.alarm.FIRE" />
             </intent-filter>
         </receiver>
 

@@ -1,0 +1,191 @@
+package app.adaptweather.data
+
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import app.adaptweather.core.domain.model.DeliveryMode
+import app.adaptweather.core.domain.model.DistanceUnit
+import app.adaptweather.core.domain.model.Location
+import app.adaptweather.core.domain.model.Schedule
+import app.adaptweather.core.domain.model.TemperatureUnit
+import app.adaptweather.core.domain.model.TtsEngine
+import app.adaptweather.core.domain.model.UserPreferences
+import app.adaptweather.core.domain.model.WardrobeRule
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.time.DayOfWeek
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+/**
+ * Persists [UserPreferences] in DataStore Preferences.
+ *
+ * `Schedule.zoneId` is intentionally NOT persisted — it's resolved from
+ * [zoneIdProvider] (defaulting to the current system zone) every time the flow
+ * emits. This way, if the user travels or DST flips, the next read picks up the
+ * correct zone without us having to migrate stored data.
+ *
+ * Constructor takes the [DataStore] for unit-test injection;
+ * [SettingsRepository.create] is the production factory.
+ */
+class SettingsRepository(
+    private val dataStore: DataStore<Preferences>,
+    private val zoneIdProvider: () -> ZoneId = { ZoneId.systemDefault() },
+    private val json: Json = Json { ignoreUnknownKeys = true },
+) {
+    val preferences: Flow<UserPreferences> = dataStore.data.map { prefs -> prefs.toUserPreferences() }
+
+    suspend fun setSchedule(time: LocalTime, days: Set<DayOfWeek>) {
+        require(days.isNotEmpty()) { "Schedule must include at least one day" }
+        dataStore.edit { prefs ->
+            prefs[SCHEDULE_TIME] = TIME_FORMAT.format(time)
+            prefs[SCHEDULE_DAYS] = days.map { it.name }.toSet()
+        }
+    }
+
+    suspend fun setDeliveryMode(mode: DeliveryMode) {
+        dataStore.edit { it[DELIVERY_MODE] = mode.name }
+    }
+
+    suspend fun setTemperatureUnit(unit: TemperatureUnit) {
+        dataStore.edit { it[TEMPERATURE_UNIT] = unit.name }
+    }
+
+    suspend fun setDistanceUnit(unit: DistanceUnit) {
+        dataStore.edit { it[DISTANCE_UNIT] = unit.name }
+    }
+
+    suspend fun setWardrobeRules(rules: List<WardrobeRule>) {
+        dataStore.edit { it[WARDROBE_RULES] = json.encodeToString(rules.map { rule -> rule.toDto() }) }
+    }
+
+    suspend fun setLocation(location: Location) {
+        dataStore.edit { prefs ->
+            prefs[LOCATION_LAT] = location.latitude
+            prefs[LOCATION_LON] = location.longitude
+            location.displayName?.let { prefs[LOCATION_NAME] = it } ?: prefs.remove(LOCATION_NAME)
+        }
+    }
+
+    suspend fun clearLocation() {
+        dataStore.edit { prefs ->
+            prefs.remove(LOCATION_LAT)
+            prefs.remove(LOCATION_LON)
+            prefs.remove(LOCATION_NAME)
+        }
+    }
+
+    suspend fun setUseDeviceLocation(enabled: Boolean) {
+        dataStore.edit { it[USE_DEVICE_LOCATION] = enabled }
+    }
+
+    suspend fun setTtsEngine(engine: TtsEngine) {
+        dataStore.edit { it[TTS_ENGINE] = engine.name }
+    }
+
+    suspend fun setGeminiVoice(voice: String) {
+        dataStore.edit { it[GEMINI_VOICE] = voice }
+    }
+
+    suspend fun setOpenAiVoice(voice: String) {
+        dataStore.edit { it[OPENAI_VOICE] = voice }
+    }
+
+    suspend fun setGeminiModel(model: String) {
+        dataStore.edit { it[GEMINI_MODEL] = model }
+    }
+
+    private fun Preferences.toUserPreferences(): UserPreferences {
+        val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
+            ?: DEFAULT_TIME
+        val days = this[SCHEDULE_DAYS]?.mapNotNull { runCatching { DayOfWeek.valueOf(it) }.getOrNull() }
+            ?.toSet()
+            ?.takeIf { it.isNotEmpty() }
+            ?: Schedule.EVERY_DAY
+        val deliveryMode = this[DELIVERY_MODE]?.let { runCatching { DeliveryMode.valueOf(it) }.getOrNull() }
+            ?: DeliveryMode.NOTIFICATION_ONLY
+        val temperatureUnit = this[TEMPERATURE_UNIT]?.let { runCatching { TemperatureUnit.valueOf(it) }.getOrNull() }
+            ?: TemperatureUnit.CELSIUS
+        val distanceUnit = this[DISTANCE_UNIT]?.let { runCatching { DistanceUnit.valueOf(it) }.getOrNull() }
+            ?: DistanceUnit.KILOMETERS
+        val rules = parseRules(this[WARDROBE_RULES])
+        val location = parseLocation(this)
+        val useDeviceLocation = this[USE_DEVICE_LOCATION] == true
+        val ttsEngine = this[TTS_ENGINE]?.let { runCatching { TtsEngine.valueOf(it) }.getOrNull() }
+            ?: TtsEngine.DEVICE
+        val geminiVoice = this[GEMINI_VOICE]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_GEMINI_VOICE
+        val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_OPENAI_VOICE
+        val geminiModel = this[GEMINI_MODEL]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_GEMINI_MODEL
+
+        return UserPreferences(
+            schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
+            deliveryMode = deliveryMode,
+            temperatureUnit = temperatureUnit,
+            distanceUnit = distanceUnit,
+            wardrobeRules = rules,
+            location = location,
+            useDeviceLocation = useDeviceLocation,
+            ttsEngine = ttsEngine,
+            geminiVoice = geminiVoice,
+            openAiVoice = openAiVoice,
+            geminiModel = geminiModel,
+        )
+    }
+
+    private fun parseLocation(prefs: Preferences): Location? {
+        val lat = prefs[LOCATION_LAT] ?: return null
+        val lon = prefs[LOCATION_LON] ?: return null
+        return runCatching {
+            Location(
+                latitude = lat,
+                longitude = lon,
+                displayName = prefs[LOCATION_NAME],
+            )
+        }.getOrNull()
+    }
+
+    private fun parseRules(raw: String?): List<WardrobeRule> {
+        if (raw.isNullOrBlank()) return WardrobeRule.DEFAULTS
+        return runCatching {
+            json.decodeFromString<List<WardrobeRuleDto>>(raw).map { it.toDomain() }
+        }.getOrDefault(WardrobeRule.DEFAULTS)
+    }
+
+    companion object {
+        private val SCHEDULE_TIME = stringPreferencesKey("schedule_time_hhmm")
+        private val SCHEDULE_DAYS = stringSetPreferencesKey("schedule_days")
+        private val DELIVERY_MODE = stringPreferencesKey("delivery_mode")
+        private val TEMPERATURE_UNIT = stringPreferencesKey("temperature_unit")
+        private val DISTANCE_UNIT = stringPreferencesKey("distance_unit")
+        private val WARDROBE_RULES = stringPreferencesKey("wardrobe_rules_json")
+        private val LOCATION_LAT = doublePreferencesKey("location_latitude")
+        private val LOCATION_LON = doublePreferencesKey("location_longitude")
+        private val LOCATION_NAME = stringPreferencesKey("location_display_name")
+        private val USE_DEVICE_LOCATION = booleanPreferencesKey("use_device_location")
+        private val TTS_ENGINE = stringPreferencesKey("tts_engine")
+        private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
+        private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
+        private val GEMINI_MODEL = stringPreferencesKey("gemini_model")
+
+        private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)
+
+        fun create(context: Context): SettingsRepository =
+            SettingsRepository(context.settingsDataStore)
+    }
+}
+
+private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
