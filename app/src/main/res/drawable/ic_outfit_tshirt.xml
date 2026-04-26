@@ -17,10 +17,10 @@
         android:strokeWidth="2.5"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="M38,16 L42,24 L48,26 L54,24 L58,16 L84,32 L76,46 L68,42 L68,84 L28,84 L28,42 L20,46 L12,32 Z" />
+        android:pathData="M38,12 L42,20 L48,22 L54,20 L58,12 L84,28 L76,42 L68,38 L68,86 L28,86 L28,38 L20,42 L12,28 Z" />
     <path
         android:strokeColor="#01579B"
         android:strokeWidth="1.5"
         android:strokeLineCap="round"
-        android:pathData="M42,24 Q48,30 54,24" />
+        android:pathData="M42,20 Q48,26 54,20" />
 </vector>
