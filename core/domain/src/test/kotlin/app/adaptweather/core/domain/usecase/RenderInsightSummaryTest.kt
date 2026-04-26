@@ -58,10 +58,22 @@ class RenderInsightSummaryTest {
 
     @Test
     fun `delta sentence emits when feels-like high differs by at least 3 degrees`() {
-        // yesterday max 17, today max 22 → +5 warmer
-        val today = mildToday.copy(feelsLikeMaxC = 22.0, feelsLikeMinC = 18.0)
+        // yesterday max 17, today max 22 → +5 warmer.
+        // Match the lows so the high delta is the larger absolute one and wins.
+        val today = mildToday.copy(feelsLikeMaxC = 22.0, feelsLikeMinC = yesterday.feelsLikeMinC)
         val out = subject(today, yesterday, emptyList())
         out.shouldContain("It will be 5° warmer today.")
+    }
+
+    @Test
+    fun `delta sentence is omitted when the unrounded delta is under 3 even if it rounds to 3`() {
+        // 2.6° rounds to 3 — but the rule is "≥3° true delta", not "≥3° after rounding".
+        // Match the lows so only the high delta matters.
+        val today = mildToday.copy(
+            feelsLikeMaxC = yesterday.feelsLikeMaxC + 2.6,
+            feelsLikeMinC = yesterday.feelsLikeMinC,
+        )
+        subject(today, yesterday, emptyList()).shouldNotContain("warmer")
     }
 
     @Test
