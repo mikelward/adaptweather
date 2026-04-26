@@ -5,6 +5,35 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+/**
+ * Runs `git` and returns its trimmed stdout. Throws — loudly — when git is
+ * unavailable or the working tree isn't a repo, rather than silently shipping
+ * a bogus version. Configure-time failures are the right outcome: a release
+ * APK with versionCode = 0 is worse than a build that won't start.
+ */
+fun git(vararg args: String): String {
+    val process = ProcessBuilder("git", *args)
+        .directory(rootDir)
+        .redirectErrorStream(true)
+        .start()
+    val output = process.inputStream.bufferedReader().readText().trim()
+    val exit = process.waitFor()
+    check(exit == 0) { "git ${args.joinToString(" ")} failed (exit $exit): $output" }
+    return output
+}
+
+// versionCode: total commit count on the current branch. Monotonically increases,
+// reproducible (same commit -> same number), required by Firebase App Distribution
+// and the Play Store. CI must use `actions/checkout@v4` with `fetch-depth: 0` —
+// shallow clones make rev-list --count return 1 and break monotonicity across builds.
+val gitCommitCount: Int = git("rev-list", "--count", "HEAD").toInt()
+
+// versionName base. Bumped manually for marketing-meaningful releases. The short
+// SHA is appended at build time so any APK in the wild can be traced to the
+// commit that produced it (visible in Settings -> About at runtime).
+val versionNameBase = "0.1.0"
+val gitShortSha: String = git("rev-parse", "--short", "HEAD")
+
 android {
     // Pinned to app.adaptweather (reverse-DNS of the owned adaptweather.app
     // domain) before the first Firebase App Distribution rollout. Once a
@@ -20,8 +49,12 @@ android {
         applicationId = "app.adaptweather"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = gitCommitCount
+        // semver build metadata: <base>+<commitCount>.<shortSha>. Some downstream
+        // tools (Crashlytics, Bugsnag, screenshots in bug reports) carry only
+        // versionName, not versionCode — embedding the count means one string
+        // identifies the build everywhere.
+        versionName = "$versionNameBase+$gitCommitCount.$gitShortSha"
     }
 
     buildTypes {
