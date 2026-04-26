@@ -1057,7 +1057,9 @@ private suspend fun runTtsPreview(
         } catch (_: CancellationException) {
             // Expected when the user picks a different option mid-playback; not an error.
         } catch (t: Throwable) {
-            val message = "${engine.name} TTS failed: ${t.message ?: t.javaClass.simpleName}"
+            // TTS exceptions already name their provider in the message
+            // (e.g. "Gemini TTS HTTP 400: …"); don't double that up.
+            val message = t.message?.takeIf { it.isNotBlank() } ?: t.javaClass.simpleName
             android.util.Log.w("SettingsScreen", "TTS preview failed for $engine", t)
             // Toast.show() posts internally, but Toast.makeText()'s constructor needs
             // a Looper on the calling thread — Dispatchers.IO has none, so hop to Main.

@@ -15,16 +15,19 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.http.path
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import java.util.Base64
 
-const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
+const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-tts"
 const val DEFAULT_GEMINI_TTS_VOICE: String = "Kore"
 
 internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"
 
 /**
- * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Uses the
+ * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-tts`). Uses the
  * standard Generative Language host with a BYOK `x-goog-api-key` header.
  *
  * The model returns a single 16-bit signed PCM audio stream at a sample rate carried
@@ -132,21 +135,26 @@ class GeminiTtsBlockedException(message: String) : IllegalStateException(message
 /**
  * HTTP failure surfaced with a short body excerpt so the diagnostic Toast in
  * Settings shows the actual reason (auth failure / quota / model unavailable /
- * deprecated preview model). Without this, Ktor would deserialize the error JSON
- * as a TtsResponse with default empty candidates and we'd report the generic
- * empty-response error with no diagnostic.
+ * deprecated preview model). Pulls just `error.message` out of Gemini's standard
+ * error envelope; falls back to a truncated raw excerpt when the body isn't
+ * shaped that way.
  */
 class GeminiTtsHttpException(val status: HttpStatusCode, body: ByteArray) :
     IllegalStateException(buildMessage(status, body)) {
 
     companion object {
         private fun buildMessage(status: HttpStatusCode, body: ByteArray): String {
-            val excerpt = runCatching { body.toString(Charsets.UTF_8) }
-                .getOrDefault("(unparseable body)")
-                .take(MAX_EXCERPT_CHARS)
+            val raw = runCatching { body.toString(Charsets.UTF_8) }.getOrNull().orEmpty()
+            val excerpt = extractErrorMessage(raw) ?: raw.take(MAX_EXCERPT_CHARS)
             return "Gemini TTS HTTP ${status.value}: $excerpt"
         }
 
-        private const val MAX_EXCERPT_CHARS = 240
+        private fun extractErrorMessage(body: String): String? = runCatching {
+            val root = Json.parseToJsonElement(body) as? JsonObject
+            val error = root?.get("error") as? JsonObject
+            (error?.get("message") as? JsonPrimitive)?.content?.take(MAX_EXCERPT_CHARS)
+        }.getOrNull()
+
+        private const val MAX_EXCERPT_CHARS = 160
     }
 }
