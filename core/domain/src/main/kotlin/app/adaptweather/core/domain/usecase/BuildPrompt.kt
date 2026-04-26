@@ -24,9 +24,13 @@ import java.util.Locale
  *    (freezing / cold / cool / mild / warm / hot) and output either
  *    "Today will be <band>." or "Today will be <coldband> to <hotband>.".
  *    This sentence is always emitted.
- * 3. **Wardrobe**: if any wardrobe rule triggers today, output "Wear <items>.".
+ * 3. **Temperature change vs yesterday**: if max OR min feels-like differs from
+ *    yesterday by ≥ 3°C, output "It will be N° warmer/cooler today." (using the
+ *    larger delta). Comes after the band sentence so the band sets the absolute
+ *    context first and the delta follows as the comparison.
+ * 4. **Wardrobe**: if any wardrobe rule triggers today, output "Wear <items>.".
  *    Always emitted when the list is non-empty — no comparison against yesterday.
- * 4. **Precipitation**: if today's peak chance is ≥ 30%, output "<Type> at <HH:MM>.".
+ * 5. **Precipitation**: if today's peak chance is ≥ 30%, output "<Type> at <HH:MM>.".
  */
 data class Prompt(
     val systemInstruction: String,
@@ -36,6 +40,7 @@ data class Prompt(
 class BuildPrompt {
     operator fun invoke(
         today: DailyForecast,
+        yesterday: DailyForecast,
         todayTriggeredRules: List<WardrobeRule>,
         temperatureUnit: TemperatureUnit,
         languageTag: String,
@@ -44,6 +49,7 @@ class BuildPrompt {
         val system = systemInstruction(languageTag)
         val user = buildUserMessage(
             today = today,
+            yesterday = yesterday,
             todayItems = todayTriggeredRules.map { it.item },
             temperatureUnit = temperatureUnit,
             alerts = alerts,
@@ -56,7 +62,7 @@ class BuildPrompt {
 
         All temperatures provided to you are pre-computed "feels like" (apparent) values.
 
-        Apply these four rules in order. Each rule yields zero or one sentence.
+        Apply these five rules in order. Each rule yields zero or one sentence.
 
         1. Severe alert: if a severe-weather alert is listed below with severity SEVERE
            or EXTREME, output exactly "Alert: <event>." using the event name of the
@@ -65,11 +71,15 @@ class BuildPrompt {
         2. Temperature band: a band label (e.g. "cool") or a "<low> to <high>" range
            (e.g. "cold to mild") is provided below as "feels-like band". Output exactly
            "Today will be <band>." Always emit this sentence.
-        3. Wardrobe: today's triggered wardrobe items are listed below. If the list is
+        3. Temperature change vs yesterday: if today's high differs from yesterday's by
+           at least 3°, OR today's low differs from yesterday's by at least 3°, output
+           exactly "It will be N° warmer today." or "It will be N° cooler today." using
+           the larger absolute delta rounded to the nearest integer. Otherwise omit.
+        4. Wardrobe: today's triggered wardrobe items are listed below. If the list is
            non-empty, output exactly "Wear <items>." with items separated by commas
            (Oxford comma for three or more). Always emit when the list is non-empty —
            do not compare against any previous day. Otherwise omit.
-        4. Precipitation: if today's peak precipitation chance is at least 30%, output
+        5. Precipitation: if today's peak precipitation chance is at least 30%, output
            exactly "<Type> at <HH:MM>." (e.g. "Rain at 15:00."). Otherwise omit.
 
         Concatenate the resulting sentences with a single space between each.
@@ -79,10 +89,16 @@ class BuildPrompt {
 
     private fun buildUserMessage(
         today: DailyForecast,
+        yesterday: DailyForecast,
         todayItems: List<String>,
         temperatureUnit: TemperatureUnit,
         alerts: List<WeatherAlert>,
     ): String = buildString {
+        appendLine("Yesterday (${yesterday.date}):")
+        appendLine("- feels-like high: ${tempStr(yesterday.feelsLikeMaxC, temperatureUnit)}")
+        appendLine("- feels-like low: ${tempStr(yesterday.feelsLikeMinC, temperatureUnit)}")
+        appendLine("- conditions: ${conditionStr(yesterday.condition)}")
+        appendLine()
         appendLine("Today (${today.date}):")
         appendLine("- feels-like high: ${tempStr(today.feelsLikeMaxC, temperatureUnit)}")
         appendLine("- feels-like low: ${tempStr(today.feelsLikeMinC, temperatureUnit)}")

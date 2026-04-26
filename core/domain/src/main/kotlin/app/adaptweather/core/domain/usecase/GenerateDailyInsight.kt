@@ -37,6 +37,7 @@ class GenerateDailyInsight(
         val todayTriggered = evaluateWardrobeRules(bundle.today, prefs.wardrobeRules)
         val prompt = buildPrompt(
             today = bundle.today,
+            yesterday = bundle.yesterday,
             todayTriggeredRules = todayTriggered,
             temperatureUnit = prefs.temperatureUnit,
             languageTag = languageTag,
