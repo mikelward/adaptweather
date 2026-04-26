@@ -171,7 +171,7 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepository.setUseCalendarEvents(enabled) }
     }
 
-    /** Used by [LocationCard] inside a LaunchedEffect; safe to call from any dispatcher. */
+    /** Used by the data-sources page's location dialog; safe to call from any dispatcher. */
     suspend fun searchLocations(query: String): List<Location> = geocodingClient.search(query)
 
     fun setSchedule(time: LocalTime, days: Set<DayOfWeek>) {
