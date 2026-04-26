@@ -10,6 +10,7 @@ import app.adaptweather.core.domain.model.Location
 import app.adaptweather.core.domain.model.Schedule
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.TtsEngine
+import app.adaptweather.core.domain.model.VoiceLocale
 import app.adaptweather.core.domain.model.WardrobeRule
 import app.adaptweather.data.SecureKeyStore
 import app.adaptweather.data.SettingsRepository
@@ -48,6 +49,7 @@ class SettingsViewModel(
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
                         openAiVoice = prefs.openAiVoice,
+                        voiceLocale = prefs.voiceLocale,
                     )
                 }
             }
@@ -139,6 +141,10 @@ class SettingsViewModel(
 
     fun setTtsEngine(engine: TtsEngine) {
         viewModelScope.launch { settingsRepository.setTtsEngine(engine) }
+    }
+
+    fun setVoiceLocale(locale: VoiceLocale) {
+        viewModelScope.launch { settingsRepository.setVoiceLocale(locale) }
     }
 
     /** Used by [LocationCard] inside a LaunchedEffect; safe to call from any dispatcher. */

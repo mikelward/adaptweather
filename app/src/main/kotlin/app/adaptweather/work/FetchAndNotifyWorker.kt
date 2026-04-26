@@ -19,6 +19,7 @@ import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.UserPreferences
 import app.adaptweather.tts.GeminiTtsSpeaker
 import app.adaptweather.tts.OpenAITtsSpeaker
+import app.adaptweather.tts.resolve
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -158,10 +159,11 @@ class FetchAndNotifyWorker(
      * path is the primary delivery channel and has already fired by this point.
      */
     private suspend fun speakWithFallback(text: String, prefs: UserPreferences) {
+        val locale = prefs.voiceLocale.resolve()
         when (prefs.ttsEngine) {
             TtsEngine.GEMINI -> {
                 try {
-                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = prefs.geminiVoice).speak(text)
+                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = prefs.geminiVoice).speak(text, locale)
                     return
                 } catch (t: Throwable) {
                     Log.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
@@ -169,7 +171,7 @@ class FetchAndNotifyWorker(
             }
             TtsEngine.OPENAI -> {
                 try {
-                    OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text)
+                    OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text, locale)
                     return
                 } catch (t: Throwable) {
                     Log.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
@@ -178,7 +180,7 @@ class FetchAndNotifyWorker(
             TtsEngine.DEVICE -> Unit
         }
         try {
-            app.deviceTtsSpeaker.speak(text)
+            app.deviceTtsSpeaker.speak(text, locale)
         } catch (t: Throwable) {
             Log.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
         }

@@ -7,7 +7,9 @@ import app.adaptweather.core.domain.model.Schedule
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.UserPreferences
+import app.adaptweather.core.domain.model.VoiceLocale
 import app.adaptweather.core.domain.model.WardrobeRule
+import app.adaptweather.tts.defaultOpenAiVoiceFor
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -23,7 +25,12 @@ data class SettingsState(
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
-    val openAiVoice: String = UserPreferences.DEFAULT_OPENAI_VOICE,
+    // Match SettingsRepository's locale-aware default so the picker doesn't
+    // briefly render "alloy" before the first DataStore emission overrides it.
+    // When voiceLocale is SYSTEM (the default), this resolves through the phone's
+    // current locale → fable on en-GB, nova everywhere else.
+    val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
+    val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,
 )
