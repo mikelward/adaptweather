@@ -16,6 +16,11 @@
     <!-- Daily notification. POST_NOTIFICATIONS is runtime on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Read today's calendar events to enrich the morning insight. Opt-in via the
+         Settings toggle; runtime grant requested from there. We deliberately do NOT
+         declare WRITE_CALENDAR — AdaptWeather only reads. -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+
     <!-- Re-arm the alarm on reboot, package update, timezone change, locale change. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

@@ -3,10 +3,12 @@ package app.adaptweather
 import android.app.Application
 import android.util.Log
 import app.adaptweather.alarm.DailyAlarmScheduler
+import app.adaptweather.calendar.CalendarContractEventReader
 import app.adaptweather.core.data.location.OpenMeteoGeocodingClient
 import app.adaptweather.core.data.tts.GeminiTtsClient
 import app.adaptweather.core.data.tts.OpenAITtsClient
 import app.adaptweather.core.data.weather.OpenMeteoClient
+import app.adaptweather.core.domain.repository.CalendarEventReader
 import app.adaptweather.core.domain.repository.WeatherRepository
 import app.adaptweather.core.domain.usecase.GenerateDailyInsight
 import app.adaptweather.data.InsightCache
@@ -48,6 +50,7 @@ class AdaptWeatherApplication : Application() {
     val weatherAlertNotifier: WeatherAlertNotifier by lazy { WeatherAlertNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
     val deviceTtsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
+    val calendarEventReader: CalendarEventReader by lazy { CalendarContractEventReader(this) }
     val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }
     val openAiTtsClient: OpenAITtsClient by lazy {
         OpenAITtsClient(httpClient, secureKeyStore.openAiKeyProvider)
@@ -64,7 +67,12 @@ class AdaptWeatherApplication : Application() {
     val weatherRepository: WeatherRepository by lazy { OpenMeteoClient(httpClient) }
     val geocodingClient: OpenMeteoGeocodingClient by lazy { OpenMeteoGeocodingClient(httpClient) }
 
-    val generateDailyInsight: GenerateDailyInsight by lazy { GenerateDailyInsight(weatherRepository) }
+    val generateDailyInsight: GenerateDailyInsight by lazy {
+        GenerateDailyInsight(
+            weatherRepository = weatherRepository,
+            calendarEventReader = calendarEventReader,
+        )
+    }
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 

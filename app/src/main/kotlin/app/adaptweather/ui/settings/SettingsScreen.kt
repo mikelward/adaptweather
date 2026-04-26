@@ -35,10 +35,13 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -119,6 +122,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onSetOpenAiKey = viewModel::setOpenAiKey,
             onClearOpenAiKey = viewModel::clearOpenAiKey,
             onSetVoiceLocale = viewModel::setVoiceLocale,
+            onSetUseCalendarEvents = viewModel::setUseCalendarEvents,
         )
     }
 }
@@ -146,6 +150,7 @@ private fun SettingsContent(
     onSetOpenAiKey: (String) -> Unit,
     onClearOpenAiKey: () -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
+    onSetUseCalendarEvents: (Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -197,6 +202,10 @@ private fun SettingsContent(
             onAdd = onAddWardrobeRule,
             onReplace = onReplaceWardrobeRule,
             onDelete = onDeleteWardrobeRule,
+        )
+        CalendarCard(
+            useEvents = state.useCalendarEvents,
+            onSetUseEvents = onSetUseCalendarEvents,
         )
         if (BuildConfig.DEBUG) {
             DebugCard()
@@ -773,6 +782,97 @@ private fun TimePickerDialog(
 }
 
 private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+@Composable
+private fun CalendarCard(
+    useEvents: Boolean,
+    onSetUseEvents: (Boolean) -> Unit,
+) {
+    val context = LocalContext.current
+    var permissionGranted by remember {
+        mutableStateOf(app.adaptweather.calendar.CalendarPermission.isGranted(context))
+    }
+
+    // rememberUpdatedState so the lifecycle observer sees the *current* useEvents
+    // and onSetUseEvents on every check, not the values captured the first time
+    // the effect ran.
+    val currentUseEvents by rememberUpdatedState(useEvents)
+    val currentOnSetUseEvents by rememberUpdatedState(onSetUseEvents)
+
+    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        // Re-check on resume so the toggle reflects whatever the user did in system
+        // Settings while we were backgrounded. If permission was revoked, also flip
+        // the persisted pref off so the worker stops consulting the reader.
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                val granted = app.adaptweather.calendar.CalendarPermission.isGranted(context)
+                permissionGranted = granted
+                if (!granted && currentUseEvents) {
+                    currentOnSetUseEvents(false)
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val launcher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        permissionGranted = granted
+        // Only flip the toggle on if the user granted; otherwise the worker would
+        // consult the reader, get an empty list every morning, and silently log a
+        // permission-denied warning forever.
+        onSetUseEvents(granted)
+    }
+
+    SectionCard(title = stringResource(R.string.settings_calendar_title)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.settings_calendar_use_events),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = useEvents && permissionGranted,
+                onCheckedChange = { wantsOn ->
+                    if (!wantsOn) {
+                        onSetUseEvents(false)
+                        return@Switch
+                    }
+                    if (permissionGranted) {
+                        onSetUseEvents(true)
+                    } else {
+                        launcher.launch(app.adaptweather.calendar.CalendarPermission.MANIFEST_PERMISSION)
+                    }
+                },
+            )
+        }
+        Text(
+            text = stringResource(
+                if (useEvents && permissionGranted) R.string.settings_calendar_description_on
+                else R.string.settings_calendar_description_off,
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (useEvents && !permissionGranted) {
+            Text(
+                text = stringResource(R.string.settings_calendar_open_settings),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+            TextButton(
+                onClick = { openAppDetails(context) },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.settings_calendar_grant_permission)) }
+        }
+    }
+}
 
 @Composable
 private fun DebugCard() {

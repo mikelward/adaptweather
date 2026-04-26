@@ -136,6 +136,13 @@
     <string name="settings_notification_permission_description">Without notification permission, the daily insight has nowhere to go. Grant it so AdaptWeather can post tomorrow morning.</string>
     <string name="settings_notification_permission_grant">Grant notification permission</string>
 
+    <string name="settings_calendar_title">Calendar</string>
+    <string name="settings_calendar_use_events">Use today\'s calendar events</string>
+    <string name="settings_calendar_description_off">When enabled, AdaptWeather reads today\'s events from your device calendar so the morning insight can suggest items keyed to specific events — for example, "bring an umbrella for your 3pm park run". Only event titles and times are used; descriptions, attendees, and locations are read but never sent off-device.</string>
+    <string name="settings_calendar_description_on">Reading today\'s events from your device calendar to enrich the morning insight. Only titles and times are used in the rendered summary; descriptions and attendees are not. Everything stays on-device.</string>
+    <string name="settings_calendar_grant_permission">Grant calendar permission</string>
+    <string name="settings_calendar_open_settings">Calendar permission denied. Grant it from system Settings.</string>
+
     <string name="settings_debug_title">Debug (debug builds only)</string>
     <string name="settings_debug_description">Fire the daily-insight pipeline immediately. Useful for verifying without waiting until the scheduled time.</string>
     <string name="settings_debug_fire_now">Fire insight now</string>

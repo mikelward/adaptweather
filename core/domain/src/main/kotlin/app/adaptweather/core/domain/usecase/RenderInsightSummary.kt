@@ -1,17 +1,19 @@
 package app.adaptweather.core.domain.usecase
 
 import app.adaptweather.core.domain.model.AlertSeverity
+import app.adaptweather.core.domain.model.CalendarEvent
 import app.adaptweather.core.domain.model.DailyForecast
 import app.adaptweather.core.domain.model.WardrobeRule
 import app.adaptweather.core.domain.model.WeatherAlert
 import app.adaptweather.core.domain.model.WeatherCondition
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * Renders the daily insight summary as a deterministic single string of up to five
+ * Renders the daily insight summary as a deterministic single string of up to six
  * short sentences, each driven by an independent rule. Replaces the previous
  * Gemini call: every sentence is template-fillable from the forecast, so the LLM
  * round trip wasn't earning its keep.
@@ -28,6 +30,12 @@ import kotlin.math.roundToInt
  *    an article on the first item ("a" / "an" / no article for plurals) and
  *    " and " before the last item (Oxford comma for three or more).
  * 5. Precipitation: peak chance ≥ 30% → "<Type> at <HH:MM>."
+ * 6. Calendar tie-in (optional): if rules 4 and 5 both fired AND a calendar event
+ *    is in progress at the precip peak hour, output
+ *    "Bring <first-item> for your <HH:MM> <title>." Picks the umbrella when one
+ *    is on the wardrobe list, otherwise the first triggered item. Only fires
+ *    when the caller passes events; the worker only does that when the user
+ *    has opted in to calendar reading.
  *
  * All temperature comparisons use feels-like values, matching the wardrobe rules.
  */
@@ -37,12 +45,16 @@ class RenderInsightSummary {
         yesterday: DailyForecast,
         todayTriggeredRules: List<WardrobeRule>,
         alerts: List<WeatherAlert> = emptyList(),
+        events: List<CalendarEvent> = emptyList(),
     ): String = buildList {
         alertSentence(alerts)?.let { add(it) }
         add(bandSentence(today))
         deltaSentence(today, yesterday)?.let { add(it) }
-        wardrobeSentence(todayTriggeredRules.map { it.item })?.let { add(it) }
-        precipSentence(today)?.let { add(it) }
+        val items = todayTriggeredRules.map { it.item }
+        wardrobeSentence(items)?.let { add(it) }
+        val peak = peakPrecip(today)
+        precipSentence(peak)?.let { add(it) }
+        calendarSentence(items, peak, events)?.let { add(it) }
     }.joinToString(" ")
 
     private fun alertSentence(alerts: List<WeatherAlert>): String? {
@@ -101,7 +113,12 @@ class RenderInsightSummary {
         else -> "a $item"
     }
 
-    private fun precipSentence(today: DailyForecast): String? {
+    /**
+     * Resolves the precipitation peak hour the way the precip rule needs it. Lifted
+     * out of [precipSentence] so the calendar-tie-in rule can pair an event window
+     * against the same time without re-running the logic and getting out of sync.
+     */
+    private fun peakPrecip(today: DailyForecast): PeakPrecip? {
         val peak = today.hourly.maxByOrNull { it.precipitationProbabilityPct }
         val time: LocalTime
         val condition: WeatherCondition
@@ -113,9 +130,34 @@ class RenderInsightSummary {
             time = peak.time
             condition = if (peak.condition == WeatherCondition.UNKNOWN) today.condition else peak.condition
         }
-        val type = condition.name.lowercase(Locale.ROOT).replace('_', ' ')
+        return PeakPrecip(time, condition)
+    }
+
+    private fun precipSentence(peak: PeakPrecip?): String? {
+        if (peak == null) return null
+        val type = peak.condition.name.lowercase(Locale.ROOT).replace('_', ' ')
             .replaceFirstChar { it.titlecase(Locale.ROOT) }
-        return "$type at $time."
+        return "$type at ${peak.time}."
+    }
+
+    private fun calendarSentence(
+        items: List<String>,
+        peak: PeakPrecip?,
+        events: List<CalendarEvent>,
+    ): String? {
+        if (items.isEmpty() || peak == null || events.isEmpty()) return null
+        val event = events.firstOrNull { it.overlaps(peak.time) } ?: return null
+        // Prefer "umbrella" when the user has it on their list — that's the wardrobe
+        // item the precip-peak overlap was actually motivated by. Otherwise just
+        // take the first triggered item, mirroring rule 4's ordering.
+        val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
+        return "Bring ${withArticle(item)} for your ${EVENT_TIME.format(peak.time)} ${event.title}."
+    }
+
+    private data class PeakPrecip(val time: LocalTime, val condition: WeatherCondition)
+
+    private companion object {
+        private val EVENT_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     }
 }
 

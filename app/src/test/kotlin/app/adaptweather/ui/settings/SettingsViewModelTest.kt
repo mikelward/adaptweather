@@ -140,6 +140,17 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `setUseCalendarEvents persists and surfaces in state`() = runTest {
+        subject.setUseCalendarEvents(true)
+        subject.state.first { it.useCalendarEvents }
+        settingsRepository.preferences.first().useCalendarEvents shouldBe true
+
+        subject.setUseCalendarEvents(false)
+        subject.state.first { !it.useCalendarEvents }
+        settingsRepository.preferences.first().useCalendarEvents shouldBe false
+    }
+
+    @Test
     fun `setTemperatureUnit and setDistanceUnit persist independently`() = runTest {
         subject.setTemperatureUnit(TemperatureUnit.FAHRENHEIT)
         subject.setDistanceUnit(DistanceUnit.MILES)

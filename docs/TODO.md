@@ -33,13 +33,16 @@ Code TODOs in source files are linked from here when they exist.
 
 ## Calendar integration (next-up after TTS)
 
-- [ ] **Read today's calendar events** (`CalendarContract`) so the daily
+- [x] **Read today's calendar events** (`CalendarContract`) so the daily
       insight can suggest items keyed to events: *"Bring an umbrella for your
-      3pm at the park."*
-  - Opt-in toggle in Settings + runtime `READ_CALENDAR` grant.
-  - New `:core:domain` model `CalendarEvent`.
-  - Worker reads events for today and feeds them into `BuildPrompt`.
-  - Privacy disclosure update in `docs/privacy.md`.
+      3pm park run."* Opt-in via Settings → Calendar (off by default), runtime
+      `READ_CALENDAR` granted from the same card. The reader projects only
+      titles, times, and locations; the rendered summary uses only title and
+      time. The 6th sentence in `RenderInsightSummary` fires only when a
+      wardrobe rule + a precip-peak event window both apply, preferring
+      "umbrella" when on the wardrobe list. Reader failures degrade silently
+      to no events.
+  - Privacy disclosure update in `docs/privacy.md` (file not yet created).
 
 ## Forecast & alerts
 

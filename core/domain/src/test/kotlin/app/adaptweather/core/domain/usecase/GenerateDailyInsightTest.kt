@@ -1,6 +1,7 @@
 package app.adaptweather.core.domain.usecase
 
 import app.adaptweather.core.domain.model.AlertSeverity
+import app.adaptweather.core.domain.model.CalendarEvent
 import app.adaptweather.core.domain.model.DailyForecast
 import app.adaptweather.core.domain.model.DeliveryMode
 import app.adaptweather.core.domain.model.DistanceUnit
@@ -12,17 +13,21 @@ import app.adaptweather.core.domain.model.UserPreferences
 import app.adaptweather.core.domain.model.WardrobeRule
 import app.adaptweather.core.domain.model.WeatherAlert
 import app.adaptweather.core.domain.model.WeatherCondition
+import app.adaptweather.core.domain.repository.CalendarEventReader
 import app.adaptweather.core.domain.repository.ForecastBundle
 import app.adaptweather.core.domain.repository.WeatherRepository
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 
 class GenerateDailyInsightTest {
@@ -68,6 +73,23 @@ class GenerateDailyInsightTest {
         override suspend fun fetchForecast(location: Location): ForecastBundle {
             lastQueriedLocation = location
             return bundle
+        }
+    }
+
+    private class FakeCalendarEventReader(
+        private val events: List<CalendarEvent> = emptyList(),
+        private val throws: Throwable? = null,
+    ) : CalendarEventReader {
+        var lastDate: LocalDate? = null
+            private set
+        var lastZone: ZoneId? = null
+            private set
+
+        override suspend fun eventsForDay(date: LocalDate, zoneId: ZoneId): List<CalendarEvent> {
+            lastDate = date
+            lastZone = zoneId
+            throws?.let { throw it }
+            return events
         }
     }
 
@@ -160,6 +182,65 @@ class GenerateDailyInsightTest {
         val result = subject(london, prefs)
 
         result.insight.hourly.shouldContainExactly(hourly)
+    }
+
+    @Test
+    fun `calendar reader is consulted for today's date and zone when opted in`() = runTest {
+        val zone = ZoneId.of("Europe/London")
+        val rainyHourly = today.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN),
+            ),
+        )
+        val event = CalendarEvent(
+            title = "park run",
+            start = LocalTime.of(14, 30),
+            end = LocalTime.of(16, 0),
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(rainyHourly, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(event))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(
+            location = london,
+            prefs = prefs.copy(
+                useCalendarEvents = true,
+                schedule = Schedule.default(zone),
+            ),
+        )
+
+        calendar.lastDate shouldBe today.date
+        calendar.lastZone shouldBe zone
+        result.insight.summary.shouldContain("for your 15:00 park run")
+    }
+
+    @Test
+    fun `calendar reader is not consulted when the toggle is off`() = runTest {
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(
+            CalendarEvent("standup", LocalTime.of(9, 0), LocalTime.of(9, 30)),
+        ))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(london, prefs.copy(useCalendarEvents = false))
+
+        calendar.lastDate.shouldBeNull()
+        result.insight.summary.shouldNotContain("for your")
+    }
+
+    @Test
+    fun `calendar reader failure degrades to no events without failing the insight`() = runTest {
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
+        val calendar = FakeCalendarEventReader(throws = SecurityException("permission denied"))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(london, prefs.copy(useCalendarEvents = true))
+
+        // The summary still composes — we just lose the calendar tie-in sentence.
+        result.insight.summary.shouldContain("Today will be")
+        result.insight.summary.shouldNotContain("for your")
     }
 
     @Test

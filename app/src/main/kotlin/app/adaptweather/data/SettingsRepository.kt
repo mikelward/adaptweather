@@ -107,6 +107,10 @@ class SettingsRepository(
         dataStore.edit { it[VOICE_LOCALE] = locale.name }
     }
 
+    suspend fun setUseCalendarEvents(enabled: Boolean) {
+        dataStore.edit { it[USE_CALENDAR_EVENTS] = enabled }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -133,6 +137,7 @@ class SettingsRepository(
         // Resolve only after voiceLocale is known so the picked voice matches.
         val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
             ?: defaultOpenAiVoiceFor(voiceLocale)
+        val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
 
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
@@ -146,6 +151,7 @@ class SettingsRepository(
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
             voiceLocale = voiceLocale,
+            useCalendarEvents = useCalendarEvents,
         )
     }
 
@@ -183,6 +189,7 @@ class SettingsRepository(
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
+        private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)
