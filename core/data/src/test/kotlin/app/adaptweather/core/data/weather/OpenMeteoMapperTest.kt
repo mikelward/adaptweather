@@ -65,7 +65,7 @@ class OpenMeteoMapperTest {
     }
 
     @Test
-    fun `peak rain hour is preserved for downstream BuildPrompt`() {
+    fun `peak rain hour is preserved for downstream insight rendering`() {
         val t = OpenMeteoMapper.toBundle(loadFixture()).today
 
         val peak = t.hourly.maxByOrNull { it.precipitationProbabilityPct }
