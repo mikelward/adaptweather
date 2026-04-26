@@ -5,14 +5,13 @@ Code TODOs in source files are linked from here when they exist.
 
 ## Pre-publishing blockers
 
-- [x] **Pick a stable namespace + applicationId.** Pinned to `app.adaptweather`
-      (reverse-DNS of the owned `adaptweather.app` domain). Renaming after
-      sideload destroys settings — Android treats the new applicationId as a
-      different app — so this had to land before any Firebase App Distribution
-      rollout.
+- [x] **Pick a stable namespace + applicationId.** Pinned to `app.clothescast`
+      (reverse-DNS of the planned `clothescast.app` domain). Renamed from
+      `app.adaptweather` as part of the product rename — Android treats the
+      new applicationId as a different app, so existing FAD testers had to
+      uninstall + reinstall and lose their stored settings.
 - [x] **Pick a stable product name.** Settled on "ClothesCast" (user-visible
-      strings + icon updated; package/applicationId still `app.adaptweather` to
-      avoid breaking existing installs).
+      strings, icon, and applicationId all updated to `app.clothescast`).
 
 ## Distribution
 
@@ -108,4 +107,4 @@ Code TODOs in source files are linked from here when they exist.
 | File | Note |
 |---|---|
 | `app/build.gradle.kts:9` | Pin namespace + applicationId before first distribution. |
-| `app/src/main/kotlin/app/adaptweather/tts/AndroidTtsSpeaker.kt:30` | Evaluate higher-quality TTS alternatives. (Gemini + OpenAI now landed.) |
+| `app/src/main/kotlin/app/clothescast/tts/AndroidTtsSpeaker.kt:30` | Evaluate higher-quality TTS alternatives. (Gemini + OpenAI now landed.) |

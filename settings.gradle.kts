@@ -22,7 +22,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "adaptweather"
+rootProject.name = "clothescast"
 
 include(":core:domain")
 include(":core:data")
