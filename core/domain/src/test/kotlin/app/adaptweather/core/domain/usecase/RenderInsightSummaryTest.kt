@@ -54,7 +54,7 @@ class RenderInsightSummaryTest {
     @Test
     fun `band sentence emits a low-to-high range when min and max fall in different bands`() {
         val today = mildToday.copy(feelsLikeMinC = 15.0, feelsLikeMaxC = 23.0)
-        subject(today, yesterday, emptyList()).shouldContain("Today will be cool-mild.")
+        subject(today, yesterday, emptyList()).shouldContain("Today will be cool to mild.")
     }
 
     @Test
@@ -224,7 +224,7 @@ class RenderInsightSummaryTest {
             todayTriggeredRules = listOf(jumperRule, umbrellaRule),
             alerts = listOf(severe),
         )
-        out shouldBe "Alert: Flood Warning. Today will be cool-mild. It will be 6° warmer today. " +
+        out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer today. " +
             "Wear a jumper and umbrella. Rain at 15:00."
     }
 
