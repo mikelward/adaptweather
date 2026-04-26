@@ -209,12 +209,21 @@ private fun SettingsContent(
 private fun AboutCard() {
     val context = LocalContext.current
     SectionCard(title = stringResource(R.string.settings_about_title)) {
+        // Release builds get a clean "Version 0.1.0+61.85d100b (61)". Anything else
+        // (debug today, possibly internal QA flavours later) appends " · <type> build"
+        // so a tester can tell which install they're on without digging into adb.
+        val versionText = stringResource(
+            R.string.settings_about_version,
+            BuildConfig.VERSION_NAME,
+            BuildConfig.VERSION_CODE,
+        )
+        val buildTypeSuffix = if (BuildConfig.BUILD_TYPE != "release") {
+            stringResource(R.string.settings_about_build_type_suffix, BuildConfig.BUILD_TYPE)
+        } else {
+            ""
+        }
         Text(
-            text = stringResource(
-                R.string.settings_about_version,
-                BuildConfig.VERSION_NAME,
-                BuildConfig.VERSION_CODE,
-            ),
+            text = versionText + buildTypeSuffix,
             style = MaterialTheme.typography.bodyMedium,
         )
         Text(
