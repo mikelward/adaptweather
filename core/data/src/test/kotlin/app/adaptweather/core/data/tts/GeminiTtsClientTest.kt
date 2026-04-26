@@ -63,6 +63,29 @@ class GeminiTtsClientTest {
     }
 
     @Test
+    fun `request body includes responseModalities AUDIO`() = runTest {
+        // Regression for the kotlinx.serialization `encodeDefaults = false` trap:
+        // when the runtime value equals the declared default, the field is dropped
+        // and Gemini falls back to its TEXT modality default — which a TTS model
+        // can't satisfy ("The requested combination of response modalities (TEXT)
+        // is not supported by the model.").
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello")
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("\"responseModalities\":[\"AUDIO\"]")
+    }
+
+    @Test
     fun `decodes inline pcm and parses sample rate from mime type`() = runTest {
         val client = GeminiTtsClient(
             httpClient = mockClient(SUCCESS_BODY),
