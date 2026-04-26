@@ -9,12 +9,16 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 /**
- * Plays a chunk of 16-bit signed mono PCM through [AudioTrack] in `MODE_STATIC`,
+ * Plays a chunk of 16-bit signed mono PCM through [AudioTrack] in `MODE_STREAM`,
  * suspending until the playback head reaches the end of the buffer.
  *
  * Shared by [GeminiTtsSpeaker] and [OpenAITtsSpeaker] — both providers return PCM
  * with the same encoding, only the sample rate differs (Gemini reports it in the
  * response mimeType; OpenAI fixes it at 24 kHz).
+ *
+ * Uses `USAGE_ASSISTANT` to bypass the notification stream's compression/limiting,
+ * which audibly distorts speech at 24 kHz. `MODE_STREAM` (rather than `MODE_STATIC`)
+ * avoids end-of-buffer pops observed on some devices.
  */
 internal object PcmAudioPlayer {
 
@@ -23,11 +27,31 @@ internal object PcmAudioPlayer {
     suspend fun play(audio: PcmAudio) {
         val pcm = audio.bytes
         if (pcm.isEmpty()) return
+        // 16-bit mono → 2 bytes per frame. An odd payload means the response was
+        // truncated mid-sample; setting a marker past the last whole frame would
+        // either click or never fire.
+        if (pcm.size % 2 != 0) {
+            Log.w(TAG, "PCM payload has odd byte count (${pcm.size}); aborting playback")
+            return
+        }
+
+        val minBuffer = AudioTrack.getMinBufferSize(
+            audio.sampleRate,
+            AudioFormat.CHANNEL_OUT_MONO,
+            AudioFormat.ENCODING_PCM_16BIT,
+        )
+        if (minBuffer <= 0) {
+            Log.w(TAG, "getMinBufferSize returned $minBuffer for ${audio.sampleRate}Hz; aborting playback")
+            return
+        }
+        // A few periods of headroom smooth over jitter on slower devices without
+        // adding meaningful latency for short utterances.
+        val bufferBytes = minBuffer * 2
 
         val track = AudioTrack.Builder()
             .setAudioAttributes(
                 AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ASSISTANT)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build(),
             )
@@ -38,16 +62,15 @@ internal object PcmAudioPlayer {
                     .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                     .build(),
             )
-            .setBufferSizeInBytes(pcm.size)
-            .setTransferMode(AudioTrack.MODE_STATIC)
+            .setBufferSizeInBytes(bufferBytes)
+            .setTransferMode(AudioTrack.MODE_STREAM)
             .build()
 
         try {
-            // MODE_STATIC normally accepts the whole buffer in a single write because
-            // we sized the track to pcm.size — but the contract permits a positive
-            // short write, in which case we'd set the marker beyond the actual frame
-            // count and awaitMarker would never resume. Loop until the buffer is
-            // fully accepted; bail on any error code or zero-progress write.
+            val totalFrames = pcm.size / 2
+            track.notificationMarkerPosition = totalFrames
+            track.play()
+
             var offset = 0
             while (offset < pcm.size) {
                 val written = track.write(pcm, offset, pcm.size - offset)
@@ -57,15 +80,6 @@ internal object PcmAudioPlayer {
                 }
                 offset += written
             }
-            // 2 bytes per 16-bit sample, mono. Validate alignment defensively — a
-            // partial-write loop ending on an odd byte boundary would point the
-            // marker at a non-existent frame.
-            if (offset % 2 != 0) {
-                Log.w(TAG, "AudioTrack accepted an odd number of bytes ($offset); aborting playback")
-                return
-            }
-            val totalFrames = offset / 2
-            track.notificationMarkerPosition = totalFrames
             awaitMarker(track, totalFrames)
         } finally {
             runCatching { track.stop() }
@@ -83,7 +97,6 @@ internal object PcmAudioPlayer {
                     override fun onPeriodicNotification(t: AudioTrack?) {}
                 },
             )
-            track.play()
             cont.invokeOnCancellation { runCatching { track.stop() } }
         }
         Log.i(TAG, "Played $markerInFrames PCM frames")
