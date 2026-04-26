@@ -181,7 +181,14 @@ class BuildPromptTest {
         val prompt = subject(today, yesterday, emptyList(), TemperatureUnit.CELSIUS, "en-AU")
         prompt.systemInstruction.shouldContain("Severe alert")
         prompt.systemInstruction.shouldContain("\"Alert: <event>.\"")
-        prompt.systemInstruction.shouldContain("EXTREME outranks SEVERE")
+        prompt.systemInstruction.shouldContain("Extreme outranks Severe")
+    }
+
+    @Test
+    fun `system instruction documents the (none) sentinel so it isn't echoed literally`() {
+        val prompt = subject(today, yesterday, emptyList(), TemperatureUnit.CELSIUS, "en-AU")
+        prompt.systemInstruction.shouldContain("\"(none)\"")
+        prompt.systemInstruction.shouldContain("If the list is \"(none)\", omit")
     }
 
     @Test
