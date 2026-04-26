@@ -32,13 +32,12 @@ internal const val GEMINI_API_VERSION = "v1beta"
  *
  * The model returns a single 16-bit signed PCM audio stream at a sample rate carried
  * in the `mimeType` (`audio/L16;codec=pcm;rate=24000`). [PcmAudio.sampleRate] parses
- * that out of the response.
+ * that out of the response so the caller can hand the bytes straight to AudioTrack.
  *
- * **Endianness**: per RFC 2586, `audio/L16` is *big-endian* (network byte order).
- * Android `AudioTrack` only consumes little-endian PCM16, so we byte-swap each
- * 16-bit sample after decode. Without this, every sample is byte-flipped, which
- * sounds like continuous static throughout playback. (OpenAI's `pcm` response
- * format is documented as little-endian, so [OpenAITtsClient] doesn't need this.)
+ * Despite the `audio/L16` mime label (which per RFC 2586 specifies network byte
+ * order), Gemini's payload is already little-endian — the same encoding Android's
+ * `ENCODING_PCM_16BIT` consumes. A previous attempt to byte-swap on decode was
+ * reverted because it turned correctly-decoded speech into noise.
  *
  * Default voice is `Kore` (firm). Other prebuilt voices are listed in Google's docs;
  * pass via [voiceName] when calling.
@@ -100,21 +99,8 @@ class GeminiTtsClient(
             ?: throw GeminiTtsEmptyResponseException(candidate?.finishReason)
 
         val pcm = Base64.getDecoder().decode(inline.data)
-        swapBytePairsInPlace(pcm)
         val sampleRate = parseSampleRate(inline.mimeType) ?: DEFAULT_SAMPLE_RATE_HZ
         return PcmAudio(bytes = pcm, sampleRate = sampleRate)
-    }
-
-    /** Big-endian → little-endian conversion for 16-bit samples; see class KDoc. */
-    private fun swapBytePairsInPlace(bytes: ByteArray) {
-        var i = 0
-        val end = bytes.size and 1.inv() // round down to even — last odd byte (if any) left untouched
-        while (i < end) {
-            val tmp = bytes[i]
-            bytes[i] = bytes[i + 1]
-            bytes[i + 1] = tmp
-            i += 2
-        }
     }
 
     private fun parseSampleRate(mimeType: String): Int? {
