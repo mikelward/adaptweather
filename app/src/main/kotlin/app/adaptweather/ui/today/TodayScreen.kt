@@ -210,7 +210,7 @@ internal fun EmptyState(onRefresh: () -> Unit) {
  * at a glance.
  */
 @Composable
-private fun OutfitPreviewCard(outfit: OutfitSuggestion) {
+internal fun OutfitPreviewCard(outfit: OutfitSuggestion) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),

@@ -49,6 +49,14 @@ class PreviewSnapshots {
         composeRule.onRoot().captureRoboImage()
     }
 
+    @Test fun outfit_tshirt_shorts() = capture { OutfitTShirtShortsPreview() }
+    @Test fun outfit_tshirt_pants() = capture { OutfitTShirtPantsPreview() }
+    @Test fun outfit_sweater_shorts() = capture { OutfitSweaterShortsPreview() }
+    @Test fun outfit_sweater_pants() = capture { OutfitSweaterPantsPreview() }
+    @Test fun outfit_jacket_shorts() = capture { OutfitJacketShortsPreview() }
+    @Test fun outfit_jacket_pants() = capture { OutfitJacketPantsPreview() }
+    @Test fun outfit_sweater_pants_dark() = capture { OutfitSweaterPantsDarkPreview() }
+
     @Test fun today_empty_state() = capture { EmptyStatePreview() }
     @Test fun today_insight_card() = capture { InsightCardPreview() }
     @Test fun today_insight_card_dark() = capture { InsightCardDarkPreview() }

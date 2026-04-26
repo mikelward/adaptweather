@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import app.adaptweather.core.domain.model.ConfidenceInfo
 import app.adaptweather.core.domain.model.ForecastConfidence
 import app.adaptweather.core.domain.model.Insight
+import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.ui.theme.AdaptWeatherTheme
 import app.adaptweather.work.FetchAndNotifyWorker
 import java.time.Instant
@@ -43,6 +44,50 @@ private val SAMPLE_INSIGHT = Insight(
     generatedAt = Instant.parse("2026-04-26T07:30:00Z"),
     forDate = LocalDate.of(2026, 4, 26),
 )
+
+@Preview(name = "Outfit · t-shirt + shorts", widthDp = 360)
+@Composable
+internal fun OutfitTShirtShortsPreview() {
+    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.SHORTS)) }
+}
+
+@Preview(name = "Outfit · t-shirt + long pants", widthDp = 360)
+@Composable
+internal fun OutfitTShirtPantsPreview() {
+    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.LONG_PANTS)) }
+}
+
+@Preview(name = "Outfit · sweater + shorts", widthDp = 360)
+@Composable
+internal fun OutfitSweaterShortsPreview() {
+    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.SHORTS)) }
+}
+
+@Preview(name = "Outfit · sweater + long pants", widthDp = 360)
+@Composable
+internal fun OutfitSweaterPantsPreview() {
+    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS)) }
+}
+
+@Preview(name = "Outfit · thick jacket + shorts", widthDp = 360)
+@Composable
+internal fun OutfitJacketShortsPreview() {
+    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.SHORTS)) }
+}
+
+@Preview(name = "Outfit · thick jacket + long pants", widthDp = 360)
+@Composable
+internal fun OutfitJacketPantsPreview() {
+    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.LONG_PANTS)) }
+}
+
+@Preview(name = "Outfit · sweater + pants (dark)", widthDp = 360)
+@Composable
+internal fun OutfitSweaterPantsDarkPreview() {
+    Frame(darkTheme = true) {
+        OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS))
+    }
+}
 
 @Preview(name = "Today · empty state", widthDp = 360)
 @Composable
