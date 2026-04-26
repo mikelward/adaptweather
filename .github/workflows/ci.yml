@@ -22,6 +22,11 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          # `app/build.gradle.kts` derives `versionCode` from
+          # `git rev-list --count HEAD`. Shallow clones return 1 every time,
+          # so every build would collide on versionCode 1.
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -119,6 +124,9 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          # See unit-tests job above — versionCode comes from rev-list --count.
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
