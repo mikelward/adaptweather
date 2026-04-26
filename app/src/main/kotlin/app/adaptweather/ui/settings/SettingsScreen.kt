@@ -57,6 +57,8 @@ import app.adaptweather.core.domain.model.Location
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.WardrobeRule
+import app.adaptweather.tts.ELEVENLABS_VOICES
+import app.adaptweather.tts.ElevenLabsTtsSpeaker
 import app.adaptweather.tts.GEMINI_VOICES
 import app.adaptweather.tts.GeminiTtsSpeaker
 import app.adaptweather.tts.OPENAI_VOICES
@@ -116,6 +118,9 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onSetOpenAiVoice = viewModel::setOpenAiVoice,
             onSetOpenAiKey = viewModel::setOpenAiKey,
             onClearOpenAiKey = viewModel::clearOpenAiKey,
+            onSetElevenLabsVoice = viewModel::setElevenLabsVoice,
+            onSetElevenLabsKey = viewModel::setElevenLabsKey,
+            onClearElevenLabsKey = viewModel::clearElevenLabsKey,
         )
     }
 }
@@ -142,6 +147,9 @@ private fun SettingsContent(
     onSetOpenAiVoice: (String) -> Unit,
     onSetOpenAiKey: (String) -> Unit,
     onClearOpenAiKey: () -> Unit,
+    onSetElevenLabsVoice: (String) -> Unit,
+    onSetElevenLabsKey: (String) -> Unit,
+    onClearElevenLabsKey: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -155,10 +163,13 @@ private fun SettingsContent(
         ApiKeysCard(
             geminiConfigured = state.apiKeyConfigured,
             openAiConfigured = state.openAiKeyConfigured,
+            elevenLabsConfigured = state.elevenLabsKeyConfigured,
             onSetGeminiKey = onSetApiKey,
             onClearGeminiKey = onClearApiKey,
             onSetOpenAiKey = onSetOpenAiKey,
             onClearOpenAiKey = onClearOpenAiKey,
+            onSetElevenLabsKey = onSetElevenLabsKey,
+            onClearElevenLabsKey = onClearElevenLabsKey,
         )
         LocationCard(
             current = state.location,
@@ -181,8 +192,11 @@ private fun SettingsContent(
             onGeminiVoice = onSetGeminiVoice,
             openAiVoice = state.openAiVoice,
             onOpenAiVoice = onSetOpenAiVoice,
+            elevenLabsVoice = state.elevenLabsVoice,
+            onElevenLabsVoice = onSetElevenLabsVoice,
             geminiKeyConfigured = state.apiKeyConfigured,
             openAiKeyConfigured = state.openAiKeyConfigured,
+            elevenLabsKeyConfigured = state.elevenLabsKeyConfigured,
         )
         TemperatureUnitCard(state.temperatureUnit, onSetTemperatureUnit)
         DistanceUnitCard(state.distanceUnit, onSetDistanceUnit)
@@ -805,18 +819,22 @@ private fun SectionCard(title: String, content: @Composable () -> Unit) {
 
 /**
  * One section that holds every BYOK API key the app uses (Gemini for Gemini TTS,
- * OpenAI for OpenAI TTS). Putting both in a single section makes them feel
- * symmetric — neither is "the primary" — and keeps the engine picker downstream
- * focused on engine + voice + a small "missing key" hint when relevant.
+ * OpenAI for OpenAI TTS, ElevenLabs for ElevenLabs TTS). Putting them in a single
+ * section makes them feel symmetric — none is "the primary" — and keeps the engine
+ * picker downstream focused on engine + voice + a small "missing key" hint when
+ * relevant.
  */
 @Composable
 private fun ApiKeysCard(
     geminiConfigured: Boolean,
     openAiConfigured: Boolean,
+    elevenLabsConfigured: Boolean,
     onSetGeminiKey: (String) -> Unit,
     onClearGeminiKey: () -> Unit,
     onSetOpenAiKey: (String) -> Unit,
     onClearOpenAiKey: () -> Unit,
+    onSetElevenLabsKey: (String) -> Unit,
+    onClearElevenLabsKey: () -> Unit,
 ) {
     SectionCard(title = stringResource(R.string.settings_api_keys_title)) {
         Text(
@@ -860,6 +878,25 @@ private fun ApiKeysCard(
             onSave = onSetOpenAiKey,
             onClear = onClearOpenAiKey,
         )
+
+        HorizontalDivider()
+
+        Text(
+            text = stringResource(R.string.settings_api_key_elevenlabs_label),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        KeyEntryFields(
+            configured = elevenLabsConfigured,
+            statusText = stringResource(
+                if (elevenLabsConfigured) R.string.settings_elevenlabs_key_status_set
+                else R.string.settings_elevenlabs_key_status_unset,
+            ),
+            placeholder = stringResource(R.string.settings_elevenlabs_key_placeholder),
+            saveLabel = stringResource(R.string.settings_elevenlabs_key_save),
+            clearLabel = stringResource(R.string.settings_elevenlabs_key_clear),
+            onSave = onSetElevenLabsKey,
+            onClear = onClearElevenLabsKey,
+        )
     }
 }
 
@@ -887,8 +924,11 @@ private fun TtsEngineCard(
     onGeminiVoice: (String) -> Unit,
     openAiVoice: String,
     onOpenAiVoice: (String) -> Unit,
+    elevenLabsVoice: String,
+    onElevenLabsVoice: (String) -> Unit,
     geminiKeyConfigured: Boolean,
     openAiKeyConfigured: Boolean,
+    elevenLabsKeyConfigured: Boolean,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -897,10 +937,10 @@ private fun TtsEngineCard(
     // overlapping playbacks.
     var previewJob by remember { mutableStateOf<Job?>(null) }
 
-    fun preview(engine: TtsEngine, gVoice: String, oVoice: String) {
+    fun preview(engine: TtsEngine, gVoice: String, oVoice: String, eVoice: String) {
         previewJob?.cancel()
         previewJob = coroutineScope.launch {
-            runTtsPreview(context, engine, gVoice, oVoice)
+            runTtsPreview(context, engine, gVoice, oVoice, eVoice)
         }
     }
 
@@ -916,7 +956,7 @@ private fun TtsEngineCard(
                 selected = engine == selected,
                 onSelect = {
                     onSelect(engine)
-                    preview(engine, geminiVoice, openAiVoice)
+                    preview(engine, geminiVoice, openAiVoice, elevenLabsVoice)
                 },
             )
         }
@@ -933,10 +973,10 @@ private fun TtsEngineCard(
                     selectedId = geminiVoice,
                     onSelect = {
                         onGeminiVoice(it)
-                        preview(TtsEngine.GEMINI, it, openAiVoice)
+                        preview(TtsEngine.GEMINI, it, openAiVoice, elevenLabsVoice)
                     },
                 )
-                TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
+                TestVoiceButton { preview(selected, geminiVoice, openAiVoice, elevenLabsVoice) }
             }
             TtsEngine.OPENAI -> {
                 if (!openAiKeyConfigured) {
@@ -950,10 +990,27 @@ private fun TtsEngineCard(
                     selectedId = openAiVoice,
                     onSelect = {
                         onOpenAiVoice(it)
-                        preview(TtsEngine.OPENAI, geminiVoice, it)
+                        preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice)
                     },
                 )
-                TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
+                TestVoiceButton { preview(selected, geminiVoice, openAiVoice, elevenLabsVoice) }
+            }
+            TtsEngine.ELEVENLABS -> {
+                if (!elevenLabsKeyConfigured) {
+                    MissingKeyHint(
+                        engineName = stringResource(R.string.settings_api_key_elevenlabs_label),
+                    )
+                }
+                VoicePicker(
+                    title = stringResource(R.string.settings_tts_voice_label),
+                    voices = ELEVENLABS_VOICES,
+                    selectedId = elevenLabsVoice,
+                    onSelect = {
+                        onElevenLabsVoice(it)
+                        preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it)
+                    },
+                )
+                TestVoiceButton { preview(selected, geminiVoice, openAiVoice, elevenLabsVoice) }
             }
             TtsEngine.DEVICE -> Unit
         }
@@ -1037,6 +1094,7 @@ private suspend fun runTtsPreview(
     engine: TtsEngine,
     geminiVoice: String,
     openAiVoice: String,
+    elevenLabsVoice: String,
 ) {
     val app = context.applicationContext as app.adaptweather.AdaptWeatherApplication
     // Network synthesis and AudioTrack write are both blocking-ish work — Ktor
@@ -1051,6 +1109,8 @@ private suspend fun runTtsPreview(
                     GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text)
                 TtsEngine.OPENAI ->
                     OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text)
+                TtsEngine.ELEVENLABS ->
+                    ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = elevenLabsVoice).speak(text)
                 TtsEngine.DEVICE ->
                     app.deviceTtsSpeaker.speak(text)
             }
@@ -1183,6 +1243,7 @@ private fun ttsEngineLabel(engine: TtsEngine): Int = when (engine) {
     TtsEngine.DEVICE -> R.string.settings_tts_engine_device
     TtsEngine.GEMINI -> R.string.settings_tts_engine_gemini
     TtsEngine.OPENAI -> R.string.settings_tts_engine_openai
+    TtsEngine.ELEVENLABS -> R.string.settings_tts_engine_elevenlabs
 }
 
 private fun temperatureUnitLabel(unit: TemperatureUnit): Int = when (unit) {

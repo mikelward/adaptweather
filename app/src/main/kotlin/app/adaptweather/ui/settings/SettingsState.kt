@@ -24,6 +24,8 @@ data class SettingsState(
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
     val openAiVoice: String = UserPreferences.DEFAULT_OPENAI_VOICE,
+    val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,
+    val elevenLabsKeyConfigured: Boolean = false,
 )

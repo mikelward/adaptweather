@@ -16,8 +16,11 @@ enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
  *   a small amount per character. Falls back to [DEVICE] if the call fails.
  * - [OPENAI] uses OpenAI's `audio/speech` endpoint over a separate BYOK OpenAI key.
  *   Comparable quality to Gemini; falls back to [DEVICE] on failure.
+ * - [ELEVENLABS] uses ElevenLabs's `text-to-speech` endpoint over a separate BYOK
+ *   ElevenLabs key. Highest perceptual naturalness of the three online options;
+ *   falls back to [DEVICE] on failure.
  */
-enum class TtsEngine { DEVICE, GEMINI, OPENAI }
+enum class TtsEngine { DEVICE, GEMINI, OPENAI, ELEVENLABS }
 
 data class UserPreferences(
     val schedule: Schedule,
@@ -49,9 +52,17 @@ data class UserPreferences(
      * == [TtsEngine.OPENAI].
      */
     val openAiVoice: String = DEFAULT_OPENAI_VOICE,
+    /**
+     * ElevenLabs voice ID — the opaque library identifier (e.g.
+     * "EXAVITQu4vr4xnSDxMaL" for Sarah). Only consulted when [ttsEngine]
+     * == [TtsEngine.ELEVENLABS].
+     */
+    val elevenLabsVoice: String = DEFAULT_ELEVENLABS_VOICE,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"
         const val DEFAULT_OPENAI_VOICE = "alloy"
+        // Sarah — the most generally pleasant of ElevenLabs's stock library voices.
+        const val DEFAULT_ELEVENLABS_VOICE = "EXAVITQu4vr4xnSDxMaL"
     }
 }
