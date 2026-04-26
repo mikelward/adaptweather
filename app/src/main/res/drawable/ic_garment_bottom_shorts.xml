@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Shorts overlay for the cartoon outfit figure. Covers hips and the upper
+    portion of each leg, leaving most of the legs (calves) and feet visible
+    underneath the skin layer.
+
+    See ic_person_skin.xml for shared coordinate-system notes.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- Waistband (slightly wider than the legs to feel like a band) -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M32,60 h32 v4 h-32 z" />
+    <!-- Left short leg -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M36,60 h10 v12 h-10 z" />
+    <!-- Right short leg -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M50,60 h10 v12 h-10 z" />
+</vector>

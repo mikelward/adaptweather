@@ -28,9 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,10 +48,6 @@ import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.symbol
 import app.adaptweather.work.FetchAndNotifyWorker
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -203,76 +204,46 @@ internal fun EmptyState(onRefresh: () -> Unit) {
 }
 
 /**
- * Big, glanceable two-icon preview of today's outfit (one top + one bottom). Sits
- * above the wordy [InsightCard] so the user can answer "what do I wear?" without
- * reading. Icons are fixed-colour SVGs in the GNOME / flat-design spirit; we
- * don't tint them with the Material scheme so each garment stays recognisable
- * at a glance.
+ * Big, glanceable cartoon-figure preview of today's outfit. Sits above the
+ * wordy [InsightCard] so the user can answer "what do I wear?" without
+ * reading. The figure itself ([OutfitFigure]) is one androgynous cartoon
+ * person rendered as stacked tinted vector layers — see [OutfitAppearance]
+ * for the customization roadmap (user-selected colours, skin tone, gender).
  */
 @Composable
 internal fun OutfitPreviewCard(outfit: OutfitSuggestion) {
+    val description = stringResource(
+        R.string.today_outfit_description,
+        stringResource(topLabelRes(outfit.top)),
+        stringResource(bottomLabelRes(outfit.bottom)),
+    )
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = stringResource(R.string.today_outfit_title),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.Top,
-            ) {
-                OutfitGarment(
-                    iconRes = topIconRes(outfit.top),
-                    labelRes = topLabelRes(outfit.top),
-                )
-                OutfitGarment(
-                    iconRes = bottomIconRes(outfit.bottom),
-                    labelRes = bottomLabelRes(outfit.bottom),
-                )
-            }
+            )
+            OutfitFigure(
+                outfit = outfit,
+                modifier = Modifier
+                    .height(160.dp)
+                    .aspectRatio(1f)
+                    .semantics { contentDescription = description },
+            )
         }
     }
-}
-
-@Composable
-private fun OutfitGarment(iconRes: Int, labelRes: Int) {
-    val label = stringResource(labelRes)
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            modifier = Modifier.height(112.dp),
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
-}
-
-private fun topIconRes(top: OutfitSuggestion.Top): Int = when (top) {
-    OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt
-    OutfitSuggestion.Top.SWEATER -> R.drawable.ic_outfit_sweater
-    OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_outfit_thick_jacket
 }
 
 private fun topLabelRes(top: OutfitSuggestion.Top): Int = when (top) {
     OutfitSuggestion.Top.TSHIRT -> R.string.today_outfit_top_tshirt
     OutfitSuggestion.Top.SWEATER -> R.string.today_outfit_top_sweater
     OutfitSuggestion.Top.THICK_JACKET -> R.string.today_outfit_top_thick_jacket
-}
-
-private fun bottomIconRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
-    OutfitSuggestion.Bottom.SHORTS -> R.drawable.ic_outfit_shorts
-    OutfitSuggestion.Bottom.LONG_PANTS -> R.drawable.ic_outfit_long_pants
 }
 
 private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
