@@ -63,8 +63,11 @@ class RenderInsightSummary {
         val highDelta = today.feelsLikeMaxC - yesterday.feelsLikeMaxC
         val lowDelta = today.feelsLikeMinC - yesterday.feelsLikeMinC
         val biggest = if (abs(highDelta) >= abs(lowDelta)) highDelta else lowDelta
+        // Apply the threshold against the *unrounded* delta. Otherwise 2.6°C rounds
+        // to 3 and would emit a sentence even though the actual delta is under the
+        // 3° rule.
+        if (abs(biggest) < 3.0) return null
         val rounded = biggest.roundToInt()
-        if (abs(rounded) < 3) return null
         val direction = if (rounded > 0) "warmer" else "cooler"
         return "It will be ${abs(rounded)}° $direction today."
     }
@@ -110,7 +113,7 @@ class RenderInsightSummary {
             time = peak.time
             condition = if (peak.condition == WeatherCondition.UNKNOWN) today.condition else peak.condition
         }
-        val type = condition.name.lowercase().replace('_', ' ')
+        val type = condition.name.lowercase(Locale.ROOT).replace('_', ' ')
             .replaceFirstChar { it.titlecase(Locale.ROOT) }
         return "$type at $time."
     }
