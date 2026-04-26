@@ -34,6 +34,12 @@ class InsightNotifier(private val context: Context) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
+        // TODO(notification-figure): when [insight.outfit] is non-null, render the
+        // [OutfitFigure] composable to a Bitmap (Compose ComposeView →
+        // Bitmap.Config.ARGB_8888, sized for Notification.LARGE_ICON_SIZE) and
+        // attach via .setLargeIcon(bitmap). The figure is the same one shown on
+        // the Today screen, so the notification carries the same glanceable
+        // "what to wear today" cue without the user having to open the app.
         val notification = NotificationCompat.Builder(context, CHANNEL_DAILY_INSIGHT)
             .setSmallIcon(R.drawable.ic_notification_insight)
             .setContentTitle(context.getString(R.string.notification_daily_insight_title))

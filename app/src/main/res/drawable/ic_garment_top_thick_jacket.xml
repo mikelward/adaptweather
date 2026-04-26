@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Thick / puffy jacket overlay for the cartoon outfit figure. Wider torso
+    and sleeves than the sweater (suggesting bulk), and the body extends
+    further down past the hips. No hood for v1 — keep silhouette simple.
+
+    See ic_person_skin.xml for shared coordinate-system notes.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- Body — wider than sweater, extends below the waist -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M28,30 h40 v36 h-40 z" />
+    <!-- Left thick sleeve -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M18,32 h12 v30 h-12 z" />
+    <!-- Right thick sleeve -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M66,32 h12 v30 h-12 z" />
+</vector>
