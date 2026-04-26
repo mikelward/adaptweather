@@ -1073,8 +1073,6 @@ private suspend fun runTtsPreview(
     // Network synthesis and AudioTrack write are both blocking-ish work — Ktor
     // suspends off-Main internally, but AudioTrack.write/play are JNI calls and
     // we don't want a hot stack of preview work running on the UI dispatcher.
-    // Toast is documented as safe from any thread (it posts internally) so we
-    // don't need to hop back to Main for the failure path.
     withContext(Dispatchers.IO) {
         try {
             val text = app.insightCache.latest.first()?.spokenText()
@@ -1092,7 +1090,11 @@ private suspend fun runTtsPreview(
         } catch (t: Throwable) {
             val message = "${t.javaClass.simpleName}: ${t.message ?: "(no detail)"}"
             android.util.Log.w("SettingsScreen", "TTS preview failed for $engine", t)
-            android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+            // Toast.show() posts internally, but Toast.makeText()'s constructor needs
+            // a Looper on the calling thread — Dispatchers.IO has none, so hop to Main.
+            withContext(Dispatchers.Main) {
+                android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+            }
         }
     }
 }
