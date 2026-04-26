@@ -49,6 +49,7 @@ class SettingsViewModel(
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
                         openAiVoice = prefs.openAiVoice,
+                        elevenLabsVoice = prefs.elevenLabsVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
                     )
@@ -86,12 +87,30 @@ class SettingsViewModel(
         }
     }
 
+    fun setElevenLabsKey(key: String) {
+        viewModelScope.launch {
+            keyStore.setElevenLabs(key.trim())
+            refreshApiKeyStatus()
+        }
+    }
+
+    fun clearElevenLabsKey() {
+        viewModelScope.launch {
+            keyStore.clearElevenLabs()
+            refreshApiKeyStatus()
+        }
+    }
+
     fun setGeminiVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setGeminiVoice(voice) }
     }
 
     fun setOpenAiVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setOpenAiVoice(voice) }
+    }
+
+    fun setElevenLabsVoice(voice: String) {
+        viewModelScope.launch { settingsRepository.setElevenLabsVoice(voice) }
     }
 
     fun setDeliveryMode(mode: DeliveryMode) {
@@ -170,7 +189,14 @@ class SettingsViewModel(
     private suspend fun refreshApiKeyStatus() {
         val gemini = runCatching { keyStore.get().isNotBlank() }.getOrDefault(false)
         val openAi = runCatching { keyStore.getOpenAi().isNotBlank() }.getOrDefault(false)
-        _state.update { it.copy(apiKeyConfigured = gemini, openAiKeyConfigured = openAi) }
+        val elevenLabs = runCatching { keyStore.getElevenLabs().isNotBlank() }.getOrDefault(false)
+        _state.update {
+            it.copy(
+                apiKeyConfigured = gemini,
+                openAiKeyConfigured = openAi,
+                elevenLabsKeyConfigured = elevenLabs,
+            )
+        }
     }
 
     class Factory(

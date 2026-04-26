@@ -155,18 +155,25 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `setGeminiVoice and setOpenAiVoice round-trip and are independent`() = runTest {
+    fun `voice setters round-trip and are independent across providers`() = runTest {
         subject.setGeminiVoice("Puck")
         subject.setOpenAiVoice("nova")
+        subject.setElevenLabsVoice("21m00Tcm4TlvDq8ikWAM")
 
         val prefs = subject.preferences.first()
         prefs.geminiVoice shouldBe "Puck"
         prefs.openAiVoice shouldBe "nova"
+        prefs.elevenLabsVoice shouldBe "21m00Tcm4TlvDq8ikWAM"
     }
 
     @Test
     fun `gemini voice defaults to Kore when nothing stored`() = runTest {
         subject.preferences.first().geminiVoice shouldBe "Kore"
+    }
+
+    @Test
+    fun `elevenLabs voice defaults to Sarah when nothing stored`() = runTest {
+        subject.preferences.first().elevenLabsVoice shouldBe "EXAVITQu4vr4xnSDxMaL"
     }
 
     @Test

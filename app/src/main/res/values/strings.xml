@@ -38,6 +38,7 @@
     <string name="settings_api_keys_description">Configure the API keys for the online voice engines you want to use. Keys are encrypted at rest using the Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">A Gemini key is configured.</string>
     <string name="settings_api_key_status_unset">No Gemini key configured. Get one at aistudio.google.com to use Gemini voices.</string>
@@ -70,10 +71,11 @@
     <string name="settings_delivery_notification_and_tts">Notification and spoken aloud</string>
 
     <string name="settings_tts_engine_title">Voice engine</string>
-    <string name="settings_tts_engine_description">Online engines (Gemini, OpenAI) sound much more natural but need a network call at speak-time and use your API key for synthesis (one short call per spoken insight). Falls back to the device voice if the chosen engine fails.</string>
+    <string name="settings_tts_engine_description">Online engines (Gemini, OpenAI, ElevenLabs) sound much more natural but need a network call at speak-time and use your API key for synthesis (one short call per spoken insight). Falls back to the device voice if the chosen engine fails.</string>
     <string name="settings_tts_engine_device">Device (offline, free)</string>
     <string name="settings_tts_engine_gemini">Gemini (high quality, online)</string>
     <string name="settings_tts_engine_openai">OpenAI (high quality, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (highest quality, online)</string>
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
     <string name="settings_tts_voice_locale_label">English variant</string>
@@ -93,6 +95,12 @@
     <string name="settings_openai_key_placeholder">Paste your OpenAI API key</string>
     <string name="settings_openai_key_save">Save OpenAI key</string>
     <string name="settings_openai_key_clear">Clear stored OpenAI key</string>
+
+    <string name="settings_elevenlabs_key_status_set">An ElevenLabs key is configured.</string>
+    <string name="settings_elevenlabs_key_status_unset">No ElevenLabs key configured. Get one at elevenlabs.io to use ElevenLabs voices.</string>
+    <string name="settings_elevenlabs_key_placeholder">Paste your ElevenLabs API key</string>
+    <string name="settings_elevenlabs_key_save">Save ElevenLabs key</string>
+    <string name="settings_elevenlabs_key_clear">Clear stored ElevenLabs key</string>
 
     <string name="settings_temperature_unit_title">Temperature unit</string>
     <string name="settings_temperature_unit_celsius">Celsius (°C)</string>

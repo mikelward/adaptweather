@@ -30,8 +30,10 @@ data class SettingsState(
     // When voiceLocale is SYSTEM (the default), this resolves through the phone's
     // current locale → fable on en-GB, nova everywhere else.
     val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
+    val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val useCalendarEvents: Boolean = false,
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,
+    val elevenLabsKeyConfigured: Boolean = false,
 )

@@ -17,6 +17,7 @@ import app.adaptweather.core.domain.model.Insight
 import app.adaptweather.core.domain.model.Location
 import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.UserPreferences
+import app.adaptweather.tts.ElevenLabsTtsSpeaker
 import app.adaptweather.tts.GeminiTtsSpeaker
 import app.adaptweather.tts.OpenAITtsSpeaker
 import app.adaptweather.tts.resolve
@@ -202,6 +203,14 @@ class FetchAndNotifyWorker(
                     return
                 } catch (t: Throwable) {
                     Log.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
+                }
+            }
+            TtsEngine.ELEVENLABS -> {
+                try {
+                    ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = prefs.elevenLabsVoice).speak(text, locale)
+                    return
+                } catch (t: Throwable) {
+                    Log.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)
                 }
             }
             TtsEngine.DEVICE -> Unit
