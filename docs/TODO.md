@@ -5,11 +5,11 @@ Code TODOs in source files are linked from here when they exist.
 
 ## Pre-publishing blockers
 
-- [ ] **Pick a stable namespace + applicationId.** Currently `com.adaptweather`,
-      a placeholder. Reverse-DNS based on a domain you own (e.g.
-      `dev.mikelward.adaptweather`) and a settled product name. Marked TODO in
-      `app/build.gradle.kts:9`. *Renaming after sideload destroys settings —
-      Android treats the new applicationId as a different app.*
+- [x] **Pick a stable namespace + applicationId.** Pinned to `app.adaptweather`
+      (reverse-DNS of the owned `adaptweather.app` domain). Renaming after
+      sideload destroys settings — Android treats the new applicationId as a
+      different app — so this had to land before any Firebase App Distribution
+      rollout.
 - [ ] **Pick a stable product name.** "AdaptWeather" is a working title.
 
 ## Distribution
@@ -106,4 +106,4 @@ Code TODOs in source files are linked from here when they exist.
 | File | Note |
 |---|---|
 | `app/build.gradle.kts:9` | Pin namespace + applicationId before first distribution. |
-| `app/src/main/kotlin/com/adaptweather/tts/AndroidTtsSpeaker.kt:30` | Evaluate higher-quality TTS alternatives. (Gemini + OpenAI now landed.) |
+| `app/src/main/kotlin/app/adaptweather/tts/AndroidTtsSpeaker.kt:30` | Evaluate higher-quality TTS alternatives. (Gemini + OpenAI now landed.) |
