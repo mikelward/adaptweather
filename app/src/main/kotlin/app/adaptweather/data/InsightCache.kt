@@ -121,7 +121,13 @@ class InsightCache(
     )
 
     companion object {
-        private val INSIGHT_JSON = stringPreferencesKey("latest_insight_v1")
+        // Bumped from `latest_insight_v1` when the daily insight moved from a Gemini
+        // text call to the deterministic local renderer. Pre-bump entries can carry
+        // truncated LLM output (`"Today will be"` with nothing after — the band
+        // sentence chopped at maxOutputTokens) and would otherwise stick around
+        // until the user crossed midnight, since the worker reuses any cached
+        // entry that matches `forToday`.
+        private val INSIGHT_JSON = stringPreferencesKey("latest_insight_v2")
 
         fun create(context: Context): InsightCache = InsightCache(context.insightDataStore)
     }

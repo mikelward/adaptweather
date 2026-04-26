@@ -96,7 +96,7 @@ class InsightCacheTest {
     @Test
     fun `corrupt JSON in the slot maps to null rather than crashing`() = runTest {
         dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v1")] = "{not valid json"
+            it[stringPreferencesKey("latest_insight_v2")] = "{not valid json"
         }
 
         subject.latest.first() shouldBe null
@@ -128,11 +128,10 @@ class InsightCacheTest {
     }
 
     @Test
-    fun `legacy v1 payloads without hourly decode to an empty hourly list`() = runTest {
-        // Simulates a payload written before the hourly field existed: same key,
-        // no `hourly` member. The cache must treat the missing field as empty
-        // rather than crashing — otherwise existing users would see a blank
-        // Today screen until the next worker run.
+    fun `legacy payloads without hourly decode to an empty hourly list`() = runTest {
+        // Simulates a payload written before the hourly field existed. The cache must
+        // treat the missing field as empty rather than crashing — otherwise existing
+        // users would see a blank Today screen until the next worker run.
         val legacyJson = """
             {
               "summary": "Cooler than yesterday — bring a jumper.",
@@ -142,7 +141,7 @@ class InsightCacheTest {
             }
         """.trimIndent()
         dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v1")] = legacyJson
+            it[stringPreferencesKey("latest_insight_v2")] = legacyJson
         }
 
         val read = subject.latest.first()
