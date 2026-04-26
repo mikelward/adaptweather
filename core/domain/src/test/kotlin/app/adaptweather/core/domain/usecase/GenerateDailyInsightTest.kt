@@ -13,7 +13,6 @@ import app.adaptweather.core.domain.model.WardrobeRule
 import app.adaptweather.core.domain.model.WeatherAlert
 import app.adaptweather.core.domain.model.WeatherCondition
 import app.adaptweather.core.domain.repository.ForecastBundle
-import app.adaptweather.core.domain.repository.InsightGenerator
 import app.adaptweather.core.domain.repository.WeatherRepository
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -72,25 +71,19 @@ class GenerateDailyInsightTest {
         }
     }
 
-    private class FakeInsightGenerator(private val response: String) : InsightGenerator {
-        var lastPrompt: Prompt? = null
-            private set
-
-        override suspend fun generate(prompt: Prompt): String {
-            lastPrompt = prompt
-            return response
-        }
-    }
-
     @Test
-    fun `produces insight with rule items, summary, clock-based timestamp, today's date`() = runTest {
+    fun `produces insight with rule items, deterministic summary, clock-based timestamp, today's date`() = runTest {
         val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
-        val gen = FakeInsightGenerator("  Cooler this morning but warmer than yesterday's peak — bring a jumper.  ")
-        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+        val subject = GenerateDailyInsight(weather, clock = clock)
 
-        val insight = subject(london, prefs, languageTag = "en-AU").insight
+        val insight = subject(london, prefs).insight
 
-        insight.summary shouldBe "Cooler this morning but warmer than yesterday's peak — bring a jumper."
+        // today: feels-like 6→25 → cold-warm; +8°C high vs yesterday → 8° warmer;
+        // wardrobe defaults at this temperature: jumper, jacket, shorts, umbrella;
+        // 60% precipitation → noon fallback (no hourly entries on `today`).
+        insight.summary shouldBe
+            "Today will be cold-warm. It will be 8° warmer today. " +
+            "Wear a jumper, jacket, shorts, and umbrella. Rain at 12:00."
         insight.recommendedItems.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
         insight.generatedAt shouldBe clockInstant
         insight.forDate shouldBe today.date
@@ -99,25 +92,11 @@ class GenerateDailyInsightTest {
     @Test
     fun `forwards location to weather repository`() = runTest {
         val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
-        val gen = FakeInsightGenerator("ok")
-        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+        val subject = GenerateDailyInsight(weather, clock = clock)
 
-        subject(london, prefs, languageTag = "en-AU")
+        subject(london, prefs)
 
         weather.lastQueriedLocation shouldBe london
-    }
-
-    @Test
-    fun `passes language tag and units through to the prompt`() = runTest {
-        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
-        val gen = FakeInsightGenerator("ok")
-        val subject = GenerateDailyInsight(weather, gen, clock = clock)
-
-        subject(london, prefs.copy(temperatureUnit = TemperatureUnit.FAHRENHEIT), languageTag = "en-US")
-
-        val prompt = checkNotNull(gen.lastPrompt)
-        prompt.systemInstruction.shouldContain("en-US")
-        prompt.userMessage.shouldContain("°F")
     }
 
     @Test
@@ -130,16 +109,15 @@ class GenerateDailyInsightTest {
             precipitationProbabilityMaxPct = 10.0,
         )
         val weather = FakeWeatherRepository(ForecastBundle(mildToday, yesterday))
-        val gen = FakeInsightGenerator("ok")
-        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+        val subject = GenerateDailyInsight(weather, clock = clock)
 
-        val result = subject(london, prefs, languageTag = "en-AU")
+        val result = subject(london, prefs)
 
         result.insight.recommendedItems shouldBe emptyList()
     }
 
     @Test
-    fun `severe alerts are surfaced in result and forwarded to the prompt`() = runTest {
+    fun `severe alerts are surfaced in result and woven into the summary`() = runTest {
         val severe = WeatherAlert(
             event = "Severe Thunderstorm Warning",
             severity = AlertSeverity.SEVERE,
@@ -149,21 +127,16 @@ class GenerateDailyInsightTest {
             expires = clockInstant.plusSeconds(3600),
         )
         val weather = FakeWeatherRepository(ForecastBundle(today, yesterday, alerts = listOf(severe)))
-        val gen = FakeInsightGenerator("ok")
-        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+        val subject = GenerateDailyInsight(weather, clock = clock)
 
-        val result = subject(london, prefs, languageTag = "en-AU")
+        val result = subject(london, prefs)
 
         result.alerts.shouldContainExactly(severe)
-        checkNotNull(gen.lastPrompt).userMessage.shouldContain("Severe Thunderstorm Warning")
+        result.insight.summary.shouldContain("Alert: Severe Thunderstorm Warning.")
     }
 
     @Test
     fun `today's hourly forecast is forwarded into the produced insight`() = runTest {
-        // The Today screen's chart reads hourly data off the cached Insight, so the
-        // use case is the only place that can populate it. Without this assertion,
-        // a regression that quietly drops bundle.today.hourly would only surface as
-        // a missing chart at runtime.
         val hourly = listOf(
             HourlyForecast(
                 time = LocalTime.of(8, 0),
@@ -182,16 +155,15 @@ class GenerateDailyInsightTest {
         )
         val todayWithHourly = today.copy(hourly = hourly)
         val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
-        val gen = FakeInsightGenerator("ok")
-        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+        val subject = GenerateDailyInsight(weather, clock = clock)
 
-        val result = subject(london, prefs, languageTag = "en-AU")
+        val result = subject(london, prefs)
 
         result.insight.hourly.shouldContainExactly(hourly)
     }
 
     @Test
-    fun `expired alerts are filtered before reaching the prompt and the result`() = runTest {
+    fun `expired alerts are filtered before reaching the summary and the result`() = runTest {
         val stale = WeatherAlert(
             event = "Wind Advisory",
             severity = AlertSeverity.MODERATE,
@@ -201,12 +173,10 @@ class GenerateDailyInsightTest {
             expires = clockInstant.minusSeconds(60),
         )
         val weather = FakeWeatherRepository(ForecastBundle(today, yesterday, alerts = listOf(stale)))
-        val gen = FakeInsightGenerator("ok")
-        val subject = GenerateDailyInsight(weather, gen, clock = clock)
+        val subject = GenerateDailyInsight(weather, clock = clock)
 
-        val result = subject(london, prefs, languageTag = "en-AU")
+        val result = subject(london, prefs)
 
         result.alerts shouldBe emptyList()
-        checkNotNull(gen.lastPrompt).userMessage.shouldContain("Severe-weather alerts: (none)")
     }
 }

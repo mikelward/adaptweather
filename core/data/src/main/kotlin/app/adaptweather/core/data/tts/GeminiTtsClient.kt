@@ -1,7 +1,5 @@
 package app.adaptweather.core.data.tts
 
-import app.adaptweather.core.data.insight.GEMINI_API_VERSION
-import app.adaptweather.core.data.insight.GEMINI_HOST
 import app.adaptweather.core.data.insight.KeyProvider
 import app.adaptweather.core.data.insight.MissingApiKeyException
 import io.ktor.client.HttpClient
@@ -22,9 +20,12 @@ import java.util.Base64
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
 const val DEFAULT_GEMINI_TTS_VOICE: String = "Kore"
 
+internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
+internal const val GEMINI_API_VERSION = "v1beta"
+
 /**
- * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Same host,
- * same auth header, same BYOK key as [app.adaptweather.core.data.insight.DirectGeminiClient].
+ * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Uses the
+ * standard Generative Language host with a BYOK `x-goog-api-key` header.
  *
  * The model returns a single 16-bit signed PCM audio stream at a sample rate carried
  * in the `mimeType` (`audio/L16;codec=pcm;rate=24000`). [PcmAudio.sampleRate] parses

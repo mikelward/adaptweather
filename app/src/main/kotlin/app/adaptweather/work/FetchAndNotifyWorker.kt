@@ -12,9 +12,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import app.adaptweather.AdaptWeatherApplication
-import app.adaptweather.core.data.insight.GeminiBlockedException
-import app.adaptweather.core.data.insight.GeminiEmptyResponseException
-import app.adaptweather.core.data.insight.MissingApiKeyException
 import app.adaptweather.core.domain.model.DeliveryMode
 import app.adaptweather.core.domain.model.Insight
 import app.adaptweather.core.domain.model.Location
@@ -26,7 +23,6 @@ import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
-import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.first
 import java.io.IOException
 import java.time.LocalDate
@@ -39,12 +35,8 @@ import java.util.concurrent.TimeUnit
  *
  * Outcomes:
  * - Result.success — insight posted (or notification permission denied; we still cached the insight).
- * - Result.retry — transient network / 5xx; WorkManager will retry with backoff.
- * - Result.failure — non-recoverable: missing key, blocked by safety, or 4xx auth.
- *   Caller (the user) is expected to fix the configuration; no point retrying.
- *
- * Location for v1 is hard-coded to London. The plan calls for device GPS at notify time,
- * which lands in a follow-up alongside the location-permission UX.
+ * - Result.retry — transient network / 5xx from OpenMeteo; WorkManager retries with backoff.
+ * - Result.failure — non-recoverable HTTP error or unhandled throwable.
  */
 class FetchAndNotifyWorker(
     context: Context,
@@ -63,34 +55,31 @@ class FetchAndNotifyWorker(
         }
 
         val location = resolveLocation(prefs)
-        val languageTag = java.util.Locale.getDefault().toLanguageTag()
         val today = LocalDate.now()
 
         // 24h cost cap: if we already generated an insight for today, redeliver it
-        // rather than burning another Gemini call. Same path serves the morning alarm
-        // and any "Fire insight now" debug taps later in the day.
+        // rather than refetching. Same path serves the morning alarm and any
+        // "Fire insight now" debug taps later in the day.
         val cached = runCatching { app.insightCache.forToday(today) }.getOrNull()
         if (cached != null) {
-            Log.i(TAG, "Using cached insight for ${cached.forDate}; skipping Gemini.")
+            Log.i(TAG, "Using cached insight for ${cached.forDate}.")
             return runCatching { deliver(cached, prefs) }
                 .map { Result.success() }
                 .getOrElse {
                     Log.e(TAG, "Cached delivery failed; falling through to fresh generate.", it)
-                    fresh(location, prefs, languageTag)
+                    fresh(location, prefs)
                 }
         }
 
-        return fresh(location, prefs, languageTag)
+        return fresh(location, prefs)
     }
 
     private suspend fun fresh(
         location: Location,
         prefs: UserPreferences,
-        languageTag: String,
     ): Result {
         return try {
-            val result = app.createGenerateDailyInsight(prefs.geminiModel)
-                .invoke(location, prefs, languageTag)
+            val result = app.generateDailyInsight(location, prefs)
             val insight = result.insight
             // Severe alerts are out-of-band: post them as separate high-priority
             // notifications on every fresh fetch, regardless of whether the daily
@@ -104,30 +93,14 @@ class FetchAndNotifyWorker(
             deliver(insight, prefs)
             Log.i(TAG, "Insight delivered for ${insight.forDate}: ${insight.summary}")
             Result.success()
-        } catch (e: MissingApiKeyException) {
-            Log.w(TAG, "No Gemini API key configured; user must set one in Settings.")
-            // Surface this to the user — without it the morning is silent and they have
-            // no idea why no insight arrived.
-            runCatching { app.missingApiKeyNotifier.post() }
-                .onFailure { Log.w(TAG, "Failed to post missing-API-key notification.", it) }
-            Result.failure(reason(REASON_MISSING_API_KEY))
-        } catch (e: GeminiBlockedException) {
-            Log.w(TAG, "Gemini refused the prompt: ${e.message}")
-            Result.failure(reason(REASON_GEMINI_BLOCKED, e.message))
-        } catch (e: GeminiEmptyResponseException) {
-            Log.w(TAG, "Gemini returned no candidate text; will retry.")
-            Result.retry()
         } catch (e: ResponseException) {
-            // 4xx auth/quota: don't retry. 5xx server-side: retry with backoff.
+            // OpenMeteo 4xx → fail; 5xx → retry with backoff.
             val status = e.response.status
-            if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
-                Log.w(TAG, "Auth failed against Gemini ($status); user must fix the key.")
-                Result.failure(reason(REASON_GEMINI_AUTH, "$status"))
-            } else if (status.value in 500..599) {
-                Log.w(TAG, "Server error $status; retrying.")
+            if (status.value in 500..599) {
+                Log.w(TAG, "Server error $status from OpenMeteo; retrying.")
                 Result.retry()
             } else {
-                Log.e(TAG, "Unexpected HTTP status $status", e)
+                Log.e(TAG, "Unexpected HTTP status $status from OpenMeteo", e)
                 Result.failure(reason(REASON_UNEXPECTED_HTTP, "$status"))
             }
         } catch (e: ConnectTimeoutException) {
@@ -161,8 +134,10 @@ class FetchAndNotifyWorker(
     }
 
     private suspend fun deliver(insight: Insight, prefs: UserPreferences) {
-        // Silent run: when nothing meaningful changed, the prompt rules tell Gemini to
-        // emit an empty string. Don't post a blank notification or speak silence.
+        // Defensive: a cache from an older app version could have a blank summary
+        // (when the LLM rule set occasionally emitted nothing). Don't post a blank
+        // notification or speak silence. The current renderer always emits a band
+        // sentence, so this guard never trips for fresh insights.
         if (insight.summary.isBlank()) {
             Log.i(TAG, "Insight summary is blank; skipping notification + TTS.")
             return
@@ -217,9 +192,6 @@ class FetchAndNotifyWorker(
         const val KEY_REASON = "reason"
         const val KEY_REASON_DETAIL = "reason_detail"
 
-        const val REASON_MISSING_API_KEY = "missing_api_key"
-        const val REASON_GEMINI_AUTH = "gemini_auth"
-        const val REASON_GEMINI_BLOCKED = "gemini_blocked"
         const val REASON_UNEXPECTED_HTTP = "unexpected_http"
         const val REASON_UNHANDLED = "unhandled"
 

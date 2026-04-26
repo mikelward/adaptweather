@@ -39,7 +39,7 @@ internal fun Frame(darkTheme: Boolean = false, content: @Composable () -> Unit) 
 }
 
 private val SAMPLE_INSIGHT = Insight(
-    summary = "About 4° warmer than yesterday — comfortable in a sweater. Showers from late afternoon.",
+    summary = "Today will be cool-mild. It will be 4° warmer today. Wear a jumper and umbrella. Rain at 15:00.",
     recommendedItems = listOf("jumper", "umbrella"),
     generatedAt = Instant.parse("2026-04-26T07:30:00Z"),
     forDate = LocalDate.of(2026, 4, 26),
@@ -158,14 +158,14 @@ internal fun WorkStatusRunningPreview() {
     Frame { WorkStatusBanner(WorkStatus.Running) }
 }
 
-@Preview(name = "Banner · failed (missing key)", widthDp = 360)
+@Preview(name = "Banner · failed (HTTP error)", widthDp = 360)
 @Composable
 internal fun WorkStatusFailedPreview() {
     Frame {
         WorkStatusBanner(
             WorkStatus.Failed(
-                reason = FetchAndNotifyWorker.REASON_MISSING_API_KEY,
-                detail = null,
+                reason = FetchAndNotifyWorker.REASON_UNEXPECTED_HTTP,
+                detail = "503",
             ),
         )
     }

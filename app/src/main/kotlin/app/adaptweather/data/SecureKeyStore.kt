@@ -36,9 +36,9 @@ import java.util.Base64
  * device-to-device transfer that doesn't preserve hardware-backed keys, etc.) by asking
  * the user to re-enter their key, rather than looping on a corrupt ciphertext.
  *
- * `SecureKeyStore` itself implements [KeyProvider] for backwards compatibility — `get()`
- * returns the Gemini key, since that's the historical contract used by `DirectGeminiClient`
- * and `GeminiTtsClient`. The OpenAI key is exposed through [openAiKeyProvider].
+ * `SecureKeyStore` itself implements [KeyProvider] — `get()` returns the Gemini key,
+ * matching the contract `GeminiTtsClient` consumes. The OpenAI key is exposed through
+ * [openAiKeyProvider].
  */
 class SecureKeyStore(
     private val aead: Aead,

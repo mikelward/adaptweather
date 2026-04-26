@@ -5,16 +5,12 @@ import app.adaptweather.core.domain.model.Location
 import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.core.domain.model.UserPreferences
 import app.adaptweather.core.domain.model.WeatherAlert
-import app.adaptweather.core.domain.repository.InsightGenerator
 import app.adaptweather.core.domain.repository.WeatherRepository
 import java.time.Clock
 
 /**
- * The product. Fetches the forecast, evaluates wardrobe rules, builds the prompt,
- * asks the LLM for a short summary, and packages the result.
- *
- * The rule evaluation runs *before* the LLM call so the deterministic list of items
- * is preserved in the [Insight] regardless of LLM output quality.
+ * The product. Fetches the forecast, evaluates wardrobe rules, renders the
+ * deterministic summary string in [renderInsightSummary], and packages the result.
  *
  * Severe-weather alerts piggy-back on the same fetch and are returned alongside the
  * insight in [DailyInsightResult]; the worker uses them to drive a separate
@@ -22,33 +18,23 @@ import java.time.Clock
  */
 class GenerateDailyInsight(
     private val weatherRepository: WeatherRepository,
-    private val insightGenerator: InsightGenerator,
     private val evaluateWardrobeRules: EvaluateWardrobeRules = EvaluateWardrobeRules(),
-    private val buildPrompt: BuildPrompt = BuildPrompt(),
+    private val renderInsightSummary: RenderInsightSummary = RenderInsightSummary(),
     private val clock: Clock = Clock.systemUTC(),
 ) {
     suspend operator fun invoke(
         location: Location,
         prefs: UserPreferences,
-        languageTag: String,
     ): DailyInsightResult {
         val bundle = weatherRepository.fetchForecast(location)
         val activeAlerts = bundle.alerts.filter { it.expires.isAfter(clock.instant()) }
         val todayTriggered = evaluateWardrobeRules(bundle.today, prefs.wardrobeRules)
-        val prompt = buildPrompt(
+        val summary = renderInsightSummary(
             today = bundle.today,
             yesterday = bundle.yesterday,
             todayTriggeredRules = todayTriggered,
-            temperatureUnit = prefs.temperatureUnit,
-            languageTag = languageTag,
             alerts = activeAlerts,
         )
-        // TODO: revisit whether the Gemini call still earns its keep. Now that the
-        // band sentence is pre-computed and the wardrobe / precipitation phrases are
-        // template-fills, the LLM's only real job is translating the four fixed
-        // sentences into the user's languageTag. If we move to strings.xml (or
-        // commit to English) we can render the summary directly and drop the call.
-        val summary = insightGenerator.generate(prompt).trim()
         val insight = Insight(
             summary = summary,
             recommendedItems = todayTriggered.map { it.item },

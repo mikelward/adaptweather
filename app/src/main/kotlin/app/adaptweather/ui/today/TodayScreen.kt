@@ -159,12 +159,6 @@ internal fun WorkStatusBanner(status: WorkStatus) {
 @Composable
 private fun describeFailure(failed: WorkStatus.Failed): String {
     val message = when (failed.reason) {
-        FetchAndNotifyWorker.REASON_MISSING_API_KEY ->
-            stringResource(R.string.today_failed_missing_api_key)
-        FetchAndNotifyWorker.REASON_GEMINI_AUTH ->
-            stringResource(R.string.today_failed_gemini_auth)
-        FetchAndNotifyWorker.REASON_GEMINI_BLOCKED ->
-            stringResource(R.string.today_failed_gemini_blocked)
         FetchAndNotifyWorker.REASON_UNEXPECTED_HTTP ->
             stringResource(R.string.today_failed_unexpected_http)
         FetchAndNotifyWorker.REASON_UNHANDLED, null ->
@@ -268,16 +262,6 @@ internal fun InsightCard(insight: Insight) {
                 text = insight.summary,
                 style = MaterialTheme.typography.headlineSmall,
             )
-            if (insight.recommendedItems.isNotEmpty()) {
-                Text(
-                    text = stringResource(
-                        R.string.today_recommended_items,
-                        insight.recommendedItems.joinToString(", "),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
             Text(
                 text = stringResource(
                     R.string.today_generated_at,
