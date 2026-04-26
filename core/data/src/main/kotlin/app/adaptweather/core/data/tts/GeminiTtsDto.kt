@@ -40,10 +40,14 @@ internal data class PrebuiltVoiceConfig(val voiceName: String)
 @Serializable
 internal data class TtsResponse(
     val candidates: List<TtsCandidate> = emptyList(),
+    val promptFeedback: TtsPromptFeedback? = null,
 )
 
 @Serializable
-internal data class TtsCandidate(val content: TtsCandidateContent? = null)
+internal data class TtsCandidate(
+    val content: TtsCandidateContent? = null,
+    val finishReason: String? = null,
+)
 
 @Serializable
 internal data class TtsCandidateContent(val parts: List<TtsResponsePart> = emptyList())
@@ -57,4 +61,9 @@ internal data class TtsResponsePart(
 internal data class InlineData(
     val mimeType: String,
     val data: String,
+)
+
+@Serializable
+internal data class TtsPromptFeedback(
+    val blockReason: String? = null,
 )
