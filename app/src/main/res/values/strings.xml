@@ -12,6 +12,13 @@
     <string name="today_recommended_items">Recommended items: %1$s</string>
     <string name="today_generated_at">Generated at %1$s</string>
 
+    <string name="today_outfit_title">What to wear</string>
+    <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_sweater">Sweater</string>
+    <string name="today_outfit_top_thick_jacket">Thick jacket</string>
+    <string name="today_outfit_bottom_shorts">Shorts</string>
+    <string name="today_outfit_bottom_long_pants">Long pants</string>
+
     <string name="today_forecast_title">Hourly forecast</string>
     <string name="today_forecast_legend">Temperature and feels-like (%1$s) by hour</string>
 

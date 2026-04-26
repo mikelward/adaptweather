@@ -21,6 +21,12 @@ data class Insight(
      * it. UI should treat null as "unknown" rather than "high".
      */
     val confidence: ConfidenceInfo? = null,
+    /**
+     * The big-picture top + bottom shown as icons on the home screen. Null on
+     * insights from older app versions deserialised from cache; the next worker
+     * run repopulates it.
+     */
+    val outfit: OutfitSuggestion? = null,
 ) {
     /**
      * The text that gets spoken aloud. The LLM is told to weave the items into its

@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.adaptweather.core.domain.model.HourlyForecast
 import app.adaptweather.core.domain.model.Insight
+import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.core.domain.model.WeatherCondition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -63,6 +64,7 @@ class InsightCache(
         // deserialize as an empty list, the chart hides itself, and the next worker
         // run rewrites with hourly populated.
         val hourly: List<HourlyDto> = emptyList(),
+        val outfit: OutfitDto? = null,
     ) {
         fun toDomain(): Insight = Insight(
             summary = summary,
@@ -70,7 +72,17 @@ class InsightCache(
             generatedAt = Instant.ofEpochMilli(generatedAtEpochMillis),
             forDate = LocalDate.ofEpochDay(forDateEpochDays),
             hourly = hourly.map { it.toDomain() },
+            outfit = outfit?.toDomain(),
         )
+    }
+
+    @Serializable
+    private data class OutfitDto(val top: String, val bottom: String) {
+        fun toDomain(): OutfitSuggestion? {
+            val t = runCatching { OutfitSuggestion.Top.valueOf(top) }.getOrNull() ?: return null
+            val b = runCatching { OutfitSuggestion.Bottom.valueOf(bottom) }.getOrNull() ?: return null
+            return OutfitSuggestion(t, b)
+        }
     }
 
     @Serializable
@@ -97,6 +109,7 @@ class InsightCache(
         generatedAtEpochMillis = generatedAt.toEpochMilli(),
         forDateEpochDays = forDate.toEpochDay(),
         hourly = hourly.map { it.toDto() },
+        outfit = outfit?.let { OutfitDto(it.top.name, it.bottom.name) },
     )
 
     private fun HourlyForecast.toDto(): HourlyDto = HourlyDto(
