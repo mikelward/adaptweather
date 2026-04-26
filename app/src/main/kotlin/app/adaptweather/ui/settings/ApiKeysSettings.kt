@@ -114,8 +114,13 @@ internal fun ApiKeysContent(
     }
 }
 
+/**
+ * Status text + password-style input + save/clear buttons for one BYOK API key.
+ * Reused by the API-keys settings page (once per provider) and the onboarding
+ * screen (Gemini only).
+ */
 @Composable
-private fun KeyEntryFields(
+internal fun KeyEntryFields(
     configured: Boolean,
     statusText: String,
     placeholder: String,

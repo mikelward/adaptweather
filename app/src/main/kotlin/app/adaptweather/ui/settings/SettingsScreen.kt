@@ -33,8 +33,11 @@ import app.adaptweather.R
  * root list: schedule + wardrobe come first (the most-frequently-tweaked rules),
  * voice + units after (set once, mostly forgotten), API keys / data sources /
  * about at the bottom.
+ *
+ * Public so callers (e.g. the onboarding flow) can deep-link into a specific
+ * sub-page via [SettingsScreen]'s `initialRoute` param.
  */
-internal enum class SettingsRoute(@StringRes val titleRes: Int) {
+enum class SettingsRoute(@StringRes val titleRes: Int) {
     Root(R.string.settings_title),
     Schedule(R.string.settings_root_schedule),
     Wardrobe(R.string.settings_root_wardrobe),
@@ -47,12 +50,27 @@ internal enum class SettingsRoute(@StringRes val titleRes: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
+    onNavigateBack: () -> Unit,
+    initialRoute: SettingsRoute? = null,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var route by rememberSaveable { mutableStateOf(SettingsRoute.Root) }
+    var route by rememberSaveable { mutableStateOf(initialRoute ?: SettingsRoute.Root) }
 
-    BackHandler(enabled = route != SettingsRoute.Root) {
-        route = SettingsRoute.Root
+    // When entered via deep link (initialRoute is non-null), back from the deep-linked
+    // sub-page exits Settings entirely instead of going to Root — so onboarding's
+    // "Continue → Schedule" needs only one back to reach Today, not two.
+    fun goBackOrUp() {
+        when {
+            route == SettingsRoute.Root -> onNavigateBack()
+            initialRoute != null && route == initialRoute -> onNavigateBack()
+            else -> route = SettingsRoute.Root
+        }
+    }
+
+    BackHandler(enabled = route != SettingsRoute.Root || initialRoute != null) {
+        goBackOrUp()
     }
 
     Scaffold(
@@ -60,12 +78,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             TopAppBar(
                 title = { Text(stringResource(route.titleRes)) },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (route == SettingsRoute.Root) onNavigateBack()
-                            else route = SettingsRoute.Root
-                        },
-                    ) {
+                    IconButton(onClick = ::goBackOrUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.settings_back),
