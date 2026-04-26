@@ -37,7 +37,7 @@ class OpenAITtsClient(
         voice: String = DEFAULT_OPENAI_TTS_VOICE,
     ): PcmAudio {
         val key = keyProvider.get().also {
-            if (it.isBlank()) throw MissingApiKeyException()
+            if (it.isBlank()) throw MissingApiKeyException("OpenAI")
         }
 
         val response: HttpResponse = httpClient.post(SPEECH_URL) {

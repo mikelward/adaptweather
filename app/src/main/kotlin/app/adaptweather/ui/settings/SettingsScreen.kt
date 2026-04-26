@@ -1074,9 +1074,9 @@ private suspend fun runTtsPreview(
     // suspends off-Main internally, but AudioTrack.write/play are JNI calls and
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
+        val text = app.insightCache.latest.first()?.spokenText()
+            ?: context.getString(R.string.settings_tts_test_sample)
         try {
-            val text = app.insightCache.latest.first()?.spokenText()
-                ?: context.getString(R.string.settings_tts_test_sample)
             when (engine) {
                 TtsEngine.GEMINI ->
                     GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text)
@@ -1088,12 +1088,23 @@ private suspend fun runTtsPreview(
         } catch (_: CancellationException) {
             // Expected when the user picks a different option mid-playback; not an error.
         } catch (t: Throwable) {
-            val message = "${t.javaClass.simpleName}: ${t.message ?: "(no detail)"}"
+            val message = "${engine.name} TTS failed: ${t.message ?: t.javaClass.simpleName}"
             android.util.Log.w("SettingsScreen", "TTS preview failed for $engine", t)
             // Toast.show() posts internally, but Toast.makeText()'s constructor needs
             // a Looper on the calling thread — Dispatchers.IO has none, so hop to Main.
             withContext(Dispatchers.Main) {
                 android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+            }
+            // Fall back to the on-device engine so the user still hears the preview
+            // and can confirm audio output is working — mirrors FetchAndNotifyWorker.
+            if (engine != TtsEngine.DEVICE) {
+                try {
+                    app.deviceTtsSpeaker.speak(text)
+                } catch (_: CancellationException) {
+                    // user moved on; fine
+                } catch (fallback: Throwable) {
+                    android.util.Log.w("SettingsScreen", "Device TTS fallback also failed", fallback)
+                }
             }
         }
     }
