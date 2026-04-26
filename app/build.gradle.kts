@@ -57,6 +57,29 @@ android {
         versionName = "$versionNameBase+$gitCommitCount.$gitShortSha"
     }
 
+    signingConfigs {
+        // Stable debug-keystore signing. When the env vars below are present
+        // (decoded from GitHub Secrets in the workflow), every CI build is
+        // signed with the same identity — so the user's installed APK upgrades
+        // in place rather than failing with "App not installed (signature
+        // mismatch)" on each new build, which would otherwise force a wipe of
+        // their encrypted Gemini key + saved settings.
+        //
+        // Locally, the env vars are absent, so AGP's auto-generated
+        // ~/.android/debug.keystore is used (the conventional dev path —
+        // unchanged behaviour for anyone running `./gradlew assembleDebug`
+        // from their own machine).
+        getByName("debug") {
+            val keystoreFile = System.getenv("DEBUG_KEYSTORE_FILE")?.let { file(it) }
+            if (keystoreFile != null && keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = System.getenv("DEBUG_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("DEBUG_KEY_ALIAS")
+                keyPassword = System.getenv("DEBUG_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
