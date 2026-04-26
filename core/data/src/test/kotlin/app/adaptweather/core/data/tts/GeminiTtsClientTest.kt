@@ -109,6 +109,21 @@ class GeminiTtsClientTest {
     }
 
     @Test
+    fun `surfaces a placeholder when the error body is empty`() = runTest {
+        val client = GeminiTtsClient(
+            httpClient = mockClient(
+                status = HttpStatusCode.BadGateway,
+                responseBody = "",
+            ),
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        val ex = shouldThrow<GeminiTtsHttpException> { client.synthesize(text = "hi") }
+
+        ex.message shouldBe "Gemini TTS HTTP 502: (empty body)"
+    }
+
+    @Test
     fun `falls back to truncated raw body when error envelope is unparseable`() = runTest {
         val raw = "x".repeat(500)
         val client = GeminiTtsClient(
