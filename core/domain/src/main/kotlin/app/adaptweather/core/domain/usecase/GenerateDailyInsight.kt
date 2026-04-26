@@ -10,8 +10,8 @@ import app.adaptweather.core.domain.repository.WeatherRepository
 import java.time.Clock
 
 /**
- * The product. Fetches yesterday + today, evaluates wardrobe rules, builds the prompt,
- * asks the LLM for a short comparative sentence, and packages the result.
+ * The product. Fetches the forecast, evaluates wardrobe rules, builds the prompt,
+ * asks the LLM for a short summary, and packages the result.
  *
  * The rule evaluation runs *before* the LLM call so the deterministic list of items
  * is preserved in the [Insight] regardless of LLM output quality.
@@ -34,12 +34,9 @@ class GenerateDailyInsight(
     ): DailyInsightResult {
         val bundle = weatherRepository.fetchForecast(location)
         val activeAlerts = bundle.alerts.filter { it.expires.isAfter(clock.instant()) }
-        val yesterdayTriggered = evaluateWardrobeRules(bundle.yesterday, prefs.wardrobeRules)
         val todayTriggered = evaluateWardrobeRules(bundle.today, prefs.wardrobeRules)
         val prompt = buildPrompt(
             today = bundle.today,
-            yesterday = bundle.yesterday,
-            yesterdayTriggeredRules = yesterdayTriggered,
             todayTriggeredRules = todayTriggered,
             temperatureUnit = prefs.temperatureUnit,
             languageTag = languageTag,
