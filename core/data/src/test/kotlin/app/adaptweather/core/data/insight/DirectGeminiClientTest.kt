@@ -118,6 +118,18 @@ class DirectGeminiClientTest {
     }
 
     @Test
+    fun `throws GeminiEmptyResponseException when candidate content omits parts`() = runTest {
+        val client = DirectGeminiClient(
+            httpClient = mockClient(
+                """{"candidates":[{"content":{"role":"model"},"finishReason":"MAX_TOKENS"}]}""",
+            ),
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        shouldThrow<GeminiEmptyResponseException> { client.generate(prompt) }
+    }
+
+    @Test
     fun `throws GeminiBlockedException when promptFeedback indicates a block`() = runTest {
         val client = DirectGeminiClient(
             httpClient = mockClient("""{"promptFeedback":{"blockReason":"SAFETY"}}"""),

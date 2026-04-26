@@ -18,7 +18,7 @@ internal data class GenerateContentRequest(
 internal data class SystemInstruction(val parts: List<Part>)
 
 @Serializable
-internal data class Content(val role: String, val parts: List<Part>)
+internal data class Content(val role: String? = null, val parts: List<Part> = emptyList())
 
 @Serializable
 internal data class Part(val text: String)
