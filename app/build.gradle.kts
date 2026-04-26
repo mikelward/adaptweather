@@ -70,12 +70,35 @@ android {
         // unchanged behaviour for anyone running `./gradlew assembleDebug`
         // from their own machine).
         getByName("debug") {
-            val keystoreFile = System.getenv("DEBUG_KEYSTORE_FILE")?.let { file(it) }
-            if (keystoreFile != null && keystoreFile.exists()) {
-                storeFile = keystoreFile
-                storePassword = System.getenv("DEBUG_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("DEBUG_KEY_ALIAS")
-                keyPassword = System.getenv("DEBUG_KEY_PASSWORD")
+            // All four vars must be present for the override; if only some are
+            // set we'd otherwise silently install blank credentials and let
+            // signing fail with a confusing message at the end of the build.
+            // Treat partial configuration as user error, fail fast.
+            val keystorePath = System.getenv("DEBUG_KEYSTORE_FILE")?.takeIf { it.isNotBlank() }
+            val storePass = System.getenv("DEBUG_KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() }
+            val alias = System.getenv("DEBUG_KEY_ALIAS")?.takeIf { it.isNotBlank() }
+            val keyPass = System.getenv("DEBUG_KEY_PASSWORD")?.takeIf { it.isNotBlank() }
+
+            val anySet = keystorePath != null || storePass != null || alias != null || keyPass != null
+            val allSet = keystorePath != null && storePass != null && alias != null && keyPass != null
+
+            if (anySet && !allSet) {
+                error(
+                    "Partial debug-keystore configuration. Set all of DEBUG_KEYSTORE_FILE, " +
+                        "DEBUG_KEYSTORE_PASSWORD, DEBUG_KEY_ALIAS, DEBUG_KEY_PASSWORD — or none, " +
+                        "to fall back to AGP's default debug keystore.",
+                )
+            }
+
+            if (allSet) {
+                val keystore = file(keystorePath!!)
+                check(keystore.exists()) {
+                    "DEBUG_KEYSTORE_FILE is set but does not exist: ${keystore.path}"
+                }
+                storeFile = keystore
+                storePassword = storePass
+                keyAlias = alias
+                keyPassword = keyPass
             }
         }
     }

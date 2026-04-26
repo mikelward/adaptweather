@@ -14,15 +14,12 @@ Code TODOs in source files are linked from here when they exist.
 
 ## Distribution
 
-- [ ] **Firebase App Distribution setup** (in progress). Plan: keystore stays
-      out of the repo, base64 + passwords go in GitHub Secrets, CI decodes on
-      the runner. Six secrets total: `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`,
-      `KEY_ALIAS`, `KEY_PASSWORD`, `FIREBASE_APP_ID`,
-      `FIREBASE_SERVICE_ACCOUNT_JSON`.
-- [ ] **`.github/workflows/build.yml`** — push-to-main signed-release upload to
-      FAD. Replaces the artifact-download workflow.
+- [x] **Firebase App Distribution setup.** Push to `main` triggers a debug
+      APK build signed with the stable keystore, uploaded to FAD with the
+      commit message as release notes. Setup steps in
+      [docs/firebase-app-distribution.md](firebase-app-distribution.md).
 - [ ] **`.github/workflows/release.yml`** — tag-triggered, runs Maestro on
-      Firebase Test Lab + cuts a GitHub Release.
+      Firebase Test Lab + cuts a GitHub Release with a release-signed APK.
 
 ## Voice / TTS
 
