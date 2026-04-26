@@ -73,6 +73,11 @@ new rule the first time something bites you, not the third.
   #52's HTTP-error surfacing` — number, short SHA, and a one-clause
   summary of what the change gates. The user uses this to know which
   Firebase / locally-built APK contains their fix.
+  **Sandbox clones are usually shallow** (`git rev-parse --is-shallow-repository`
+  returns `true`), which silently truncates `rev-list --count` and makes the
+  reported number lower than the real APK's. Run `git fetch --unshallow origin
+  main` once at the start of any session that will report versionCodes — the
+  user has been bitten by an under-by-15 count.
 
 ## CI
 
@@ -120,3 +125,10 @@ new rule the first time something bites you, not the third.
   to call) is `:app`'s problem. The `:core:domain` module is pure Kotlin
   and must stay that way — it's where the wardrobe / insight logic lives
   and must remain testable on a JVM.
+- **Don't rename Gemini models from web-search guesses.** When a TTS / text
+  model ID seems "deprecated" or "promoted to GA", verify against the live
+  `ListModels` endpoint (`GET /v1beta/models?key=…`) before changing
+  defaults — search snippets routinely fabricate confident-sounding GA
+  names (`gemini-2.5-flash-tts`) for models that only exist as previews
+  (`gemini-2.5-flash-preview-tts`). PR #59 → #60 was a same-day
+  rename-and-revert because of this.
