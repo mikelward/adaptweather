@@ -34,6 +34,14 @@
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
 
+    <string name="settings_root_voice">Voice</string>
+    <string name="settings_root_schedule">Schedule</string>
+    <string name="settings_root_units">Units</string>
+    <string name="settings_root_wardrobe">Wardrobe</string>
+    <string name="settings_root_api_keys">API keys</string>
+    <string name="settings_root_data_sources">Data sources</string>
+    <string name="settings_root_about">About</string>
+
     <string name="settings_api_keys_title">API keys</string>
     <string name="settings_api_keys_description">Configure the API keys for the online voice engines you want to use. Keys are encrypted at rest using the Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
