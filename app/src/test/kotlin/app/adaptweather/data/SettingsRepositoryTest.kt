@@ -10,7 +10,6 @@ import app.adaptweather.core.domain.model.DeliveryMode
 import app.adaptweather.core.domain.model.DistanceUnit
 import app.adaptweather.core.domain.model.Schedule
 import app.adaptweather.core.domain.model.TemperatureUnit
-import app.adaptweather.core.domain.model.UserPreferences
 import app.adaptweather.core.domain.model.WardrobeRule
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
@@ -169,14 +168,6 @@ class SettingsRepositoryTest {
         val prefs = subject.preferences.first()
         prefs.geminiVoice shouldBe "Kore"
         prefs.openAiVoice shouldBe "alloy"
-    }
-
-    @Test
-    fun `setGeminiModel round-trips and defaults to the configured default model`() = runTest {
-        subject.preferences.first().geminiModel shouldBe UserPreferences.DEFAULT_GEMINI_MODEL
-
-        subject.setGeminiModel("gemini-2.5-pro")
-        subject.preferences.first().geminiModel shouldBe "gemini-2.5-pro"
     }
 
     @Test

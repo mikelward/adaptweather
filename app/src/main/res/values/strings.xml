@@ -39,15 +39,16 @@
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
 
-    <string name="settings_api_key_title">Gemini API key</string>
-    <string name="settings_api_key_status_set">A key is configured. The key is encrypted at rest using the Android Keystore.</string>
-    <string name="settings_api_key_status_unset">No key configured. The daily insight needs a Gemini API key from aistudio.google.com.</string>
-    <string name="settings_api_key_placeholder">Paste your API key</string>
-    <string name="settings_api_key_save">Save key</string>
-    <string name="settings_api_key_clear">Clear stored key</string>
+    <string name="settings_api_keys_title">API keys</string>
+    <string name="settings_api_keys_description">Configure the API keys for the online voice engines you want to use. Keys are encrypted at rest using the Android Keystore.</string>
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
 
-    <string name="settings_gemini_model_title">Gemini model</string>
-    <string name="settings_gemini_model_description">Choose the model used to write the daily insight. Flash Lite is much cheaper than Flash while using the same API key. Pro is the highest quality but slowest and costliest — overkill for the morning summary, useful when you want polished prose.</string>
+    <string name="settings_api_key_status_set">A Gemini key is configured.</string>
+    <string name="settings_api_key_status_unset">No Gemini key configured. Get one at aistudio.google.com to use Gemini voices.</string>
+    <string name="settings_api_key_placeholder">Paste your Gemini API key</string>
+    <string name="settings_api_key_save">Save Gemini key</string>
+    <string name="settings_api_key_clear">Clear stored Gemini key</string>
 
     <string name="settings_location_title">Location</string>
     <string name="settings_location_use_device">Use device location</string>
@@ -81,10 +82,13 @@
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
     <string name="settings_tts_test">Test voice</string>
+    <!-- Shown next to the engine picker when the chosen engine's API key isn't
+         configured. %1$s is the engine name ("Gemini" / "OpenAI"). -->
+    <string name="settings_tts_no_key_hint">No %1$s key configured — add one in API keys above to enable this engine.</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
     <string name="settings_tts_test_sample">Hello — this is the AdaptWeather voice preview.</string>
 
-    <string name="settings_openai_key_status_set">An OpenAI key is configured. The key is encrypted at rest using the Android Keystore.</string>
+    <string name="settings_openai_key_status_set">An OpenAI key is configured.</string>
     <string name="settings_openai_key_status_unset">No OpenAI key configured. Get one at platform.openai.com to use OpenAI voices.</string>
     <string name="settings_openai_key_placeholder">Paste your OpenAI API key</string>
     <string name="settings_openai_key_save">Save OpenAI key</string>

@@ -57,8 +57,6 @@ import app.adaptweather.core.domain.model.Location
 import app.adaptweather.core.domain.model.TemperatureUnit
 import app.adaptweather.core.domain.model.TtsEngine
 import app.adaptweather.core.domain.model.WardrobeRule
-import app.adaptweather.insight.GEMINI_MODELS
-import app.adaptweather.insight.GeminiModelOption
 import app.adaptweather.tts.GEMINI_VOICES
 import app.adaptweather.tts.GeminiTtsSpeaker
 import app.adaptweather.tts.OPENAI_VOICES
@@ -118,7 +116,6 @@ fun SettingsScreen(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
             onSetOpenAiVoice = viewModel::setOpenAiVoice,
             onSetOpenAiKey = viewModel::setOpenAiKey,
             onClearOpenAiKey = viewModel::clearOpenAiKey,
-            onSetGeminiModel = viewModel::setGeminiModel,
         )
     }
 }
@@ -145,7 +142,6 @@ private fun SettingsContent(
     onSetOpenAiVoice: (String) -> Unit,
     onSetOpenAiKey: (String) -> Unit,
     onClearOpenAiKey: () -> Unit,
-    onSetGeminiModel: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -156,14 +152,13 @@ private fun SettingsContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         NotificationPermissionBanner()
-        ApiKeyCard(
-            configured = state.apiKeyConfigured,
-            onSave = onSetApiKey,
-            onClear = onClearApiKey,
-        )
-        GeminiModelCard(
-            selected = state.geminiModel,
-            onSelect = onSetGeminiModel,
+        ApiKeysCard(
+            geminiConfigured = state.apiKeyConfigured,
+            openAiConfigured = state.openAiKeyConfigured,
+            onSetGeminiKey = onSetApiKey,
+            onClearGeminiKey = onClearApiKey,
+            onSetOpenAiKey = onSetOpenAiKey,
+            onClearOpenAiKey = onClearOpenAiKey,
         )
         LocationCard(
             current = state.location,
@@ -186,9 +181,8 @@ private fun SettingsContent(
             onGeminiVoice = onSetGeminiVoice,
             openAiVoice = state.openAiVoice,
             onOpenAiVoice = onSetOpenAiVoice,
+            geminiKeyConfigured = state.apiKeyConfigured,
             openAiKeyConfigured = state.openAiKeyConfigured,
-            onSetOpenAiKey = onSetOpenAiKey,
-            onClearOpenAiKey = onClearOpenAiKey,
         )
         TemperatureUnitCard(state.temperatureUnit, onSetTemperatureUnit)
         DistanceUnitCard(state.distanceUnit, onSetDistanceUnit)
@@ -809,98 +803,62 @@ private fun SectionCard(title: String, content: @Composable () -> Unit) {
     }
 }
 
+/**
+ * One section that holds every BYOK API key the app uses (Gemini for Gemini TTS,
+ * OpenAI for OpenAI TTS). Putting both in a single section makes them feel
+ * symmetric — neither is "the primary" — and keeps the engine picker downstream
+ * focused on engine + voice + a small "missing key" hint when relevant.
+ */
 @Composable
-private fun ApiKeyCard(
-    configured: Boolean,
-    onSave: (String) -> Unit,
-    onClear: () -> Unit,
+private fun ApiKeysCard(
+    geminiConfigured: Boolean,
+    openAiConfigured: Boolean,
+    onSetGeminiKey: (String) -> Unit,
+    onClearGeminiKey: () -> Unit,
+    onSetOpenAiKey: (String) -> Unit,
+    onClearOpenAiKey: () -> Unit,
 ) {
-    SectionCard(title = stringResource(R.string.settings_api_key_title)) {
+    SectionCard(title = stringResource(R.string.settings_api_keys_title)) {
         Text(
-            text = if (configured) {
-                stringResource(R.string.settings_api_key_status_set)
-            } else {
-                stringResource(R.string.settings_api_key_status_unset)
-            },
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        var input by remember { mutableStateOf("") }
-        OutlinedTextField(
-            value = input,
-            onValueChange = { input = it },
-            singleLine = true,
-            visualTransformation = if (input.isEmpty()) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            placeholder = { Text(stringResource(R.string.settings_api_key_placeholder)) },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Button(
-                onClick = {
-                    if (input.isNotBlank()) {
-                        onSave(input)
-                        input = ""
-                    }
-                },
-                enabled = input.isNotBlank(),
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.settings_api_key_save)) }
-
-            if (configured) {
-                TextButton(
-                    onClick = onClear,
-                    modifier = Modifier.fillMaxWidth(),
-                ) { Text(stringResource(R.string.settings_api_key_clear)) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun GeminiModelCard(
-    selected: String,
-    onSelect: (String) -> Unit,
-) {
-    var dialogOpen by remember { mutableStateOf(false) }
-    val current = GEMINI_MODELS.firstOrNull { it.id == selected }
-    SectionCard(title = stringResource(R.string.settings_gemini_model_title)) {
-        Text(
-            text = stringResource(R.string.settings_gemini_model_description),
+            text = stringResource(R.string.settings_api_keys_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        OutlinedButton(
-            onClick = { dialogOpen = true },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(current?.displayName ?: selected)
-        }
-    }
-    if (dialogOpen) {
-        AlertDialog(
-            onDismissRequest = { dialogOpen = false },
-            title = { Text(stringResource(R.string.settings_gemini_model_title)) },
-            text = {
-                Column {
-                    GEMINI_MODELS.forEach { option: GeminiModelOption ->
-                        RadioRow(
-                            label = option.displayName,
-                            selected = option.id == selected,
-                            onSelect = {
-                                onSelect(option.id)
-                                dialogOpen = false
-                            },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { dialogOpen = false }) {
-                    Text(stringResource(R.string.settings_tts_voice_dismiss))
-                }
-            },
+
+        Text(
+            text = stringResource(R.string.settings_api_key_gemini_label),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        KeyEntryFields(
+            configured = geminiConfigured,
+            statusText = stringResource(
+                if (geminiConfigured) R.string.settings_api_key_status_set
+                else R.string.settings_api_key_status_unset,
+            ),
+            placeholder = stringResource(R.string.settings_api_key_placeholder),
+            saveLabel = stringResource(R.string.settings_api_key_save),
+            clearLabel = stringResource(R.string.settings_api_key_clear),
+            onSave = onSetGeminiKey,
+            onClear = onClearGeminiKey,
+        )
+
+        HorizontalDivider()
+
+        Text(
+            text = stringResource(R.string.settings_api_key_openai_label),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        KeyEntryFields(
+            configured = openAiConfigured,
+            statusText = stringResource(
+                if (openAiConfigured) R.string.settings_openai_key_status_set
+                else R.string.settings_openai_key_status_unset,
+            ),
+            placeholder = stringResource(R.string.settings_openai_key_placeholder),
+            saveLabel = stringResource(R.string.settings_openai_key_save),
+            clearLabel = stringResource(R.string.settings_openai_key_clear),
+            onSave = onSetOpenAiKey,
+            onClear = onClearOpenAiKey,
         )
     }
 }
@@ -929,9 +887,8 @@ private fun TtsEngineCard(
     onGeminiVoice: (String) -> Unit,
     openAiVoice: String,
     onOpenAiVoice: (String) -> Unit,
+    geminiKeyConfigured: Boolean,
     openAiKeyConfigured: Boolean,
-    onSetOpenAiKey: (String) -> Unit,
-    onClearOpenAiKey: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -965,6 +922,11 @@ private fun TtsEngineCard(
         }
         when (selected) {
             TtsEngine.GEMINI -> {
+                if (!geminiKeyConfigured) {
+                    MissingKeyHint(
+                        engineName = stringResource(R.string.settings_api_key_gemini_label),
+                    )
+                }
                 VoicePicker(
                     title = stringResource(R.string.settings_tts_voice_label),
                     voices = GEMINI_VOICES,
@@ -977,18 +939,11 @@ private fun TtsEngineCard(
                 TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
             }
             TtsEngine.OPENAI -> {
-                KeyEntryFields(
-                    configured = openAiKeyConfigured,
-                    statusText = stringResource(
-                        if (openAiKeyConfigured) R.string.settings_openai_key_status_set
-                        else R.string.settings_openai_key_status_unset,
-                    ),
-                    placeholder = stringResource(R.string.settings_openai_key_placeholder),
-                    saveLabel = stringResource(R.string.settings_openai_key_save),
-                    clearLabel = stringResource(R.string.settings_openai_key_clear),
-                    onSave = onSetOpenAiKey,
-                    onClear = onClearOpenAiKey,
-                )
+                if (!openAiKeyConfigured) {
+                    MissingKeyHint(
+                        engineName = stringResource(R.string.settings_api_key_openai_label),
+                    )
+                }
                 VoicePicker(
                     title = stringResource(R.string.settings_tts_voice_label),
                     voices = OPENAI_VOICES,
@@ -1003,6 +958,20 @@ private fun TtsEngineCard(
             TtsEngine.DEVICE -> Unit
         }
     }
+}
+
+/**
+ * Inline hint shown next to the engine picker when the chosen engine's key isn't
+ * configured. Points the user up to the API keys section instead of trying to
+ * collect the key here — keys are managed in one place now.
+ */
+@Composable
+private fun MissingKeyHint(engineName: String) {
+    Text(
+        text = stringResource(R.string.settings_tts_no_key_hint, engineName),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.error,
+    )
 }
 
 @Composable
