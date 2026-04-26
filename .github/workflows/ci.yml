@@ -233,6 +233,14 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+    # Job-level env: the Firebase distribute step's `if:` reads these via
+    # env.FIREBASE_APP_ID / env.FIREBASE_SERVICE_ACCOUNT_JSON. The `secrets`
+    # context isn't available in `if:` expressions ("Unrecognized named-value:
+    # 'secrets'"); job-level env is. Step-level env is also out of scope when
+    # evaluating that same step's `if`, so this must live at the job level.
+    env:
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -376,18 +384,15 @@ jobs:
       - name: Distribute via Firebase App Distribution
         # On push to main only — feature-branch CI runs would otherwise spam
         # testers with WIP builds. Skipped when secrets aren't set so the build
-        # still finishes on a fresh repo / fork.
-        #
-        # Guarded against `secrets.*` directly: step-level `env:` is not in
-        # scope when GitHub evaluates the step's own `if`, so referencing
-        # `env.FIREBASE_APP_ID` here would always be empty and the step would
-        # never run.
+        # still finishes on a fresh repo / fork. The env vars referenced here
+        # are populated at the job level (see env: block above) — the secrets
+        # context isn't allowed in step `if:` and step-level env isn't in scope.
         if: |
           success() &&
           github.event_name == 'push' &&
           github.ref == 'refs/heads/main' &&
-          secrets.FIREBASE_APP_ID != '' &&
-          secrets.FIREBASE_SERVICE_ACCOUNT_JSON != ''
+          env.FIREBASE_APP_ID != '' &&
+          env.FIREBASE_SERVICE_ACCOUNT_JSON != ''
         # Pinned to a specific commit SHA (rather than the floating @v1 tag) so
         # a compromised upstream release can't silently swap in malicious code
         # on our next CI run. Bump deliberately. SHA below is wzieba/Firebase-
