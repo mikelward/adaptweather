@@ -17,8 +17,7 @@ enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
  * - [OPENAI] uses OpenAI's `audio/speech` endpoint over a separate BYOK OpenAI key.
  *   Comparable quality to Gemini; falls back to [DEVICE] on failure.
  * - [ELEVENLABS] uses ElevenLabs's `text-to-speech` endpoint over a separate BYOK
- *   ElevenLabs key. Highest perceptual naturalness of the three online options;
- *   falls back to [DEVICE] on failure.
+ *   ElevenLabs key; falls back to [DEVICE] on failure.
  */
 enum class TtsEngine { DEVICE, GEMINI, OPENAI, ELEVENLABS }
 
