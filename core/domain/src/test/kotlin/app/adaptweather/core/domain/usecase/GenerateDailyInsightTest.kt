@@ -78,11 +78,11 @@ class GenerateDailyInsightTest {
 
         val insight = subject(london, prefs).insight
 
-        // today: feels-like 6→25 → cold-warm; +8°C high vs yesterday → 8° warmer;
+        // today: feels-like 6→25 → cold to warm; +8°C high vs yesterday → 8° warmer;
         // wardrobe defaults at this temperature: jumper, jacket, shorts, umbrella;
         // 60% precipitation → noon fallback (no hourly entries on `today`).
         insight.summary shouldBe
-            "Today will be cold-warm. It will be 8° warmer today. " +
+            "Today will be cold to warm. It will be 8° warmer today. " +
             "Wear a jumper, jacket, shorts, and umbrella. Rain at 12:00."
         insight.recommendedItems.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
         insight.generatedAt shouldBe clockInstant

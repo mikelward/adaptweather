@@ -39,7 +39,7 @@ internal fun Frame(darkTheme: Boolean = false, content: @Composable () -> Unit) 
 }
 
 private val SAMPLE_INSIGHT = Insight(
-    summary = "Today will be cool-mild. It will be 4° warmer today. Wear a jumper and umbrella. Rain at 15:00.",
+    summary = "Today will be cool to mild. It will be 4° warmer today. Wear a jumper and umbrella. Rain at 15:00.",
     recommendedItems = listOf("jumper", "umbrella"),
     generatedAt = Instant.parse("2026-04-26T07:30:00Z"),
     forDate = LocalDate.of(2026, 4, 26),

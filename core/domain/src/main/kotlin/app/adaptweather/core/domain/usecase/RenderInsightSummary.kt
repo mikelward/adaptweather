@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
  * 1. Severe alert: highest-severity SEVERE/EXTREME → "Alert: <event>." Extreme
  *    outranks Severe; ties take the first listed.
  * 2. Temperature band: classify today's feels-like low and high into bands. Output
- *    "Today will be <band>." (same band) or "Today will be <coldband>-<hotband>."
+ *    "Today will be <band>." (same band) or "Today will be <coldband> to <hotband>."
  *    (different bands). Always emitted.
  * 3. Temperature change vs yesterday: if max OR min feels-like differs by ≥ 3°,
  *    output "It will be N° warmer/cooler today." using the larger absolute delta.
@@ -55,7 +55,7 @@ class RenderInsightSummary {
     private fun bandSentence(today: DailyForecast): String {
         val low = TemperatureBand.forCelsius(today.feelsLikeMinC)
         val high = TemperatureBand.forCelsius(today.feelsLikeMaxC)
-        val label = if (low == high) low.label else "${low.label}-${high.label}"
+        val label = if (low == high) low.label else "${low.label} to ${high.label}"
         return "Today will be $label."
     }
 

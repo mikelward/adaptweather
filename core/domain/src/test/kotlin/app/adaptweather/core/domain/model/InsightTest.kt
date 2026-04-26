@@ -8,7 +8,7 @@ import java.time.LocalDate
 class InsightTest {
 
     private val base = Insight(
-        summary = "Today will be cool-mild. Wear a jumper and jacket.",
+        summary = "Today will be cool to mild. Wear a jumper and jacket.",
         recommendedItems = listOf("jumper", "jacket"),
         generatedAt = Instant.parse("2026-04-25T07:00:00Z"),
         forDate = LocalDate.of(2026, 4, 25),
