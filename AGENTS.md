@@ -60,6 +60,13 @@ new rule the first time something bites you, not the third.
   links as plain text, so a single link can hide the rest of the stack
   (and may surface an already-merged PR while obscuring the live one).
   Worth the extra two lines.
+- **Report Android versionCode after every merge to `main`.** When a PR
+  merges, fetch `main` and run `git rev-list --count origin/main` to get
+  the versionCode (`app/build.gradle.kts` derives it from this count).
+  Report it as e.g. `Need versionCode 72 (b81c23d) or higher to test PR
+  #52's HTTP-error surfacing` — number, short SHA, and a one-clause
+  summary of what the change gates. The user uses this to know which
+  Firebase / locally-built APK contains their fix.
 
 ## CI
 
