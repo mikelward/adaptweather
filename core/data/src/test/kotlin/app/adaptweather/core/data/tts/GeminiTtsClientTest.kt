@@ -86,6 +86,25 @@ class GeminiTtsClientTest {
     }
 
     @Test
+    fun `request body prepends the studio-voice style directive to the user text`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello world")
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("clean, crisp studio voice")
+        body.shouldContain("hello world")
+    }
+
+    @Test
     fun `decodes inline pcm and parses sample rate from mime type`() = runTest {
         val client = GeminiTtsClient(
             httpClient = mockClient(SUCCESS_BODY),
