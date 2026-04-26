@@ -12,6 +12,8 @@ import com.google.crypto.tink.Aead
 import com.google.crypto.tink.KeyTemplates
 import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.Base64
@@ -62,6 +64,15 @@ class SecureKeyStore(
     suspend fun setElevenLabs(key: String) = write(ELEVENLABS_PREF_KEY, ELEVENLABS_AAD, key)
 
     suspend fun clearElevenLabs() = remove(ELEVENLABS_PREF_KEY)
+
+    /**
+     * Reactive view of "is a Gemini key currently stored." Used by the Today screen's
+     * welcome card to decide whether to nudge the user to set a key. Reads only the
+     * presence of ciphertext, not the plaintext value, so no decrypt happens here.
+     */
+    val geminiKeyConfiguredFlow: Flow<Boolean> = dataStore.data
+        .map { it[GEMINI_PREF_KEY] != null }
+        .distinctUntilChanged()
 
     /**
      * KeyProvider view onto the OpenAI key. Used to wire `OpenAITtsClient` while
