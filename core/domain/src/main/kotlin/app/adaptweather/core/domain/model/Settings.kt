@@ -11,7 +11,7 @@ enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
  *
  * - [DEVICE] uses Android's on-device TextToSpeech engine. Free, fully offline once
  *   voices are installed, but quality varies by vendor.
- * - [GEMINI] uses Gemini's audio-output model (`gemini-2.5-flash-tts`) over
+ * - [GEMINI] uses Gemini's audio-output model (`gemini-2.5-flash-preview-tts`) over
  *   the BYOK Gemini key. Near-human quality, requires network at speak-time, costs
  *   a small amount per character. Falls back to [DEVICE] if the call fails.
  * - [OPENAI] uses OpenAI's `audio/speech` endpoint over a separate BYOK OpenAI key.

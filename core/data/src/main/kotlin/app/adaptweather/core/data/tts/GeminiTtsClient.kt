@@ -20,14 +20,14 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import java.util.Base64
 
-const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-tts"
+const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
 const val DEFAULT_GEMINI_TTS_VOICE: String = "Kore"
 
 internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"
 
 /**
- * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-tts`). Uses the
+ * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Uses the
  * standard Generative Language host with a BYOK `x-goog-api-key` header.
  *
  * The model returns a single 16-bit signed PCM audio stream at a sample rate carried

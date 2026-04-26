@@ -28,7 +28,7 @@ import kotlin.coroutines.resumeWithException
  *    language matches. Voice quality runs from VERY_LOW (100) through VERY_HIGH (500).
  *
  * TODO: evaluate higher-quality alternatives. Two candidates:
- *   - Gemini's audio-output model (`gemini-2.5-flash-tts`). Uses the existing
+ *   - Gemini's audio-output model (`gemini-2.5-flash-preview-tts`). Uses the existing
  *     BYOK key. Network round-trip per speak; produces near-human voices.
  *   - ElevenLabs / OpenAI TTS. Highest fidelity but adds another vendor + key.
  */
