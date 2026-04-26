@@ -18,7 +18,7 @@
 
     <!-- Read today's calendar events to enrich the morning insight. Opt-in via the
          Settings toggle; runtime grant requested from there. We deliberately do NOT
-         declare WRITE_CALENDAR — AdaptWeather only reads. -->
+         declare WRITE_CALENDAR — ClothesCast only reads. -->
     <uses-permission android:name="android.permission.READ_CALENDAR" />
 
     <!-- Re-arm the alarm on reboot, package update, timezone change, locale change. -->
@@ -38,17 +38,17 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SHORT_SERVICE" />
 
     <application
-        android:name=".AdaptWeatherApplication"
+        android:name=".ClothesCastApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AdaptWeather">
+        android:theme="@style/Theme.ClothesCast">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.AdaptWeather">
+            android:theme="@style/Theme.ClothesCast">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -60,7 +60,7 @@
             android:name=".alarm.AlarmReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="app.adaptweather.alarm.FIRE" />
+                <action android:name="app.clothescast.alarm.FIRE" />
             </intent-filter>
         </receiver>
 

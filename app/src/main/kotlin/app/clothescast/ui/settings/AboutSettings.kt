@@ -1,0 +1,98 @@
+package app.clothescast.ui.settings
+
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import app.clothescast.BuildConfig
+import app.clothescast.R
+import app.clothescast.work.FetchAndNotifyWorker
+
+@Composable
+internal fun AboutContent(padding: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        AboutCard()
+        if (BuildConfig.DEBUG) {
+            DebugCard()
+        }
+    }
+}
+
+@Composable
+private fun AboutCard() {
+    val context = LocalContext.current
+    SectionCard(title = stringResource(R.string.settings_about_title)) {
+        // Release builds get a clean "Version 0.1.0+61.85d100b (61)". Anything else
+        // (debug today, possibly internal QA flavours later) appends " · <type> build"
+        // so a tester can tell which install they're on without digging into adb.
+        val versionText = stringResource(
+            R.string.settings_about_version,
+            BuildConfig.VERSION_NAME,
+            BuildConfig.VERSION_CODE,
+        )
+        val buildTypeSuffix = if (BuildConfig.BUILD_TYPE != "release") {
+            stringResource(R.string.settings_about_build_type_suffix, BuildConfig.BUILD_TYPE)
+        } else {
+            ""
+        }
+        Text(
+            text = versionText + buildTypeSuffix,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            text = stringResource(R.string.settings_about_privacy),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        TextButton(
+            onClick = { openUrl(context, "https://github.com/mikelward/adaptweather") },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_about_source)) }
+        TextButton(
+            onClick = { openUrl(context, "https://dontkillmyapp.com") },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_about_dontkillmyapp)) }
+    }
+}
+
+@Composable
+private fun DebugCard() {
+    val context = LocalContext.current
+    SectionCard(title = stringResource(R.string.settings_debug_title)) {
+        Text(
+            text = stringResource(R.string.settings_debug_description),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Button(
+            onClick = {
+                FetchAndNotifyWorker.enqueueOneShot(context.applicationContext)
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.settings_debug_fire_toast),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_debug_fire_now)) }
+    }
+}

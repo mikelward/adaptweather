@@ -29,8 +29,8 @@ project**.
 
 Inside the project, click the Android icon to add an app.
 
-- **Android package name**: `app.adaptweather.debug` *(this is the debug
-  variant's applicationId — not `app.adaptweather`. The `.debug` suffix
+- **Android package name**: `app.clothescast.debug` *(this is the debug
+  variant's applicationId — not `app.clothescast`. The `.debug` suffix
   matters; without it, FAD will reject uploads.)*
 - **App nickname**: "ClothesCast Debug" or similar.
 - **Debug signing certificate SHA-1**: optional, only needed for Firebase

@@ -36,18 +36,18 @@ val versionNameBase = "0.1.0"
 val gitShortSha: String = git("rev-parse", "--short", "HEAD")
 
 android {
-    // Pinned to app.adaptweather (reverse-DNS of the owned adaptweather.app
-    // domain) before the first Firebase App Distribution rollout. Once a
-    // sideloaded build with applicationId X is in the wild, switching to Y
-    // means installs of Y are a different app — users have to uninstall +
-    // reinstall and lose their encrypted Gemini key, schedule, location, and
-    // wardrobe rules. The applicationId is the install identity; do not
-    // change it without a planned migration story.
-    namespace = "app.adaptweather"
+    // Pinned to app.clothescast. Renamed from app.adaptweather as part of the
+    // product rename; existing FAD testers had to uninstall + reinstall,
+    // losing their encrypted API keys (Gemini, OpenAI, ElevenLabs), schedule,
+    // location, and wardrobe rules. Once a sideloaded build with applicationId
+    // X is in the wild, switching to Y means installs of Y are a different
+    // app — the applicationId is the install identity; do not change it again
+    // without a planned migration story.
+    namespace = "app.clothescast"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "app.adaptweather"
+        applicationId = "app.clothescast"
         minSdk = 26
         targetSdk = 35
         versionCode = gitCommitCount

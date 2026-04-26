@@ -1,4 +1,4 @@
-# Agent guide for adaptweather
+# Agent guide for clothescast
 
 Rules and gotchas for AI coding agents (Claude Code, Codex, etc.) working in
 this repo. Keep this file short and concrete — one-liners over essays. Add a
