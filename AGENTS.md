@@ -51,8 +51,14 @@ new rule the first time something bites you, not the third.
   CLI is **not** available in this sandbox.
 - Open PRs as **draft** by default. Un-draft only after CI is green and you
   (or the user) have eyeballed the change.
-- Be frugal with PR comments. Only post when there's something the reviewer
-  needs that isn't already in the diff or the PR description.
+- **Never leave a review comment thread silently dismissed.** Either reply on
+  the thread *or* resolve it — the user wants every thread to end in one of
+  those two states, not "left open and ignored." When you think a comment is
+  a false positive, say *why* on the thread (one or two sentences is fine):
+  the reasoning is exactly what the user wants surfaced, and "Linux-only CI,
+  doesn't apply" is more useful on the PR than buried in chat history.
+  Acknowledgement noise ("good catch, will do") is fine and preferred over
+  silence; the discipline is "say something or resolve," not "say nothing."
 - **Always link every open PR in the stack.** Any time you push, summarise
   CI, or invite the user to review, list every currently-open PR on the
   feature by URL — one per line — not just the topmost one. The Claude Code
