@@ -106,7 +106,7 @@ private fun TodayContent(
 }
 
 @Composable
-private fun WorkStatusBanner(status: WorkStatus) {
+internal fun WorkStatusBanner(status: WorkStatus) {
     when (status) {
         is WorkStatus.Idle -> Unit
         is WorkStatus.Running -> {
@@ -169,7 +169,7 @@ private fun describeFailure(failed: WorkStatus.Failed): String {
 }
 
 @Composable
-private fun EmptyState(onRefresh: () -> Unit) {
+internal fun EmptyState(onRefresh: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -198,7 +198,7 @@ private fun EmptyState(onRefresh: () -> Unit) {
 }
 
 @Composable
-private fun InsightCard(insight: Insight) {
+internal fun InsightCard(insight: Insight) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -243,7 +243,7 @@ private fun InsightCard(insight: Insight) {
  * across the consulted models so the user can judge for themselves.
  */
 @Composable
-private fun ConfidenceChip(info: ConfidenceInfo) {
+internal fun ConfidenceChip(info: ConfidenceInfo) {
     val (bgColor, fgColor) = when (info.level) {
         ForecastConfidence.HIGH -> MaterialTheme.colorScheme.secondaryContainer to
             MaterialTheme.colorScheme.onSecondaryContainer
