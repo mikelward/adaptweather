@@ -149,7 +149,9 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app/src/test/snapshots
+          if [ -d app/src/test/snapshots ]; then
+            git add app/src/test/snapshots
+          fi
           if git diff --cached --quiet; then
             echo "No snapshot changes."
             echo "SNAPSHOTS_REGENERATED=false" >> "$GITHUB_ENV"
