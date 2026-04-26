@@ -964,6 +964,12 @@ private fun TtsEngineCard(
                 TestVoiceButton { preview(selected, geminiVoice, openAiVoice) }
             }
             TtsEngine.DEVICE -> {
+                // TODO: promote VoiceLocalePicker out of TtsEngineCard. The locale
+                // also drives the OpenAI default voice (en-GB → fable, else nova),
+                // so users on the OpenAI engine can't currently see/change it
+                // without switching to Device first. The picker should live in its
+                // own section above the engine card so it's visible regardless of
+                // engine choice.
                 VoiceLocalePicker(
                     selected = voiceLocale,
                     onSelect = {
