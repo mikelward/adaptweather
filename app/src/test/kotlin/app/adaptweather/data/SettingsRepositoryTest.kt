@@ -193,6 +193,17 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `useCalendarEvents defaults to false and round-trips`() = runTest {
+        subject.preferences.first().useCalendarEvents shouldBe false
+
+        subject.setUseCalendarEvents(true)
+        subject.preferences.first().useCalendarEvents shouldBe true
+
+        subject.setUseCalendarEvents(false)
+        subject.preferences.first().useCalendarEvents shouldBe false
+    }
+
+    @Test
     fun `zoneId is resolved fresh on each emission`() = runTest {
         val zones = mutableListOf(ZoneId.of("UTC"), ZoneId.of("America/New_York"))
         val rotating = SettingsRepository(

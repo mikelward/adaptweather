@@ -31,6 +31,7 @@ data class SettingsState(
     // current locale → fable on en-GB, nova everywhere else.
     val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
+    val useCalendarEvents: Boolean = false,
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,
 )

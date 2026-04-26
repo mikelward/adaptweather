@@ -50,6 +50,7 @@ class SettingsViewModel(
                         geminiVoice = prefs.geminiVoice,
                         openAiVoice = prefs.openAiVoice,
                         voiceLocale = prefs.voiceLocale,
+                        useCalendarEvents = prefs.useCalendarEvents,
                     )
                 }
             }
@@ -145,6 +146,10 @@ class SettingsViewModel(
 
     fun setVoiceLocale(locale: VoiceLocale) {
         viewModelScope.launch { settingsRepository.setVoiceLocale(locale) }
+    }
+
+    fun setUseCalendarEvents(enabled: Boolean) {
+        viewModelScope.launch { settingsRepository.setUseCalendarEvents(enabled) }
     }
 
     /** Used by [LocationCard] inside a LaunchedEffect; safe to call from any dispatcher. */

@@ -1,6 +1,7 @@
 package app.adaptweather.core.domain.usecase
 
 import app.adaptweather.core.domain.model.AlertSeverity
+import app.adaptweather.core.domain.model.CalendarEvent
 import app.adaptweather.core.domain.model.DailyForecast
 import app.adaptweather.core.domain.model.HourlyForecast
 import app.adaptweather.core.domain.model.WardrobeRule
@@ -226,6 +227,91 @@ class RenderInsightSummaryTest {
         )
         out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer today. " +
             "Wear a jumper and umbrella. Rain at 15:00."
+    }
+
+    @Test
+    fun `calendar tie-in fires when wardrobe + precip + overlapping event all present`() {
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN),
+            ),
+        )
+        val event = CalendarEvent(
+            title = "park run",
+            start = LocalTime.of(14, 30),
+            end = LocalTime.of(16, 0),
+        )
+        val out = subject(today, yesterday, listOf(umbrellaRule), events = listOf(event))
+        out.shouldContain("Bring an umbrella for your 15:00 park run.")
+    }
+
+    @Test
+    fun `calendar tie-in prefers umbrella over the first listed item when both apply`() {
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
+        )
+        val event = CalendarEvent("standup", LocalTime.of(14, 0), LocalTime.of(16, 0))
+        val out = subject(today, yesterday, listOf(jumperRule, umbrellaRule), events = listOf(event))
+        out.shouldContain("Bring an umbrella for your 15:00 standup.")
+    }
+
+    @Test
+    fun `calendar tie-in falls back to the first item when umbrella is not on the list`() {
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
+        )
+        val event = CalendarEvent("park run", LocalTime.of(14, 0), LocalTime.of(16, 0))
+        val out = subject(today, yesterday, listOf(jumperRule, jacketRule), events = listOf(event))
+        out.shouldContain("Bring a jumper for your 15:00 park run.")
+    }
+
+    @Test
+    fun `calendar tie-in is omitted when no event overlaps the precip peak`() {
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
+        )
+        val event = CalendarEvent("breakfast", LocalTime.of(8, 0), LocalTime.of(9, 0))
+        subject(today, yesterday, listOf(umbrellaRule), events = listOf(event))
+            .shouldNotContain("Bring")
+    }
+
+    @Test
+    fun `calendar tie-in is omitted when no wardrobe rule fires`() {
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
+        )
+        val event = CalendarEvent("park run", LocalTime.of(14, 30), LocalTime.of(16, 0))
+        subject(today, yesterday, emptyList(), events = listOf(event))
+            .shouldNotContain("Bring")
+    }
+
+    @Test
+    fun `calendar tie-in is omitted on a dry day even when an event exists`() {
+        val event = CalendarEvent("park run", LocalTime.of(11, 0), LocalTime.of(13, 0))
+        subject(mildToday, yesterday, listOf(umbrellaRule), events = listOf(event))
+            .shouldNotContain("Bring")
+    }
+
+    @Test
+    fun `calendar tie-in skips all-day events`() {
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
+        )
+        val holiday = CalendarEvent("public holiday", LocalTime.MIDNIGHT, LocalTime.MIDNIGHT, allDay = true)
+        subject(today, yesterday, listOf(umbrellaRule), events = listOf(holiday))
+            .shouldNotContain("Bring")
     }
 
     @Test

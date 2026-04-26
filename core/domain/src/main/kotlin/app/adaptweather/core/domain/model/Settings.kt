@@ -78,6 +78,14 @@ data class UserPreferences(
      */
     val openAiVoice: String = DEFAULT_OPENAI_VOICE,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
+    /**
+     * When true, the worker reads today's calendar events (via `READ_CALENDAR`)
+     * and feeds them into the insight summary so the rendered string can tie a
+     * wardrobe suggestion to a specific event ("bring an umbrella for your 3pm
+     * standup"). Off by default — the user must both enable the toggle and grant
+     * the runtime permission for events to actually be read.
+     */
+    val useCalendarEvents: Boolean = false,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

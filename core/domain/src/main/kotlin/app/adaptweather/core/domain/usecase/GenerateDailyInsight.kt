@@ -5,6 +5,7 @@ import app.adaptweather.core.domain.model.Location
 import app.adaptweather.core.domain.model.OutfitSuggestion
 import app.adaptweather.core.domain.model.UserPreferences
 import app.adaptweather.core.domain.model.WeatherAlert
+import app.adaptweather.core.domain.repository.CalendarEventReader
 import app.adaptweather.core.domain.repository.WeatherRepository
 import java.time.Clock
 
@@ -20,6 +21,7 @@ class GenerateDailyInsight(
     private val weatherRepository: WeatherRepository,
     private val evaluateWardrobeRules: EvaluateWardrobeRules = EvaluateWardrobeRules(),
     private val renderInsightSummary: RenderInsightSummary = RenderInsightSummary(),
+    private val calendarEventReader: CalendarEventReader? = null,
     private val clock: Clock = Clock.systemUTC(),
 ) {
     suspend operator fun invoke(
@@ -29,11 +31,25 @@ class GenerateDailyInsight(
         val bundle = weatherRepository.fetchForecast(location)
         val activeAlerts = bundle.alerts.filter { it.expires.isAfter(clock.instant()) }
         val todayTriggered = evaluateWardrobeRules(bundle.today, prefs.wardrobeRules)
+        // Calendar events are gated on both the opt-in pref AND a configured reader.
+        // Failures (missing permission, provider crash) degrade to no events so a
+        // misbehaving reader can never fail the insight pipeline; the rest of the
+        // summary still renders. Capture the property as a local so the smart-cast
+        // survives across the runCatching lambda boundary.
+        val reader = calendarEventReader
+        val events = if (prefs.useCalendarEvents && reader != null) {
+            runCatching {
+                reader.eventsForDay(bundle.today.date, prefs.schedule.zoneId)
+            }.getOrDefault(emptyList())
+        } else {
+            emptyList()
+        }
         val summary = renderInsightSummary(
             today = bundle.today,
             yesterday = bundle.yesterday,
             todayTriggeredRules = todayTriggered,
             alerts = activeAlerts,
+            events = events,
         )
         val insight = Insight(
             summary = summary,
