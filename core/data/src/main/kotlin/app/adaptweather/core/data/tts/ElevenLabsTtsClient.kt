@@ -11,8 +11,10 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import io.ktor.http.path
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -45,7 +47,16 @@ class ElevenLabsTtsClient(
             if (it.isBlank()) throw MissingApiKeyException("ElevenLabs")
         }
 
-        val response: HttpResponse = httpClient.post("$SPEECH_URL_BASE/$voiceId") {
+        val response: HttpResponse = httpClient.post {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = ELEVENLABS_HOST
+                // Use Ktor's path-segment builder so `voiceId` is treated as a
+                // single segment and reserved characters (/, ?, #, %) are
+                // percent-encoded — voice IDs come from persisted user input,
+                // and a stray slash would otherwise silently mis-route.
+                path("v1", "text-to-speech", voiceId)
+            }
             header("xi-api-key", key)
             contentType(ContentType.Application.Json)
             parameter("output_format", PCM_OUTPUT_FORMAT)
@@ -67,7 +78,7 @@ class ElevenLabsTtsClient(
         // matches the AudioTrack format we already use for Gemini / OpenAI.
         private const val ELEVENLABS_PCM_SAMPLE_RATE_HZ = 24_000
         private const val PCM_OUTPUT_FORMAT = "pcm_24000"
-        private const val SPEECH_URL_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
+        private const val ELEVENLABS_HOST = "api.elevenlabs.io"
     }
 }
 
