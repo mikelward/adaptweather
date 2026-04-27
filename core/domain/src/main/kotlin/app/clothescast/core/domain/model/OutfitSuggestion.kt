@@ -10,6 +10,14 @@ package app.clothescast.core.domain.model
  * Thresholds use feels-like temperatures (wind chill / humidity adjusted), matching what
  * [WardrobeRule] does, since that's what people actually experience on the way out the
  * door.
+ *
+ * TODO: render a paired Day / Night outfit on the Today screen when the user has an
+ * evening calendar event with a location. The summary already carries the evening
+ * "Bring a jacket for your 20:00 dinner." sentence (rule 7 in
+ * [app.clothescast.core.domain.usecase.RenderInsightSummary]); the home screen still
+ * shows a single icon pair. Plan: have [GenerateDailyInsight] surface a second
+ * `OutfitSuggestion` (built from `today.evening()`) on [Insight], and add a
+ * "Day"/"Night" caption above each on the Today card.
  */
 data class OutfitSuggestion(
     val top: Top,

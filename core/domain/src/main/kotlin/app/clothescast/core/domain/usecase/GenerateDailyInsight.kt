@@ -1,13 +1,17 @@
 package app.clothescast.core.domain.usecase
 
+import app.clothescast.core.domain.model.DAY_END_HOUR
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.WeatherAlert
+import app.clothescast.core.domain.model.daytime
+import app.clothescast.core.domain.model.evening
 import app.clothescast.core.domain.repository.CalendarEventReader
 import app.clothescast.core.domain.repository.WeatherRepository
 import java.time.Clock
+import java.time.LocalTime
 
 /**
  * The product. Fetches the forecast, evaluates wardrobe rules, renders the
@@ -30,7 +34,14 @@ class GenerateDailyInsight(
     ): DailyInsightResult {
         val bundle = weatherRepository.fetchForecast(location)
         val activeAlerts = bundle.alerts.filter { it.expires.isAfter(clock.instant()) }
-        val todayTriggered = evaluateWardrobeRules(bundle.today, prefs.wardrobeRules)
+        // Wardrobe and summary speak for the daytime window only; the evening slice
+        // is reserved for "bring a jacket for your dinner"-style addenda that piggy-
+        // back on calendar events with a location.
+        val todayDay = bundle.today.daytime()
+        val yesterdayDay = bundle.yesterday.daytime()
+        val todayEvening = bundle.today.evening()
+        val todayTriggered = evaluateWardrobeRules(todayDay, prefs.wardrobeRules)
+        val eveningTriggered = evaluateWardrobeRules(todayEvening, prefs.wardrobeRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
         // Failures (missing permission, provider crash) degrade to no events so a
         // misbehaving reader can never fail the insight pipeline; the rest of the
@@ -44,12 +55,24 @@ class GenerateDailyInsight(
         } else {
             emptyList()
         }
+        // "Out tonight" = a real, non-all-day event with a location that runs past
+        // 19:00. Location-as-a-string stands in for "not at home" until we have a
+        // proper home-location setting. Tomorrow's small hours aren't queried yet
+        // (eventsForDay is single-day), so a midnight–02:00 event next door is missed
+        // for now — TODO: also fetch tomorrow's events and union the windows.
+        val eveningEvents = events.filter { event ->
+            !event.allDay &&
+                !event.location.isNullOrBlank() &&
+                event.end.isAfter(LocalTime.of(DAY_END_HOUR, 0))
+        }
         val summary = renderInsightSummary(
-            today = bundle.today,
-            yesterday = bundle.yesterday,
+            today = todayDay,
+            yesterday = yesterdayDay,
             todayTriggeredRules = todayTriggered,
             alerts = activeAlerts,
             events = events,
+            eveningTriggeredRules = eveningTriggered,
+            eveningEvents = eveningEvents,
         )
         val insight = Insight(
             summary = summary,
@@ -58,7 +81,7 @@ class GenerateDailyInsight(
             forDate = bundle.today.date,
             hourly = bundle.today.hourly,
             confidence = bundle.confidence,
-            outfit = OutfitSuggestion.fromForecast(bundle.today),
+            outfit = OutfitSuggestion.fromForecast(todayDay),
         )
         return DailyInsightResult(insight = insight, alerts = activeAlerts)
     }
