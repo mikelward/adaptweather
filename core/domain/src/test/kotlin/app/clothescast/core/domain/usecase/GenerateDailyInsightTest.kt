@@ -4,11 +4,13 @@ import app.clothescast.core.domain.model.AlertSeverity
 import app.clothescast.core.domain.model.CalendarEvent
 import app.clothescast.core.domain.model.DailyForecast
 import app.clothescast.core.domain.model.DeliveryMode
+import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.Schedule
+import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.WardrobeRule
@@ -19,9 +21,8 @@ import app.clothescast.core.domain.repository.ForecastBundle
 import app.clothescast.core.domain.repository.WeatherRepository
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.string.shouldNotContain
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -104,9 +105,14 @@ class GenerateDailyInsightTest {
         // today: feels-like 6→25 → cold to warm; +8°C high vs yesterday → 8° warmer;
         // wardrobe defaults at this temperature: jumper, jacket, shorts, umbrella;
         // 60% precipitation → noon fallback (no hourly entries on `today`).
-        insight.summary shouldBe
-            "Today will be cold to warm. It will be 8° warmer today. " +
-            "Wear a jumper, jacket, shorts, and umbrella. Rain at 12:00."
+        insight.summary.band.low shouldBe TemperatureBand.COLD
+        insight.summary.band.high shouldBe TemperatureBand.WARM
+        insight.summary.delta.shouldNotBeNull()
+        insight.summary.delta!!.degrees shouldBe 8
+        insight.summary.delta!!.direction shouldBe DeltaClause.Direction.WARMER
+        insight.summary.wardrobe!!.items.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
+        insight.summary.precip!!.condition shouldBe WeatherCondition.RAIN
+        insight.summary.precip!!.time shouldBe LocalTime.NOON
         insight.recommendedItems.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
         insight.generatedAt shouldBe clockInstant
         insight.forDate shouldBe today.date
@@ -155,7 +161,7 @@ class GenerateDailyInsightTest {
         val result = subject(london, prefs)
 
         result.alerts.shouldContainExactly(severe)
-        result.insight.summary.shouldContain("Alert: Severe Thunderstorm Warning.")
+        result.insight.summary.alert!!.event shouldBe "Severe Thunderstorm Warning"
     }
 
     @Test
@@ -214,7 +220,10 @@ class GenerateDailyInsightTest {
 
         calendar.lastDate shouldBe today.date
         calendar.lastZone shouldBe zone
-        result.insight.summary.shouldContain("for your 15:00 park run")
+        val tieIn = result.insight.summary.calendarTieIn
+        tieIn.shouldNotBeNull()
+        tieIn!!.title shouldBe "park run"
+        tieIn.time shouldBe LocalTime.of(15, 0)
     }
 
     @Test
@@ -228,7 +237,7 @@ class GenerateDailyInsightTest {
         val result = subject(london, prefs.copy(useCalendarEvents = false))
 
         calendar.lastDate.shouldBeNull()
-        result.insight.summary.shouldNotContain("for your")
+        result.insight.summary.calendarTieIn.shouldBeNull()
     }
 
     @Test
@@ -239,23 +248,22 @@ class GenerateDailyInsightTest {
 
         val result = subject(london, prefs.copy(useCalendarEvents = true))
 
-        // The summary still composes — we just lose the calendar tie-in sentence.
-        result.insight.summary.shouldContain("Today will be")
-        result.insight.summary.shouldNotContain("for your")
+        // The summary still composes — the band clause is always present (it's non-null
+        // by the type system) — we just lose the calendar tie-in.
+        result.insight.summary.calendarTieIn.shouldBeNull()
     }
 
     @Test
-    fun `tonight period leads with Tonight will be and skips the yesterday delta sentence`() = runTest {
+    fun `tonight period leads with TONIGHT and skips the yesterday delta clause`() = runTest {
         val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
         val subject = GenerateDailyInsight(weather, clock = clock)
 
         val result = subject(london, prefs, ForecastPeriod.TONIGHT)
 
-        result.insight.summary.shouldContain("Tonight will be")
-        result.insight.summary.shouldNotContain("Today will be")
+        result.insight.summary.period shouldBe ForecastPeriod.TONIGHT
         // The morning pass already mentioned the +8°C delta against yesterday;
         // the evening pass deliberately omits it.
-        result.insight.summary.shouldNotContain("warmer today")
+        result.insight.summary.delta.shouldBeNull()
         result.insight.period shouldBe ForecastPeriod.TONIGHT
     }
 
@@ -293,9 +301,10 @@ class GenerateDailyInsightTest {
             LocalTime.of(3, 0),
             LocalTime.of(6, 0),
         )
-        // Aggregates recomputed from the slice — overnight low (4.0°C feels-like at 03:00)
+        // Aggregates recomputed from the slice — overnight low (3.0°C feels-like at 03:00)
         // is what drives the tonight band sentence and outfit, not today's daytime min.
-        result.insight.summary.shouldContain("Tonight will be freezing to cool.")
+        result.insight.summary.band.low shouldBe TemperatureBand.FREEZING
+        result.insight.summary.band.high shouldBe TemperatureBand.COOL
     }
 
     @Test
@@ -316,7 +325,7 @@ class GenerateDailyInsightTest {
     }
 
     @Test
-    fun `tonight period flags hasEvents when an evening event is present and gates the calendar sentence by it`() = runTest {
+    fun `tonight period flags hasEvents when an evening event is present and gates the calendar clause by it`() = runTest {
         val zone = ZoneId.of("Europe/London")
         val rainyEvening = today.copy(
             precipitationProbabilityMaxPct = 60.0,
@@ -347,9 +356,11 @@ class GenerateDailyInsightTest {
             period = ForecastPeriod.TONIGHT,
         )
 
-        // Morning event must be filtered out for the tonight pass; the gig must drive the tie-in sentence.
-        result.insight.summary.shouldContain("for your 20:00 gig")
-        result.insight.summary.shouldNotContain("standup")
+        // Morning event must be filtered out for the tonight pass; the gig must drive the tie-in.
+        val tieIn = result.insight.summary.calendarTieIn
+        tieIn.shouldNotBeNull()
+        tieIn!!.title shouldBe "gig"
+        tieIn.time shouldBe LocalTime.of(20, 0)
         result.insight.hasEvents shouldBe true
     }
 

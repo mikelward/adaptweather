@@ -18,6 +18,7 @@ import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
+import app.clothescast.insight.InsightFormatter
 import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OpenAITtsSpeaker
@@ -48,6 +49,8 @@ class FetchAndNotifyWorker(
 
     private val app: ClothesCastApplication
         get() = applicationContext as ClothesCastApplication
+
+    private val formatter = InsightFormatter()
 
     override suspend fun doWork(): Result {
         val prefs = try {
@@ -134,7 +137,7 @@ class FetchAndNotifyWorker(
             runCatching { app.insightCache.store(insight) }
                 .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
             deliver(insight, prefs)
-            Log.i(TAG, "Insight delivered for ${insight.forDate}: ${insight.summary}")
+            Log.i(TAG, "Insight delivered for ${insight.forDate}: ${formatter.format(insight.summary)}")
             Result.success()
         } catch (e: ResponseException) {
             // OpenMeteo 4xx → fail; 5xx → retry with backoff.
@@ -177,14 +180,6 @@ class FetchAndNotifyWorker(
     }
 
     private suspend fun deliver(insight: Insight, prefs: UserPreferences) {
-        // Defensive: a cache from an older app version could have a blank summary
-        // (when the LLM rule set occasionally emitted nothing). Don't post a blank
-        // notification or speak silence. The current renderer always emits a band
-        // sentence, so this guard never trips for fresh insights.
-        if (insight.summary.isBlank()) {
-            Log.i(TAG, "Insight summary is blank; skipping notification + TTS.")
-            return
-        }
         when (insight.period) {
             ForecastPeriod.TODAY -> deliverToday(insight, prefs)
             ForecastPeriod.TONIGHT -> deliverTonight(insight, prefs)
@@ -197,7 +192,7 @@ class FetchAndNotifyWorker(
             app.insightNotifier.notify(insight)
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(insight.spokenText(), prefs)
+            speakWithFallback(formatter.format(insight.summary), prefs)
         }
     }
 
@@ -222,7 +217,7 @@ class FetchAndNotifyWorker(
             return
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(insight.spokenText(), prefs)
+            speakWithFallback(formatter.format(insight.summary), prefs)
         }
     }
 

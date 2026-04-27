@@ -5,8 +5,17 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import app.clothescast.core.domain.model.AlertClause
+import app.clothescast.core.domain.model.BandClause
+import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.DeltaClause
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
+import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.PrecipClause
+import app.clothescast.core.domain.model.TemperatureBand
+import app.clothescast.core.domain.model.WardrobeClause
 import app.clothescast.core.domain.model.WeatherCondition
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +46,15 @@ class InsightCacheTest {
     private val today = LocalDate.of(2026, 4, 25)
     private val now = Instant.parse("2026-04-25T07:00:00Z")
 
+    private val sampleSummary = InsightSummary(
+        period = ForecastPeriod.TODAY,
+        band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
+        delta = DeltaClause(4, DeltaClause.Direction.COOLER),
+        wardrobe = WardrobeClause(listOf("jumper", "umbrella")),
+    )
+
     private val sample = Insight(
-        summary = "Cooler than yesterday — bring a jumper.",
+        summary = sampleSummary,
         recommendedItems = listOf("jumper", "umbrella"),
         generatedAt = now,
         forDate = today,
@@ -96,7 +112,30 @@ class InsightCacheTest {
     @Test
     fun `corrupt JSON in the slot maps to null rather than crashing`() = runTest {
         dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v2")] = "{not valid json"
+            it[stringPreferencesKey("latest_insight_v3")] = "{not valid json"
+        }
+
+        subject.latest.first() shouldBe null
+    }
+
+    @Test
+    fun `pre-v3 prose-summary payloads are dropped rather than crashing the cache`() = runTest {
+        // Older app versions stored `summary` as a rendered string. The schema bump
+        // to v3 carries a structured InsightSummary instead, so a v2 payload no
+        // longer deserialises and the slot drops to null. The next worker run
+        // regenerates on the new key.
+        val v2Json = """
+            {
+              "summary": "Cooler than yesterday — bring a jumper.",
+              "recommendedItems": ["jumper", "umbrella"],
+              "generatedAtEpochMillis": ${now.toEpochMilli()},
+              "forDateEpochDays": ${today.toEpochDay()}
+            }
+        """.trimIndent()
+        dataStore.edit {
+            // v3 key, v2-shaped payload — the decoder fails on the `summary` field
+            // and the runCatching in the cache returns null.
+            it[stringPreferencesKey("latest_insight_v3")] = v2Json
         }
 
         subject.latest.first() shouldBe null
@@ -128,25 +167,21 @@ class InsightCacheTest {
     }
 
     @Test
-    fun `legacy payloads without hourly decode to an empty hourly list`() = runTest {
-        // Simulates a payload written before the hourly field existed. The cache must
-        // treat the missing field as empty rather than crashing — otherwise existing
-        // users would see a blank Today screen until the next worker run.
-        val legacyJson = """
-            {
-              "summary": "Cooler than yesterday — bring a jumper.",
-              "recommendedItems": ["jumper", "umbrella"],
-              "generatedAtEpochMillis": ${now.toEpochMilli()},
-              "forDateEpochDays": ${today.toEpochDay()}
-            }
-        """.trimIndent()
-        dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v2")] = legacyJson
-        }
+    fun `every clause type round-trips through the cache`() = runTest {
+        val full = sample.copy(
+            summary = InsightSummary(
+                period = ForecastPeriod.TODAY,
+                band = BandClause(TemperatureBand.FREEZING, TemperatureBand.HOT),
+                alert = AlertClause("Tornado Warning"),
+                delta = DeltaClause(8, DeltaClause.Direction.WARMER),
+                wardrobe = WardrobeClause(listOf("jumper", "jacket", "shorts", "umbrella")),
+                precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
+                calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
+            ),
+        )
 
-        val read = subject.latest.first()
+        subject.store(full)
 
-        read shouldBe sample
-        read?.hourly shouldBe emptyList()
+        subject.latest.first() shouldBe full
     }
 }

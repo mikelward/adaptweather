@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.Insight
+import app.clothescast.insight.InsightFormatter
 
 /**
  * Posts the tonight insight as a system notification. Picks one of two channels
@@ -27,10 +28,14 @@ import app.clothescast.core.domain.model.Insight
  * posting; on Android 13+ a missing permission silently no-ops (the insight is
  * still cached and surfaced in-app the next time the user opens it).
  */
-class TonightInsightNotifier(private val context: Context) {
+class TonightInsightNotifier(
+    private val context: Context,
+    private val formatter: InsightFormatter = InsightFormatter(),
+) {
 
     fun notify(insight: Insight) {
         if (!hasPostNotificationPermission()) return
+        val prose = formatter.format(insight.summary)
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -49,8 +54,8 @@ class TonightInsightNotifier(private val context: Context) {
             .setSmallIcon(InsightNotifier.smallIconFor(insight.outfit?.top))
             .setLargeIcon(InsightNotifier.largeIconForTop(context, insight.outfit?.top))
             .setContentTitle(context.getString(R.string.notification_tonight_insight_title))
-            .setContentText(insight.summary)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(insight.summary))
+            .setContentText(prose)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(prose))
             .setPriority(priority)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(true)
