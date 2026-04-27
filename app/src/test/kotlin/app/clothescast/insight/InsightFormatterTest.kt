@@ -56,7 +56,7 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `wardrobe with a single article-able item emits 'a <item>'`() {
+    fun `wardrobe with a single article-able item emits 'a jumper'`() {
         subject.format(summary(wardrobe = WardrobeClause(listOf("jumper")))) shouldBe
             "Today will be mild. Wear a jumper."
     }
