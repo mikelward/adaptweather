@@ -18,6 +18,7 @@ import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WardrobeClause
 import app.clothescast.core.domain.model.WeatherCondition
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -140,6 +141,35 @@ class InsightCacheTest {
         }
 
         subject.latest.first() shouldBe null
+    }
+
+    @Test
+    fun `an empty nextPeriod object in cached JSON is dropped rather than crashing the cache`() = runTest {
+        // NextPeriodClause's init enforces "at least one signal", but the wire
+        // format can't enforce that — `ignoreUnknownKeys` plus field defaults
+        // mean an empty `nextPeriod: {}` (e.g. a future schema variant or a
+        // hand-edited cache file) deserializes to (null, false). The DTO's
+        // toDomain() must return null in that case, not throw, so the rest of
+        // the insight survives.
+        val emptyNextJson = """
+            {
+              "summary": {
+                "period": "TODAY",
+                "band": {"low": "MILD", "high": "MILD"},
+                "nextPeriod": {}
+              },
+              "recommendedItems": [],
+              "generatedAtEpochMillis": ${now.toEpochMilli()},
+              "forDateEpochDays": ${today.toEpochDay()}
+            }
+        """.trimIndent()
+        dataStore.edit {
+            it[stringPreferencesKey("latest_insight_v3")] = emptyNextJson
+        }
+
+        val cached = subject.latest.first()
+        cached.shouldNotBeNull()
+        cached!!.summary.nextPeriod shouldBe null
     }
 
     @Test

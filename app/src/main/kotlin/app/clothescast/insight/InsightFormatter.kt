@@ -71,7 +71,7 @@ class InsightFormatter {
     }
 
     private fun formatPrecip(precip: PrecipClause): String =
-        "${conditionWord(precip.condition)} at ${EVENT_TIME.format(precip.time)}."
+        "${conditionWord(precip.condition, capitalised = true)} at ${EVENT_TIME.format(precip.time)}."
 
     private fun formatCalendarTieIn(tieIn: CalendarTieInClause): String =
         "Bring ${withArticle(tieIn.item)} for your ${EVENT_TIME.format(tieIn.time)} ${tieIn.title}."
@@ -88,17 +88,23 @@ class InsightFormatter {
             // this appears mid-sentence after the lead colon, where capital "Rain"
             // clashes with a trailing "and cooler" continuation.
             next.precip?.let {
-                val word = it.condition.name.lowercase(Locale.ROOT).replace('_', ' ')
-                add("$word at ${EVENT_TIME.format(it.time)}")
+                add("${conditionWord(it.condition, capitalised = false)} at ${EVENT_TIME.format(it.time)}")
             }
             if (next.isColder) add("cooler")
         }
         return "$lead: ${parts.joinToString(" and ")}."
     }
 
-    private fun conditionWord(condition: WeatherCondition): String =
-        condition.name.lowercase(Locale.ROOT).replace('_', ' ')
-            .replaceFirstChar { it.titlecase(Locale.ROOT) }
+    /**
+     * Renders a [WeatherCondition] enum to its display word: snake_case → space-separated
+     * lowercase, then optionally title-cased on the first character. The two callsites:
+     *  - standalone precip sentence ("Rain at 15:00.") uses [capitalised] = true,
+     *  - next-period continuation ("Tonight: rain at 22:00…") uses [capitalised] = false.
+     */
+    private fun conditionWord(condition: WeatherCondition, capitalised: Boolean): String {
+        val lower = condition.name.lowercase(Locale.ROOT).replace('_', ' ')
+        return if (capitalised) lower.replaceFirstChar { it.titlecase(Locale.ROOT) } else lower
+    }
 
     private fun bandLabel(band: TemperatureBand): String = when (band) {
         TemperatureBand.FREEZING -> "freezing"
