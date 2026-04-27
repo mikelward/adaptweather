@@ -20,7 +20,13 @@ class OpenAITtsSpeaker(
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
-        val audio = client.synthesize(text = text, voice = voice, locale = locale)
+        // [locale] is part of the [TtsSpeaker] contract (the device speaker uses
+        // it to pick a system voice) but OpenAI's accent is purely voice-bound:
+        // the right accent comes from the user picking the right voice in
+        // Settings, not from anything we can send at synthesis time. So we drop
+        // [locale] on the floor here, intentionally — see TtsVoices.kt for the
+        // picker-side filter that surfaces the accent-appropriate voices.
+        val audio = client.synthesize(text = text, voice = voice)
         PcmAudioPlayer.play(audio)
     }
 }

@@ -167,7 +167,7 @@ internal fun VoiceContent(
                     }
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
-                        voices = OPENAI_VOICES,
+                        voices = OPENAI_VOICES.filterByVariant(voiceLocale, keepSelected = openAiVoice),
                         selectedId = openAiVoice,
                         enabled = !isPreviewing,
                         onSelect = {
