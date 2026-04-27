@@ -212,11 +212,19 @@ class GenerateDailyInsightTest {
         val calendar = FakeCalendarEventReader(events = listOf(event))
         val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
 
+        // Defaults are temperature-only now, so a 22°C rainy hour wouldn't trigger
+        // any clothes rule and the tie-in would short-circuit on `items.isEmpty()`.
+        // Add an umbrella rule explicitly — modelling a user who's personalised
+        // their wet-weather accessory — so the test still exercises the calendar
+        // tie-in path it's meant to cover.
+        val rules = ClothesRule.DEFAULTS +
+            ClothesRule("umbrella", ClothesRule.PrecipitationProbabilityAbove(50.0))
         val result = subject(
             location = london,
             prefs = prefs.copy(
                 useCalendarEvents = true,
                 schedule = Schedule.default(zone),
+                clothesRules = rules,
             ),
         )
 
