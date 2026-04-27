@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Notification small icon variant: thick / puffy jacket silhouette. A hood
+    arc rises above the shoulders and the body is wider with longer sleeves
+    so it reads visibly bulkier than the sweater. Used by [InsightNotifier]
+    when the recommended top is [OutfitSuggestion.Top.THICK_JACKET]. Silhouette
+    fills ~92% of the 24dp viewport so it carries the same visual weight as
+    other status-bar icons.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M7.5,5.5 Q12,0.5 16.5,5.5 L23,7.5 L23,19 L18.5,19 L17.5,11 L17.5,22.5 L6.5,22.5 L6.5,11 L5.5,19 L1,19 L1,7.5 Z" />
+</vector>

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Notification icons must be silhouetted: white-on-transparent. The system applies the
-    accent / channel colour at runtime. A t-shirt silhouette with a sun-shaped cutout in
-    the middle keeps the ClothesCast brand visible at status-bar sizes.
+    Default notification small icon: a plain t-shirt silhouette filling most of
+    the 24dp viewport, so it reads at the same visual weight as the other
+    status-bar icons (e.g. GitHub) instead of looking like a tiny speck.
+    Notification icons must be silhouetted: white-on-transparent. The system
+    applies the channel / accent colour at runtime. [InsightNotifier] swaps
+    this for a top-specific silhouette when an outfit is recommended; this
+    file remains the fallback (no outfit yet, weather alerts).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
@@ -11,7 +15,5 @@
     android:viewportHeight="24">
     <path
         android:fillColor="#FFFFFF"
-        android:fillType="evenOdd"
-        android:pathData="M9.8,5.8 Q7.6,5.8 5.3,7.1 Q4,8.4 4,11.1 Q4.9,12.4 7.1,12 L6.7,20 Q12,20.7 17.3,20 L16.9,12 Q19.1,12.4 20,11.1 Q20,8.4 18.7,7.1 Q16.4,5.8 14.2,5.8 Q12,7.6 9.8,5.8 Z
-                         M12,13.8 m-2.5,0 a2.5,2.5 0 1,1 5,0 a2.5,2.5 0 1,1 -5,0" />
+        android:pathData="M10.5,4 L9,2 L1.5,5.5 L4,10 L6.5,9 L6.5,22 L17.5,22 L17.5,9 L20,10 L22.5,5.5 L15,2 L13.5,4 Q12,5 10.5,4 Z" />
 </vector>
