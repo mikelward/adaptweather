@@ -5,12 +5,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.IconCompat
 import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.Insight
@@ -52,12 +50,9 @@ class TonightInsightNotifier(
         val channel = if (insight.hasEvents) CHANNEL_TONIGHT_INSIGHT_DEFAULT else CHANNEL_TONIGHT_INSIGHT_SILENT
         val priority = if (insight.hasEvents) NotificationCompat.PRIORITY_DEFAULT else NotificationCompat.PRIORITY_LOW
 
-        // Diagnostic: see InsightNotifier for the labelled-bitmap rationale.
-        // "T-S" / "T-L" so we can tell tonight notifications apart from the
-        // daily ones if both happen to be on screen at once.
         val notification = NotificationCompat.Builder(context, channel)
-            .setSmallIcon(IconCompat.createWithBitmap(InsightNotifier.diagnosticBitmap("T-S", Color.RED)))
-            .setLargeIcon(InsightNotifier.diagnosticBitmap("T-L", Color.rgb(0, 160, 0)))
+            .setSmallIcon(InsightNotifier.smallIconFor(insight.outfit?.top))
+            .setLargeIcon(InsightNotifier.largeIconForTop(context, insight.outfit?.top))
             .setContentTitle(context.getString(R.string.notification_tonight_insight_title))
             .setContentText(prose)
             .setStyle(NotificationCompat.BigTextStyle().bigText(prose))
