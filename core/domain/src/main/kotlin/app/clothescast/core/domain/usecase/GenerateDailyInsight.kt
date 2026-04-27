@@ -72,6 +72,19 @@ class GenerateDailyInsight(
                 ?.let { OutfitSuggestion.fromForecast(it) }
             ForecastPeriod.TONIGHT -> bundle.tomorrow?.let { OutfitSuggestion.fromForecast(it) }
         }
+        // For the next-period text clause ("Tonight: rain at 22:00 and cooler.")
+        // we want apples-to-apples slices: TODAY's daytime vs TONIGHT's overnight,
+        // or TONIGHT's overnight vs tomorrow's *daytime*. The TONIGHT direction
+        // slices `bundle.tomorrow` to its daytime window — comparing against the
+        // raw 24h aggregates would mix in tomorrow's next-overnight low and
+        // falsely trigger the colder rule on every evening insight.
+        val nextForecast: DailyForecast? = when (period) {
+            ForecastPeriod.TODAY -> tonightForecast.takeIf { it.hourly.isNotEmpty() }
+            ForecastPeriod.TONIGHT -> bundle.tomorrow
+                ?.copy(hourly = bundle.tomorrowHourly)
+                ?.slicedForToday(morningStart = morningStart, eveningEnd = tonightStart)
+                ?.takeIf { it.hourly.isNotEmpty() }
+        }
         val todayTriggered = evaluateWardrobeRules(periodForecast, prefs.wardrobeRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
         // Failures (missing permission, provider crash) degrade to no events so a
@@ -94,6 +107,7 @@ class GenerateDailyInsight(
             alerts = activeAlerts,
             events = periodEvents,
             period = period,
+            next = nextForecast,
         )
         val insight = Insight(
             summary = summary,
@@ -135,10 +149,18 @@ class GenerateDailyInsight(
  *    the band sentence and wardrobe rules talk about the daytime range, not the
  *    raw 24h day-level fields,
  *  - rewrites [DailyForecast.condition] to the wettest in-window hour (preventing
- *    the precip-peak fallback from naming a midday rain on a sunny afternoon),
- *  - falls back to the original [DailyForecast] when the slice would be empty
- *    (sparse fixtures, legacy day-level-only payloads, or a degenerate
- *    `morningStart >= eveningEnd` window) so the pipeline always emits something.
+ *    the precip-peak fallback from naming a midday rain on a sunny afternoon).
+ *
+ * Two fallback modes handle sparse / inverted inputs:
+ *  - If [morningStart] is at or after [eveningEnd] the window is degenerate and
+ *    we return the original [DailyForecast] verbatim — slicing wrapping past
+ *    midnight is the tonight pass's job.
+ *  - If the filter yields no in-window entries (sparse fixture, legacy
+ *    day-level-only payload) we keep the day-level aggregates but drop the
+ *    out-of-window hourly. Returning `this` instead would re-surface those
+ *    out-of-window entries to [RenderInsightSummary]'s peak-precip rule,
+ *    defeating the whole point of slicing; dropping them forces the rule into
+ *    its noon / day-level fallback, which is the intended behavior here.
  */
 private fun DailyForecast.slicedForToday(
     morningStart: LocalTime,
@@ -193,10 +215,13 @@ private fun DailyForecast.slicedForToday(
  * tonight time to 03:00) we treat tonight as today-only, no wrap — anything else
  * would either double-count hours or invert the window.
  *
- * Falls back to the original [DailyForecast] when the combined hourly is empty
- * (older cached payloads, sparse fixtures, or a tonight time after the last
- * available hour) so we still emit *something* rather than a forecast with
- * all-zero aggregates.
+ * When the combined slice is empty (older cached payloads, sparse fixtures, or
+ * a tonight time after the last available hour) we keep the day-level aggregates
+ * but drop the out-of-window hourly. Returning `this` instead would re-surface
+ * those out-of-window entries (e.g. a morning rain peak) to
+ * [RenderInsightSummary]'s peak-precip rule, defeating the slicing; dropping
+ * them forces the rule into its noon / day-level fallback, which is the
+ * intended behavior here.
  */
 private fun DailyForecast.slicedForTonight(
     tonightStart: LocalTime,

@@ -6,6 +6,7 @@ import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.NextPeriodClause
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WardrobeClause
@@ -25,7 +26,8 @@ class InsightFormatterTest {
         wardrobe: WardrobeClause? = null,
         precip: PrecipClause? = null,
         calendarTieIn: CalendarTieInClause? = null,
-    ) = InsightSummary(period, band, alert, delta, wardrobe, precip, calendarTieIn)
+        nextPeriod: NextPeriodClause? = null,
+    ) = InsightSummary(period, band, alert, delta, wardrobe, precip, calendarTieIn, nextPeriod)
 
     @Test
     fun `band-only insight emits the lead-in and label`() {
@@ -120,6 +122,50 @@ class InsightFormatterTest {
             ),
         )
         out shouldBe "Today will be mild. Wear an umbrella. Rain at 15:00. Bring an umbrella for your 15:00 park run."
+    }
+
+    @Test
+    fun `next-period clause renders 'Tonight' lead with rain only`() {
+        val out = subject.format(
+            summary(
+                nextPeriod = NextPeriodClause(
+                    precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(22, 0)),
+                ),
+            ),
+        )
+        out shouldBe "Today will be mild. Tonight: rain at 22:00."
+    }
+
+    @Test
+    fun `next-period clause renders 'Tonight' lead with cooler only`() {
+        val out = subject.format(summary(nextPeriod = NextPeriodClause(isColder = true)))
+        out shouldBe "Today will be mild. Tonight: cooler."
+    }
+
+    @Test
+    fun `next-period clause renders 'Tonight' lead with rain and cooler joined`() {
+        val out = subject.format(
+            summary(
+                nextPeriod = NextPeriodClause(
+                    precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(22, 0)),
+                    isColder = true,
+                ),
+            ),
+        )
+        out shouldBe "Today will be mild. Tonight: rain at 22:00 and cooler."
+    }
+
+    @Test
+    fun `next-period clause renders 'Tomorrow' lead on a tonight insight`() {
+        val out = subject.format(
+            summary(
+                period = ForecastPeriod.TONIGHT,
+                nextPeriod = NextPeriodClause(
+                    precip = PrecipClause(WeatherCondition.SNOW, LocalTime.of(8, 0)),
+                ),
+            ),
+        )
+        out shouldBe "Tonight will be mild. Tomorrow: snow at 08:00."
     }
 
     @Test

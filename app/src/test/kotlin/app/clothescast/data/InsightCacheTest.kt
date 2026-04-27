@@ -13,10 +13,12 @@ import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.NextPeriodClause
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WardrobeClause
 import app.clothescast.core.domain.model.WeatherCondition
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -142,6 +144,35 @@ class InsightCacheTest {
     }
 
     @Test
+    fun `an empty nextPeriod object in cached JSON is dropped rather than crashing the cache`() = runTest {
+        // NextPeriodClause's init enforces "at least one signal", but the wire
+        // format can't enforce that — `ignoreUnknownKeys` plus field defaults
+        // mean an empty `nextPeriod: {}` (e.g. a future schema variant or a
+        // hand-edited cache file) deserializes to (null, false). The DTO's
+        // toDomain() must return null in that case, not throw, so the rest of
+        // the insight survives.
+        val emptyNextJson = """
+            {
+              "summary": {
+                "period": "TODAY",
+                "band": {"low": "MILD", "high": "MILD"},
+                "nextPeriod": {}
+              },
+              "recommendedItems": [],
+              "generatedAtEpochMillis": ${now.toEpochMilli()},
+              "forDateEpochDays": ${today.toEpochDay()}
+            }
+        """.trimIndent()
+        dataStore.edit {
+            it[stringPreferencesKey("latest_insight_v3")] = emptyNextJson
+        }
+
+        val cached = subject.latest.first()
+        cached.shouldNotBeNull()
+        cached!!.summary.nextPeriod shouldBe null
+    }
+
+    @Test
     fun `hourly entries round-trip through the cache`() = runTest {
         val hourly = listOf(
             HourlyForecast(
@@ -177,6 +208,10 @@ class InsightCacheTest {
                 wardrobe = WardrobeClause(listOf("jumper", "jacket", "shorts", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
                 calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
+                nextPeriod = NextPeriodClause(
+                    precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(22, 0)),
+                    isColder = true,
+                ),
             ),
         )
 

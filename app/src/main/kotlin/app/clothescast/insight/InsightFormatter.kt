@@ -6,9 +6,11 @@ import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.NextPeriodClause
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WardrobeClause
+import app.clothescast.core.domain.model.WeatherCondition
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -30,6 +32,7 @@ class InsightFormatter {
         summary.wardrobe?.let { add(formatWardrobe(it)) }
         summary.precip?.let { add(formatPrecip(it)) }
         summary.calendarTieIn?.let { add(formatCalendarTieIn(it)) }
+        summary.nextPeriod?.let { add(formatNextPeriod(summary.period, it)) }
     }.joinToString(" ")
 
     private fun formatAlert(alert: AlertClause): String = "Alert: ${alert.event}."
@@ -67,14 +70,41 @@ class InsightFormatter {
         return "Wear $phrase."
     }
 
-    private fun formatPrecip(precip: PrecipClause): String {
-        val type = precip.condition.name.lowercase(Locale.ROOT).replace('_', ' ')
-            .replaceFirstChar { it.titlecase(Locale.ROOT) }
-        return "$type at ${EVENT_TIME.format(precip.time)}."
-    }
+    private fun formatPrecip(precip: PrecipClause): String =
+        "${conditionWord(precip.condition, capitalised = true)} at ${EVENT_TIME.format(precip.time)}."
 
     private fun formatCalendarTieIn(tieIn: CalendarTieInClause): String =
         "Bring ${withArticle(tieIn.item)} for your ${EVENT_TIME.format(tieIn.time)} ${tieIn.title}."
+
+    private fun formatNextPeriod(period: ForecastPeriod, next: NextPeriodClause): String {
+        // Lead phrase comes from the *current* period: a TODAY insight talks
+        // about "Tonight"; a TONIGHT insight talks about "Tomorrow".
+        val lead = when (period) {
+            ForecastPeriod.TODAY -> "Tonight"
+            ForecastPeriod.TONIGHT -> "Tomorrow"
+        }
+        val parts = buildList {
+            // Condition is lowercase here — unlike the standalone PrecipClause sentence,
+            // this appears mid-sentence after the lead colon, where capital "Rain"
+            // clashes with a trailing "and cooler" continuation.
+            next.precip?.let {
+                add("${conditionWord(it.condition, capitalised = false)} at ${EVENT_TIME.format(it.time)}")
+            }
+            if (next.isColder) add("cooler")
+        }
+        return "$lead: ${parts.joinToString(" and ")}."
+    }
+
+    /**
+     * Renders a [WeatherCondition] enum to its display word: snake_case → space-separated
+     * lowercase, then optionally title-cased on the first character. The two callsites:
+     *  - standalone precip sentence ("Rain at 15:00.") uses [capitalised] = true,
+     *  - next-period continuation ("Tonight: rain at 22:00…") uses [capitalised] = false.
+     */
+    private fun conditionWord(condition: WeatherCondition, capitalised: Boolean): String {
+        val lower = condition.name.lowercase(Locale.ROOT).replace('_', ' ')
+        return if (capitalised) lower.replaceFirstChar { it.titlecase(Locale.ROOT) } else lower
+    }
 
     private fun bandLabel(band: TemperatureBand): String = when (band) {
         TemperatureBand.FREEZING -> "freezing"
