@@ -56,10 +56,10 @@ data class DeltaClause(val degrees: Int, val direction: Direction) {
 
 /**
  * Clothes items that triggered this period, in user-rule order. Each [item] is
- * the verbatim rule key — typically a US-baseline noun ("sweater", "jacket",
- * "umbrella", "shorts") which the formatter looks up against `clothes_item_<key>`
- * string resources, falling through to the literal key for user-added rules with
- * no resource match.
+ * the verbatim rule key (e.g. "jumper", "umbrella", "shorts") and the formatter
+ * emits it as-is. Region-localized vocab — picking "sweater" vs "jumper" via a
+ * `clothes_item_<key>` resource lookup — is the planned next step but isn't
+ * wired up yet.
  */
 data class ClothesClause(val items: List<String>)
 
