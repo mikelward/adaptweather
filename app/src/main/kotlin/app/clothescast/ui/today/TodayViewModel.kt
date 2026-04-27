@@ -14,11 +14,17 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import java.time.LocalTime
 
 data class TodayState(
     val insight: Insight? = null,
     val workStatus: WorkStatus = WorkStatus.Idle,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
+    // Window boundaries used by manual Refresh to decide TODAY vs TONIGHT.
+    // Default to the same 7am / 7pm boundaries Schedule uses out of the box;
+    // the ViewModel overwrites these with the user's actual schedule times.
+    val morningTime: LocalTime = LocalTime.of(7, 0),
+    val tonightTime: LocalTime = LocalTime.of(19, 0),
 )
 
 sealed class WorkStatus {
@@ -43,14 +49,18 @@ class TodayViewModel(
     ) { insight, todayInfos, tonightInfos, prefs ->
         TodayState(
             insight = insight,
-            workStatus = (todayInfos + tonightInfos).toStatus(),
+            workStatus = mergeStatus(todayInfos.toStatus(), tonightInfos.toStatus()),
             temperatureUnit = prefs.temperatureUnit,
+            morningTime = prefs.schedule.time,
+            tonightTime = prefs.tonightSchedule.time,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 
     private fun List<WorkInfo>.toStatus(): WorkStatus {
         // Most recent terminal or running entry — WorkManager may keep multiple history
         // rows for the same unique name. We take the first one whose state matters.
+        // Caller resolves cross-chain precedence in [mergeStatus]; runAttemptCount
+        // is only comparable within a single unique-work chain.
         if (isEmpty()) return WorkStatus.Idle
         val latest = maxByOrNull { it.runAttemptCount } ?: first()
         return when (latest.state) {
@@ -61,6 +71,18 @@ class TodayViewModel(
             )
             else -> WorkStatus.Idle
         }
+    }
+
+    // Explicit precedence: any in-flight refresh keeps the spinner up; otherwise
+    // surface the most recent failure if either chain ended in one; otherwise
+    // idle. Avoids comparing runAttemptCount across two unrelated WorkManager
+    // unique-work histories — those counters are per-chain and would let a stale
+    // FAILED entry from one chain mask a live RUNNING entry on the other.
+    private fun mergeStatus(a: WorkStatus, b: WorkStatus): WorkStatus = when {
+        a is WorkStatus.Running || b is WorkStatus.Running -> WorkStatus.Running
+        a is WorkStatus.Failed -> a
+        b is WorkStatus.Failed -> b
+        else -> WorkStatus.Idle
     }
 
     class Factory(

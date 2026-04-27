@@ -89,9 +89,10 @@ class InsightNotifier(
 
         /**
          * Renders the recommended top as a Bitmap for [NotificationCompat.Builder.setLargeIcon].
-         * Reuses the full-colour `ic_outfit_top_*` drawables from [OutfitPreviewCard]
-         * so the notification visual matches the home-screen card. Returns null when
-         * the outfit is missing (older cached payloads), letting the system fall back
+         * Reuses the full-colour `ic_outfit_tshirt` / `ic_outfit_sweater` /
+         * `ic_outfit_thick_jacket` drawables from `OutfitPreviewCard` so the
+         * notification visual matches the home-screen card. Returns null when the
+         * outfit is missing (older cached payloads), letting the system fall back
          * to no large icon.
          */
         internal fun largeIconForTop(context: Context, top: OutfitSuggestion.Top?): Bitmap? {
@@ -100,9 +101,15 @@ class InsightNotifier(
                 ?: return null
             val sizePx = context.resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width)
                 .takeIf { it > 0 }
-                ?: 192
+                ?: LARGE_ICON_FALLBACK_PX
             return drawable.toBitmap(width = sizePx, height = sizePx)
         }
+
+        // Fallback large-icon size in raw pixels for the rare case where
+        // `android.R.dimen.notification_large_icon_width` resolves to ≤0 (some
+        // Robolectric configs and a handful of stripped-down OEM ROMs do this).
+        // 192px ≈ 64dp on xxhdpi, which is the recommended large-icon target.
+        private const val LARGE_ICON_FALLBACK_PX = 192
 
         @DrawableRes
         private fun largeTopDrawable(top: OutfitSuggestion.Top?): Int? = when (top) {
