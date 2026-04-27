@@ -39,6 +39,7 @@ import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OPENAI_VOICES
 import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.TtsVoiceOption
+import app.clothescast.tts.filterByVariant
 import app.clothescast.tts.resolve
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -168,7 +169,7 @@ internal fun VoiceContent(
                     }
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
-                        voices = ELEVENLABS_VOICES,
+                        voices = ELEVENLABS_VOICES.filterByVariant(voiceLocale),
                         selectedId = elevenLabsVoice,
                         enabled = !isPreviewing,
                         onSelect = {

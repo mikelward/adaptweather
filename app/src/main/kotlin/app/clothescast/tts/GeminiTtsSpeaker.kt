@@ -20,7 +20,7 @@ class GeminiTtsSpeaker(
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
-        val audio = client.synthesize(text = text, voiceName = voiceName)
+        val audio = client.synthesize(text = text, voiceName = voiceName, locale = locale)
         PcmAudioPlayer.play(audio)
     }
 }
