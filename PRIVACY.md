@@ -71,10 +71,12 @@ The source code is at <https://github.com/mikelward/clothescast>.
 ### API keys you provide
 
 - If you use online TTS, you supply your own Google Gemini, OpenAI,
-  and / or ElevenLabs API key. Keys are stored on your device using
-  Android's `EncryptedSharedPreferences` and are sent only to the
-  corresponding provider on requests you initiate. They are never
-  shared with us or any third party.
+  and / or ElevenLabs API key. Keys are stored on your device encrypted
+  at rest — the ciphertext lives in Android's DataStore Preferences and
+  is wrapped by a Tink AEAD primitive whose own keyset is sealed by an
+  Android Keystore master key. Keys are sent only to the corresponding
+  provider on requests you initiate, and are never shared with us or
+  any third party.
 
 ## Third-party services
 
