@@ -129,7 +129,7 @@ internal fun KeyEntryFields(
     onSave: (String) -> Unit,
     onClear: () -> Unit,
 ) {
-    Text(text = statusText, style = MaterialTheme.typography.bodyMedium)
+    LinkifiedText(text = statusText, style = MaterialTheme.typography.bodyMedium)
 
     var input by remember { mutableStateOf("") }
     OutlinedTextField(

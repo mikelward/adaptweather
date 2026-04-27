@@ -10,13 +10,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -86,6 +97,47 @@ internal fun SettingsNavRow(
             )
         }
     }
+}
+
+private const val AISTUDIO_HOST = "aistudio.google.com"
+private const val AISTUDIO_URL = "https://aistudio.google.com/"
+
+/**
+ * Plain Text replacement that turns the literal "aistudio.google.com" inside the
+ * supplied string into a clickable link. The Gemini-key copy in onboarding and
+ * settings mentions the URL inline; rendering it as a tappable link saves the
+ * user from typing it into a browser.
+ */
+@Composable
+internal fun LinkifiedText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = LocalTextStyle.current,
+    color: Color = Color.Unspecified,
+) {
+    val linkColor = MaterialTheme.colorScheme.primary
+    val annotated = remember(text, linkColor) {
+        val idx = text.indexOf(AISTUDIO_HOST)
+        if (idx < 0) {
+            AnnotatedString(text)
+        } else {
+            buildAnnotatedString {
+                append(text, 0, idx)
+                val link = LinkAnnotation.Url(
+                    url = AISTUDIO_URL,
+                    styles = TextLinkStyles(
+                        style = SpanStyle(
+                            color = linkColor,
+                            textDecoration = TextDecoration.Underline,
+                        ),
+                    ),
+                )
+                withLink(link) { append(AISTUDIO_HOST) }
+                append(text, idx + AISTUDIO_HOST.length, text.length)
+            }
+        }
+    }
+    Text(text = annotated, modifier = modifier, style = style, color = color)
 }
 
 internal fun openUrl(context: android.content.Context, url: String) {

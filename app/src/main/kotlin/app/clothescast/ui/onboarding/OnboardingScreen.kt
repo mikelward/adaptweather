@@ -40,6 +40,7 @@ import app.clothescast.R
 import app.clothescast.core.domain.model.Location
 import app.clothescast.notification.NotificationPermission
 import app.clothescast.ui.settings.KeyEntryFields
+import app.clothescast.ui.settings.LinkifiedText
 import app.clothescast.ui.settings.LocationSearchDialog
 
 /**
@@ -331,7 +332,7 @@ private fun StepCard(
                     )
                 }
             }
-            Text(
+            LinkifiedText(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
