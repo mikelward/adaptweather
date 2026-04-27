@@ -143,7 +143,7 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `precip clause uses 12-hour pm form for late-afternoon peak`() {
+    fun `precip clause uses 12-hour pm form for late-evening peak`() {
         subject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(23, 0)))) shouldBe
             "Today will be mild. Rain at 11pm."
     }
