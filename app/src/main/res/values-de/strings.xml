@@ -12,6 +12,17 @@ the rest of the app stays in English.
     <string name="settings_region_language_de_de">Deutsch (Deutschland)</string>
     <string name="settings_tts_voice_locale_de_de">Deutsch (Deutschland)</string>
 
+    <!--
+    Outfit-card category labels — shown in OutfitPreviewCard on the Today
+    screen. These are app-provided category names (the user's typed clothes
+    rules are separate and stay as the user wrote them).
+    -->
+    <string name="today_outfit_top_tshirt">T-Shirt</string>
+    <string name="today_outfit_top_sweater">Pullover</string>
+    <string name="today_outfit_top_thick_jacket">Dicke Jacke</string>
+    <string name="today_outfit_bottom_shorts">Kurze Hose</string>
+    <string name="today_outfit_bottom_long_pants">Lange Hose</string>
+
     <!-- Insight prose templates — German equivalents of the keys in values/strings.xml. -->
     <string name="insight_lead_today">Heute</string>
     <string name="insight_lead_tonight">Heute Abend</string>
