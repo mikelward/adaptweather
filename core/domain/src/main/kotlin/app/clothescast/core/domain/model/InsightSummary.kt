@@ -11,8 +11,8 @@ import java.time.LocalTime
  *
  * Splitting "what to say" (this) from "how to say it" (the formatter) lets us:
  *  - Localize clothes vocab per region without re-fetching the forecast — the
- *    same cached [InsightSummary] can re-render as "sweater" or "jumper" depending
- *    on the user's Region setting.
+ *    same cached [InsightSummary] can re-render as "sweater" or "Pullover"
+ *    depending on the user's Region setting (see GermanClothesPhraser).
  *  - Keep [app.clothescast.core.domain.usecase.RenderInsightSummary] free of any
  *    Android dependency, so it stays pure-Kotlin testable on the JVM.
  *
@@ -56,10 +56,10 @@ data class DeltaClause(val degrees: Int, val direction: Direction) {
 
 /**
  * Clothes items that triggered this period, in user-rule order. Each [item] is
- * the verbatim rule key (e.g. "jumper", "umbrella", "shorts") and the formatter
- * emits it as-is. Region-localized vocab — picking "sweater" vs "jumper" via a
- * `clothes_item_<key>` resource lookup — is the planned next step but isn't
- * wired up yet.
+ * the verbatim rule key (e.g. "sweater", "umbrella", "shorts"); the formatter's
+ * per-language phraser maps known English keys to localized vocab at format
+ * time (e.g. "sweater" → "Pullover" in German), with anything not in the table
+ * falling through unchanged.
  */
 data class ClothesClause(val items: List<String>)
 

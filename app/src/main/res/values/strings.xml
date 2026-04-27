@@ -163,25 +163,15 @@
 
     <string name="settings_clothes_title">Clothes rules</string>
     <string name="settings_clothes_description">If a forecast crosses one of these thresholds, ClothesCast mentions the item in the daily insight.</string>
-    <string name="settings_clothes_empty">No rules configured. Tap Add to create one.</string>
-    <string name="settings_clothes_add">Add rule</string>
-    <string name="settings_clothes_edit">Edit</string>
-    <string name="settings_clothes_delete">Delete</string>
+    <!-- Footer note explaining why Add / Edit / Delete are missing today.
+         The rules-redesign TODO on ClothesRule tracks the work to bring
+         editing back (fixed garment presets + per-garment threshold + an
+         explicit user-defined path with a translation hook). -->
+    <string name="settings_clothes_lockdown_note">Editing is temporarily disabled. A future update will let you tune the temperature thresholds per garment, add more presets, and define your own items.</string>
 
     <string name="settings_clothes_cond_temp_below">when min temperature is below %.0f°C</string>
     <string name="settings_clothes_cond_temp_above">when max temperature is above %.0f°C</string>
     <string name="settings_clothes_cond_precip_above">when chance of rain is above %.0f%%</string>
-
-    <string name="settings_clothes_cond_type_temp_below">Temperature below threshold (°C)</string>
-    <string name="settings_clothes_cond_type_temp_above">Temperature above threshold (°C)</string>
-    <string name="settings_clothes_cond_type_precip_above">Chance of rain above threshold (%)</string>
-
-    <string name="settings_clothes_dialog_add_title">Add clothes rule</string>
-    <string name="settings_clothes_dialog_edit_title">Edit clothes rule</string>
-    <string name="settings_clothes_item_label">Item (e.g. jumper, shorts)</string>
-    <string name="settings_clothes_condition_label">When to suggest it</string>
-    <string name="settings_clothes_value_label_celsius">Threshold (°C)</string>
-    <string name="settings_clothes_value_label_percent">Threshold (%)</string>
 
     <string name="notification_channel_daily_insight_name">Daily insight</string>
     <string name="notification_channel_daily_insight_description">The morning weather summary you opted in to.</string>
@@ -260,7 +250,7 @@
 
     <!--
     Clothes phrasing. The list of items is composed locale-by-locale so the
-    article picking ("a jumper" / "an umbrella" / bare "shorts") doesn't leak
+    article picking ("a sweater" / "an umbrella" / bare "shorts") doesn't leak
     cross-language. English-specific article logic lives in EnglishClothesPhraser;
     other languages provide their own phraser implementation. The "Wear ..." outer
     template wraps the locale-specific body.

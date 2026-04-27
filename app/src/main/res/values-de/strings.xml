@@ -15,6 +15,9 @@ the rest of the app stays in English.
          German got added; "English variant: Deutsch" was self-contradictory). -->
     <string name="settings_tts_voice_locale_label">Sprache</string>
 
+    <!-- Footer note on the Clothes settings page (editing is locked for now). -->
+    <string name="settings_clothes_lockdown_note">Bearbeiten ist vorübergehend deaktiviert. Ein zukünftiges Update wird die Temperaturschwellen pro Kleidungsstück anpassbar machen, weitere Vorschläge hinzufügen und eigene Einträge erlauben.</string>
+
     <!--
     Outfit-card category labels — shown in OutfitPreviewCard on the Today
     screen. These are app-provided category names (the user's typed clothes

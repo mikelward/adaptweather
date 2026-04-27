@@ -53,10 +53,10 @@ private val SAMPLE_INSIGHT = Insight(
         period = ForecastPeriod.TODAY,
         band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
         delta = DeltaClause(4, DeltaClause.Direction.WARMER),
-        clothes = ClothesClause(listOf("jumper", "umbrella")),
+        clothes = ClothesClause(listOf("sweater", "umbrella")),
         precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
     ),
-    recommendedItems = listOf("jumper", "umbrella"),
+    recommendedItems = listOf("sweater", "umbrella"),
     generatedAt = Instant.parse("2026-04-26T07:30:00Z"),
     forDate = LocalDate.of(2026, 4, 26),
 )

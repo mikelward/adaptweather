@@ -114,9 +114,6 @@ fun SettingsScreen(
             SettingsRoute.Clothes -> ClothesContent(
                 rules = state.clothesRules,
                 padding = padding,
-                onAdd = viewModel::addClothesRule,
-                onReplace = viewModel::replaceClothesRule,
-                onDelete = viewModel::deleteClothesRule,
             )
             SettingsRoute.Region -> RegionContent(
                 region = state.region,

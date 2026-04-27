@@ -50,12 +50,12 @@ class InsightCacheTest {
         period = ForecastPeriod.TODAY,
         band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
         delta = DeltaClause(4, DeltaClause.Direction.COOLER),
-        clothes = ClothesClause(listOf("jumper", "umbrella")),
+        clothes = ClothesClause(listOf("sweater", "umbrella")),
     )
 
     private val sample = Insight(
         summary = sampleSummary,
-        recommendedItems = listOf("jumper", "umbrella"),
+        recommendedItems = listOf("sweater", "umbrella"),
         generatedAt = now,
         forDate = today,
     )
@@ -126,8 +126,8 @@ class InsightCacheTest {
         // regenerates on the new key.
         val v2Json = """
             {
-              "summary": "Cooler than yesterday — bring a jumper.",
-              "recommendedItems": ["jumper", "umbrella"],
+              "summary": "Cooler than yesterday — bring a sweater.",
+              "recommendedItems": ["sweater", "umbrella"],
               "generatedAtEpochMillis": ${now.toEpochMilli()},
               "forDateEpochDays": ${today.toEpochDay()}
             }
@@ -174,7 +174,7 @@ class InsightCacheTest {
                 band = BandClause(TemperatureBand.FREEZING, TemperatureBand.HOT),
                 alert = AlertClause("Tornado Warning"),
                 delta = DeltaClause(8, DeltaClause.Direction.WARMER),
-                clothes = ClothesClause(listOf("jumper", "jacket", "shorts", "umbrella")),
+                clothes = ClothesClause(listOf("sweater", "jacket", "shorts", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
                 calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
             ),

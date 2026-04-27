@@ -181,7 +181,7 @@ private fun DailyForecast.slicedForToday(
  *    about the actual overnight low — typically the pre-dawn hours from
  *    [tomorrowHourly], which the day-level fields don't capture.
  *  - The clothes rules evaluate against the overnight conditions (the user
- *    pulling a thicker jumper because it'll be 4°C at 05:00, not the day's 18°C
+ *    pulling a thicker sweater because it'll be 4°C at 05:00, not the day's 18°C
  *    midday high).
  *  - [OutfitSuggestion.fromForecast] picks a top + bottom appropriate for what
  *    the user will leave in tonight and arrive in tomorrow morning.
