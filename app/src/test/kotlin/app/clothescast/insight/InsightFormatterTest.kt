@@ -262,4 +262,33 @@ class InsightFormatterTest {
         out shouldBe "Heute wird es mild. Trag Regenschirm. " +
             "Denk an Regenschirm für Park-Lauf um 15:00."
     }
+
+    // ---------------------------------------------------------------------
+    // en-GB / en-AU regional vocab — the canonical rule key is "sweater"
+    // but speakers in those regions say "jumper". The phraser maps it at
+    // format time so the spoken prose matches the localized outfit-card
+    // label (`today_outfit_top_sweater` → "Jumper" via values-en-r{GB,AU}/).
+    // ---------------------------------------------------------------------
+
+    private val britishSubject = InsightFormatter.forContext(context, Locale.UK)
+    private val australianSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("en-AU"))
+
+    @Test
+    fun `en-GB — sweater renders as jumper in the spoken prose`() {
+        britishSubject.format(summary(clothes = ClothesClause(listOf("sweater")))) shouldBe
+            "Today will be mild. Wear a jumper."
+    }
+
+    @Test
+    fun `en-AU — sweater renders as jumper in the spoken prose`() {
+        australianSubject.format(summary(clothes = ClothesClause(listOf("sweater")))) shouldBe
+            "Today will be mild. Wear a jumper."
+    }
+
+    @Test
+    fun `en-GB — non-overridden items pass through trimmed`() {
+        // "jacket" isn't in the en-GB override table — emits as-is.
+        britishSubject.format(summary(clothes = ClothesClause(listOf("sweater", "jacket")))) shouldBe
+            "Today will be mild. Wear a jumper and jacket."
+    }
 }

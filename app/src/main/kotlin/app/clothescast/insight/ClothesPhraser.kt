@@ -22,7 +22,7 @@ internal interface ClothesPhraser {
     companion object {
         fun forLocale(resources: Resources, locale: Locale): ClothesPhraser =
             when (locale.language) {
-                "en" -> EnglishClothesPhraser(resources)
+                "en" -> EnglishClothesPhraser(resources, locale)
                 "de" -> GermanClothesPhraser(resources)
                 else -> BareClothesPhraser()
             }
@@ -36,24 +36,70 @@ internal interface ClothesPhraser {
  *  - Items starting with a vowel letter take "an"; everything else takes "a".
  * Subsequent items in the list are emitted bare per the user-preferred phrasing
  * "Wear a sweater and jacket." rather than fully grammatical "a sweater and a jacket."
+ *
+ * Items are passed through [translate] first so the canonical en-US-flavoured
+ * source keys ("sweater") render in the local vocabulary on en-GB / en-AU
+ * ("jumper"), matching the localized `today_outfit_top_*` labels in
+ * `values-en-rGB/` and `values-en-rAU/`. Items not in the regional table fall
+ * through unchanged.
  */
-internal class EnglishClothesPhraser(private val resources: Resources) : ClothesPhraser {
-    override fun withArticle(item: String): String = when {
-        item.endsWith("s", ignoreCase = true) -> item
-        item.firstOrNull()?.let { it.lowercaseChar() in "aeiou" } == true ->
-            resources.getString(R.string.insight_clothes_article_an, item)
-        else -> resources.getString(R.string.insight_clothes_article_a, item)
+internal class EnglishClothesPhraser(
+    private val resources: Resources,
+    private val locale: Locale = Locale.getDefault(),
+) : ClothesPhraser {
+    override fun withArticle(item: String): String {
+        val display = translate(item)
+        return when {
+            display.endsWith("s", ignoreCase = true) -> display
+            display.firstOrNull()?.let { it.lowercaseChar() in "aeiou" } == true ->
+                resources.getString(R.string.insight_clothes_article_an, display)
+            else -> resources.getString(R.string.insight_clothes_article_a, display)
+        }
     }
 
-    override fun joinItems(items: List<String>): String = when (items.size) {
-        0 -> ""
-        1 -> withArticle(items[0])
-        2 -> resources.getString(R.string.insight_clothes_join_two, withArticle(items[0]), items[1])
-        else -> resources.getString(
-            R.string.insight_clothes_join_many,
-            withArticle(items[0]),
-            items.subList(1, items.size - 1).joinToString(", "),
-            items.last(),
+    override fun joinItems(items: List<String>): String {
+        val translated = items.map(::translate)
+        return when (translated.size) {
+            0 -> ""
+            1 -> withArticleForDisplay(translated[0])
+            2 -> resources.getString(
+                R.string.insight_clothes_join_two,
+                withArticleForDisplay(translated[0]),
+                translated[1],
+            )
+            else -> resources.getString(
+                R.string.insight_clothes_join_many,
+                withArticleForDisplay(translated[0]),
+                translated.subList(1, translated.size - 1).joinToString(", "),
+                translated.last(),
+            )
+        }
+    }
+
+    /** Same article logic as [withArticle], but takes an already-translated string. */
+    private fun withArticleForDisplay(display: String): String = when {
+        display.endsWith("s", ignoreCase = true) -> display
+        display.firstOrNull()?.let { it.lowercaseChar() in "aeiou" } == true ->
+            resources.getString(R.string.insight_clothes_article_an, display)
+        else -> resources.getString(R.string.insight_clothes_article_a, display)
+    }
+
+    private fun translate(item: String): String {
+        val trimmed = item.trim()
+        val regional = REGIONAL_OVERRIDES[locale.country]?.get(trimmed.lowercase(Locale.ROOT))
+        return regional ?: trimmed
+    }
+
+    private companion object {
+        // en-GB and en-AU both prefer "jumper" over "sweater" for the cold-
+        // weather top — the same divergence the values-en-rGB / -rAU label
+        // overrides express for the outfit card. Kept tight rather than
+        // exhaustive: only add an entry when the en-US base would actually
+        // sound wrong to a regional speaker.
+        private val EN_GB_AU = mapOf("sweater" to "jumper")
+        private val REGIONAL_OVERRIDES: Map<String, Map<String, String>> = mapOf(
+            "GB" to EN_GB_AU,
+            "AU" to EN_GB_AU,
         )
     }
 }
@@ -99,8 +145,10 @@ internal class GermanClothesPhraser(private val resources: Resources) : ClothesP
      * capitalization (German nouns are always capitalised). Anything not in
      * the table falls through unchanged.
      */
-    private fun translate(item: String): String =
-        EN_TO_DE[item.trim().lowercase(Locale.ROOT)] ?: item
+    private fun translate(item: String): String {
+        val trimmed = item.trim()
+        return EN_TO_DE[trimmed.lowercase(Locale.ROOT)] ?: trimmed
+    }
 
     private companion object {
         // Defaults shipped in ClothesRule.DEFAULTS plus the obvious extras a user
