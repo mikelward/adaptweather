@@ -30,16 +30,15 @@ enum class TtsEngine { DEVICE, GEMINI, OPENAI, ELEVENLABS }
  *  - [TtsEngine.GEMINI] passes the locale through as a natural-language
  *    accent directive prepended to the prompt — Gemini's prebuilt voices are
  *    language-agnostic personalities and follow that direction.
+ *  - [TtsEngine.OPENAI] passes the locale through as the request's
+ *    `instructions` field (e.g. *"Speak with a British English accent."*),
+ *    which `gpt-4o-mini-tts` honours. The locale also influences the
+ *    *default* voice for first-launch users (en-GB → `fable`, else `nova`)
+ *    via `defaultOpenAiVoiceFor` — once the user explicitly picks a voice
+ *    in Settings, that choice wins.
  *  - [TtsEngine.ELEVENLABS] filters the voice picker to voices whose baked-in
  *    accent matches the variant; falls back to the full list if no voice
  *    matches. Voice clones have a fixed accent that can't be prompt-steered.
- *  - [TtsEngine.OPENAI] influences the *default* voice when the user hasn't
- *    explicitly chosen one — en-GB picks `fable` (the only British voice),
- *    everything else picks `nova`. Once the user explicitly picks a voice in
- *    Settings, that choice wins regardless of locale. (tts-1's voices have
- *    fixed accents that can't be prompt-steered; switching to
- *    `gpt-4o-mini-tts` would unlock instruction-based accent steering at a
- *    higher per-character cost.)
  *
  * [SYSTEM] means "follow the phone's locale" — the right default for almost
  * everyone, since their device language already encodes their accent
