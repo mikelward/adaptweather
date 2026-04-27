@@ -4,13 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -44,7 +42,7 @@ import app.clothescast.ui.theme.ClothesCastTheme
 //
 
 private val WidgetWidth = 160.dp
-private val WidgetHeight = 160.dp
+private val WidgetHeight = 200.dp
 
 @Composable
 private fun WidgetFrame(darkTheme: Boolean = false, content: @Composable () -> Unit) {
@@ -91,20 +89,25 @@ internal fun OutfitWidgetMockFilled(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
             )
-            Spacer(modifier = Modifier.height(6.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = topIconResMock(outfit.top)),
-                    contentDescription = stringResource(topLabelResMock(outfit.top)),
-                    modifier = Modifier.size(56.dp),
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Image(
-                    painter = painterResource(id = bottomIconResMock(outfit.bottom)),
-                    contentDescription = stringResource(bottomLabelResMock(outfit.bottom)),
-                    modifier = Modifier.size(56.dp),
-                )
-            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Image(
+                painter = painterResource(id = topIconResMock(outfit.top)),
+                contentDescription = stringResource(topLabelResMock(outfit.top)),
+                modifier = Modifier.size(48.dp),
+            )
+            Image(
+                painter = painterResource(id = bottomIconResMock(outfit.bottom)),
+                contentDescription = stringResource(bottomLabelResMock(outfit.bottom)),
+                modifier = Modifier.size(48.dp),
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = stringResource(topLabelResMock(outfit.top)) +
+                    " · " +
+                    stringResource(bottomLabelResMock(outfit.bottom)),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 11.sp,
+            )
         }
     }
 }
@@ -133,7 +136,7 @@ internal fun OutfitWidgetMockEmpty() {
     }
 }
 
-@Preview(name = "Widget · today · t-shirt + shorts", widthDp = 192, heightDp = 192)
+@Preview(name = "Widget · today · t-shirt + shorts", widthDp = 192, heightDp = 232)
 @Composable
 internal fun WidgetTodayTShirtShortsPreview() {
     WidgetFrame {
@@ -144,7 +147,7 @@ internal fun WidgetTodayTShirtShortsPreview() {
     }
 }
 
-@Preview(name = "Widget · tonight · sweater + long pants", widthDp = 192, heightDp = 192)
+@Preview(name = "Widget · tonight · sweater + long pants", widthDp = 192, heightDp = 232)
 @Composable
 internal fun WidgetTonightSweaterPantsPreview() {
     WidgetFrame {
@@ -155,7 +158,7 @@ internal fun WidgetTonightSweaterPantsPreview() {
     }
 }
 
-@Preview(name = "Widget · today · thick jacket + long pants", widthDp = 192, heightDp = 192)
+@Preview(name = "Widget · today · thick jacket + long pants", widthDp = 192, heightDp = 232)
 @Composable
 internal fun WidgetTodayJacketPantsPreview() {
     WidgetFrame {
@@ -166,7 +169,7 @@ internal fun WidgetTodayJacketPantsPreview() {
     }
 }
 
-@Preview(name = "Widget · tonight (dark)", widthDp = 192, heightDp = 192)
+@Preview(name = "Widget · tonight (dark)", widthDp = 192, heightDp = 232)
 @Composable
 internal fun WidgetTonightDarkPreview() {
     WidgetFrame(darkTheme = true) {
@@ -177,7 +180,7 @@ internal fun WidgetTonightDarkPreview() {
     }
 }
 
-@Preview(name = "Widget · empty", widthDp = 192, heightDp = 192)
+@Preview(name = "Widget · empty", widthDp = 192, heightDp = 232)
 @Composable
 internal fun WidgetEmptyPreview() {
     WidgetFrame { OutfitWidgetMockEmpty() }
