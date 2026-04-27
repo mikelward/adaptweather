@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+British English overrides. Android picks this up automatically when the device
+locale is en-GB; everything not in this file falls back to values/strings.xml.
+Scope today: vocabulary that an en-GB speaker would notice as wrong, not a
+full re-translation.
+-->
+<resources>
+    <!-- "Jumper", not "Sweater" — the en-US default reads as American to UK ears. -->
+    <string name="today_outfit_top_sweater">Jumper</string>
+    <!-- "Trousers", not "Long pants" — "pants" means underwear in en-GB. -->
+    <string name="today_outfit_bottom_long_pants">Trousers</string>
+</resources>
