@@ -9,14 +9,13 @@ package app.clothescast.core.domain.model
  * outside, factoring in wind chill and humidity. Precipitation rules check the day's
  * peak probability.
  *
- * TODO(rules-redesign): the user-facing UI in Settings is currently locked to the
- * defaults — `item` is a free-form string today, but the *intended* model is a
- * fixed garment enum (SWEATER / JACKET / SHORTS / …) with the user only able to
- * tune the temperature / precipitation threshold per garment. The current
- * editing UI accidentally exposed the garment name as editable; that's hidden
- * for now (see ClothesSettings) until the redesign lands. When we re-enable
- * editing, also: more presets (coat, scarf, gloves, hat, boots, raincoat,
- * sunscreen) and an explicit "user-defined" path with a translation hook.
+ * TODO(rules-redesign): `item` is still a free-form string on disk so existing
+ * stored rules round-trip, but the editor now picks from the fixed [Garment]
+ * catalog instead of free text — translation works because every catalog key
+ * has a `garment_<key>` resource and a German phraser entry. Future: migrate
+ * `item` to `Garment` directly (typed field, no fallback string), broaden the
+ * catalog beyond tops + bottoms (headwear, scarf / gloves, footwear, rain /
+ * sun gear), and add a "user-defined" path with an explicit translation hook.
  */
 data class ClothesRule(
     val item: String,

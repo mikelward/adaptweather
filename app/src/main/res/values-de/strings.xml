@@ -15,8 +15,41 @@ the rest of the app stays in English.
          German got added; "English variant: Deutsch" was self-contradictory). -->
     <string name="settings_tts_voice_locale_label">Sprache</string>
 
-    <!-- Footer note on the Clothes settings page (editing is locked for now). -->
-    <string name="settings_clothes_lockdown_note">Bearbeiten ist vorübergehend deaktiviert. Ein zukünftiges Update wird die Temperaturschwellen pro Kleidungsstück anpassbar machen, weitere Vorschläge hinzufügen und eigene Einträge erlauben.</string>
+    <!-- Garment dropdown labels — translated names for the picker on the
+         Clothes settings page. The stored key on disk is the en-US form
+         ("sweater" / "pants" / …); these strings only change the display.
+         The German insight phraser translates the same keys independently
+         for spoken-aloud prose. -->
+    <string name="garment_sweater">Pullover</string>
+    <string name="garment_hoodie">Hoodie</string>
+    <string name="garment_jacket">Jacke</string>
+    <string name="garment_coat">Mantel</string>
+    <string name="garment_tshirt">T-Shirt</string>
+    <string name="garment_shirt">Hemd</string>
+    <string name="garment_shorts">Kurze Hose</string>
+    <string name="garment_pants">Lange Hose</string>
+    <string name="garment_jeans">Jeans</string>
+
+    <!-- Editor strings restored from the pre-lockdown UI, German equivalents. -->
+    <string name="settings_clothes_empty">Noch keine Regeln. Tippe auf Hinzufügen, um eine zu erstellen.</string>
+    <string name="settings_clothes_add">Hinzufügen</string>
+    <string name="settings_clothes_edit">Bearbeiten</string>
+    <string name="settings_clothes_delete">Löschen</string>
+    <string name="settings_clothes_dialog_add_title">Kleidungsregel hinzufügen</string>
+    <string name="settings_clothes_dialog_edit_title">Kleidungsregel bearbeiten</string>
+    <string name="settings_clothes_item_label">Kleidungsstück</string>
+    <string name="settings_clothes_condition_label">Auslöser</string>
+    <string name="settings_clothes_value_label_temp_c">Schwelle (°C)</string>
+    <string name="settings_clothes_value_label_precip">Schwelle (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Wenn es sich kälter anfühlt als</string>
+    <string name="settings_clothes_cond_type_temp_above">Wenn es sich wärmer anfühlt als</string>
+    <string name="settings_clothes_cond_type_precip_above">Wenn die Regenwahrscheinlichkeit über</string>
+
+    <!-- Row description for an existing rule. Mirrors the English templates
+         in values/strings.xml. -->
+    <string name="settings_clothes_cond_temp_below">wenn die gefühlte Mindesttemperatur unter %.0f°C liegt</string>
+    <string name="settings_clothes_cond_temp_above">wenn die gefühlte Höchsttemperatur über %.0f°C liegt</string>
+    <string name="settings_clothes_cond_precip_above">wenn die Regenwahrscheinlichkeit über %.0f%% liegt</string>
 
     <!--
     Outfit-card category labels — shown in OutfitPreviewCard on the Today

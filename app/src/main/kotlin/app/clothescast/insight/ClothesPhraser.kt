@@ -118,9 +118,14 @@ internal class GermanClothesPhraser(private val resources: Resources) : ClothesP
             "shirt" to "Hemd",
             "t-shirt" to "T-Shirt",
             "tshirt" to "T-Shirt",
-            "shorts" to "Shorts",
-            "pants" to "Hose",
-            "trousers" to "Hose",
+            "shorts" to "kurze Hose",
+            // Lowercase "kurze" / "lange" because the prose embeds them
+            // mid-sentence ("Trag kurze Hose und Pullover."); only the noun
+            // "Hose" stays capitalised. The dropdown labels in
+            // values-de/strings.xml (garment_*) use sentence-style capitals
+            // since they stand alone as a UI label.
+            "pants" to "lange Hose",
+            "trousers" to "lange Hose",
             "jeans" to "Jeans",
             "umbrella" to "Regenschirm",
             "hat" to "Hut",
