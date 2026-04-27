@@ -123,7 +123,13 @@
     <string name="settings_tts_test">Test voice</string>
     <!-- Shown next to the engine picker when the chosen engine's API key isn't
          configured. %1$s is the engine name ("Gemini" / "OpenAI"). -->
-    <string name="settings_tts_no_key_hint">No %1$s key configured — add one in API keys above to enable this engine.</string>
+    <string name="settings_tts_no_key_hint">No %1$s key configured — add one to enable this engine.</string>
+    <!-- Button next to the missing-key hint that opens a paste-key dialog. -->
+    <string name="settings_tts_add_api_key">Add API key</string>
+    <!-- Title of the paste-key dialog. %1$s is the engine name. -->
+    <string name="settings_tts_add_api_key_title">Add %1$s API key</string>
+    <string name="settings_tts_add_api_key_save">Save</string>
+    <string name="settings_tts_add_api_key_cancel">Cancel</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
     <string name="settings_tts_test_sample">Hello — this is the ClothesCast voice preview.</string>
 
