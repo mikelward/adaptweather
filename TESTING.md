@@ -151,6 +151,47 @@ for the storage layer — you exercise the actual code path that ships.
 
 `InsightCacheTest` and `SettingsRepositoryTest` use this pattern.
 
+### Robolectric — Android runtime on the JVM
+
+Provides JVM-side implementations of `Context`, `Resources`, `Bitmap`,
+`View`, `Looper`, etc. so code that touches the Android framework can be
+tested headlessly. Adds 1–2 seconds to test startup, which is why the
+JUnit 5 / Kotest path above is preferred for anything that doesn't need it.
+
+In this project Robolectric exists to support **`PreviewSnapshots`** (see
+below). `@RunWith(AndroidJUnit4::class) @GraphicsMode(NATIVE) @Config(sdk = …)`
+switches to the real Skia pipeline so Compose can rasterise to a real
+`Bitmap`, with the SDK and screen qualifiers pinned for cross-host
+reproducibility.
+
+JUnit 5 doesn't run JUnit 4 tests on its own — the bridge is
+`junit-vintage-engine` as `testRuntimeOnly`, wired in `app/build.gradle.kts`.
+
+### Roborazzi + Compose UI test — `@Preview` snapshot capture
+
+Renders Composables to PNG on the JVM via Robolectric's Skia pipeline and
+writes the result to a tracked path. The test harness is the standard
+Compose UI test API (`createAndroidComposeRule`, `composeRule.setContent`,
+`composeRule.onRoot()`) — same library as instrumented tests, just
+running against Robolectric instead of a device.
+
+```kotlin
+@Test fun today_insight_card() = capture { InsightCardPreview() }
+```
+
+Pipeline lives in
+`app/src/test/kotlin/app/clothescast/ui/today/PreviewSnapshots.kt`; PNGs
+land in `app/snapshots/` (tracked in Git, so GitHub renders pixel diffs
+inline in the PR's "Files changed" view). The build script sets
+`roborazzi.test.record = true`, so each run re-records and the "gate" is
+just "did the PNGs change?" — no separate verify step. CI commits
+any new/updated PNGs back to the branch (see `.github/workflows/ci.yml`).
+
+To add a captured state: add an `internal @Preview` wrapper in
+`TodayPreviews.kt` (Preview wrappers are deliberately `internal` rather
+than `public` so screen-internal composables don't leak through their
+visibility), then a one-line `capture { … }` in `PreviewSnapshots`.
+
 ## Test-data conventions
 
 - Fake / stub classes live alongside the test that owns them (private
@@ -169,42 +210,38 @@ for the storage layer — you exercise the actual code path that ships.
 | DataStore-backed cache or repository | JUnit 5 + Kotest + `@TempDir` + real `PreferenceDataStoreFactory` |
 | HTTP client logic (Ktor) | JUnit 5 + Ktor `MockEngine` |
 | Heavy Android interfaces (`WorkManager`) | MockK with `every { … } returns flowOf(…)` |
-| Composable rendering | **not currently possible headlessly** — see below |
+| `@Preview` pixel snapshots | Roborazzi + Robolectric + Compose UI test (`createAndroidComposeRule`) |
+| Composable behaviour assertions (`onNodeWithText` etc.) | Compose UI test + Robolectric (same harness as snapshots; not yet used in any test) |
 
 ## Not in the project
 
 These are deliberate omissions, not oversights. Each adds tooling cost and
 should only land when there's a clear reason.
 
-### Robolectric
+### Instrumented Android tests (real device / emulator)
 
-Runs Android-framework calls (`Context`, `Resources`, `Bitmap`, `View`) on
-the JVM via fake implementations. Adds 1–2 seconds to test startup. Without
-it, classes that touch `Context` or read string resources can't be tested
-headlessly.
+The instrumented flavour of Compose UI test (`androidTest` source set,
+needs a device running), AndroidX Test, Espresso, and any on-device
+screenshot tooling. Out of scope for the headless sandbox CI. Note
+that the **Robolectric-backed flavour** of Compose UI test _is_ wired —
+that's what `PreviewSnapshots` runs against — so behaviour assertions
+(`onNodeWithText(...).assertIsDisplayed()`) are also possible headlessly
+the day a test wants them, no extra infra needed.
 
-### Compose UI test (`androidx.compose.ui:ui-test-junit4`)
+### Paparazzi
 
-`setContent { TodayScreen(...) }` in a test, then
-`onNodeWithText("...").assertIsDisplayed()`. Two flavours: instrumented
-(needs a device) and Robolectric-backed (JVM, headless). Neither is wired
-up.
-
-### AndroidX Test / Espresso
-
-Instrumented tests on a real device or emulator. Out of scope for headless
-sandboxes.
-
-### Screenshot / visual regression (Paparazzi, Roborazzi)
-
-Renders Composables to PNG on the JVM and compares to a golden. Useful for
-chart / theme regressions. Adds golden-file maintenance burden.
+Same role as Roborazzi (Composable → PNG on the JVM), different
+rendering backend: Paparazzi uses Studio's LayoutLib, Roborazzi uses
+Robolectric + real Skia. They're substitutable; we picked Roborazzi
+because it shares its Android runtime with the rest of the test stack.
 
 ## Practical implications for chart-style features
 
 `ForecastChart` is a Composable that calls Vico, which renders to a Compose
-Canvas. To run it in a headless test you'd need either Compose UI test +
-Robolectric, or a screenshot tool. Until then, the realistic strategy is:
+Canvas. The Roborazzi pipeline above can pixel-snapshot it, but pixel diffs
+are noisy for chart-style content (axis ticks, label placement, anti-alias
+fuzz) and don't tell you _why_ a render changed. The default strategy is
+still:
 
 1. **Test the data layer** — verify the right list of values flows into the
    chart's producer (round-trips through the cache, conversions are correct).
