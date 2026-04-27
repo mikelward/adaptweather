@@ -309,6 +309,74 @@ class RenderInsightSummaryTest {
     }
 
     @Test
+    fun `next-period clause emits when next period crosses precip threshold`() {
+        val today = mildToday
+        val nextWithRain = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(22, 0), 16.0, 16.0, 60.0, WeatherCondition.RAIN),
+            ),
+        )
+        val out = subject(today, yesterday, emptyList(), next = nextWithRain).nextPeriod
+        out.shouldNotBeNull()
+        out!!.precip.shouldNotBeNull()
+        out.precip!!.condition shouldBe WeatherCondition.RAIN
+        out.precip!!.time shouldBe LocalTime.of(22, 0)
+        out.isColder shouldBe false
+    }
+
+    @Test
+    fun `next-period clause emits isColder when next feels-like min drops by at least 3 degrees`() {
+        val today = mildToday.copy(feelsLikeMinC = 15.0, feelsLikeMaxC = 22.0)
+        val coldNext = mildToday.copy(feelsLikeMinC = 11.0, feelsLikeMaxC = 14.0)
+        val out = subject(today, yesterday, emptyList(), next = coldNext).nextPeriod
+        out.shouldNotBeNull()
+        out!!.isColder shouldBe true
+        out.precip.shouldBeNull()
+    }
+
+    @Test
+    fun `next-period clause is omitted when next is only 2 degrees colder`() {
+        val today = mildToday.copy(feelsLikeMinC = 15.0)
+        val barelyColder = mildToday.copy(feelsLikeMinC = 13.0)
+        subject(today, yesterday, emptyList(), next = barelyColder).nextPeriod.shouldBeNull()
+    }
+
+    @Test
+    fun `next-period clause is omitted when next is warmer (warmer is not surfaced)`() {
+        // The user explicitly asked for "rain or colder" — being warmer is not a
+        // condition the rule cares about (a warmer next period doesn't change what
+        // they need to walk out in).
+        val today = mildToday.copy(feelsLikeMinC = 15.0)
+        val warmerNext = mildToday.copy(feelsLikeMinC = 22.0)
+        subject(today, yesterday, emptyList(), next = warmerNext).nextPeriod.shouldBeNull()
+    }
+
+    @Test
+    fun `next-period clause carries both signals when next has rain AND is colder`() {
+        val today = mildToday.copy(feelsLikeMinC = 16.0)
+        val rainyAndColder = mildToday.copy(
+            feelsLikeMinC = 9.0,
+            precipitationProbabilityMaxPct = 70.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(20, 0), 14.0, 12.0, 70.0, WeatherCondition.RAIN),
+            ),
+        )
+        val out = subject(today, yesterday, emptyList(), next = rainyAndColder).nextPeriod
+        out.shouldNotBeNull()
+        out!!.isColder shouldBe true
+        out.precip!!.condition shouldBe WeatherCondition.RAIN
+        out.precip!!.time shouldBe LocalTime.of(20, 0)
+    }
+
+    @Test
+    fun `next-period clause is omitted when next is null (no upstream forecast)`() {
+        subject(mildToday, yesterday, emptyList(), next = null).nextPeriod.shouldBeNull()
+    }
+
+    @Test
     fun `temperature band classifier covers all six bands at boundaries`() {
         TemperatureBand.forCelsius(-1.0) shouldBe TemperatureBand.FREEZING
         TemperatureBand.forCelsius(3.999) shouldBe TemperatureBand.FREEZING

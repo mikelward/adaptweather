@@ -14,6 +14,7 @@ import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.NextPeriodClause
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
@@ -128,6 +129,7 @@ class InsightCache(
         val wardrobe: WardrobeDto? = null,
         val precip: PrecipDto? = null,
         val calendarTieIn: CalendarTieInDto? = null,
+        val nextPeriod: NextPeriodDto? = null,
     ) {
         fun toDomain(): InsightSummary = InsightSummary(
             period = runCatching { ForecastPeriod.valueOf(period) }.getOrDefault(ForecastPeriod.TODAY),
@@ -137,6 +139,7 @@ class InsightCache(
             wardrobe = wardrobe?.toDomain(),
             precip = precip?.toDomain(),
             calendarTieIn = calendarTieIn?.toDomain(),
+            nextPeriod = nextPeriod?.toDomain(),
         )
     }
 
@@ -190,6 +193,17 @@ class InsightCache(
     }
 
     @Serializable
+    private data class NextPeriodDto(
+        val precip: PrecipDto? = null,
+        val isColder: Boolean = false,
+    ) {
+        fun toDomain(): NextPeriodClause = NextPeriodClause(
+            precip = precip?.toDomain(),
+            isColder = isColder,
+        )
+    }
+
+    @Serializable
     private data class OutfitDto(val top: String, val bottom: String) {
         fun toDomain(): OutfitSuggestion? {
             val t = runCatching { OutfitSuggestion.Top.valueOf(top) }.getOrNull() ?: return null
@@ -237,6 +251,12 @@ class InsightCache(
         precip = precip?.let { PrecipDto(it.condition.name, it.time.toSecondOfDay()) },
         calendarTieIn = calendarTieIn?.let {
             CalendarTieInDto(it.item, it.time.toSecondOfDay(), it.title)
+        },
+        nextPeriod = nextPeriod?.let {
+            NextPeriodDto(
+                precip = it.precip?.let { p -> PrecipDto(p.condition.name, p.time.toSecondOfDay()) },
+                isColder = it.isColder,
+            )
         },
     )
 
