@@ -17,10 +17,12 @@ fun VoiceLocale.resolve(): Locale = toJavaLocale() ?: Locale.getDefault()
 /**
  * Picks the most natural OpenAI voice for a given locale preference.
  *
- * OpenAI's TTS voices have fixed accents — `fable` is the only British
- * option; the rest are American. There's no Australian voice, so en-AU
- * falls back to American `nova` (closest "bright female" timbre) rather
- * than to British `fable`.
+ * Historically a v1 workaround for `tts-1`'s fixed-accent voices: `fable`
+ * was the only British-sounding option, so en-GB users defaulted to it.
+ * On `gpt-4o-mini-tts` accent is steerable via the request `instructions`
+ * field (see `openAiAccentInstructionFor`), but the default-voice choice
+ * still matters for first-launch quality of the unconfigured user — pick
+ * the voice whose *baseline* timbre is closest to what they'd expect.
  *
  * Used as the *default* when the user hasn't explicitly chosen a voice;
  * once they pick one in Settings the chosen voice wins regardless of locale.

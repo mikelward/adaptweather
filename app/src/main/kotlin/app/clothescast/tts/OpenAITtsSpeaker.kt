@@ -20,7 +20,7 @@ class OpenAITtsSpeaker(
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
-        val audio = client.synthesize(text = text, voice = voice)
+        val audio = client.synthesize(text = text, voice = voice, locale = locale)
         PcmAudioPlayer.play(audio)
     }
 }
