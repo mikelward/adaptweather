@@ -197,10 +197,17 @@ class InsightCache(
         val precip: PrecipDto? = null,
         val isColder: Boolean = false,
     ) {
-        fun toDomain(): NextPeriodClause = NextPeriodClause(
-            precip = precip?.toDomain(),
-            isColder = isColder,
-        )
+        // Nullable on purpose. [NextPeriodClause]'s init enforces "at least one
+        // signal", but the wire format can't enforce that — `ignoreUnknownKeys`
+        // plus the field defaults mean an empty `nextPeriod: {}` (e.g. an older
+        // app version reading a future schema, or a hand-edited cache file)
+        // deserializes here as `(null, false)`. Returning null in that case
+        // skips the clause cleanly instead of throwing the whole insight away.
+        fun toDomain(): NextPeriodClause? {
+            val precipClause = precip?.toDomain()
+            if (precipClause == null && !isColder) return null
+            return NextPeriodClause(precip = precipClause, isColder = isColder)
+        }
     }
 
     @Serializable
