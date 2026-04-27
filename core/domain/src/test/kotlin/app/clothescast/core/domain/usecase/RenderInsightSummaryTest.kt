@@ -156,6 +156,48 @@ class RenderInsightSummaryTest {
     }
 
     @Test
+    fun `precip clause is omitted when the peak hour's condition is cloudy`() {
+        // "Cloudy at 15:00" doesn't earn a clause: precipitation info is what the
+        // user wants to hear, not haziness. A 30%+ probability with a non-precip
+        // dominant condition gets dropped entirely.
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.CLOUDY,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.CLOUDY),
+            ),
+        )
+        subject(today, yesterday, emptyList()).precip.shouldBeNull()
+    }
+
+    @Test
+    fun `precip clause is omitted when the noon fallback condition is partly cloudy`() {
+        // Day-level chance 40% but no hourly entry crosses 30%, so we'd normally fall
+        // back to noon with today.condition. If today.condition is non-precip we still
+        // drop the clause.
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 40.0,
+            condition = WeatherCondition.PARTLY_CLOUDY,
+            hourly = emptyList(),
+        )
+        subject(today, yesterday, emptyList()).precip.shouldBeNull()
+    }
+
+    @Test
+    fun `calendar tie-in is omitted when the peak condition is non-precipitation`() {
+        // Even with the umbrella rule firing on day-level probability and an event
+        // overlapping the peak hour, a cloudy peak shouldn't motivate a tie-in —
+        // there's no precipitation clause to anchor it to.
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.CLOUDY,
+            hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.CLOUDY)),
+        )
+        val event = CalendarEvent("park run", LocalTime.of(14, 30), LocalTime.of(16, 0))
+        subject(today, yesterday, listOf(umbrellaRule), events = listOf(event)).calendarTieIn.shouldBeNull()
+    }
+
+    @Test
     fun `alert clause is emitted with the highest-severity event`() {
         val severe = WeatherAlert(
             event = "Severe Thunderstorm Warning",
