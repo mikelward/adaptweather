@@ -122,7 +122,7 @@
     <string name="settings_tts_voice_locale_en_au">English (Australia)</string>
     <string name="settings_tts_test">Test voice</string>
     <!-- Shown next to the engine picker when the chosen engine's API key isn't
-         configured. %1$s is the engine name ("Gemini" / "OpenAI"). -->
+         configured. %1$s is the engine name ("Gemini" / "OpenAI" / "ElevenLabs"). -->
     <string name="settings_tts_no_key_hint">No %1$s key configured — add one to enable this engine.</string>
     <!-- Button next to the missing-key hint that opens a paste-key dialog. -->
     <string name="settings_tts_add_api_key">Add API key</string>
