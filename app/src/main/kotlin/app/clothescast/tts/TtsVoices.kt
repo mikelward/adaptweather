@@ -107,7 +107,6 @@ val OPENAI_VOICES: List<TtsVoiceOption> = listOf(
 val ELEVENLABS_VOICES: List<TtsVoiceOption> = listOf(
     TtsVoiceOption("EXAVITQu4vr4xnSDxMaL", "Sarah — Warm, female", VoiceLocale.EN_US),
     TtsVoiceOption("21m00Tcm4TlvDq8ikWAM", "Rachel — Calm, female", VoiceLocale.EN_US),
-    TtsVoiceOption("AZnzlk1v9MwlGOIKvxn0", "Domi — Strong, female", VoiceLocale.EN_US),
     TtsVoiceOption("MF3mGyEYCl7XYWbV9V6O", "Elli — Emotional, female", VoiceLocale.EN_US),
     TtsVoiceOption("pNInz6obpgDQGcFmaJgB", "Adam — Deep, male", VoiceLocale.EN_US),
     TtsVoiceOption("ErXwobaYiN019PkySvjV", "Antoni — Well-rounded, male", VoiceLocale.EN_US),
