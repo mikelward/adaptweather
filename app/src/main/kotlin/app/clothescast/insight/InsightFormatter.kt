@@ -9,7 +9,7 @@ import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
-import java.time.format.DateTimeFormatter
+import java.time.LocalTime
 import java.util.Locale
 
 /**
@@ -18,8 +18,10 @@ import java.util.Locale
  * Living in `:app` means this is the natural place to fold in region-localized
  * vocabulary (Android string resources, BCP-47 locale picking) — the upcoming
  * Region setting will replace the hardcoded English here with `getString` calls.
- * For now the strings are inline and produce the same prose the previous
- * domain-side renderer did, byte-for-byte.
+ * For now the strings are inline.
+ *
+ * Times are rendered as natural language ("midnight", "2am", "noon", "3pm") —
+ * better for TTS than "02:00" and identical text feeds both UI and speech.
  */
 class InsightFormatter {
 
@@ -28,7 +30,7 @@ class InsightFormatter {
         add(formatBand(summary.period, summary.band))
         summary.delta?.let { add(formatDelta(it)) }
         summary.clothes?.let { add(formatClothes(it)) }
-        summary.precip?.let { add(formatPrecip(it)) }
+        summary.precip?.let { add(formatPrecip(it, hasCalendarTieIn = summary.calendarTieIn != null)) }
         summary.calendarTieIn?.let { add(formatCalendarTieIn(it)) }
     }.joinToString(" ")
 
@@ -67,14 +69,23 @@ class InsightFormatter {
         return "Wear $phrase."
     }
 
-    private fun formatPrecip(precip: PrecipClause): String {
+    private fun formatPrecip(precip: PrecipClause, hasCalendarTieIn: Boolean): String {
         val type = precip.condition.name.lowercase(Locale.ROOT).replace('_', ' ')
             .replaceFirstChar { it.titlecase(Locale.ROOT) }
-        return "$type at ${EVENT_TIME.format(precip.time)}."
+        // "Rain at 02:00" sounds robotic and a precise hour adds little value when
+        // the user is asleep. Collapse early-morning peaks to "overnight" — but only
+        // when there's no calendar tie-in pinning the time, since that clause names
+        // the same hour and the two should agree.
+        val timePhrase = if (precip.time.hour in OVERNIGHT_HOURS && !hasCalendarTieIn) {
+            "overnight"
+        } else {
+            "at ${spokenTime(precip.time)}"
+        }
+        return "$type $timePhrase."
     }
 
     private fun formatCalendarTieIn(tieIn: CalendarTieInClause): String =
-        "Bring ${withArticle(tieIn.item)} for your ${EVENT_TIME.format(tieIn.time)} ${tieIn.title}."
+        "Bring ${withArticle(tieIn.item)} for your ${spokenTime(tieIn.time)} ${tieIn.title}."
 
     private fun bandLabel(band: TemperatureBand): String = when (band) {
         TemperatureBand.FREEZING -> "freezing"
@@ -99,12 +110,25 @@ class InsightFormatter {
         else -> "a $item"
     }
 
+    /**
+     * 24h LocalTime → spoken English ("midnight", "2am", "noon", "3:30pm").
+     * Locale-agnostic ASCII output: Arabic locale digits would otherwise shape
+     * any numeric minutes into Eastern Arabic numerals, breaking the prose
+     * contract the rest of the app expects.
+     */
+    private fun spokenTime(time: LocalTime): String {
+        val hour = time.hour
+        val minute = time.minute
+        if (hour == 0 && minute == 0) return "midnight"
+        if (hour == 12 && minute == 0) return "noon"
+        val h12 = ((hour + 11) % 12) + 1
+        val suffix = if (hour < 12) "am" else "pm"
+        return if (minute == 0) "$h12$suffix" else "$h12:%02d$suffix".format(Locale.ROOT, minute)
+    }
+
     private companion object {
-        // Locale.ROOT keeps digits ASCII regardless of device locale — under e.g.
-        // Arabic locales the system default would otherwise shape "15:00" into
-        // Eastern Arabic numerals, breaking the prose contract the rest of the
-        // app expects.
-        private val EVENT_TIME: DateTimeFormatter =
-            DateTimeFormatter.ofPattern("HH:mm").withLocale(Locale.ROOT)
+        // Hours treated as "overnight" when collapsing precip times. 5am is borderline
+        // morning rather than night, so the band stops at 4:59.
+        private val OVERNIGHT_HOURS = 0..4
     }
 }

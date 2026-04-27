@@ -97,6 +97,11 @@ class RenderInsightSummary {
      * out of the precip clause assembly so the calendar-tie-in rule can pair an
      * event window against the same time without re-running the logic and getting
      * out of sync.
+     *
+     * Returns null unless the resolved condition is *actual* precipitation
+     * (drizzle / rain / snow / thunderstorm). A cloudy or foggy day with a
+     * 30%+ "precip" probability isn't worth a clause — the user wants the
+     * spoken summary to mention precipitation, not haziness.
      */
     private fun peakPrecip(today: DailyForecast): PeakPrecip? {
         val peak = today.hourly.maxByOrNull { it.precipitationProbabilityPct }
@@ -110,7 +115,20 @@ class RenderInsightSummary {
             time = peak.time
             condition = if (peak.condition == WeatherCondition.UNKNOWN) today.condition else peak.condition
         }
+        if (!condition.isPrecipitation()) return null
         return PeakPrecip(time, condition)
+    }
+
+    private fun WeatherCondition.isPrecipitation(): Boolean = when (this) {
+        WeatherCondition.DRIZZLE,
+        WeatherCondition.RAIN,
+        WeatherCondition.SNOW,
+        WeatherCondition.THUNDERSTORM -> true
+        WeatherCondition.CLEAR,
+        WeatherCondition.PARTLY_CLOUDY,
+        WeatherCondition.CLOUDY,
+        WeatherCondition.FOG,
+        WeatherCondition.UNKNOWN -> false
     }
 
     private fun calendarTieInClause(

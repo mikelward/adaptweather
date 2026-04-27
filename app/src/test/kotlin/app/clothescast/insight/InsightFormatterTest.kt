@@ -93,15 +93,65 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `precip clause emits with peak hour and capitalised type`() {
+    fun `precip clause emits with spoken peak hour and capitalised type`() {
         subject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)))) shouldBe
-            "Today will be mild. Rain at 15:00."
+            "Today will be mild. Rain at 3pm."
     }
 
     @Test
-    fun `precip clause humanises an underscored condition name`() {
-        subject.format(summary(precip = PrecipClause(WeatherCondition.PARTLY_CLOUDY, LocalTime.NOON))) shouldBe
-            "Today will be mild. Partly cloudy at 12:00."
+    fun `precip clause says 'noon' for 12-00`() {
+        subject.format(summary(precip = PrecipClause(WeatherCondition.DRIZZLE, LocalTime.NOON))) shouldBe
+            "Today will be mild. Drizzle at noon."
+    }
+
+    @Test
+    fun `precip clause says 'overnight' for early-morning peak when no calendar tie-in`() {
+        subject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(2, 0)))) shouldBe
+            "Today will be mild. Rain overnight."
+    }
+
+    @Test
+    fun `precip clause says 'overnight' for midnight peak when no calendar tie-in`() {
+        subject.format(summary(precip = PrecipClause(WeatherCondition.SNOW, LocalTime.MIDNIGHT))) shouldBe
+            "Today will be mild. Snow overnight."
+    }
+
+    @Test
+    fun `precip clause names the hour even overnight when a calendar tie-in pins the same time`() {
+        // The tie-in clause spells out "your 2am yoga class" — the precip clause
+        // should agree on the time rather than collapse to "overnight".
+        val out = subject.format(
+            summary(
+                clothes = ClothesClause(listOf("umbrella")),
+                precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(2, 0)),
+                calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(2, 0), "yoga class"),
+            ),
+        )
+        out shouldBe "Today will be mild. Wear an umbrella. Rain at 2am. Bring an umbrella for your 2am yoga class."
+    }
+
+    @Test
+    fun `precip clause uses 'midnight' when calendar tie-in pins 00-00`() {
+        val out = subject.format(
+            summary(
+                clothes = ClothesClause(listOf("umbrella")),
+                precip = PrecipClause(WeatherCondition.RAIN, LocalTime.MIDNIGHT),
+                calendarTieIn = CalendarTieInClause("umbrella", LocalTime.MIDNIGHT, "stargazing"),
+            ),
+        )
+        out shouldBe "Today will be mild. Wear an umbrella. Rain at midnight. Bring an umbrella for your midnight stargazing."
+    }
+
+    @Test
+    fun `precip clause uses 12-hour pm form for late-afternoon peak`() {
+        subject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(23, 0)))) shouldBe
+            "Today will be mild. Rain at 11pm."
+    }
+
+    @Test
+    fun `precip clause renders non-zero minutes`() {
+        subject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 30)))) shouldBe
+            "Today will be mild. Rain at 3:30pm."
     }
 
     @Test
@@ -111,7 +161,7 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `calendar tie-in renders bring + article + time + title`() {
+    fun `calendar tie-in renders bring + article + spoken time + title`() {
         val out = subject.format(
             summary(
                 clothes = ClothesClause(listOf("umbrella")),
@@ -119,7 +169,7 @@ class InsightFormatterTest {
                 calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
             ),
         )
-        out shouldBe "Today will be mild. Wear an umbrella. Rain at 15:00. Bring an umbrella for your 15:00 park run."
+        out shouldBe "Today will be mild. Wear an umbrella. Rain at 3pm. Bring an umbrella for your 3pm park run."
     }
 
     @Test
@@ -134,6 +184,6 @@ class InsightFormatterTest {
             ),
         )
         out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer today. " +
-            "Wear a jumper and umbrella. Rain at 15:00."
+            "Wear a jumper and umbrella. Rain at 3pm."
     }
 }
