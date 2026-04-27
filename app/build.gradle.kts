@@ -102,6 +102,40 @@ android {
                 keyPassword = keyPass
             }
         }
+        // Upload key for Play App Signing. Same env-var-or-fail pattern as the
+        // debug block above: in CI the four UPLOAD_* env vars are populated from
+        // GitHub Secrets and bundleRelease produces a Play-uploadable AAB; locally
+        // the env vars are absent, the signing config has no storeFile, and AGP
+        // fails loudly on bundleRelease/assembleRelease — which is the right
+        // default (better than silently shipping a debug-signed release).
+        create("release") {
+            val keystorePath = System.getenv("UPLOAD_KEYSTORE_FILE")?.takeIf { it.isNotBlank() }
+            val storePass = System.getenv("UPLOAD_KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() }
+            val alias = System.getenv("UPLOAD_KEY_ALIAS")?.takeIf { it.isNotBlank() }
+            val keyPass = System.getenv("UPLOAD_KEY_PASSWORD")?.takeIf { it.isNotBlank() }
+
+            val anySet = keystorePath != null || storePass != null || alias != null || keyPass != null
+            val allSet = keystorePath != null && storePass != null && alias != null && keyPass != null
+
+            if (anySet && !allSet) {
+                error(
+                    "Partial upload-keystore configuration. Set all of UPLOAD_KEYSTORE_FILE, " +
+                        "UPLOAD_KEYSTORE_PASSWORD, UPLOAD_KEY_ALIAS, UPLOAD_KEY_PASSWORD — or none, " +
+                        "to leave the release signing config empty (bundleRelease will then fail).",
+                )
+            }
+
+            if (allSet) {
+                val keystore = file(keystorePath!!)
+                check(keystore.exists()) {
+                    "UPLOAD_KEYSTORE_FILE is set but does not exist: ${keystore.path}"
+                }
+                storeFile = keystore
+                storePassword = storePass
+                keyAlias = alias
+                keyPassword = keyPass
+            }
+        }
     }
 
     buildTypes {
@@ -116,8 +150,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            // Signing config wired in by CI; assembleRelease in dev builds will fail loudly
-            // until then, which is the right default.
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
