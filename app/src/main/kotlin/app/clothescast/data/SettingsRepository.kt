@@ -218,6 +218,12 @@ class SettingsRepository(
         return runCatching {
             json.decodeFromString<List<ClothesRuleDto>>(raw).map { it.toDomain() }
         }.getOrDefault(ClothesRule.DEFAULTS)
+            // An empty stored list is also treated as "no rules configured" rather
+            // than honoured as an intentional zero — with editing locked
+            // (ClothesSettings is read-only), a user who deleted all their rules
+            // in a previous editable-UI version would otherwise have no way to
+            // recover the defaults.
+            .ifEmpty { ClothesRule.DEFAULTS }
     }
 
     companion object {
