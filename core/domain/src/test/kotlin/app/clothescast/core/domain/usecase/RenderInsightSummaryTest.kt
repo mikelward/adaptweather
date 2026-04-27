@@ -2,12 +2,12 @@ package app.clothescast.core.domain.usecase
 
 import app.clothescast.core.domain.model.AlertSeverity
 import app.clothescast.core.domain.model.CalendarEvent
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DailyForecast
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.TemperatureBand
-import app.clothescast.core.domain.model.WardrobeRule
 import app.clothescast.core.domain.model.WeatherAlert
 import app.clothescast.core.domain.model.WeatherCondition
 import io.kotest.matchers.collections.shouldContainExactly
@@ -44,10 +44,10 @@ class RenderInsightSummaryTest {
         condition = WeatherCondition.PARTLY_CLOUDY,
     )
 
-    private val sweaterRule = WardrobeRule("sweater", WardrobeRule.TemperatureBelow(18.0))
-    private val jacketRule = WardrobeRule("jacket", WardrobeRule.TemperatureBelow(12.0))
-    private val umbrellaRule = WardrobeRule("umbrella", WardrobeRule.PrecipitationProbabilityAbove(50.0))
-    private val shortsRule = WardrobeRule("shorts", WardrobeRule.TemperatureAbove(24.0))
+    private val sweaterRule = ClothesRule("sweater", ClothesRule.TemperatureBelow(18.0))
+    private val jacketRule = ClothesRule("jacket", ClothesRule.TemperatureBelow(12.0))
+    private val umbrellaRule = ClothesRule("umbrella", ClothesRule.PrecipitationProbabilityAbove(50.0))
+    private val shortsRule = ClothesRule("shorts", ClothesRule.TemperatureAbove(24.0))
 
     @Test
     fun `band clause is always emitted`() {
@@ -110,15 +110,15 @@ class RenderInsightSummaryTest {
     }
 
     @Test
-    fun `wardrobe clause carries items in rule order`() {
+    fun `clothes clause carries items in rule order`() {
         val out = subject(mildToday, yesterday, listOf(sweaterRule, jacketRule, umbrellaRule))
-        out.wardrobe.shouldNotBeNull()
-        out.wardrobe!!.items.shouldContainExactly("sweater", "jacket", "umbrella")
+        out.clothes.shouldNotBeNull()
+        out.clothes!!.items.shouldContainExactly("sweater", "jacket", "umbrella")
     }
 
     @Test
-    fun `wardrobe clause is omitted when no rules trigger`() {
-        subject(mildToday, yesterday, emptyList()).wardrobe.shouldBeNull()
+    fun `clothes clause is omitted when no rules trigger`() {
+        subject(mildToday, yesterday, emptyList()).clothes.shouldBeNull()
     }
 
     @Test
@@ -189,7 +189,7 @@ class RenderInsightSummaryTest {
     }
 
     @Test
-    fun `full insight composes alert + band + delta + wardrobe + precipitation`() {
+    fun `full insight composes alert + band + delta + clothes + precipitation`() {
         val today = mildToday.copy(
             feelsLikeMinC = 15.0,
             feelsLikeMaxC = 23.0,
@@ -216,14 +216,14 @@ class RenderInsightSummaryTest {
         out.band.high shouldBe TemperatureBand.MILD
         out.delta!!.degrees shouldBe 6
         out.delta!!.direction shouldBe DeltaClause.Direction.WARMER
-        out.wardrobe!!.items.shouldContainExactly("sweater", "umbrella")
+        out.clothes!!.items.shouldContainExactly("sweater", "umbrella")
         out.precip!!.condition shouldBe WeatherCondition.RAIN
         out.precip!!.time shouldBe LocalTime.of(15, 0)
         out.calendarTieIn.shouldBeNull()
     }
 
     @Test
-    fun `calendar tie-in fires when wardrobe + precip + overlapping event all present`() {
+    fun `calendar tie-in fires when clothes + precip + overlapping event all present`() {
         val today = mildToday.copy(
             precipitationProbabilityMaxPct = 60.0,
             condition = WeatherCondition.RAIN,
@@ -281,7 +281,7 @@ class RenderInsightSummaryTest {
     }
 
     @Test
-    fun `calendar tie-in is omitted when no wardrobe rule fires`() {
+    fun `calendar tie-in is omitted when no clothes rule fires`() {
         val today = mildToday.copy(
             precipitationProbabilityMaxPct = 60.0,
             condition = WeatherCondition.RAIN,

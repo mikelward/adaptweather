@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 /**
  * The output of a daily generation pass: the structured [InsightSummary] (clauses
- * driven by the wardrobe + forecast rules) plus the deterministic list of items
+ * driven by the clothes + forecast rules) plus the deterministic list of items
  * that triggered. The rule-based item list is kept separate from [summary] so
  * callers can render it (e.g. icons) without going through the prose formatter.
  *

@@ -5,12 +5,12 @@ import java.time.LocalTime
 /**
  * The structured form of a daily insight. Each clause is a pure-data description of
  * one of the six independent rules in [app.clothescast.core.domain.usecase.RenderInsightSummary]
- * (alert, band, delta, wardrobe, precip, calendar tie-in); the corresponding prose
+ * (alert, band, delta, clothes, precip, calendar tie-in); the corresponding prose
  * is produced by an Android-side formatter that resolves item keys and templates
  * through string resources.
  *
  * Splitting "what to say" (this) from "how to say it" (the formatter) lets us:
- *  - Localize wardrobe vocab per region without re-fetching the forecast — the
+ *  - Localize clothes vocab per region without re-fetching the forecast — the
  *    same cached [InsightSummary] can re-render as "sweater" or "jumper" depending
  *    on the user's Region setting.
  *  - Keep [app.clothescast.core.domain.usecase.RenderInsightSummary] free of any
@@ -26,7 +26,7 @@ data class InsightSummary(
     val band: BandClause,
     val alert: AlertClause? = null,
     val delta: DeltaClause? = null,
-    val wardrobe: WardrobeClause? = null,
+    val clothes: ClothesClause? = null,
     val precip: PrecipClause? = null,
     val calendarTieIn: CalendarTieInClause? = null,
 )
@@ -55,13 +55,13 @@ data class DeltaClause(val degrees: Int, val direction: Direction) {
 }
 
 /**
- * Wardrobe items that triggered this period, in user-rule order. Each [item] is
+ * Clothes items that triggered this period, in user-rule order. Each [item] is
  * the verbatim rule key — typically a US-baseline noun ("sweater", "jacket",
- * "umbrella", "shorts") which the formatter looks up against `wardrobe_item_<key>`
+ * "umbrella", "shorts") which the formatter looks up against `clothes_item_<key>`
  * string resources, falling through to the literal key for user-added rules with
  * no resource match.
  */
-data class WardrobeClause(val items: List<String>)
+data class ClothesClause(val items: List<String>)
 
 /**
  * Peak precipitation hour: a [condition] (RAIN, SNOW, etc.) at a wall-clock [time].
@@ -70,7 +70,7 @@ data class WardrobeClause(val items: List<String>)
 data class PrecipClause(val condition: WeatherCondition, val time: LocalTime)
 
 /**
- * Calendar tie-in: a wardrobe [item] paired with a calendar event that overlaps
+ * Calendar tie-in: a clothes [item] paired with a calendar event that overlaps
  * the precipitation peak. The formatter renders this as "Bring <item> for your
  * <time> <title>." with article picking on [item].
  */

@@ -98,7 +98,7 @@ class FetchAndNotifyWorker(
         //
         // TODO: opportunistic auto-refresh — when the user opens the app and the
         // cached insight is more than ~1h old, regenerate (bypassing the same-day
-        // cache). Avoids a full Refresh tap when the wardrobe / forecast has moved
+        // cache). Avoids a full Refresh tap when the clothes / forecast has moved
         // since the morning generation.
         val cached = if (forceRefresh) {
             Log.i(TAG, "Force refresh requested; bypassing today's cache.")

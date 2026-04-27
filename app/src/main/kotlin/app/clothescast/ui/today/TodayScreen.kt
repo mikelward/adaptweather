@@ -482,7 +482,7 @@ private fun triggerRefresh(
     // force=true so an explicit user tap bypasses the same-day cache and
     // actually regenerates. Without this, Refresh on the same calendar day
     // just redelivers the morning's payload — surprising when the user has
-    // changed wardrobe rules, location, or the underlying forecast has moved.
+    // changed clothes rules, location, or the underlying forecast has moved.
     //
     // Period follows wall-clock time so an evening tap inside the user's
     // tonight window regenerates the tonight insight — that's the one whose

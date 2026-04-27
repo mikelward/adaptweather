@@ -76,7 +76,7 @@ data class UserPreferences(
     val region: Region = Region.SYSTEM,
     val temperatureUnit: TemperatureUnit,
     val distanceUnit: DistanceUnit,
-    val wardrobeRules: List<WardrobeRule>,
+    val clothesRules: List<ClothesRule>,
     /**
      * The fixed location to fetch weather for when [useDeviceLocation] is false (or as a
      * fallback when device location can't be resolved). Null when the user has not
@@ -111,7 +111,7 @@ data class UserPreferences(
     /**
      * When true, the worker reads today's calendar events (via `READ_CALENDAR`)
      * and feeds them into the insight summary so the rendered string can tie a
-     * wardrobe suggestion to a specific event ("bring an umbrella for your 3pm
+     * clothes suggestion to a specific event ("bring an umbrella for your 3pm
      * standup"). Off by default — the user must both enable the toggle and grant
      * the runtime permission for events to actually be read.
      */

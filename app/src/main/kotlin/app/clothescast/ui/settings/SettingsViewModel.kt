@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.ForecastPeriod
@@ -13,7 +14,6 @@ import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.core.domain.model.WardrobeRule
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +50,7 @@ class SettingsViewModel(
                         region = prefs.region,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
-                        wardrobeRules = prefs.wardrobeRules,
+                        clothesRules = prefs.clothesRules,
                         location = prefs.location,
                         useDeviceLocation = prefs.useDeviceLocation,
                         ttsEngine = prefs.ttsEngine,
@@ -136,25 +136,25 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepository.setDistanceUnit(unit) }
     }
 
-    fun addWardrobeRule(rule: WardrobeRule) {
+    fun addClothesRule(rule: ClothesRule) {
         viewModelScope.launch {
-            settingsRepository.setWardrobeRules(_state.value.wardrobeRules + rule)
+            settingsRepository.setClothesRules(_state.value.clothesRules + rule)
         }
     }
 
-    fun replaceWardrobeRule(index: Int, rule: WardrobeRule) {
+    fun replaceClothesRule(index: Int, rule: ClothesRule) {
         viewModelScope.launch {
-            val current = _state.value.wardrobeRules
+            val current = _state.value.clothesRules
             if (index !in current.indices) return@launch
-            settingsRepository.setWardrobeRules(current.toMutableList().apply { this[index] = rule })
+            settingsRepository.setClothesRules(current.toMutableList().apply { this[index] = rule })
         }
     }
 
-    fun deleteWardrobeRule(index: Int) {
+    fun deleteClothesRule(index: Int) {
         viewModelScope.launch {
-            val current = _state.value.wardrobeRules
+            val current = _state.value.clothesRules
             if (index !in current.indices) return@launch
-            settingsRepository.setWardrobeRules(current.toMutableList().apply { removeAt(index) })
+            settingsRepository.setClothesRules(current.toMutableList().apply { removeAt(index) })
         }
     }
 

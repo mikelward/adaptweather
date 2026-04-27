@@ -49,7 +49,7 @@ The source code is at <https://github.com/mikelward/clothescast>.
 - **What:** Today's events — title, start/end time, location, all-day
   flag — read via Android's `CalendarContract` only when you grant
   `READ_CALENDAR` and enable the calendar tie-in setting.
-- **Why:** To pair a wardrobe recommendation with a meeting that overlaps
+- **Why:** To pair a clothes recommendation with a meeting that overlaps
   bad weather (e.g. _"Bring a jacket for your concert tonight"_).
 - **Where it goes:** Calendar reading happens entirely on your device.
   The only way calendar data leaves the device is if (a) the tie-in fires

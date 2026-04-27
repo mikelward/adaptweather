@@ -8,7 +8,7 @@ import java.time.LocalTime
  *
  * Temperature is provided as both raw 2 m air temperature ([temperatureMinC],
  * [temperatureMaxC]) and apparent / "feels like" ([feelsLikeMinC], [feelsLikeMaxC]),
- * which factors in wind chill and humidity. The user-facing prompt and wardrobe
+ * which factors in wind chill and humidity. The user-facing prompt and clothes
  * thresholds use feels-like — that's what people actually experience.
  */
 data class DailyForecast(

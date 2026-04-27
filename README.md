@@ -4,7 +4,7 @@ A daily weather-insight app for Android. Each morning, at a time you set,
 ClothesCast posts a one-sentence comparative summary —
 _"4°C warmer than yesterday, leave the jumper at home"_ or _"50% chance
 of rain at 3pm — take an umbrella"_ — derived on-device from yesterday's
-actual weather, today's forecast, and the wardrobe thresholds you've
+actual weather, today's forecast, and the clothes thresholds you've
 configured.
 
 It can also speak the insight aloud — through the platform TTS engine, or
@@ -17,7 +17,7 @@ See [PRIVACY.md](PRIVACY.md) for what data leaves the device and when.
 
 Working v1: full daily-insight pipeline (Open-Meteo → on-device rendering
 → notification +/- TTS), Compose Settings UI for everything (location,
-schedule, delivery mode, units, wardrobe rules, voice engine, API keys,
+schedule, delivery mode, units, clothes rules, voice engine, API keys,
 calendar tie-in), runtime permission UX, boot/timezone/locale alarm
 re-arm, and a debug "Fire insight now" button for testing without waiting
 until the scheduled time.
@@ -36,14 +36,14 @@ CI artifact (see below). Play-Store-ready release plumbing lands later.
   changes.
 - **Open-Meteo** for forecast and city geocoding (no key, free).
 - **Deterministic on-device rendering** for the insight sentence —
-  template-fillable rules over the forecast, wardrobe thresholds, weather
+  template-fillable rules over the forecast, clothes thresholds, weather
   alerts, and (optionally) today's calendar events. No LLM round trip.
 - **TTS — your choice of engine**: the platform `TextToSpeech` engine
   (default, fully on-device), or an online voice via the Gemini, OpenAI,
   or ElevenLabs API. Online engines are BYOK; keys are encrypted on-device
   via Tink + Android Keystore + DataStore Preferences.
 - **Optional calendar tie-in**: with `READ_CALENDAR` granted, the daily
-  sentence can name the event the wardrobe advice is for —
+  sentence can name the event the clothes advice is for —
   _"Bring an umbrella for your 3pm meeting."_
 - **Optional device location**: with `ACCESS_COARSE_LOCATION` granted, the
   worker uses the phone's coarse location at notify-time instead of the
@@ -56,7 +56,7 @@ CI artifact (see below). Play-Store-ready release plumbing lands later.
 
 | Module | Status |
 |---|---|
-| `:core:domain` | Pure-Kotlin models, use cases (insight rendering, wardrobe rules), repository interfaces |
+| `:core:domain` | Pure-Kotlin models, use cases (insight rendering, clothes rules), repository interfaces |
 | `:core:data` | Open-Meteo forecast + geocoding clients, Gemini / OpenAI / ElevenLabs TTS clients, parser tests |
 | `:app` | Compose UI, manifest, receivers, worker, alarm scheduler, DI, platform TTS, calendar reader, encrypted key store |
 
@@ -82,7 +82,7 @@ The release pipeline is still being wired up. Until then:
    falls back to London.
 3. **Schedule**: pick a time and the days of the week you want the
    notification.
-4. **Wardrobe rules** (optional): the defaults (`jumper`, `jacket`,
+4. **Clothes rules** (optional): the defaults (`jumper`, `jacket`,
    `shorts`, `umbrella`) are a sensible starting set. Add your own — e.g.
    `gloves` when temperature drops below 5°C.
 5. **Voice** (optional): the platform TTS engine works out of the box. To

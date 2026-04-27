@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class WardrobeRuleTest {
+class ClothesRuleTest {
     private val date = LocalDate.of(2026, 4, 25)
 
     /**
@@ -30,45 +30,45 @@ class WardrobeRuleTest {
 
     @Test
     fun `temperature below applies when feels-like min is colder`() {
-        val rule = WardrobeRule("jumper", WardrobeRule.TemperatureBelow(18.0))
+        val rule = ClothesRule("jumper", ClothesRule.TemperatureBelow(18.0))
         rule.appliesTo(forecast(min = 14.0, max = 22.0)) shouldBe true
     }
 
     @Test
     fun `temperature below uses feels-like, not raw temperature`() {
         // Raw min is 20°C (above threshold) but wind chill makes it feel like 14°C.
-        val rule = WardrobeRule("jumper", WardrobeRule.TemperatureBelow(18.0))
+        val rule = ClothesRule("jumper", ClothesRule.TemperatureBelow(18.0))
         rule.appliesTo(forecast(min = 20.0, max = 24.0, feelsLikeMin = 14.0, feelsLikeMax = 22.0)) shouldBe true
     }
 
     @Test
     fun `temperature below does not apply when feels-like min meets threshold`() {
-        val rule = WardrobeRule("jumper", WardrobeRule.TemperatureBelow(18.0))
+        val rule = ClothesRule("jumper", ClothesRule.TemperatureBelow(18.0))
         rule.appliesTo(forecast(min = 18.0, max = 22.0)) shouldBe false
     }
 
     @Test
     fun `temperature above applies when feels-like max is warmer`() {
-        val rule = WardrobeRule("shorts", WardrobeRule.TemperatureAbove(24.0))
+        val rule = ClothesRule("shorts", ClothesRule.TemperatureAbove(24.0))
         rule.appliesTo(forecast(min = 12.0, max = 26.5)) shouldBe true
     }
 
     @Test
     fun `temperature above does not apply when feels-like max meets threshold`() {
-        val rule = WardrobeRule("shorts", WardrobeRule.TemperatureAbove(24.0))
+        val rule = ClothesRule("shorts", ClothesRule.TemperatureAbove(24.0))
         rule.appliesTo(forecast(min = 12.0, max = 24.0)) shouldBe false
     }
 
     @Test
     fun `precipitation rule uses peak probability`() {
-        val rule = WardrobeRule("umbrella", WardrobeRule.PrecipitationProbabilityAbove(50.0))
+        val rule = ClothesRule("umbrella", ClothesRule.PrecipitationProbabilityAbove(50.0))
         rule.appliesTo(forecast(min = 10.0, max = 18.0, precip = 65.0)) shouldBe true
         rule.appliesTo(forecast(min = 10.0, max = 18.0, precip = 30.0)) shouldBe false
     }
 
     @Test
     fun `defaults cover the four MVP cases`() {
-        val items = WardrobeRule.DEFAULTS.map { it.item }
+        val items = ClothesRule.DEFAULTS.map { it.item }
         items shouldBe listOf("jumper", "jacket", "shorts", "umbrella")
     }
 
@@ -76,7 +76,7 @@ class WardrobeRuleTest {
     fun `cold morning warm afternoon triggers both jumper and shorts`() {
         // Realistic spring day: chilly start, warm peak.
         val day = forecast(min = 8.0, max = 25.0)
-        val triggered = WardrobeRule.DEFAULTS.filter { it.appliesTo(day) }.map { it.item }
+        val triggered = ClothesRule.DEFAULTS.filter { it.appliesTo(day) }.map { it.item }
         triggered shouldBe listOf("jumper", "jacket", "shorts")
     }
 }

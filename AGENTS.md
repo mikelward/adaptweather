@@ -126,13 +126,13 @@ new rule the first time something bites you, not the third.
 
 ## Domain conventions
 
-- Wardrobe rules and outfit suggestions both look at *feels-like*
+- Clothes rules and outfit suggestions both look at *feels-like*
   temperatures (apparent, wind-chill / humidity adjusted) — never raw 2 m
   air temperature. That's what the user actually experiences stepping
   outside.
 - The `:app` module owns Android concerns; LLM choice (which Gemini model
   to call) is `:app`'s problem. The `:core:domain` module is pure Kotlin
-  and must stay that way — it's where the wardrobe / insight logic lives
+  and must stay that way — it's where the clothes / insight logic lives
   and must remain testable on a JVM.
 - **Don't rename Gemini models from web-search guesses.** When a TTS / text
   model ID seems "deprecated" or "promoted to GA", verify against the live

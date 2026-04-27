@@ -26,7 +26,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 /**
  * Renders today's hourly temperature as a single line — feels-like or raw 2 m
  * air, controlled by [showFeelsLike]. Defaults to feels-like because that's
- * what the wardrobe rules and band sentence ("Today will be cool to mild")
+ * what the clothes rules and band sentence ("Today will be cool to mild")
  * are evaluated against; surfacing the raw line by default invited "which
  * line is which?" confusion. The parent toggles which series is shown.
  *

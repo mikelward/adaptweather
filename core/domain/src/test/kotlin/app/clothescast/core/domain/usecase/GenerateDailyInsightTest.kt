@@ -2,6 +2,7 @@ package app.clothescast.core.domain.usecase
 
 import app.clothescast.core.domain.model.AlertSeverity
 import app.clothescast.core.domain.model.CalendarEvent
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DailyForecast
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DeltaClause
@@ -14,7 +15,6 @@ import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.UserPreferences
-import app.clothescast.core.domain.model.WardrobeRule
 import app.clothescast.core.domain.model.WeatherAlert
 import app.clothescast.core.domain.model.WeatherCondition
 import app.clothescast.core.domain.repository.CalendarEventReader
@@ -66,7 +66,7 @@ class GenerateDailyInsightTest {
         deliveryMode = DeliveryMode.NOTIFICATION_ONLY,
         temperatureUnit = TemperatureUnit.CELSIUS,
         distanceUnit = DistanceUnit.KILOMETERS,
-        wardrobeRules = WardrobeRule.DEFAULTS,
+        clothesRules = ClothesRule.DEFAULTS,
     )
 
     private class FakeWeatherRepository(private val bundle: ForecastBundle) : WeatherRepository {
@@ -104,14 +104,14 @@ class GenerateDailyInsightTest {
         val insight = subject(london, prefs).insight
 
         // today: feels-like 6→25 → cold to warm; +8°C high vs yesterday → 8° warmer;
-        // wardrobe defaults at this temperature: jumper, jacket, shorts, umbrella;
+        // clothes defaults at this temperature: jumper, jacket, shorts, umbrella;
         // 60% precipitation → noon fallback (no hourly entries on `today`).
         insight.summary.band.low shouldBe TemperatureBand.COLD
         insight.summary.band.high shouldBe TemperatureBand.WARM
         insight.summary.delta.shouldNotBeNull()
         insight.summary.delta!!.degrees shouldBe 8
         insight.summary.delta!!.direction shouldBe DeltaClause.Direction.WARMER
-        insight.summary.wardrobe!!.items.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
+        insight.summary.clothes!!.items.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
         insight.summary.precip!!.condition shouldBe WeatherCondition.RAIN
         insight.summary.precip!!.time shouldBe LocalTime.NOON
         insight.recommendedItems.shouldContainExactly("jumper", "jacket", "shorts", "umbrella")
@@ -285,7 +285,7 @@ class GenerateDailyInsightTest {
         val todayHourly = listOf(
             // The day-level feelsLikeMinC on `today` is 6.0°C — but that's the pre-dawn
             // low. The actual daytime range is 12→20°C, which is what the band sentence
-            // and wardrobe rules should see.
+            // and clothes rules should see.
             HourlyForecast(LocalTime.of(6, 0), 8.0, 6.0, 5.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 5.0, WeatherCondition.CLEAR),

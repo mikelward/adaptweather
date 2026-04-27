@@ -6,13 +6,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.core.domain.model.WardrobeRule
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -77,7 +77,7 @@ class SettingsRepositoryTest {
         prefs.deliveryMode shouldBe DeliveryMode.NOTIFICATION_ONLY
         prefs.temperatureUnit shouldBe TemperatureUnit.CELSIUS
         prefs.distanceUnit shouldBe DistanceUnit.KILOMETERS
-        prefs.wardrobeRules shouldBe WardrobeRule.DEFAULTS
+        prefs.clothesRules shouldBe ClothesRule.DEFAULTS
     }
 
     @Test
@@ -158,32 +158,32 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `setWardrobeRules round-trips all three condition types`() = runTest {
+    fun `setClothesRules round-trips all three condition types`() = runTest {
         val rules = listOf(
-            WardrobeRule("hat", WardrobeRule.TemperatureBelow(5.0)),
-            WardrobeRule("shorts", WardrobeRule.TemperatureAbove(28.5)),
-            WardrobeRule("brolly", WardrobeRule.PrecipitationProbabilityAbove(40.0)),
+            ClothesRule("hat", ClothesRule.TemperatureBelow(5.0)),
+            ClothesRule("shorts", ClothesRule.TemperatureAbove(28.5)),
+            ClothesRule("brolly", ClothesRule.PrecipitationProbabilityAbove(40.0)),
         )
 
-        subject.setWardrobeRules(rules)
+        subject.setClothesRules(rules)
 
-        subject.preferences.first().wardrobeRules shouldContainExactly rules
+        subject.preferences.first().clothesRules shouldContainExactly rules
     }
 
     @Test
-    fun `setWardrobeRules with empty list persists empty list, not defaults`() = runTest {
-        subject.setWardrobeRules(emptyList())
+    fun `setClothesRules with empty list persists empty list, not defaults`() = runTest {
+        subject.setClothesRules(emptyList())
 
-        subject.preferences.first().wardrobeRules shouldBe emptyList()
+        subject.preferences.first().clothesRules shouldBe emptyList()
     }
 
     @Test
-    fun `corrupt wardrobe rules JSON falls back to defaults`() = runTest {
+    fun `corrupt clothes rules JSON falls back to defaults`() = runTest {
         dataStore.edit {
-            it[stringPreferencesKey("wardrobe_rules_json")] = "{not valid json["
+            it[stringPreferencesKey("clothes_rules_json")] = "{not valid json["
         }
 
-        subject.preferences.first().wardrobeRules shouldBe WardrobeRule.DEFAULTS
+        subject.preferences.first().clothesRules shouldBe ClothesRule.DEFAULTS
     }
 
     @Test

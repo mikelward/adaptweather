@@ -1,5 +1,6 @@
 package app.clothescast.ui.settings
 
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Location
@@ -9,7 +10,6 @@ import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.core.domain.model.WardrobeRule
 import app.clothescast.data.defaultDistanceUnitFor
 import app.clothescast.data.defaultTemperatureUnitFor
 import app.clothescast.tts.defaultOpenAiVoiceFor
@@ -31,7 +31,7 @@ data class SettingsState(
     // Region.SYSTEM falls through to the phone locale, mirroring the repository.
     val temperatureUnit: TemperatureUnit = defaultTemperatureUnitFor(Locale.getDefault()),
     val distanceUnit: DistanceUnit = defaultDistanceUnitFor(Locale.getDefault()),
-    val wardrobeRules: List<WardrobeRule> = WardrobeRule.DEFAULTS,
+    val clothesRules: List<ClothesRule> = ClothesRule.DEFAULTS,
     val location: Location? = null,
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,

@@ -9,7 +9,7 @@ package app.clothescast.core.domain.model
  * outside, factoring in wind chill and humidity. Precipitation rules check the day's
  * peak probability.
  */
-data class WardrobeRule(
+data class ClothesRule(
     val item: String,
     val condition: Condition,
 ) {
@@ -32,11 +32,11 @@ data class WardrobeRule(
     }
 
     companion object {
-        val DEFAULTS: List<WardrobeRule> = listOf(
-            WardrobeRule("jumper", TemperatureBelow(18.0)),
-            WardrobeRule("jacket", TemperatureBelow(12.0)),
-            WardrobeRule("shorts", TemperatureAbove(24.0)),
-            WardrobeRule("umbrella", PrecipitationProbabilityAbove(50.0)),
+        val DEFAULTS: List<ClothesRule> = listOf(
+            ClothesRule("jumper", TemperatureBelow(18.0)),
+            ClothesRule("jacket", TemperatureBelow(12.0)),
+            ClothesRule("shorts", TemperatureAbove(24.0)),
+            ClothesRule("umbrella", PrecipitationProbabilityAbove(50.0)),
         )
     }
 }

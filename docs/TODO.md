@@ -40,8 +40,8 @@ Code TODOs in source files are linked from here when they exist.
       `READ_CALENDAR` granted from the same card. The reader projects only
       titles, times, and locations; the rendered summary uses only title and
       time. The 6th sentence in `RenderInsightSummary` fires only when a
-      wardrobe rule + a precip-peak event window both apply, preferring
-      "umbrella" when on the wardrobe list. Reader failures degrade silently
+      clothes rule + a precip-peak event window both apply, preferring
+      "umbrella" when on the clothes list. Reader failures degrade silently
       to no events.
   - Privacy disclosure update in `docs/privacy.md` (file not yet created).
 
@@ -70,7 +70,7 @@ Code TODOs in source files are linked from here when they exist.
 - [ ] **Tap-to-replay TTS** on Today.
 - [ ] **Past 7 days history** on Today — pull from `InsightCache`, persist
       beyond the current single slot.
-- [ ] **Wardrobe rule presets** ("Cyclist", "Commuter", "Dog walker") — pick a
+- [ ] **Clothes rule presets** ("Cyclist", "Commuter", "Dog walker") — pick a
       preset, customise from there.
 - [ ] **Quiet hours** — don't fire if the device is in DND.
 - [ ] **Per-locale defaults** — Fahrenheit / miles when the system locale is

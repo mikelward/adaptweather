@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
@@ -15,7 +16,6 @@ import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
-import app.clothescast.core.domain.model.WardrobeClause
 import app.clothescast.core.domain.model.WeatherCondition
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +50,7 @@ class InsightCacheTest {
         period = ForecastPeriod.TODAY,
         band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
         delta = DeltaClause(4, DeltaClause.Direction.COOLER),
-        wardrobe = WardrobeClause(listOf("jumper", "umbrella")),
+        clothes = ClothesClause(listOf("jumper", "umbrella")),
     )
 
     private val sample = Insight(
@@ -174,7 +174,7 @@ class InsightCacheTest {
                 band = BandClause(TemperatureBand.FREEZING, TemperatureBand.HOT),
                 alert = AlertClause("Tornado Warning"),
                 delta = DeltaClause(8, DeltaClause.Direction.WARMER),
-                wardrobe = WardrobeClause(listOf("jumper", "jacket", "shorts", "umbrella")),
+                clothes = ClothesClause(listOf("jumper", "jacket", "shorts", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
                 calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
             ),
