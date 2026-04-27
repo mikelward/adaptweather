@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
@@ -17,7 +18,6 @@ import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
-import app.clothescast.core.domain.model.WardrobeClause
 import app.clothescast.core.domain.model.WeatherCondition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -125,7 +125,7 @@ class InsightCache(
         val band: BandDto,
         val alert: AlertDto? = null,
         val delta: DeltaDto? = null,
-        val wardrobe: WardrobeDto? = null,
+        val clothes: ClothesDto? = null,
         val precip: PrecipDto? = null,
         val calendarTieIn: CalendarTieInDto? = null,
     ) {
@@ -134,7 +134,7 @@ class InsightCache(
             band = band.toDomain(),
             alert = alert?.toDomain(),
             delta = delta?.toDomain(),
-            wardrobe = wardrobe?.toDomain(),
+            clothes = clothes?.toDomain(),
             precip = precip?.toDomain(),
             calendarTieIn = calendarTieIn?.toDomain(),
         )
@@ -163,8 +163,8 @@ class InsightCache(
     }
 
     @Serializable
-    private data class WardrobeDto(val items: List<String>) {
-        fun toDomain(): WardrobeClause = WardrobeClause(items)
+    private data class ClothesDto(val items: List<String>) {
+        fun toDomain(): ClothesClause = ClothesClause(items)
     }
 
     @Serializable
@@ -233,7 +233,7 @@ class InsightCache(
         band = BandDto(band.low.name, band.high.name),
         alert = alert?.let { AlertDto(it.event) },
         delta = delta?.let { DeltaDto(it.degrees, it.direction.name) },
-        wardrobe = wardrobe?.let { WardrobeDto(it.items) },
+        clothes = clothes?.let { ClothesDto(it.items) },
         precip = precip?.let { PrecipDto(it.condition.name, it.time.toSecondOfDay()) },
         calendarTieIn = calendarTieIn?.let {
             CalendarTieInDto(it.item, it.time.toSecondOfDay(), it.title)

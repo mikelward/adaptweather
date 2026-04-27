@@ -9,7 +9,7 @@ package app.clothescast.core.domain.model
  *    19:00). Spans the overnight window from the evening time today through to the
  *    next morning's wake-up time (default 07:00 next day) — Open-Meteo is fetched
  *    with `forecast_days=2` so the bundle carries tomorrow's pre-dawn hourly slice.
- *    The summary leads with "Tonight will be …" and the wardrobe / outfit reflect
+ *    The summary leads with "Tonight will be …" and the clothes / outfit reflect
  *    the actual overnight low.
  */
 enum class ForecastPeriod { TODAY, TONIGHT }

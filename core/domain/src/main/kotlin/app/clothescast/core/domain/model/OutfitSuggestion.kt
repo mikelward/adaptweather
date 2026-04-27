@@ -5,10 +5,10 @@ package app.clothescast.core.domain.model
  * forecast so the home screen can render two big icons instead of a comma-separated word
  * list. The set is intentionally tiny (3 tops × 2 bottoms) because the goal is "tell me
  * at a glance", not "build my closet". Customisable item-level rules still live in
- * [WardrobeRule] and continue to drive [Insight.recommendedItems].
+ * [ClothesRule] and continue to drive [Insight.recommendedItems].
  *
  * Thresholds use feels-like temperatures (wind chill / humidity adjusted), matching what
- * [WardrobeRule] does, since that's what people actually experience on the way out the
+ * [ClothesRule] does, since that's what people actually experience on the way out the
  * door.
  */
 data class OutfitSuggestion(

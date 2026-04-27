@@ -3,12 +3,12 @@ package app.clothescast.insight
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
-import app.clothescast.core.domain.model.WardrobeClause
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -27,7 +27,7 @@ class InsightFormatter {
         summary.alert?.let { add(formatAlert(it)) }
         add(formatBand(summary.period, summary.band))
         summary.delta?.let { add(formatDelta(it)) }
-        summary.wardrobe?.let { add(formatWardrobe(it)) }
+        summary.clothes?.let { add(formatClothes(it)) }
         summary.precip?.let { add(formatPrecip(it)) }
         summary.calendarTieIn?.let { add(formatCalendarTieIn(it)) }
     }.joinToString(" ")
@@ -52,8 +52,8 @@ class InsightFormatter {
         return "It will be ${delta.degrees}° $direction today."
     }
 
-    private fun formatWardrobe(wardrobe: WardrobeClause): String {
-        val items = wardrobe.items
+    private fun formatClothes(clothes: ClothesClause): String {
+        val items = clothes.items
         val phrase = when (items.size) {
             1 -> withArticle(items[0])
             2 -> "${withArticle(items[0])} and ${items[1]}"
@@ -86,7 +86,7 @@ class InsightFormatter {
     }
 
     /**
-     * Article picker for the first-listed wardrobe item.
+     * Article picker for the first-listed clothes item.
      *  - Items ending in 's' are treated as plural (shorts, boots, gloves) and take
      *    no article.
      *  - Items starting with a vowel letter take "an"; everything else takes "a".

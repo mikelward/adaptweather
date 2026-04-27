@@ -30,7 +30,7 @@ import app.clothescast.R
 
 /**
  * One sub-page per concern. Order in the enum matches the order shown in the
- * root list: schedule + wardrobe come first (the most-frequently-tweaked rules),
+ * root list: schedule + clothes come first (the most-frequently-tweaked rules),
  * voice + region after (set once, mostly forgotten), API keys / data sources /
  * about at the bottom.
  *
@@ -40,7 +40,7 @@ import app.clothescast.R
 enum class SettingsRoute(@StringRes val titleRes: Int) {
     Root(R.string.settings_title),
     Schedule(R.string.settings_root_schedule),
-    Wardrobe(R.string.settings_root_wardrobe),
+    Clothes(R.string.settings_root_clothes),
     Voice(R.string.settings_root_voice),
     Region(R.string.settings_root_region),
     ApiKeys(R.string.settings_root_api_keys),
@@ -111,12 +111,12 @@ fun SettingsScreen(
                 // settings flow they exit via the top-bar back arrow.
                 onDone = if (initialRoute == SettingsRoute.Schedule) onNavigateBack else null,
             )
-            SettingsRoute.Wardrobe -> WardrobeContent(
-                rules = state.wardrobeRules,
+            SettingsRoute.Clothes -> ClothesContent(
+                rules = state.clothesRules,
                 padding = padding,
-                onAdd = viewModel::addWardrobeRule,
-                onReplace = viewModel::replaceWardrobeRule,
-                onDelete = viewModel::deleteWardrobeRule,
+                onAdd = viewModel::addClothesRule,
+                onReplace = viewModel::replaceClothesRule,
+                onDelete = viewModel::deleteClothesRule,
             )
             SettingsRoute.Voice -> VoiceContent(
                 selected = state.ttsEngine,

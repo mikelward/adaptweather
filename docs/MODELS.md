@@ -69,7 +69,7 @@ of the time" stat surfaced on Today.
 
 Stretch: ask which *aspect* was wrong (temp / rain timing / wind / "felt
 colder than predicted"). That data is most valuable for tuning the
-wardrobe rules — if a user's "feels-like" model is consistently off in one
+clothes rules — if a user's "feels-like" model is consistently off in one
 direction, the thresholds can be auto-shifted.
 
 Cost: small. Just storage + UI for the prompt.
@@ -103,7 +103,7 @@ locally. No backend.
 Pure logging at first; later you could:
 - Surface a "your most common complaints" stat ("you flagged temp as too
   high 14 times this month").
-- Auto-shift wardrobe thresholds based on flagged patterns.
+- Auto-shift clothes thresholds based on flagged patterns.
 
 Cost: minimal.
 Complexity: small — a button, a Room table, optional UI to review past

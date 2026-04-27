@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.clothescast.core.domain.model.BandClause
+import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastConfidence
@@ -17,7 +18,6 @@ import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
-import app.clothescast.core.domain.model.WardrobeClause
 import app.clothescast.core.domain.model.WeatherCondition
 import app.clothescast.ui.theme.ClothesCastTheme
 import app.clothescast.work.FetchAndNotifyWorker
@@ -52,7 +52,7 @@ private val SAMPLE_INSIGHT = Insight(
         period = ForecastPeriod.TODAY,
         band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
         delta = DeltaClause(4, DeltaClause.Direction.WARMER),
-        wardrobe = WardrobeClause(listOf("jumper", "umbrella")),
+        clothes = ClothesClause(listOf("jumper", "umbrella")),
         precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
     ),
     recommendedItems = listOf("jumper", "umbrella"),

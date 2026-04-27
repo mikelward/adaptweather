@@ -154,7 +154,7 @@ class OpenMeteoMapperTest {
     @Test
     fun `feels-like falls back to raw temperature when missing`() {
         // Open-Meteo can return apparent_temperature null even when temperature_2m is set
-        // (rare, but observed). Fall back so wardrobe rules still match something sensible.
+        // (rare, but observed). Fall back so clothes rules still match something sensible.
         val partial = OpenMeteoResponse(
             timezone = "UTC",
             daily = DailyData(

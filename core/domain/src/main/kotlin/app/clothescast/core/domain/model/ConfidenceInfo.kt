@@ -8,7 +8,7 @@ package app.clothescast.core.domain.model
  * When the major models *disagree* — say, one says 18 °C and another says 23 °C
  * — the forecast is least trustworthy. Surfacing that as a confidence level on
  * Today is actionable information we get for free; the user has a cue to check
- * again later or hedge their wardrobe choice.
+ * again later or hedge their clothes choice.
  *
  * Idea sketched in [docs/MODELS.md](../../../../../../../../docs/MODELS.md) #1.
  */

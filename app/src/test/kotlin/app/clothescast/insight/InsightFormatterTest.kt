@@ -3,12 +3,12 @@ package app.clothescast.insight
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
-import app.clothescast.core.domain.model.WardrobeClause
 import app.clothescast.core.domain.model.WeatherCondition
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -22,10 +22,10 @@ class InsightFormatterTest {
         band: BandClause = BandClause(TemperatureBand.MILD, TemperatureBand.MILD),
         alert: AlertClause? = null,
         delta: DeltaClause? = null,
-        wardrobe: WardrobeClause? = null,
+        clothes: ClothesClause? = null,
         precip: PrecipClause? = null,
         calendarTieIn: CalendarTieInClause? = null,
-    ) = InsightSummary(period, band, alert, delta, wardrobe, precip, calendarTieIn)
+    ) = InsightSummary(period, band, alert, delta, clothes, precip, calendarTieIn)
 
     @Test
     fun `band-only insight emits the lead-in and label`() {
@@ -56,39 +56,39 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `wardrobe with a single article-able item emits 'a jumper'`() {
-        subject.format(summary(wardrobe = WardrobeClause(listOf("jumper")))) shouldBe
+    fun `clothes with a single article-able item emits 'a jumper'`() {
+        subject.format(summary(clothes = ClothesClause(listOf("jumper")))) shouldBe
             "Today will be mild. Wear a jumper."
     }
 
     @Test
-    fun `wardrobe picks 'an' before vowel-leading items`() {
-        subject.format(summary(wardrobe = WardrobeClause(listOf("umbrella")))) shouldBe
+    fun `clothes picks 'an' before vowel-leading items`() {
+        subject.format(summary(clothes = ClothesClause(listOf("umbrella")))) shouldBe
             "Today will be mild. Wear an umbrella."
     }
 
     @Test
-    fun `wardrobe drops the article on plural-looking items`() {
-        subject.format(summary(wardrobe = WardrobeClause(listOf("shorts")))) shouldBe
+    fun `clothes drops the article on plural-looking items`() {
+        subject.format(summary(clothes = ClothesClause(listOf("shorts")))) shouldBe
             "Today will be mild. Wear shorts."
     }
 
     @Test
-    fun `wardrobe joins two items with 'and' and only the first item gets an article`() {
-        subject.format(summary(wardrobe = WardrobeClause(listOf("jumper", "jacket")))) shouldBe
+    fun `clothes joins two items with 'and' and only the first item gets an article`() {
+        subject.format(summary(clothes = ClothesClause(listOf("jumper", "jacket")))) shouldBe
             "Today will be mild. Wear a jumper and jacket."
     }
 
     @Test
-    fun `wardrobe Oxford-joins three items with article only on the first`() {
-        subject.format(summary(wardrobe = WardrobeClause(listOf("jumper", "jacket", "umbrella")))) shouldBe
+    fun `clothes Oxford-joins three items with article only on the first`() {
+        subject.format(summary(clothes = ClothesClause(listOf("jumper", "jacket", "umbrella")))) shouldBe
             "Today will be mild. Wear a jumper, jacket, and umbrella."
     }
 
     @Test
-    fun `wardrobe Oxford-joins four items`() {
+    fun `clothes Oxford-joins four items`() {
         subject.format(
-            summary(wardrobe = WardrobeClause(listOf("jumper", "jacket", "shorts", "umbrella"))),
+            summary(clothes = ClothesClause(listOf("jumper", "jacket", "shorts", "umbrella"))),
         ) shouldBe "Today will be mild. Wear a jumper, jacket, shorts, and umbrella."
     }
 
@@ -114,7 +114,7 @@ class InsightFormatterTest {
     fun `calendar tie-in renders bring + article + time + title`() {
         val out = subject.format(
             summary(
-                wardrobe = WardrobeClause(listOf("umbrella")),
+                clothes = ClothesClause(listOf("umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
                 calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
             ),
@@ -123,13 +123,13 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `full insight composes alert + band + delta + wardrobe + precip in order`() {
+    fun `full insight composes alert + band + delta + clothes + precip in order`() {
         val out = subject.format(
             summary(
                 alert = AlertClause("Flood Warning"),
                 band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
                 delta = DeltaClause(6, DeltaClause.Direction.WARMER),
-                wardrobe = WardrobeClause(listOf("jumper", "umbrella")),
+                clothes = ClothesClause(listOf("jumper", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
             ),
         )

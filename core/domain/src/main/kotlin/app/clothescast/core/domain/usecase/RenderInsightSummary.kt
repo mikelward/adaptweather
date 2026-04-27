@@ -5,14 +5,14 @@ import app.clothescast.core.domain.model.AlertSeverity
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarEvent
 import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.ClothesClause
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DailyForecast
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
-import app.clothescast.core.domain.model.WardrobeClause
-import app.clothescast.core.domain.model.WardrobeRule
 import app.clothescast.core.domain.model.WeatherAlert
 import app.clothescast.core.domain.model.WeatherCondition
 import java.time.LocalTime
@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
  * Builds the structured [InsightSummary] for a daily generation pass: up to six
  * independent clauses, each driven by an independent rule. The presentation layer
  * (an Android-side formatter) turns this into the final prose, so anything
- * region- or locale-specific (wardrobe vocab, sentence templates, time formatting)
+ * region- or locale-specific (clothes vocab, sentence templates, time formatting)
  * is resolved there rather than here.
  *
  * Rules (each yields 0 or 1 clause):
@@ -33,20 +33,20 @@ import kotlin.math.roundToInt
  * 3. [DeltaClause] — yesterday vs today; only emitted when the larger absolute
  *    feels-like delta is ≥ 3°C, and only for [ForecastPeriod.TODAY] (the morning
  *    pass already mentioned this comparison; the tonight pass shouldn't repeat it).
- * 4. [WardrobeClause] — items triggered by the user's rule list, in rule order.
+ * 4. [ClothesClause] — items triggered by the user's rule list, in rule order.
  * 5. [PrecipClause] — peak chance ≥ 30% (hourly peak preferred; falls back to a
  *    noon synthesis when only the day-level field crosses the threshold).
- * 6. [CalendarTieInClause] — when wardrobe + precip both fired AND a calendar
- *    event overlaps the precip peak hour. Picks "umbrella" when on the wardrobe
+ * 6. [CalendarTieInClause] — when clothes + precip both fired AND a calendar
+ *    event overlaps the precip peak hour. Picks "umbrella" when on the clothes
  *    list, otherwise the first triggered item, mirroring rule 4's ordering.
  *
- * All temperature comparisons use feels-like values, matching the wardrobe rules.
+ * All temperature comparisons use feels-like values, matching the clothes rules.
  */
 class RenderInsightSummary {
     operator fun invoke(
         today: DailyForecast,
         yesterday: DailyForecast,
-        todayTriggeredRules: List<WardrobeRule>,
+        todayTriggeredRules: List<ClothesRule>,
         alerts: List<WeatherAlert> = emptyList(),
         events: List<CalendarEvent> = emptyList(),
         period: ForecastPeriod = ForecastPeriod.TODAY,
@@ -58,7 +58,7 @@ class RenderInsightSummary {
             alert = alertClause(alerts),
             band = bandClause(today),
             delta = if (period == ForecastPeriod.TODAY) deltaClause(today, yesterday) else null,
-            wardrobe = wardrobeClause(items),
+            clothes = clothesClause(items),
             precip = peak?.let { PrecipClause(it.condition, it.time) },
             calendarTieIn = calendarTieInClause(items, peak, events),
         )
@@ -89,8 +89,8 @@ class RenderInsightSummary {
         return DeltaClause(degrees = abs(rounded), direction = direction)
     }
 
-    private fun wardrobeClause(items: List<String>): WardrobeClause? =
-        if (items.isEmpty()) null else WardrobeClause(items)
+    private fun clothesClause(items: List<String>): ClothesClause? =
+        if (items.isEmpty()) null else ClothesClause(items)
 
     /**
      * Resolves the precipitation peak hour the way the precip rule needs it. Lifted
@@ -120,7 +120,7 @@ class RenderInsightSummary {
     ): CalendarTieInClause? {
         if (items.isEmpty() || peak == null || events.isEmpty()) return null
         val event = events.firstOrNull { it.overlaps(peak.time) } ?: return null
-        // Prefer "umbrella" when the user has it on their list — that's the wardrobe
+        // Prefer "umbrella" when the user has it on their list — that's the clothes
         // item the precip-peak overlap was actually motivated by. Otherwise just
         // take the first triggered item, mirroring rule 4's ordering.
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()

@@ -60,7 +60,7 @@
     <string name="settings_root_voice">Voice</string>
     <string name="settings_root_schedule">Schedule</string>
     <string name="settings_root_region">Region</string>
-    <string name="settings_root_wardrobe">Wardrobe</string>
+    <string name="settings_root_clothes">Clothes</string>
     <string name="settings_root_api_keys">API keys</string>
     <string name="settings_root_data_sources">Data sources</string>
     <string name="settings_root_about">About</string>
@@ -153,27 +153,27 @@
     <string name="settings_distance_unit_kilometers">Kilometres</string>
     <string name="settings_distance_unit_miles">Miles</string>
 
-    <string name="settings_wardrobe_title">Wardrobe rules</string>
-    <string name="settings_wardrobe_description">If a forecast crosses one of these thresholds, ClothesCast mentions the item in the daily insight.</string>
-    <string name="settings_wardrobe_empty">No rules configured. Tap Add to create one.</string>
-    <string name="settings_wardrobe_add">Add rule</string>
-    <string name="settings_wardrobe_edit">Edit</string>
-    <string name="settings_wardrobe_delete">Delete</string>
+    <string name="settings_clothes_title">Clothes rules</string>
+    <string name="settings_clothes_description">If a forecast crosses one of these thresholds, ClothesCast mentions the item in the daily insight.</string>
+    <string name="settings_clothes_empty">No rules configured. Tap Add to create one.</string>
+    <string name="settings_clothes_add">Add rule</string>
+    <string name="settings_clothes_edit">Edit</string>
+    <string name="settings_clothes_delete">Delete</string>
 
-    <string name="settings_wardrobe_cond_temp_below">when min temperature is below %.0f°C</string>
-    <string name="settings_wardrobe_cond_temp_above">when max temperature is above %.0f°C</string>
-    <string name="settings_wardrobe_cond_precip_above">when chance of rain is above %.0f%%</string>
+    <string name="settings_clothes_cond_temp_below">when min temperature is below %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">when max temperature is above %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">when chance of rain is above %.0f%%</string>
 
-    <string name="settings_wardrobe_cond_type_temp_below">Temperature below threshold (°C)</string>
-    <string name="settings_wardrobe_cond_type_temp_above">Temperature above threshold (°C)</string>
-    <string name="settings_wardrobe_cond_type_precip_above">Chance of rain above threshold (%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Temperature below threshold (°C)</string>
+    <string name="settings_clothes_cond_type_temp_above">Temperature above threshold (°C)</string>
+    <string name="settings_clothes_cond_type_precip_above">Chance of rain above threshold (%)</string>
 
-    <string name="settings_wardrobe_dialog_add_title">Add wardrobe rule</string>
-    <string name="settings_wardrobe_dialog_edit_title">Edit wardrobe rule</string>
-    <string name="settings_wardrobe_item_label">Item (e.g. jumper, shorts)</string>
-    <string name="settings_wardrobe_condition_label">When to suggest it</string>
-    <string name="settings_wardrobe_value_label_celsius">Threshold (°C)</string>
-    <string name="settings_wardrobe_value_label_percent">Threshold (%)</string>
+    <string name="settings_clothes_dialog_add_title">Add clothes rule</string>
+    <string name="settings_clothes_dialog_edit_title">Edit clothes rule</string>
+    <string name="settings_clothes_item_label">Item (e.g. jumper, shorts)</string>
+    <string name="settings_clothes_condition_label">When to suggest it</string>
+    <string name="settings_clothes_value_label_celsius">Threshold (°C)</string>
+    <string name="settings_clothes_value_label_percent">Threshold (%)</string>
 
     <string name="notification_channel_daily_insight_name">Daily insight</string>
     <string name="notification_channel_daily_insight_description">The morning weather summary you opted in to.</string>

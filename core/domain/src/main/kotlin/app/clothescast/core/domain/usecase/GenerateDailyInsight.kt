@@ -16,7 +16,7 @@ import java.time.Clock
 import java.time.LocalTime
 
 /**
- * The product. Fetches the forecast, evaluates wardrobe rules, renders the
+ * The product. Fetches the forecast, evaluates clothes rules, renders the
  * deterministic summary string in [renderInsightSummary], and packages the result.
  *
  * Severe-weather alerts piggy-back on the same fetch and are returned alongside the
@@ -25,7 +25,7 @@ import java.time.LocalTime
  */
 class GenerateDailyInsight(
     private val weatherRepository: WeatherRepository,
-    private val evaluateWardrobeRules: EvaluateWardrobeRules = EvaluateWardrobeRules(),
+    private val evaluateClothesRules: EvaluateClothesRules = EvaluateClothesRules(),
     private val renderInsightSummary: RenderInsightSummary = RenderInsightSummary(),
     private val calendarEventReader: CalendarEventReader? = null,
     private val clock: Clock = Clock.systemUTC(),
@@ -72,7 +72,7 @@ class GenerateDailyInsight(
                 ?.let { OutfitSuggestion.fromForecast(it) }
             ForecastPeriod.TONIGHT -> bundle.tomorrow?.let { OutfitSuggestion.fromForecast(it) }
         }
-        val todayTriggered = evaluateWardrobeRules(periodForecast, prefs.wardrobeRules)
+        val todayTriggered = evaluateClothesRules(periodForecast, prefs.clothesRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
         // Failures (missing permission, provider crash) degrade to no events so a
         // misbehaving reader can never fail the insight pipeline; the rest of the
@@ -125,14 +125,14 @@ class GenerateDailyInsight(
 /**
  * Slices [DailyForecast] to the daytime window (today at [morningStart] through
  * today at [eveningEnd]). The TODAY counterpart of [slicedForTonight]: keeps the
- * rendered insight, wardrobe evaluation and outfit suggestion focused on the
+ * rendered insight, clothes evaluation and outfit suggestion focused on the
  * hours the user is awake and out, not on past pre-dawn hours or a late-evening
  * peak the user has already gone to bed for.
  *
  * Behaves like [slicedForTonight]:
  *  - filters today's hourly to entries in `[morningStart, eveningEnd)`,
  *  - recomputes daily-level aggregates ([feelsLikeMinC] etc.) from the slice so
- *    the band sentence and wardrobe rules talk about the daytime range, not the
+ *    the band sentence and clothes rules talk about the daytime range, not the
  *    raw 24h day-level fields,
  *  - rewrites [DailyForecast.condition] to the wettest in-window hour (preventing
  *    the precip-peak fallback from naming a midday rain on a sunny afternoon),
@@ -180,7 +180,7 @@ private fun DailyForecast.slicedForToday(
  *  - [RenderInsightSummary]'s band sentence ("Tonight will be cold to mild.") talks
  *    about the actual overnight low — typically the pre-dawn hours from
  *    [tomorrowHourly], which the day-level fields don't capture.
- *  - The wardrobe rules evaluate against the overnight conditions (the user
+ *  - The clothes rules evaluate against the overnight conditions (the user
  *    pulling a thicker jumper because it'll be 4°C at 05:00, not the day's 18°C
  *    midday high).
  *  - [OutfitSuggestion.fromForecast] picks a top + bottom appropriate for what

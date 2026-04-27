@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Location
@@ -18,7 +19,6 @@ import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.core.domain.model.WardrobeRule
 import app.clothescast.tts.defaultOpenAiVoiceFor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -86,8 +86,8 @@ class SettingsRepository(
         dataStore.edit { it[DISTANCE_UNIT] = unit.name }
     }
 
-    suspend fun setWardrobeRules(rules: List<WardrobeRule>) {
-        dataStore.edit { it[WARDROBE_RULES] = json.encodeToString(rules.map { rule -> rule.toDto() }) }
+    suspend fun setClothesRules(rules: List<ClothesRule>) {
+        dataStore.edit { it[CLOTHES_RULES] = json.encodeToString(rules.map { rule -> rule.toDto() }) }
     }
 
     suspend fun setLocation(location: Location) {
@@ -153,7 +153,7 @@ class SettingsRepository(
             ?: defaultTemperatureUnitFor(regionLocale)
         val distanceUnit = this[DISTANCE_UNIT]?.let { runCatching { DistanceUnit.valueOf(it) }.getOrNull() }
             ?: defaultDistanceUnitFor(regionLocale)
-        val rules = parseRules(this[WARDROBE_RULES])
+        val rules = parseRules(this[CLOTHES_RULES])
         val location = parseLocation(this)
         val useDeviceLocation = this[USE_DEVICE_LOCATION] == true
         val ttsEngine = this[TTS_ENGINE]?.let { runCatching { TtsEngine.valueOf(it) }.getOrNull() }
@@ -187,7 +187,7 @@ class SettingsRepository(
             region = region,
             temperatureUnit = temperatureUnit,
             distanceUnit = distanceUnit,
-            wardrobeRules = rules,
+            clothesRules = rules,
             location = location,
             useDeviceLocation = useDeviceLocation,
             ttsEngine = ttsEngine,
@@ -213,11 +213,11 @@ class SettingsRepository(
         }.getOrNull()
     }
 
-    private fun parseRules(raw: String?): List<WardrobeRule> {
-        if (raw.isNullOrBlank()) return WardrobeRule.DEFAULTS
+    private fun parseRules(raw: String?): List<ClothesRule> {
+        if (raw.isNullOrBlank()) return ClothesRule.DEFAULTS
         return runCatching {
-            json.decodeFromString<List<WardrobeRuleDto>>(raw).map { it.toDomain() }
-        }.getOrDefault(WardrobeRule.DEFAULTS)
+            json.decodeFromString<List<ClothesRuleDto>>(raw).map { it.toDomain() }
+        }.getOrDefault(ClothesRule.DEFAULTS)
     }
 
     companion object {
@@ -227,7 +227,7 @@ class SettingsRepository(
         private val REGION = stringPreferencesKey("region")
         private val TEMPERATURE_UNIT = stringPreferencesKey("temperature_unit")
         private val DISTANCE_UNIT = stringPreferencesKey("distance_unit")
-        private val WARDROBE_RULES = stringPreferencesKey("wardrobe_rules_json")
+        private val CLOTHES_RULES = stringPreferencesKey("clothes_rules_json")
         private val LOCATION_LAT = doublePreferencesKey("location_latitude")
         private val LOCATION_LON = doublePreferencesKey("location_longitude")
         private val LOCATION_NAME = stringPreferencesKey("location_display_name")
