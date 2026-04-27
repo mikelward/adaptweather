@@ -1,15 +1,18 @@
 package app.clothescast.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -20,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -37,7 +41,6 @@ import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.resolve
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,15 +64,24 @@ internal fun VoiceContent(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    // Ongoing preview job is held in remember-state so each new selection cancels
-    // the previous before starting a new one. Otherwise rapid taps would queue up
-    // overlapping playbacks.
-    var previewJob by remember { mutableStateOf<Job?>(null) }
+    // While a preview is in flight (synthesis + playback) we lock the whole
+    // voice section. Cloud TTS calls are billed per-character and the in-flight
+    // request can't reliably be un-billed by client-side cancellation, so the
+    // safe behaviour is to ignore further triggers — engine taps, voice taps,
+    // locale taps, the Test Voice button — until the current preview finishes.
+    // Compose callbacks run on the main thread, so the read-then-write here is
+    // atomic with respect to other UI events.
+    var isPreviewing by remember { mutableStateOf(false) }
 
     fun preview(engine: TtsEngine, gVoice: String, oVoice: String, eVoice: String, locale: VoiceLocale) {
-        previewJob?.cancel()
-        previewJob = coroutineScope.launch {
-            runTtsPreview(context, engine, gVoice, oVoice, eVoice, locale)
+        if (isPreviewing) return
+        isPreviewing = true
+        coroutineScope.launch {
+            try {
+                runTtsPreview(context, engine, gVoice, oVoice, eVoice, locale)
+            } finally {
+                isPreviewing = false
+            }
         }
     }
 
@@ -87,6 +99,7 @@ internal fun VoiceContent(
         SectionCard(title = stringResource(R.string.settings_tts_voice_locale_label)) {
             VoiceLocalePicker(
                 selected = voiceLocale,
+                enabled = !isPreviewing,
                 onSelect = {
                     onSetVoiceLocale(it)
                     preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, it)
@@ -104,6 +117,7 @@ internal fun VoiceContent(
                 RadioRow(
                     label = stringResource(ttsEngineLabel(engine)),
                     selected = engine == selected,
+                    enabled = !isPreviewing,
                     onSelect = {
                         onSetTtsEngine(engine)
                         preview(engine, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
@@ -119,12 +133,13 @@ internal fun VoiceContent(
                         title = stringResource(R.string.settings_tts_voice_label),
                         voices = GEMINI_VOICES,
                         selectedId = geminiVoice,
+                        enabled = !isPreviewing,
                         onSelect = {
                             onSetGeminiVoice(it)
                             preview(TtsEngine.GEMINI, it, openAiVoice, elevenLabsVoice, voiceLocale)
                         },
                     )
-                    TestVoiceButton {
+                    TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
                     }
                 }
@@ -136,12 +151,13 @@ internal fun VoiceContent(
                         title = stringResource(R.string.settings_tts_voice_label),
                         voices = OPENAI_VOICES,
                         selectedId = openAiVoice,
+                        enabled = !isPreviewing,
                         onSelect = {
                             onSetOpenAiVoice(it)
                             preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice, voiceLocale)
                         },
                     )
-                    TestVoiceButton {
+                    TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
                     }
                 }
@@ -153,17 +169,18 @@ internal fun VoiceContent(
                         title = stringResource(R.string.settings_tts_voice_label),
                         voices = ELEVENLABS_VOICES,
                         selectedId = elevenLabsVoice,
+                        enabled = !isPreviewing,
                         onSelect = {
                             onSetElevenLabsVoice(it)
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, voiceLocale)
                         },
                     )
-                    TestVoiceButton {
+                    TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
                     }
                 }
                 TtsEngine.DEVICE -> {
-                    TestVoiceButton {
+                    TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
                     }
                 }
@@ -190,11 +207,13 @@ private fun MissingKeyHint(engineName: String) {
 private fun VoiceLocalePicker(
     selected: VoiceLocale,
     onSelect: (VoiceLocale) -> Unit,
+    enabled: Boolean = true,
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
     val title = stringResource(R.string.settings_tts_voice_locale_label)
     OutlinedButton(
         onClick = { dialogOpen = true },
+        enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text("$title: ${stringResource(voiceLocaleLabel(selected))}")
@@ -239,11 +258,13 @@ private fun VoicePicker(
     voices: List<TtsVoiceOption>,
     selectedId: String,
     onSelect: (String) -> Unit,
+    enabled: Boolean = true,
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
     val current = voices.firstOrNull { it.id == selectedId }
     OutlinedButton(
         onClick = { dialogOpen = true },
+        enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text("$title: ${current?.displayName ?: selectedId}")
@@ -276,11 +297,27 @@ private fun VoicePicker(
 }
 
 @Composable
-private fun TestVoiceButton(onClick: () -> Unit) {
+private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
+    // Disabled while previewing — billed cloud TTS calls can't be reliably
+    // un-billed once dispatched, and the in-flight playback is already what
+    // a fresh tap would re-trigger. Spinner replaces the label so the user
+    // sees the click was registered and something is happening.
     Button(
         onClick = onClick,
+        enabled = !isPreviewing,
         modifier = Modifier.fillMaxWidth(),
-    ) { Text(stringResource(R.string.settings_tts_test)) }
+    ) {
+        if (isPreviewing) {
+            Box(contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                )
+            }
+        } else {
+            Text(stringResource(R.string.settings_tts_test))
+        }
+    }
 }
 
 /**
@@ -319,7 +356,7 @@ private suspend fun runTtsPreview(
                     app.deviceTtsSpeaker.speak(text, locale)
             }
         } catch (_: CancellationException) {
-            // Expected when the user picks a different option mid-playback; not an error.
+            // Composable scope cancelled (user navigated away mid-preview); not an error.
         } catch (t: Throwable) {
             // TTS exceptions already name their provider in the message
             // (e.g. "Gemini TTS HTTP 400: …"); don't double that up.
