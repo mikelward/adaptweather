@@ -169,11 +169,39 @@
 
     <string name="settings_clothes_title">Clothes rules</string>
     <string name="settings_clothes_description">If a forecast crosses one of these thresholds, ClothesCast mentions the item in the daily insight.</string>
-    <!-- Footer note explaining why Add / Edit / Delete are missing today.
-         The rules-redesign TODO on ClothesRule tracks the work to bring
-         editing back (fixed garment presets + per-garment threshold + an
-         explicit user-defined path with a translation hook). -->
-    <string name="settings_clothes_lockdown_note">Editing is temporarily disabled. A future update will let you tune the temperature thresholds per garment, add more presets, and define your own items.</string>
+
+    <!-- Garment dropdown labels — picker options when the user adds or edits a
+         clothes rule. Stored on disk as the en-US key (e.g. "sweater"), so the
+         translations here are display-only; the German insight phraser
+         translates the same key independently for spoken-aloud prose.
+         en-GB / en-AU override "Sweater" → "Jumper" and en-GB additionally
+         overrides "Pants" → "Trousers". -->
+    <string name="garment_sweater">Sweater</string>
+    <string name="garment_hoodie">Hoodie</string>
+    <string name="garment_jacket">Jacket</string>
+    <string name="garment_coat">Coat</string>
+    <string name="garment_shorts">Shorts</string>
+    <string name="garment_tshirt">T-shirt</string>
+    <string name="garment_shirt">Shirt</string>
+    <string name="garment_pants">Pants</string>
+    <string name="garment_jeans">Jeans</string>
+
+    <!-- Editor strings restored from the pre-lockdown UI. Free-form
+         garment-name input is gone; the user picks from the garment dropdown
+         above and tunes the threshold. -->
+    <string name="settings_clothes_empty">No rules yet. Tap Add to create one.</string>
+    <string name="settings_clothes_add">Add</string>
+    <string name="settings_clothes_edit">Edit</string>
+    <string name="settings_clothes_delete">Delete</string>
+    <string name="settings_clothes_dialog_add_title">Add clothes rule</string>
+    <string name="settings_clothes_dialog_edit_title">Edit clothes rule</string>
+    <string name="settings_clothes_item_label">Garment</string>
+    <string name="settings_clothes_condition_label">Trigger</string>
+    <string name="settings_clothes_value_label_temp_c">Threshold (°C)</string>
+    <string name="settings_clothes_value_label_precip">Threshold (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">When it feels colder than</string>
+    <string name="settings_clothes_cond_type_temp_above">When it feels warmer than</string>
+    <string name="settings_clothes_cond_type_precip_above">When chance of rain is above</string>
 
     <string name="settings_clothes_cond_temp_below">when min temperature is below %.0f°C</string>
     <string name="settings_clothes_cond_temp_above">when max temperature is above %.0f°C</string>

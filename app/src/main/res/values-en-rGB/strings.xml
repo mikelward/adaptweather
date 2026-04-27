@@ -10,4 +10,10 @@ full re-translation.
     <string name="today_outfit_top_sweater">Jumper</string>
     <!-- "Trousers", not "Long pants" — "pants" means underwear in en-GB. -->
     <string name="today_outfit_bottom_long_pants">Trousers</string>
+
+    <!-- Clothes-rule garment dropdown overrides — same vocabulary swap as the
+         outfit-card labels above. The stored item key stays "sweater" / "pants"
+         (en-US) on disk; only the displayed label changes. -->
+    <string name="garment_sweater">Jumper</string>
+    <string name="garment_pants">Trousers</string>
 </resources>

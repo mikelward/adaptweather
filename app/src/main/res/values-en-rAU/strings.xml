@@ -7,4 +7,8 @@ app's vocabulary — the only label that diverges from the en-US base is
 -->
 <resources>
     <string name="today_outfit_top_sweater">Jumper</string>
+
+    <!-- Clothes-rule garment dropdown — en-AU shares "Jumper" with en-GB but
+         keeps "Pants" (no underwear collision like en-GB has). -->
+    <string name="garment_sweater">Jumper</string>
 </resources>

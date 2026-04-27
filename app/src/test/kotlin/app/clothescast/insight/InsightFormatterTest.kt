@@ -242,7 +242,7 @@ class InsightFormatterTest {
         // through unchanged.
         germanSubject.format(
             summary(clothes = ClothesClause(listOf("sweater", "jacket", "shorts"))),
-        ) shouldBe "Heute wird es mild. Trag Pullover, Jacke und Shorts."
+        ) shouldBe "Heute wird es mild. Trag Pullover, Jacke und kurze Hose."
     }
 
     @Test
