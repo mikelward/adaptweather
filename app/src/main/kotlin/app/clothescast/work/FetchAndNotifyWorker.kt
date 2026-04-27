@@ -10,6 +10,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.glance.appwidget.updateAll
 import androidx.work.workDataOf
 import app.clothescast.ClothesCastApplication
 import app.clothescast.core.domain.model.DeliveryMode
@@ -23,6 +24,7 @@ import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.resolve
+import app.clothescast.widget.OutfitWidget
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -133,6 +135,16 @@ class FetchAndNotifyWorker(
                     .onFailure { Log.w(TAG, "Severe alert notification failed for ${alert.event}.", it) }
             }
             runCatching { app.insightCache.store(insight) }
+                .onSuccess {
+                    // Push the fresh outfit out to any home-screen widgets.
+                    // Gated on cache success because provideGlance() reads
+                    // from the cache — kicking updateAll() after a failed
+                    // write would just re-render the stale outfit. Failure
+                    // here is non-blocking; the widget will catch up on the
+                    // next successful fetch.
+                    runCatching { OutfitWidget().updateAll(applicationContext) }
+                        .onFailure { Log.w(TAG, "Outfit widget update failed.", it) }
+                }
                 .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
             // Render once per delivery so notification, TTS, and the audit log
             // all share the same string and we don't reconfigure the

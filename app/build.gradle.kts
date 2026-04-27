@@ -232,6 +232,12 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Home-screen App Widget — Glance speaks Compose at the source level but
+    // emits RemoteViews under the hood, so it works back to the API 26 minSdk
+    // and there's no separate XML layout to maintain.
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+
     // Ktor with the OkHttp engine for production HTTP. Tests in :core:data use MockEngine,
     // so the engine choice is :app's concern.
     implementation(libs.ktor.client.core)

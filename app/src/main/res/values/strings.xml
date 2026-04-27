@@ -21,6 +21,12 @@
     <string name="today_outfit_bottom_shorts">Shorts</string>
     <string name="today_outfit_bottom_long_pants">Long pants</string>
 
+    <!-- Home-screen App Widget. -->
+    <string name="widget_label">Outfit</string>
+    <string name="widget_description">The current period\'s outfit at a glance.</string>
+    <string name="widget_empty_title">No outfit yet</string>
+    <string name="widget_empty_subtitle">Tap to open ClothesCast</string>
+
     <string name="today_forecast_title">Hourly forecast</string>
     <string name="today_forecast_min_max">Feels like %1$d – %2$d%3$s · Air %4$d – %5$d%6$s</string>
     <string name="today_forecast_legend_feels_like">Feels-like (%1$s) by hour · tap to switch to air temperature</string>

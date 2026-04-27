@@ -16,6 +16,10 @@ serialization = "1.7.3"
 tink = "1.15.0"
 datastore = "1.1.1"
 work = "2.10.0"
+# Glance powers the home-screen App Widget. 1.1.1 is the latest stable that
+# works with AGP 8.7 / compileSdk 35 — 1.2.x bumps the AndroidX core baseline
+# and would force a compileSdk lift, paralleling the Vico version pin above.
+glance = "1.1.1"
 # Pinned to the 2.0.x line: Vico 2.2+ pulls androidx.core:core-ktx 1.16+ and
 # 2.3+ pulls 1.17+, both of which require AGP 8.9+ / compileSdk 36. The app is
 # on AGP 8.7.3 / compileSdk 35; bump Vico in lockstep with an AGP upgrade.
@@ -65,6 +69,9 @@ androidx-datastore-preferences = { group = "androidx.datastore", name = "datasto
 androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastore" }
 
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 
