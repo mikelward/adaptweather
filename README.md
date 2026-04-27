@@ -98,6 +98,14 @@ underlying scheduling primitive (`setExactAndAllowWhileIdle` with
 `USE_EXACT_ALARM`) is the strictest the platform offers; anything that
 suppresses it is a vendor-side override.
 
+## Privacy
+
+The full policy is at <https://mikelward.github.io/clothescast/privacy/>
+(source: [PRIVACY.md](PRIVACY.md)). In short: no backend, no analytics,
+no advertising. Your approximate location goes to Open-Meteo for the
+forecast; the rendered insight sentence goes to your chosen online TTS
+provider (Gemini / OpenAI / ElevenLabs) only when you've opted in.
+
 ## Roadmap
 
 - **v0.x** _(now)_: daily insight notification + TTS, full Settings UI,

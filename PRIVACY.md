@@ -1,3 +1,8 @@
+---
+title: Privacy Policy
+permalink: /privacy/
+---
+
 # Privacy Policy
 
 _Last updated: 2026-04-27_
@@ -128,8 +133,9 @@ collect personal data from them.
 
 ## Changes
 
-If this policy changes, the updated version will be committed to
-<https://github.com/mikelward/clothescast/blob/main/PRIVACY.md>; the
+If this policy changes, the updated version will be published at
+<https://mikelward.github.io/clothescast/privacy/> (source:
+<https://github.com/mikelward/clothescast/blob/main/PRIVACY.md>); the
 "Last updated" date at the top will reflect the change. Material changes
 to data handling will also be noted in the app's release notes.
 

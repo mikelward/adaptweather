@@ -1,0 +1,18 @@
+title: ClothesCast
+description: A daily weather-insight Android app
+theme: jekyll-theme-minimal
+permalink: pretty
+exclude:
+  - app/
+  - core/
+  - gradle/
+  - .github/
+  - .gradle/
+  - build/
+  - "*.gradle.kts"
+  - settings.gradle.kts
+  - gradle.properties
+  - gradlew
+  - gradlew.bat
+  - CLAUDE.md
+  - docs/TODO.md
