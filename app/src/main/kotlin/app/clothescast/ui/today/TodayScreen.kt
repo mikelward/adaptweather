@@ -57,17 +57,34 @@ import java.util.Locale
 fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val isWorking = state.workStatus is WorkStatus.Running
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.today_title)) },
                 actions = {
-                    IconButton(onClick = { triggerRefresh(context) }) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = stringResource(R.string.today_refresh),
-                        )
+                    // While the worker is enqueued or running we disable Refresh and swap
+                    // the icon for a spinner. The work makes a billed Gemini insight call
+                    // and (depending on the engine) a billed TTS call; re-tapping Refresh
+                    // while one is in flight uses ExistingWorkPolicy.REPLACE, which kills
+                    // the in-flight worker and starts another — re-issuing both requests.
+                    // Disabling the button removes the foot-gun.
+                    IconButton(
+                        onClick = { triggerRefresh(context) },
+                        enabled = !isWorking,
+                    ) {
+                        if (isWorking) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = stringResource(R.string.today_refresh),
+                            )
+                        }
                     }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(
@@ -79,7 +96,12 @@ fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
             )
         },
     ) { padding ->
-        TodayContent(state = state, padding = padding, onRefresh = { triggerRefresh(context) })
+        TodayContent(
+            state = state,
+            padding = padding,
+            isWorking = isWorking,
+            onRefresh = { triggerRefresh(context) },
+        )
     }
 }
 
@@ -87,6 +109,7 @@ fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
 private fun TodayContent(
     state: TodayState,
     padding: PaddingValues,
+    isWorking: Boolean,
     onRefresh: () -> Unit,
 ) {
     Column(
@@ -99,7 +122,7 @@ private fun TodayContent(
     ) {
         WorkStatusBanner(status = state.workStatus)
         if (state.insight == null) {
-            EmptyState(onRefresh = onRefresh)
+            EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
             state.insight.outfit?.let { OutfitPreviewCard(it) }
             InsightCard(state.insight)
@@ -168,7 +191,7 @@ private fun describeFailure(failed: WorkStatus.Failed): String {
 }
 
 @Composable
-internal fun EmptyState(onRefresh: () -> Unit) {
+internal fun EmptyState(onRefresh: () -> Unit, isWorking: Boolean = false) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -189,7 +212,7 @@ internal fun EmptyState(onRefresh: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )
-            Button(onClick = onRefresh) {
+            Button(onClick = onRefresh, enabled = !isWorking) {
                 Text(stringResource(R.string.today_fetch_now))
             }
         }

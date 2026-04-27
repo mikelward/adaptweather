@@ -35,6 +35,7 @@ internal fun RadioRow(
     label: String,
     selected: Boolean,
     onSelect: () -> Unit,
+    enabled: Boolean = true,
 ) {
     Row(
         modifier = Modifier
@@ -42,7 +43,7 @@ internal fun RadioRow(
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        RadioButton(selected = selected, onClick = onSelect)
+        RadioButton(selected = selected, onClick = onSelect, enabled = enabled)
         Text(text = label, modifier = Modifier.padding(start = 8.dp))
     }
 }
