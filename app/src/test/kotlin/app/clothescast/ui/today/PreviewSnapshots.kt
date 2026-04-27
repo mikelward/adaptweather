@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.clothescast.launcher.LauncherIconPreview
 import app.clothescast.notification.NotificationIconSweaterPreview
 import app.clothescast.notification.NotificationIconTShirtPreview
 import app.clothescast.notification.NotificationIconThickJacketPreview
@@ -94,4 +95,6 @@ class PreviewSnapshots {
     @Test fun notification_icon_thick_jacket() = capture { NotificationIconThickJacketPreview() }
 
     @Test fun settings_root() = capture { SettingsRootPreview() }
+
+    @Test fun launcher_icon() = capture { LauncherIconPreview() }
 }
