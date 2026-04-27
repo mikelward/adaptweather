@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import app.clothescast.ClothesCastApplication
 import app.clothescast.core.domain.model.DeliveryMode
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.TtsEngine
@@ -56,6 +57,18 @@ class FetchAndNotifyWorker(
             return Result.retry()
         }
 
+        val period = inputData.getString(KEY_PERIOD)
+            ?.let { runCatching { ForecastPeriod.valueOf(it) }.getOrNull() }
+            ?: ForecastPeriod.TODAY
+
+        // The tonight alarm rearms blindly via AlarmReceiver; the user's enable
+        // toggle is honoured here so a stale alarm doesn't ship a tonight insight
+        // after the user disabled the feature.
+        if (period == ForecastPeriod.TONIGHT && !prefs.tonightEnabled) {
+            Log.i(TAG, "Tonight insight is disabled; skipping.")
+            return Result.success()
+        }
+
         val location = resolveLocation(prefs)
         val today = LocalDate.now()
 
@@ -88,27 +101,28 @@ class FetchAndNotifyWorker(
             Log.i(TAG, "Force refresh requested; bypassing today's cache.")
             null
         } else {
-            runCatching { app.insightCache.forToday(today) }.getOrNull()
+            runCatching { app.insightCache.forPeriodToday(today, period) }.getOrNull()
         }
         if (cached != null) {
-            Log.i(TAG, "Using cached insight for ${cached.forDate}.")
+            Log.i(TAG, "Using cached $period insight for ${cached.forDate}.")
             return runCatching { deliver(cached, prefs) }
                 .map { Result.success() }
                 .getOrElse {
                     Log.e(TAG, "Cached delivery failed; falling through to fresh generate.", it)
-                    fresh(location, prefs)
+                    fresh(location, prefs, period)
                 }
         }
 
-        return fresh(location, prefs)
+        return fresh(location, prefs, period)
     }
 
     private suspend fun fresh(
         location: Location,
         prefs: UserPreferences,
+        period: ForecastPeriod,
     ): Result {
         return try {
-            val result = app.generateDailyInsight(location, prefs)
+            val result = app.generateDailyInsight(location, prefs, period)
             val insight = result.insight
             // Severe alerts are out-of-band: post them as separate high-priority
             // notifications on every fresh fetch, regardless of whether the daily
@@ -171,10 +185,39 @@ class FetchAndNotifyWorker(
             Log.i(TAG, "Insight summary is blank; skipping notification + TTS.")
             return
         }
+        when (insight.period) {
+            ForecastPeriod.TODAY -> deliverToday(insight, prefs)
+            ForecastPeriod.TONIGHT -> deliverTonight(insight, prefs)
+        }
+    }
+
+    private suspend fun deliverToday(insight: Insight, prefs: UserPreferences) {
         val mode = prefs.deliveryMode
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
             app.insightNotifier.notify(insight)
         }
+        if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
+            speakWithFallback(insight.spokenText(), prefs)
+        }
+    }
+
+    /**
+     * Tonight delivery is event-gated:
+     *  - Notification fires every time, but on the silent channel when there are no
+     *    calendar events (no sound / no vibration), and on the default-priority
+     *    channel when there are events (plays the user's notification sound).
+     *  - TTS only speaks when there are events tonight. The user explicitly opted
+     *    in to events; if their evening is empty there's nothing to interrupt for.
+     */
+    private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences) {
+        // The notification always posts so the user can still see the tonight
+        // insight on the lock screen even when their evening is empty.
+        app.tonightInsightNotifier.notify(insight)
+        if (!insight.hasEvents) {
+            Log.i(TAG, "Tonight insight has no events; silent notification, no TTS.")
+            return
+        }
+        val mode = prefs.deliveryMode
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
             speakWithFallback(insight.spokenText(), prefs)
         }
@@ -225,6 +268,7 @@ class FetchAndNotifyWorker(
     companion object {
         private const val TAG = "FetchAndNotifyWorker"
         const val UNIQUE_WORK_NAME = "daily_insight_fetch"
+        const val UNIQUE_WORK_NAME_TONIGHT = "tonight_insight_fetch"
 
         // Output Data keys for surfacing failure reasons in the UI.
         const val KEY_REASON = "reason"
@@ -243,6 +287,9 @@ class FetchAndNotifyWorker(
          */
         private const val KEY_REQUESTED_EPOCH_DAY = "requested_epoch_day"
 
+        /** Which slice of the day this run is for; defaults to TODAY when absent. */
+        private const val KEY_PERIOD = "period"
+
         // Fallback when the user hasn't set a location yet — the pipeline still runs and
         // posts a (London) insight rather than silently failing. The Settings screen
         // surfaces an empty-location card so the user can change it.
@@ -252,7 +299,11 @@ class FetchAndNotifyWorker(
             displayName = "London (default)",
         )
 
-        fun enqueueOneShot(context: Context, force: Boolean = false) {
+        fun enqueueOneShot(
+            context: Context,
+            force: Boolean = false,
+            period: ForecastPeriod = ForecastPeriod.TODAY,
+        ) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -264,6 +315,7 @@ class FetchAndNotifyWorker(
                     workDataOf(
                         KEY_FORCE_REFRESH to force,
                         KEY_REQUESTED_EPOCH_DAY to LocalDate.now().toEpochDay(),
+                        KEY_PERIOD to period.name,
                     )
                 )
                 .build()
@@ -272,8 +324,12 @@ class FetchAndNotifyWorker(
             // User-initiated force enqueues use REPLACE — the user just tapped Refresh
             // expecting a fresh fetch, so cancel any in-flight retry and start over.
             val policy = if (force) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.KEEP
+            val workName = when (period) {
+                ForecastPeriod.TODAY -> UNIQUE_WORK_NAME
+                ForecastPeriod.TONIGHT -> UNIQUE_WORK_NAME_TONIGHT
+            }
             WorkManager.getInstance(context)
-                .enqueueUniqueWork(UNIQUE_WORK_NAME, policy, request)
+                .enqueueUniqueWork(workName, policy, request)
         }
     }
 }

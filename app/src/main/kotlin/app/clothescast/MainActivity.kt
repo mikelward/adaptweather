@@ -104,6 +104,7 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
                     settingsRepository = app.settingsRepository,
                     keyStore = app.secureKeyStore,
                     rearmAlarm = app.dailyAlarmScheduler::schedule,
+                    cancelAlarm = app.dailyAlarmScheduler::cancel,
                     geocodingClient = app.geocodingClient,
                 ),
             )

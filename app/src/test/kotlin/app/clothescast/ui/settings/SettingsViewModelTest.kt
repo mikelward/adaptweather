@@ -88,7 +88,8 @@ class SettingsViewModelTest {
         subject = SettingsViewModel(
             settingsRepository,
             keyStore,
-            rearmAlarm = {},
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
             geocodingClient = OpenMeteoGeocodingClient(emptyGeocoding),
         )
     }

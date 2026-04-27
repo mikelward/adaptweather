@@ -9,6 +9,7 @@ import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.data.tts.GeminiTtsClient
 import app.clothescast.core.data.tts.OpenAITtsClient
 import app.clothescast.core.data.weather.OpenMeteoClient
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.repository.CalendarEventReader
 import app.clothescast.core.domain.repository.WeatherRepository
 import app.clothescast.core.domain.usecase.GenerateDailyInsight
@@ -18,6 +19,7 @@ import app.clothescast.data.SettingsRepository
 import app.clothescast.location.LocationResolver
 import app.clothescast.notification.InsightNotifier
 import app.clothescast.notification.NotificationChannelRegistrar
+import app.clothescast.notification.TonightInsightNotifier
 import app.clothescast.notification.WeatherAlertNotifier
 import app.clothescast.tts.AndroidTtsSpeaker
 import app.clothescast.tts.TtsSpeaker
@@ -48,6 +50,7 @@ class ClothesCastApplication : Application() {
     val insightCache: InsightCache by lazy { InsightCache.create(this) }
     val locationResolver: LocationResolver by lazy { LocationResolver(this) }
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
+    val tonightInsightNotifier: TonightInsightNotifier by lazy { TonightInsightNotifier(this) }
     val weatherAlertNotifier: WeatherAlertNotifier by lazy { WeatherAlertNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
     val deviceTtsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
@@ -85,8 +88,13 @@ class ClothesCastApplication : Application() {
         NotificationChannelRegistrar.register(this)
         applicationScope.launch {
             try {
-                val schedule = settingsRepository.preferences.first().schedule
-                dailyAlarmScheduler.schedule(schedule)
+                val prefs = settingsRepository.preferences.first()
+                dailyAlarmScheduler.schedule(prefs.schedule, ForecastPeriod.TODAY)
+                if (prefs.tonightEnabled) {
+                    dailyAlarmScheduler.schedule(prefs.tonightSchedule, ForecastPeriod.TONIGHT)
+                } else {
+                    dailyAlarmScheduler.cancel(ForecastPeriod.TONIGHT)
+                }
             } catch (t: Throwable) {
                 Log.e(TAG, "Initial alarm scheduling failed", t)
             }

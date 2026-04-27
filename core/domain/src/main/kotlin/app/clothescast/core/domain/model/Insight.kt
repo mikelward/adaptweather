@@ -27,6 +27,21 @@ data class Insight(
      * run repopulates it.
      */
     val outfit: OutfitSuggestion? = null,
+    /**
+     * Which slice of the day this insight is for. [ForecastPeriod.TODAY] is the
+     * morning pass (covers 07:00–19:00); [ForecastPeriod.TONIGHT] is the evening
+     * pass (covers 19:00–07:00). Defaults to TODAY so older cached insights from
+     * before the tonight feature still deserialise as morning insights.
+     */
+    val period: ForecastPeriod = ForecastPeriod.TODAY,
+    /**
+     * True when at least one calendar event was found in the relevant window for
+     * this insight (today's events for TODAY, tonight's events for TONIGHT). Used
+     * by the tonight notifier to decide between a silent and a default-priority
+     * notification — events present means "you might need to actually leave the
+     * house tonight," which warrants a sound and TTS read-out.
+     */
+    val hasEvents: Boolean = false,
 ) {
     /**
      * The text that gets spoken aloud. The summary already includes the wardrobe

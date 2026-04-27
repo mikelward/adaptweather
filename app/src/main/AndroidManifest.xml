@@ -61,6 +61,7 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="app.clothescast.alarm.FIRE" />
+                <action android:name="app.clothescast.alarm.FIRE_TONIGHT" />
             </intent-filter>
         </receiver>
 

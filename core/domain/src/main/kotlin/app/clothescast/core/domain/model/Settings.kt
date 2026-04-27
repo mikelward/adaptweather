@@ -94,6 +94,19 @@ data class UserPreferences(
      * the runtime permission for events to actually be read.
      */
     val useCalendarEvents: Boolean = false,
+    /**
+     * When the evening / "tonight" insight should fire. Distinct from [schedule]
+     * (the morning slot) so the user can keep the morning at 07:00 and still
+     * tweak the evening time independently. Default is 19:00 every day.
+     */
+    val tonightSchedule: Schedule = Schedule.defaultTonight(schedule.zoneId),
+    /**
+     * Master switch for the evening / "tonight" insight. On by default — the
+     * tonight notifier is silent when there are no calendar events for the
+     * evening, so it's not noisy out of the box. The user can disable it from
+     * the schedule settings page.
+     */
+    val tonightEnabled: Boolean = true,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

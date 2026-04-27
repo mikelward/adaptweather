@@ -17,6 +17,9 @@ import java.time.LocalTime
 data class SettingsState(
     val scheduleTime: LocalTime = LocalTime.of(7, 0),
     val scheduleDays: Set<DayOfWeek> = Schedule.EVERY_DAY,
+    val tonightTime: LocalTime = LocalTime.of(19, 0),
+    val tonightDays: Set<DayOfWeek> = Schedule.EVERY_DAY,
+    val tonightEnabled: Boolean = true,
     val deliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     val distanceUnit: DistanceUnit = DistanceUnit.KILOMETERS,

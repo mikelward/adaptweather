@@ -96,9 +96,14 @@ fun SettingsScreen(
             SettingsRoute.Schedule -> ScheduleContent(
                 time = state.scheduleTime,
                 days = state.scheduleDays,
+                tonightTime = state.tonightTime,
+                tonightDays = state.tonightDays,
+                tonightEnabled = state.tonightEnabled,
                 deliveryMode = state.deliveryMode,
                 padding = padding,
                 onSetSchedule = viewModel::setSchedule,
+                onSetTonightSchedule = viewModel::setTonightSchedule,
+                onSetTonightEnabled = viewModel::setTonightEnabled,
                 onSetDeliveryMode = viewModel::setDeliveryMode,
                 // Show a Done button only when this page is the deep-link
                 // landing from onboarding's "Continue" — gives the user an

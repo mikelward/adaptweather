@@ -34,7 +34,16 @@ data class Schedule(
 
     companion object {
         val EVERY_DAY: Set<DayOfWeek> = DayOfWeek.entries.toSet()
+
+        /** Morning insight default — 07:00 every day. */
         fun default(zoneId: ZoneId = ZoneId.systemDefault()): Schedule =
             Schedule(time = LocalTime.of(7, 0), days = EVERY_DAY, zoneId = zoneId)
+
+        /**
+         * Tonight insight default — 19:00 every day. The tonight pass mirrors the
+         * morning one; only the wall-clock time and the summary period differ.
+         */
+        fun defaultTonight(zoneId: ZoneId = ZoneId.systemDefault()): Schedule =
+            Schedule(time = LocalTime.of(19, 0), days = EVERY_DAY, zoneId = zoneId)
     }
 }

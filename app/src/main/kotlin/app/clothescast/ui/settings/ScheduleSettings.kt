@@ -22,6 +22,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -47,9 +48,14 @@ import java.util.Locale
 internal fun ScheduleContent(
     time: LocalTime,
     days: Set<DayOfWeek>,
+    tonightTime: LocalTime,
+    tonightDays: Set<DayOfWeek>,
+    tonightEnabled: Boolean,
     deliveryMode: DeliveryMode,
     padding: PaddingValues,
     onSetSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
+    onSetTonightSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
+    onSetTonightEnabled: (Boolean) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
     onDone: (() -> Unit)? = null,
 ) {
@@ -62,6 +68,13 @@ internal fun ScheduleContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         ScheduleCard(time, days, onSetSchedule)
+        TonightCard(
+            time = tonightTime,
+            days = tonightDays,
+            enabled = tonightEnabled,
+            onSetEnabled = onSetTonightEnabled,
+            onChange = onSetTonightSchedule,
+        )
         DeliveryModeCard(deliveryMode, onSetDeliveryMode)
         if (onDone != null) {
             Button(
@@ -175,6 +188,98 @@ private fun TimePickerDialog(
         },
         text = { TimePicker(state = state) },
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+private fun TonightCard(
+    time: LocalTime,
+    days: Set<DayOfWeek>,
+    enabled: Boolean,
+    onSetEnabled: (Boolean) -> Unit,
+    onChange: (LocalTime, Set<DayOfWeek>) -> Unit,
+) {
+    var pickerOpen by remember { mutableStateOf(false) }
+
+    SectionCard(title = stringResource(R.string.settings_tonight_title)) {
+        Text(
+            text = stringResource(R.string.settings_tonight_description),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.settings_tonight_enabled),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(checked = enabled, onCheckedChange = onSetEnabled)
+        }
+        if (enabled) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_tonight_time_label),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(end = 12.dp),
+                )
+                OutlinedButton(onClick = { pickerOpen = true }) {
+                    Text(text = TIME_FORMAT.format(time))
+                }
+            }
+            Text(
+                text = stringResource(R.string.settings_tonight_days_label),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                DayOfWeek.entries.forEach { dow ->
+                    val selected = dow in days
+                    FilterChip(
+                        selected = selected,
+                        onClick = {
+                            val next = if (selected) days - dow else days + dow
+                            if (next.isNotEmpty()) onChange(time, next)
+                        },
+                        label = {
+                            Text(text = dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
+                        },
+                        leadingIcon = if (selected) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                        colors = FilterChipDefaults.filterChipColors(),
+                    )
+                }
+            }
+        }
+    }
+
+    if (pickerOpen) {
+        TimePickerDialog(
+            initial = time,
+            onDismiss = { pickerOpen = false },
+            onConfirm = { newTime ->
+                pickerOpen = false
+                onChange(newTime, days)
+            },
+        )
+    }
 }
 
 @Composable
