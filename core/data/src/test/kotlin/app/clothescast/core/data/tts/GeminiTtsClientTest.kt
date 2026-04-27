@@ -120,7 +120,7 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello", locale = Locale.UK)
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("British English accent")
+        body.shouldContain("Standard Southern British accent")
     }
 
     @Test
@@ -138,7 +138,7 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("Australian English accent")
+        body.shouldContain("General Australian accent")
     }
 
     @Test
@@ -158,7 +158,9 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-CA"))
 
         val body = checkNotNull(capturedBody)
-        body.shouldNotContain("English accent")
+        // No accent directive at all — none of the SSB / General Australian /
+        // General American sentinels should leak in for unknown variants.
+        body.shouldNotContain("Speak with a")
     }
 
     @Test

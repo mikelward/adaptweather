@@ -13,10 +13,12 @@ import app.clothescast.core.domain.model.VoiceLocale
  *
  * [locale] is the voice's *baked-in* accent — only meaningful for providers whose
  * voices have a fixed accent that can't be steered by prompt (ElevenLabs voice
- * clones). Null means the picker does not filter that voice by accent: both
- * Gemini's prebuilt voices and OpenAI's `gpt-4o-mini-tts` voices are
- * language-agnostic and accept accent steering via prompt directives at
- * synthesis time. The picker only filters by [locale] when it's non-null.
+ * clones). Null means the picker does not filter that voice by accent: Gemini's
+ * prebuilt voices and OpenAI's `gpt-4o-mini-tts` voices both accept a prompt-
+ * side accent directive at synthesis time (Gemini reliably; OpenAI imperfectly
+ * — see the per-engine notes in `geminiAccentDirectiveFor` and
+ * `openAiAccentInstructionFor`). The picker only filters by [locale] when it's
+ * non-null.
  */
 data class TtsVoiceOption(
     val id: String,

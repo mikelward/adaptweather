@@ -33,8 +33,16 @@ const val DEFAULT_OPENAI_TTS_VOICE: String = "alloy"
  * field, or null when the locale doesn't map to a known English variant
  * (in which case the model's default applies).
  *
+ * Uses linguist-standard accent labels (Standard Southern British, General
+ * Australian, General American) rather than vague "British English accent"
+ * phrasing — empirically, `gpt-4o-mini-tts` only weakly honours `instructions`
+ * for accent (the voice's baked-in timbre dominates), so any nudge we get
+ * comes from being as specific as possible. If the empirical effect on real
+ * traffic remains marginal, the next step is to tag voices by their native
+ * accent and filter the picker (mirroring the ElevenLabs approach).
+ *
  * Mirrors the Gemini version — same wording, same coverage — so the audible
- * accent is consistent across providers when the user picks the same variant.
+ * accent stays consistent across providers when the user picks the same variant.
  * Only honoured by `gpt-4o-mini-tts`; older OpenAI TTS models silently ignore
  * the field, which is fine for forward-compat if [DEFAULT_OPENAI_TTS_MODEL]
  * is ever overridden.
@@ -42,9 +50,9 @@ const val DEFAULT_OPENAI_TTS_VOICE: String = "alloy"
 internal fun openAiAccentInstructionFor(locale: Locale): String? {
     if (locale.language != "en") return null
     return when (locale.country) {
-        "GB" -> "Speak with a British English accent."
-        "AU" -> "Speak with an Australian English accent."
-        "US" -> "Speak with a North American English accent."
+        "GB" -> "Speak with a Standard Southern British accent."
+        "AU" -> "Speak with a General Australian accent."
+        "US" -> "Speak with a General American accent."
         else -> null
     }
 }
