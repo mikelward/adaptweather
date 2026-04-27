@@ -8,6 +8,7 @@ import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
@@ -46,6 +47,7 @@ class SettingsViewModel(
                         tonightDays = prefs.tonightSchedule.days,
                         tonightEnabled = prefs.tonightEnabled,
                         deliveryMode = prefs.deliveryMode,
+                        region = prefs.region,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
                         wardrobeRules = prefs.wardrobeRules,
@@ -120,6 +122,10 @@ class SettingsViewModel(
 
     fun setDeliveryMode(mode: DeliveryMode) {
         viewModelScope.launch { settingsRepository.setDeliveryMode(mode) }
+    }
+
+    fun setRegion(region: Region) {
+        viewModelScope.launch { settingsRepository.setRegion(region) }
     }
 
     fun setTemperatureUnit(unit: TemperatureUnit) {

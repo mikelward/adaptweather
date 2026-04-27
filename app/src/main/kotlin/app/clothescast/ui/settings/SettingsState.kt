@@ -3,6 +3,7 @@ package app.clothescast.ui.settings
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
@@ -21,6 +22,7 @@ data class SettingsState(
     val tonightDays: Set<DayOfWeek> = Schedule.EVERY_DAY,
     val tonightEnabled: Boolean = true,
     val deliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
+    val region: Region = Region.SYSTEM,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     val distanceUnit: DistanceUnit = DistanceUnit.KILOMETERS,
     val wardrobeRules: List<WardrobeRule> = WardrobeRule.DEFAULTS,

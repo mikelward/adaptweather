@@ -12,6 +12,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
@@ -28,6 +29,7 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
  * Persists [UserPreferences] in DataStore Preferences.
@@ -43,6 +45,7 @@ import java.time.format.DateTimeFormatter
 class SettingsRepository(
     private val dataStore: DataStore<Preferences>,
     private val zoneIdProvider: () -> ZoneId = { ZoneId.systemDefault() },
+    private val systemLocaleProvider: () -> Locale = { Locale.getDefault() },
     private val json: Json = Json { ignoreUnknownKeys = true },
 ) {
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs -> prefs.toUserPreferences() }
@@ -69,6 +72,10 @@ class SettingsRepository(
 
     suspend fun setDeliveryMode(mode: DeliveryMode) {
         dataStore.edit { it[DELIVERY_MODE] = mode.name }
+    }
+
+    suspend fun setRegion(region: Region) {
+        dataStore.edit { it[REGION] = region.name }
     }
 
     suspend fun setTemperatureUnit(unit: TemperatureUnit) {
@@ -136,10 +143,16 @@ class SettingsRepository(
             ?: Schedule.EVERY_DAY
         val deliveryMode = this[DELIVERY_MODE]?.let { runCatching { DeliveryMode.valueOf(it) }.getOrNull() }
             ?: DeliveryMode.NOTIFICATION_ONLY
+        val region = this[REGION]?.let { runCatching { Region.valueOf(it) }.getOrNull() }
+            ?: Region.SYSTEM
+        // Resolve units off the user's region — SYSTEM falls through to the
+        // phone locale. Once they explicitly pick a unit it sticks regardless
+        // of region (mirrors how openAiVoice handles voiceLocale).
+        val regionLocale = region.toJavaLocale() ?: systemLocaleProvider()
         val temperatureUnit = this[TEMPERATURE_UNIT]?.let { runCatching { TemperatureUnit.valueOf(it) }.getOrNull() }
-            ?: TemperatureUnit.CELSIUS
+            ?: defaultTemperatureUnitFor(regionLocale)
         val distanceUnit = this[DISTANCE_UNIT]?.let { runCatching { DistanceUnit.valueOf(it) }.getOrNull() }
-            ?: DistanceUnit.KILOMETERS
+            ?: defaultDistanceUnitFor(regionLocale)
         val rules = parseRules(this[WARDROBE_RULES])
         val location = parseLocation(this)
         val useDeviceLocation = this[USE_DEVICE_LOCATION] == true
@@ -171,6 +184,7 @@ class SettingsRepository(
         return UserPreferences(
             schedule = Schedule(time = time, days = days, zoneId = zone),
             deliveryMode = deliveryMode,
+            region = region,
             temperatureUnit = temperatureUnit,
             distanceUnit = distanceUnit,
             wardrobeRules = rules,
@@ -210,6 +224,7 @@ class SettingsRepository(
         private val SCHEDULE_TIME = stringPreferencesKey("schedule_time_hhmm")
         private val SCHEDULE_DAYS = stringSetPreferencesKey("schedule_days")
         private val DELIVERY_MODE = stringPreferencesKey("delivery_mode")
+        private val REGION = stringPreferencesKey("region")
         private val TEMPERATURE_UNIT = stringPreferencesKey("temperature_unit")
         private val DISTANCE_UNIT = stringPreferencesKey("distance_unit")
         private val WARDROBE_RULES = stringPreferencesKey("wardrobe_rules_json")
@@ -237,3 +252,17 @@ class SettingsRepository(
 }
 
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
+private fun Region.toJavaLocale(): Locale? = bcp47?.let { Locale.forLanguageTag(it) }
+
+// Only the US uses Fahrenheit in everyday weather contexts. A handful of
+// dependencies (BS, BZ, KY, PW) also do, but they're rounding error and the
+// user can override via the unit picker if needed — not worth the extra surface.
+private fun defaultTemperatureUnitFor(locale: Locale): TemperatureUnit =
+    if (locale.country == "US") TemperatureUnit.FAHRENHEIT else TemperatureUnit.CELSIUS
+
+// Only the US sticks with imperial for weather-app distance contexts (wind
+// speed in mph, precipitation in inches). UK uses miles for *roads* but km/h
+// and mm for weather, so it lands on the metric default with everyone else.
+private fun defaultDistanceUnitFor(locale: Locale): DistanceUnit =
+    if (locale.country == "US") DistanceUnit.MILES else DistanceUnit.KILOMETERS

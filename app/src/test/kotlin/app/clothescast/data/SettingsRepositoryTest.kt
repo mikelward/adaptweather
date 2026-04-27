@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.VoiceLocale
@@ -33,6 +34,7 @@ import java.nio.file.Path
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.ZoneId
+import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsRepositoryTest {
@@ -54,6 +56,9 @@ class SettingsRepositoryTest {
         subject = SettingsRepository(
             dataStore = dataStore,
             zoneIdProvider = { zone },
+            // Pin the locale so default-unit assertions don't drift with the
+            // host machine's locale (CI runs on en_US, dev machines vary).
+            systemLocaleProvider = { Locale.UK },
         )
     }
 
@@ -99,6 +104,47 @@ class SettingsRepositoryTest {
         subject.setDeliveryMode(DeliveryMode.NOTIFICATION_AND_TTS)
 
         subject.preferences.first().deliveryMode shouldBe DeliveryMode.NOTIFICATION_AND_TTS
+    }
+
+    @Test
+    fun `region defaults to SYSTEM when nothing stored`() = runTest {
+        subject.preferences.first().region shouldBe Region.SYSTEM
+    }
+
+    @Test
+    fun `setRegion round-trips`() = runTest {
+        subject.setRegion(Region.EN_US)
+        subject.preferences.first().region shouldBe Region.EN_US
+    }
+
+    @Test
+    fun `temperature default follows region locale - en-US picks Fahrenheit`() = runTest {
+        subject.setRegion(Region.EN_US)
+        subject.preferences.first().temperatureUnit shouldBe TemperatureUnit.FAHRENHEIT
+    }
+
+    @Test
+    fun `distance default follows region locale - en-US picks miles`() = runTest {
+        subject.setRegion(Region.EN_US)
+        subject.preferences.first().distanceUnit shouldBe DistanceUnit.MILES
+    }
+
+    @Test
+    fun `temperature default falls back to system locale when region is SYSTEM`() = runTest {
+        // Test setUp pins systemLocaleProvider to Locale.UK → metric.
+        subject.preferences.first().temperatureUnit shouldBe TemperatureUnit.CELSIUS
+        subject.preferences.first().distanceUnit shouldBe DistanceUnit.KILOMETERS
+    }
+
+    @Test
+    fun `explicitly chosen unit overrides the region-derived default`() = runTest {
+        subject.setRegion(Region.EN_US)
+        subject.setTemperatureUnit(TemperatureUnit.CELSIUS)
+        subject.setDistanceUnit(DistanceUnit.KILOMETERS)
+
+        val prefs = subject.preferences.first()
+        prefs.temperatureUnit shouldBe TemperatureUnit.CELSIUS
+        prefs.distanceUnit shouldBe DistanceUnit.KILOMETERS
     }
 
     @Test

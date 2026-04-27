@@ -42,7 +42,7 @@ enum class SettingsRoute(@StringRes val titleRes: Int) {
     Schedule(R.string.settings_root_schedule),
     Wardrobe(R.string.settings_root_wardrobe),
     Voice(R.string.settings_root_voice),
-    Units(R.string.settings_root_units),
+    Region(R.string.settings_root_region),
     ApiKeys(R.string.settings_root_api_keys),
     DataSources(R.string.settings_root_data_sources),
     About(R.string.settings_root_about),
@@ -134,10 +134,12 @@ fun SettingsScreen(
                 onSetElevenLabsVoice = viewModel::setElevenLabsVoice,
                 onSetVoiceLocale = viewModel::setVoiceLocale,
             )
-            SettingsRoute.Units -> UnitsContent(
+            SettingsRoute.Region -> RegionContent(
+                region = state.region,
                 temperatureUnit = state.temperatureUnit,
                 distanceUnit = state.distanceUnit,
                 padding = padding,
+                onSetRegion = viewModel::setRegion,
                 onSetTemperatureUnit = viewModel::setTemperatureUnit,
                 onSetDistanceUnit = viewModel::setDistanceUnit,
             )

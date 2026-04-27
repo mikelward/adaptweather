@@ -49,9 +49,31 @@ enum class VoiceLocale(val bcp47: String?) {
     EN_AU("en-AU"),
 }
 
+/**
+ * The user's region — drives the language used for rendered insight text and
+ * the *default* unit choices for users who haven't explicitly picked units yet.
+ *
+ * [SYSTEM] (the default) means "follow the phone's locale": the right answer
+ * for almost everyone, since their device language already encodes where they
+ * are. The explicit en-* options are for users on a phone whose locale doesn't
+ * match the region they want the app to behave as (e.g. an en-AU traveller on
+ * an en-US phone).
+ *
+ * Distinct from [VoiceLocale]: that one is specifically about the *spoken
+ * accent* of the audio playback — you might be in Australia but prefer a US
+ * voice, or vice versa. Region is the higher-level "where am I" setting.
+ */
+enum class Region(val bcp47: String?) {
+    SYSTEM(null),
+    EN_US("en-US"),
+    EN_GB("en-GB"),
+    EN_AU("en-AU"),
+}
+
 data class UserPreferences(
     val schedule: Schedule,
     val deliveryMode: DeliveryMode,
+    val region: Region = Region.SYSTEM,
     val temperatureUnit: TemperatureUnit,
     val distanceUnit: DistanceUnit,
     val wardrobeRules: List<WardrobeRule>,
