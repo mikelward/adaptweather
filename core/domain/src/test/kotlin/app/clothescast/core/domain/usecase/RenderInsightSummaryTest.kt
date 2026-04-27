@@ -315,6 +315,81 @@ class RenderInsightSummaryTest {
     }
 
     @Test
+    fun `evening tie-in fires when evening rules trigger and a qualifying event is supplied`() {
+        // Caller-side filtering (allDay/location/end-after-19:00) lives in the use-case;
+        // the renderer just trusts what it's handed.
+        val event = CalendarEvent(
+            title = "dinner",
+            start = LocalTime.of(20, 0),
+            end = LocalTime.of(22, 0),
+            location = "Trattoria",
+        )
+        val out = subject(
+            mildToday, yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningTriggeredRules = listOf(jacketRule),
+            eveningEvents = listOf(event),
+        )
+        out.shouldContain("Bring a jacket for your 20:00 dinner.")
+    }
+
+    @Test
+    fun `evening tie-in joins multiple items like the wardrobe sentence`() {
+        val event = CalendarEvent(
+            title = "concert",
+            start = LocalTime.of(21, 0),
+            end = LocalTime.of(23, 0),
+            location = "Royal Albert Hall",
+        )
+        val out = subject(
+            mildToday, yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningTriggeredRules = listOf(jacketRule, umbrellaRule),
+            eveningEvents = listOf(event),
+        )
+        out.shouldContain("Bring a jacket and umbrella for your 21:00 concert.")
+    }
+
+    @Test
+    fun `evening tie-in picks the earliest event when multiple qualify`() {
+        val late = CalendarEvent("late drinks", LocalTime.of(22, 0), LocalTime.of(23, 30), location = "Pub")
+        val early = CalendarEvent("dinner", LocalTime.of(20, 0), LocalTime.of(21, 30), location = "Trattoria")
+        val out = subject(
+            mildToday, yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningTriggeredRules = listOf(jacketRule),
+            eveningEvents = listOf(late, early),
+        )
+        out.shouldContain("for your 20:00 dinner.")
+        out.shouldNotContain("for your 22:00 late drinks.")
+    }
+
+    @Test
+    fun `evening tie-in is omitted when no evening rules trigger`() {
+        // Mild evening + going-out plans → no jacket nudge. The whole point of the
+        // rule is "you're going out *and* you'd want something extra"; it must stay
+        // quiet on a balmy night out.
+        val event = CalendarEvent("dinner", LocalTime.of(20, 0), LocalTime.of(22, 0), location = "Trattoria")
+        subject(
+            mildToday, yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningTriggeredRules = emptyList(),
+            eveningEvents = listOf(event),
+        ).shouldNotContain("Bring")
+    }
+
+    @Test
+    fun `evening tie-in is omitted when no qualifying event is supplied`() {
+        // Cold evening but the user is staying in — no nag.
+        subject(
+            mildToday, yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningTriggeredRules = listOf(jacketRule),
+            eveningEvents = emptyList(),
+        ).shouldNotContain("Bring")
+    }
+
+    @Test
     fun `temperature band classifier covers all six bands at boundaries`() {
         TemperatureBand.forCelsius(-1.0) shouldBe TemperatureBand.FREEZING
         TemperatureBand.forCelsius(3.999) shouldBe TemperatureBand.FREEZING

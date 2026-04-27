@@ -13,10 +13,15 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * Renders the daily insight summary as a deterministic single string of up to six
+ * Renders the daily insight summary as a deterministic single string of up to seven
  * short sentences, each driven by an independent rule. Replaces the previous
  * Gemini call: every sentence is template-fillable from the forecast, so the LLM
  * round trip wasn't earning its keep.
+ *
+ * The renderer speaks for the daytime slice — `[today]` and `[yesterday]` are the
+ * already-windowed forecasts (07:00–19:00). The caller is responsible for slicing
+ * before calling in; an empty hourly array on the input falls through unsliced
+ * (which is fine — the daily aggregates already approximate the daytime).
  *
  * Rules (each yields 0 or 1 sentence, joined with single spaces):
  * 1. Severe alert: highest-severity SEVERE/EXTREME → "Alert: <event>." Extreme
@@ -36,6 +41,12 @@ import kotlin.math.roundToInt
  *    is on the wardrobe list, otherwise the first triggered item. Only fires
  *    when the caller passes events; the worker only does that when the user
  *    has opted in to calendar reading.
+ * 7. Evening tie-in (optional): if the caller passes evening-triggered rules AND
+ *    qualifying evening events (filtering — non-allDay, has a location, runs past
+ *    19:00 — happens at the use-case layer), output
+ *    "Bring <items> for your <HH:MM> <title>." against the earliest such event.
+ *    Drives the "you're going out tonight, take a jacket" nudge without nagging
+ *    when the user is staying in.
  *
  * All temperature comparisons use feels-like values, matching the wardrobe rules.
  */
@@ -46,6 +57,8 @@ class RenderInsightSummary {
         todayTriggeredRules: List<WardrobeRule>,
         alerts: List<WeatherAlert> = emptyList(),
         events: List<CalendarEvent> = emptyList(),
+        eveningTriggeredRules: List<WardrobeRule> = emptyList(),
+        eveningEvents: List<CalendarEvent> = emptyList(),
     ): String = buildList {
         alertSentence(alerts)?.let { add(it) }
         add(bandSentence(today))
@@ -55,6 +68,7 @@ class RenderInsightSummary {
         val peak = peakPrecip(today)
         precipSentence(peak)?.let { add(it) }
         calendarSentence(items, peak, events)?.let { add(it) }
+        eveningSentence(eveningTriggeredRules.map { it.item }, eveningEvents)?.let { add(it) }
     }.joinToString(" ")
 
     private fun alertSentence(alerts: List<WeatherAlert>): String? {
@@ -152,6 +166,22 @@ class RenderInsightSummary {
         // take the first triggered item, mirroring rule 4's ordering.
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return "Bring ${withArticle(item)} for your ${EVENT_TIME.format(peak.time)} ${event.title}."
+    }
+
+    private fun eveningSentence(items: List<String>, events: List<CalendarEvent>): String? {
+        if (items.isEmpty() || events.isEmpty()) return null
+        val event = events.minByOrNull { it.start } ?: return null
+        val phrase = when (items.size) {
+            1 -> withArticle(items[0])
+            2 -> "${withArticle(items[0])} and ${items[1]}"
+            else -> {
+                val head = withArticle(items[0])
+                val middle = items.subList(1, items.size - 1).joinToString(", ")
+                val tail = items.last()
+                "$head, $middle, and $tail"
+            }
+        }
+        return "Bring $phrase for your ${EVENT_TIME.format(event.start)} ${event.title}."
     }
 
     private data class PeakPrecip(val time: LocalTime, val condition: WeatherCondition)

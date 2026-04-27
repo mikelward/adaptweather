@@ -244,6 +244,133 @@ class GenerateDailyInsightTest {
     }
 
     @Test
+    fun `evening tie-in fires for an evening event with a location and chilly evening hours`() = runTest {
+        val zone = ZoneId.of("Europe/London")
+        // Mild day so daytime rules stay quiet, then a cold evening that triggers
+        // the jacket rule on the evening slice.
+        val mildDayChillyNight = today.copy(
+            feelsLikeMinC = 18.0,
+            feelsLikeMaxC = 22.0,
+            precipitationProbabilityMaxPct = 5.0,
+            condition = WeatherCondition.PARTLY_CLOUDY,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(8, 0), 18.0, 18.0, 5.0, WeatherCondition.CLEAR),
+                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
+                HourlyForecast(LocalTime.of(20, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
+                HourlyForecast(LocalTime.of(22, 0), 10.0, 8.0, 5.0, WeatherCondition.CLEAR),
+            ),
+        )
+        val event = CalendarEvent(
+            title = "dinner",
+            start = LocalTime.of(20, 0),
+            end = LocalTime.of(22, 0),
+            location = "Trattoria",
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(mildDayChillyNight, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(event))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(
+            location = london,
+            prefs = prefs.copy(useCalendarEvents = true, schedule = Schedule.default(zone)),
+        )
+
+        // The default wardrobe rules trigger both jumper (<18°C) and jacket (<12°C)
+        // at this evening's feels-like, so the sentence is the multi-item form.
+        result.insight.summary.shouldContain("Bring a jumper and jacket for your 20:00 dinner.")
+        // Daytime wardrobe stays quiet — neither rule fires on the warm afternoon
+        // slice — and the day-summary recommendedItems reflects the day.
+        result.insight.recommendedItems shouldBe emptyList()
+    }
+
+    @Test
+    fun `evening tie-in is suppressed when the event has no location`() = runTest {
+        val zone = ZoneId.of("Europe/London")
+        val mildDayChillyNight = today.copy(
+            feelsLikeMinC = 18.0,
+            feelsLikeMaxC = 22.0,
+            precipitationProbabilityMaxPct = 5.0,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
+                HourlyForecast(LocalTime.of(20, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
+            ),
+        )
+        // location absent → "at home" stand-in, no nag.
+        val event = CalendarEvent("call mum", LocalTime.of(20, 0), LocalTime.of(20, 30))
+        val weather = FakeWeatherRepository(ForecastBundle(mildDayChillyNight, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(event))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(
+            location = london,
+            prefs = prefs.copy(useCalendarEvents = true, schedule = Schedule.default(zone)),
+        )
+
+        result.insight.summary.shouldNotContain("Bring")
+    }
+
+    @Test
+    fun `evening tie-in is suppressed for all-day events even when they have a location`() = runTest {
+        val zone = ZoneId.of("Europe/London")
+        val mildDayChillyNight = today.copy(
+            feelsLikeMinC = 18.0,
+            feelsLikeMaxC = 22.0,
+            precipitationProbabilityMaxPct = 5.0,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
+                HourlyForecast(LocalTime.of(20, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
+            ),
+        )
+        val holiday = CalendarEvent(
+            title = "conference",
+            start = LocalTime.MIDNIGHT,
+            end = LocalTime.MIDNIGHT,
+            location = "ExCeL London",
+            allDay = true,
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(mildDayChillyNight, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(holiday))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(
+            location = london,
+            prefs = prefs.copy(useCalendarEvents = true, schedule = Schedule.default(zone)),
+        )
+
+        result.insight.summary.shouldNotContain("Bring")
+    }
+
+    @Test
+    fun `evening tie-in is suppressed for events that end before 19_00`() = runTest {
+        val zone = ZoneId.of("Europe/London")
+        val mildDayChillyNight = today.copy(
+            feelsLikeMinC = 18.0,
+            feelsLikeMaxC = 22.0,
+            precipitationProbabilityMaxPct = 5.0,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
+                HourlyForecast(LocalTime.of(20, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
+            ),
+        )
+        val event = CalendarEvent(
+            title = "coffee",
+            start = LocalTime.of(17, 0),
+            end = LocalTime.of(18, 0),
+            location = "Cafe Nero",
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(mildDayChillyNight, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(event))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(
+            location = london,
+            prefs = prefs.copy(useCalendarEvents = true, schedule = Schedule.default(zone)),
+        )
+
+        result.insight.summary.shouldNotContain("Bring")
+    }
+
+    @Test
     fun `expired alerts are filtered before reaching the summary and the result`() = runTest {
         val stale = WeatherAlert(
             event = "Wind Advisory",
