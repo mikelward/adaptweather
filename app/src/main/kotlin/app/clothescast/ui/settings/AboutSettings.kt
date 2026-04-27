@@ -65,6 +65,10 @@ private fun AboutCard() {
             style = MaterialTheme.typography.bodyMedium,
         )
         TextButton(
+            onClick = { openUrl(context, "https://mikelward.github.io/clothescast/privacy/") },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_about_privacy_policy)) }
+        TextButton(
             onClick = { openUrl(context, "https://github.com/mikelward/clothescast") },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.settings_about_source)) }
