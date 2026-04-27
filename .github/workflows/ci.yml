@@ -356,8 +356,18 @@ jobs:
         # Push-to-main only — see "Decode upload keystore" rationale. Produces
         # app/build/outputs/bundle/release/app-release.aab signed with the upload
         # key; Play App Signing re-signs with the real signing key on download.
+        #
+        # Both DEBUG_* and UPLOAD_* env vars are passed: Gradle evaluates *all*
+        # signingConfigs at configure time, so even though `bundleRelease` only
+        # uses the release config, the debug block at app/build.gradle.kts also
+        # runs and its partial-config guard would fail the build if DEBUG_*
+        # were only partially populated. DEBUG_KEYSTORE_FILE comes via
+        # $GITHUB_ENV from the earlier decode step.
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
+          DEBUG_KEYSTORE_PASSWORD: ${{ secrets.DEBUG_KEYSTORE_PASSWORD }}
+          DEBUG_KEY_ALIAS: ${{ secrets.DEBUG_KEY_ALIAS }}
+          DEBUG_KEY_PASSWORD: ${{ secrets.DEBUG_KEY_PASSWORD }}
           UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
