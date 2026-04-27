@@ -41,15 +41,17 @@ class EvaluateClothesRulesTest {
     }
 
     @Test
-    fun `wet cold day triggers cold-weather items and umbrella`() {
+    fun `wet cold day triggers cold-weather items only`() {
+        // Defaults no longer include umbrella — the precip clause announces rain,
+        // and the wet-weather accessory will become a personalised setting.
         val triggered = subject(forecast(min = 10.0, max = 16.0, precip = 70.0), ClothesRule.DEFAULTS)
-        triggered.map { it.item }.shouldContainExactly("jumper", "jacket", "umbrella")
+        triggered.map { it.item }.shouldContainExactly("jumper", "jacket")
     }
 
     @Test
-    fun `mild wet day triggers only umbrella and jumper`() {
+    fun `mild wet day triggers only jumper`() {
         val triggered = subject(forecast(min = 14.0, max = 20.0, precip = 70.0), ClothesRule.DEFAULTS)
-        triggered.map { it.item }.shouldContainExactly("jumper", "umbrella")
+        triggered.map { it.item }.shouldContainExactly("jumper")
     }
 
     @Test
