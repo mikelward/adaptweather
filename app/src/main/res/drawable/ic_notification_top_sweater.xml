@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Notification small icon variant: sweater silhouette. Distinguished from
+    the t-shirt by a turtleneck collar (squared off above the shoulders) and
+    long sleeves with cuffs that drop further down the body. Used by
+    [InsightNotifier] when the recommended top is [OutfitSuggestion.Top.SWEATER].
+    Silhouette fills ~90% of the 24dp viewport so it reads at the same weight
+    as neighbouring status-bar icons.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,4 L9,1.5 L15,1.5 L15,4 L22.5,7 L21,18 L18,18 L17,11 L17,22 L7,22 L7,11 L6,18 L3,18 L1.5,7 Z" />
+</vector>

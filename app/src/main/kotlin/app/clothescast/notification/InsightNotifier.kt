@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.Insight
+import app.clothescast.core.domain.model.OutfitSuggestion
 
 /**
  * Posts the daily insight as a system notification. Tapping the notification opens
@@ -34,14 +35,14 @@ class InsightNotifier(private val context: Context) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
-        // TODO(notification-figure): when [insight.outfit] is non-null, render the
+        // TODO(notification-figure): when [insight.outfit] is non-null, also render the
         // outfit icons (the same ic_outfit_* drawables the Today screen shows in
-        // OutfitPreviewCard) into a Bitmap sized for Notification.LARGE_ICON_SIZE
-        // and attach via .setLargeIcon(bitmap), so the notification carries the
-        // same glanceable "what to wear today" cue without the user having to
-        // open the app.
+        // OutfitPreviewCard) into a Bitmap sized for Notification.LARGE_ICON_SIZE and
+        // attach via .setLargeIcon(bitmap), so the expanded notification carries the
+        // same glanceable "what to wear today" cue the Today screen does. The small
+        // status-bar icon below already mirrors the recommended top.
         val notification = NotificationCompat.Builder(context, CHANNEL_DAILY_INSIGHT)
-            .setSmallIcon(R.drawable.ic_notification_insight)
+            .setSmallIcon(smallIconFor(insight.outfit?.top))
             .setContentTitle(context.getString(R.string.notification_daily_insight_title))
             .setContentText(insight.summary)
             .setStyle(NotificationCompat.BigTextStyle().bigText(insight.summary))
@@ -66,5 +67,16 @@ class InsightNotifier(private val context: Context) {
     companion object {
         const val NOTIFICATION_ID_DAILY_INSIGHT = 1001
         private const val REQUEST_OPEN_APP = 100
+
+        // The status-bar silhouette mirrors the recommended top so a glance at the
+        // notification shade already says "sweater day" / "jacket day" before the
+        // user reads anything. ic_notification_insight is itself a t-shirt silhouette,
+        // so it doubles as both the TSHIRT case and the null fallback (older cached
+        // insights without an outfit, weather alerts).
+        internal fun smallIconFor(top: OutfitSuggestion.Top?): Int = when (top) {
+            OutfitSuggestion.Top.SWEATER -> R.drawable.ic_notification_top_sweater
+            OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_notification_top_thick_jacket
+            OutfitSuggestion.Top.TSHIRT, null -> R.drawable.ic_notification_insight
+        }
     }
 }
