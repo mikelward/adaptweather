@@ -100,6 +100,11 @@ class InsightFormatter {
     }
 
     private companion object {
-        private val EVENT_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        // Locale.ROOT keeps digits ASCII regardless of device locale — under e.g.
+        // Arabic locales the system default would otherwise shape "15:00" into
+        // Eastern Arabic numerals, breaking the prose contract the rest of the
+        // app expects.
+        private val EVENT_TIME: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("HH:mm").withLocale(Locale.ROOT)
     }
 }
