@@ -142,6 +142,28 @@ class GeminiTtsClientTest {
     }
 
     @Test
+    fun `request body includes a german directive for de locale`() = runTest {
+        // German is the first non-English entry in the directive table — verifies
+        // the language-only fallback (no language-COUNTRY entry) actually fires
+        // and that the model is told to read the prose as German rather than
+        // the en-default North American English.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hallo", locale = Locale.forLanguageTag("de-DE"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("Sprich auf Deutsch")
+    }
+
+    @Test
     fun `request body omits the accent directive for unknown english variants`() = runTest {
         // en-CA isn't in our supported variant list — fall through to whatever the
         // model defaults to rather than picking a wrong-but-confident accent.

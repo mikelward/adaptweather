@@ -23,6 +23,7 @@ internal interface ClothesPhraser {
         fun forLocale(resources: Resources, locale: Locale): ClothesPhraser =
             when (locale.language) {
                 "en" -> EnglishClothesPhraser(resources)
+                "de" -> GermanClothesPhraser(resources)
                 else -> BareClothesPhraser()
             }
     }
@@ -51,6 +52,33 @@ internal class EnglishClothesPhraser(private val resources: Resources) : Clothes
         else -> resources.getString(
             R.string.insight_clothes_join_many,
             withArticle(items[0]),
+            items.subList(1, items.size - 1).joinToString(", "),
+            items.last(),
+        )
+    }
+}
+
+/**
+ * German list join: items are emitted bare because we don't carry grammatical
+ * gender on each clothes rule (der/die/das ⇒ einen/eine/ein for "Trag …"), so
+ * any guessed article is wrong half the time. Items are joined with commas
+ * and a final "und"; no Oxford comma. The calendar tie-in ("Denk an …")
+ * likewise emits the item bare.
+ *
+ * A future PR could thread a gender hint through `ClothesRule` so we can
+ * pick a real article — until then, "Trag Pullover, Jacke und Regenschirm."
+ * reads naturally enough.
+ */
+internal class GermanClothesPhraser(private val resources: Resources) : ClothesPhraser {
+    override fun withArticle(item: String): String = item
+
+    override fun joinItems(items: List<String>): String = when (items.size) {
+        0 -> ""
+        1 -> items[0]
+        2 -> resources.getString(R.string.insight_clothes_join_two, items[0], items[1])
+        else -> resources.getString(
+            R.string.insight_clothes_join_many,
+            items[0],
             items.subList(1, items.size - 1).joinToString(", "),
             items.last(),
         )
