@@ -78,6 +78,15 @@ new rule the first time something bites you, not the third.
   reported number lower than the real APK's. Run `git fetch --unshallow origin
   main` once at the start of any session that will report versionCodes — the
   user has been bitten by an under-by-15 count.
+- **Keep watching merged PRs for late review comments.** Reviewers and
+  bots routinely comment *after* merge (Copilot review, human follow-up).
+  Stay subscribed to the PR's activity after the merge and handle each
+  new comment per the "say something or resolve" rule above — reply,
+  resolve, or open a follow-up PR with the fix. Stop watching once every
+  comment posted on or after the merge commit has been answered or
+  resolved, or after ~24h of silence with no new activity, whichever
+  comes first. Don't drop the watch the moment the merge button is
+  clicked.
 
 ## CI
 
