@@ -202,22 +202,25 @@ class FetchAndNotifyWorker(
     }
 
     /**
-     * Tonight delivery is event-gated:
-     *  - Notification fires every time, but on the silent channel when there are no
-     *    calendar events (no sound / no vibration), and on the default-priority
-     *    channel when there are events (plays the user's notification sound).
-     *  - TTS only speaks when there are events tonight. The user explicitly opted
-     *    in to events; if their evening is empty there's nothing to interrupt for.
+     * Tonight delivery honours the user's [DeliveryMode] (consistent with
+     * [deliverToday]) and is also event-gated:
+     *  - Notification posts only when the delivery mode includes notifications,
+     *    matching today's behaviour. The notifier still picks the silent channel
+     *    vs the default-priority channel based on whether there are calendar
+     *    events tonight.
+     *  - TTS only speaks when the delivery mode includes TTS *and* there are
+     *    events tonight. If the evening is empty there's nothing to interrupt
+     *    for, even on a TTS-enabled mode.
      */
     private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences) {
-        // The notification always posts so the user can still see the tonight
-        // insight on the lock screen even when their evening is empty.
-        app.tonightInsightNotifier.notify(insight)
+        val mode = prefs.deliveryMode
+        if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
+            app.tonightInsightNotifier.notify(insight)
+        }
         if (!insight.hasEvents) {
-            Log.i(TAG, "Tonight insight has no events; silent notification, no TTS.")
+            Log.i(TAG, "Tonight insight has no events; skipping TTS.")
             return
         }
-        val mode = prefs.deliveryMode
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
             speakWithFallback(insight.spokenText(), prefs)
         }
