@@ -52,6 +52,7 @@ import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.symbol
 import app.clothescast.core.domain.model.toUnit
+import app.clothescast.insight.InsightFormatter
 import app.clothescast.work.FetchAndNotifyWorker
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -297,6 +298,7 @@ private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom)
 
 @Composable
 internal fun InsightCard(insight: Insight) {
+    val formatter = remember { InsightFormatter() }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -309,7 +311,7 @@ internal fun InsightCard(insight: Insight) {
             )
             insight.confidence?.let { ConfidenceChip(it) }
             Text(
-                text = insight.summary,
+                text = formatter.format(insight.summary),
                 style = MaterialTheme.typography.headlineSmall,
             )
             Text(

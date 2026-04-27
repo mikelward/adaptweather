@@ -4,13 +4,19 @@ import java.time.Instant
 import java.time.LocalDate
 
 /**
- * The output of a daily generation pass: a short readable summary suitable for both
- * a notification body and TTS, plus the deterministic list of items the wardrobe rules
- * triggered. The rule-based list is intentionally separate from [summary] so callers
- * can render it without re-parsing LLM text.
+ * The output of a daily generation pass: the structured [InsightSummary] (clauses
+ * driven by the wardrobe + forecast rules) plus the deterministic list of items
+ * that triggered. The rule-based item list is kept separate from [summary] so
+ * callers can render it (e.g. icons) without going through the prose formatter.
+ *
+ * Prose rendering — both notification body and TTS — happens in the `:app` layer
+ * via the Android-side formatter, which resolves region-localized vocab, sentence
+ * templates, and time formatting from string resources. Keeping [Insight] free of
+ * prose lets the same cached payload re-render under a different region setting
+ * without re-fetching the forecast.
  */
 data class Insight(
-    val summary: String,
+    val summary: InsightSummary,
     val recommendedItems: List<String>,
     val generatedAt: Instant,
     val forDate: LocalDate,
@@ -42,12 +48,4 @@ data class Insight(
      * house tonight," which warrants a sound and TTS read-out.
      */
     val hasEvents: Boolean = false,
-) {
-    /**
-     * The text that gets spoken aloud. The summary already includes the wardrobe
-     * sentence, so this is just the summary itself. Kept as a method so callers
-     * (notification + TTS) have a single phrasing entry point if it ever needs to
-     * diverge from the rendered summary again.
-     */
-    fun spokenText(): String = summary
-}
+)

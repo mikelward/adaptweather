@@ -7,14 +7,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.ConfidenceInfo
+import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastConfidence
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Insight
+import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.OutfitSuggestion
+import app.clothescast.core.domain.model.PrecipClause
+import app.clothescast.core.domain.model.TemperatureBand
+import app.clothescast.core.domain.model.WardrobeClause
+import app.clothescast.core.domain.model.WeatherCondition
 import app.clothescast.ui.theme.ClothesCastTheme
 import app.clothescast.work.FetchAndNotifyWorker
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 
 //
 // Preview wrappers for the Today-screen composables. Two purposes:
@@ -39,7 +48,13 @@ internal fun Frame(darkTheme: Boolean = false, content: @Composable () -> Unit) 
 }
 
 private val SAMPLE_INSIGHT = Insight(
-    summary = "Today will be cool to mild. It will be 4° warmer today. Wear a jumper and umbrella. Rain at 15:00.",
+    summary = InsightSummary(
+        period = ForecastPeriod.TODAY,
+        band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
+        delta = DeltaClause(4, DeltaClause.Direction.WARMER),
+        wardrobe = WardrobeClause(listOf("jumper", "umbrella")),
+        precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
+    ),
     recommendedItems = listOf("jumper", "umbrella"),
     generatedAt = Instant.parse("2026-04-26T07:30:00Z"),
     forDate = LocalDate.of(2026, 4, 26),
