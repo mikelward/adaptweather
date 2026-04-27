@@ -50,6 +50,7 @@ import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.OutfitSuggestion
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.symbol
 import app.clothescast.core.domain.model.toUnit
@@ -134,7 +135,7 @@ private fun TodayContent(
             EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
             OutfitPreviewRow(state.insight)
-            InsightCard(state.insight)
+            InsightCard(state.insight, state.region)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
             }
@@ -336,8 +337,9 @@ private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom)
 }
 
 @Composable
-internal fun InsightCard(insight: Insight) {
-    val formatter = remember { InsightFormatter() }
+internal fun InsightCard(insight: Insight, region: Region) {
+    val context = LocalContext.current
+    val formatter = remember(context, region) { InsightFormatter.forRegion(context, region) }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),

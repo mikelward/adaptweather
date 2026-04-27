@@ -17,7 +17,6 @@ import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.OutfitSuggestion
-import app.clothescast.insight.InsightFormatter
 
 /**
  * Posts the daily insight as a system notification. Tapping the notification opens
@@ -25,14 +24,10 @@ import app.clothescast.insight.InsightFormatter
  * permission silently no-ops (the worker keeps the cached insight; the user will see it
  * in-app the next time they open the app).
  */
-class InsightNotifier(
-    private val context: Context,
-    private val formatter: InsightFormatter = InsightFormatter(),
-) {
+class InsightNotifier(private val context: Context) {
 
-    fun notify(insight: Insight) {
+    fun notify(insight: Insight, prose: String) {
         if (!hasPostNotificationPermission()) return
-        val prose = formatter.format(insight.summary)
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP

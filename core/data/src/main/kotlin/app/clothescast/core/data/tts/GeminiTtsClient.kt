@@ -40,24 +40,35 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
         "background noise, or vinyl-style texture:\n\n"
 
 /**
- * Returns a one-line accent instruction for Gemini's TTS prompt, or null when
- * the locale doesn't map to a known English variant (in which case the model's
- * default — North American English — applies).
+ * Returns a one-line accent / language instruction for Gemini's TTS prompt, or
+ * null when the locale has no entry in [ACCENT_DIRECTIVES] (in which case the
+ * model's default — North American English — applies).
  *
  * Gemini's prebuilt voices are language-agnostic and accept natural-language
  * accent steering in the same prompt that carries the spoken text. The
  * instruction is prepended to the user text alongside [GEMINI_TTS_STYLE_DIRECTIVE]
  * and is interpreted as direction, not spoken back.
+ *
+ * Lookup is two-step: an exact `language-COUNTRY` match wins (so variants like
+ * en-GB / en-AU / en-US can carry their own directive), otherwise a
+ * language-only key. Today the table holds only `language-COUNTRY` entries —
+ * the language-only branch exists for a future `de` / `fr` / etc. directive
+ * that follows the same shape. Adding a new locale is a one-line entry in
+ * [ACCENT_DIRECTIVES].
  */
 internal fun geminiAccentDirectiveFor(locale: Locale): String? {
-    if (locale.language != "en") return null
-    return when (locale.country) {
-        "GB" -> "Speak with a Standard Southern British accent."
-        "AU" -> "Speak with a General Australian accent."
-        "US" -> "Speak with a General American accent."
-        else -> null
+    val country = locale.country
+    if (country.isNotEmpty()) {
+        ACCENT_DIRECTIVES["${locale.language}-$country"]?.let { return it }
     }
+    return ACCENT_DIRECTIVES[locale.language]
 }
+
+private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
+    "en-GB" to "Speak with a Standard Southern British accent.",
+    "en-AU" to "Speak with a General Australian accent.",
+    "en-US" to "Speak with a General American accent.",
+)
 
 /**
  * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Uses the

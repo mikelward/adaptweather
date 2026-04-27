@@ -1,5 +1,7 @@
 package app.clothescast.insight
 
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
@@ -11,11 +13,22 @@ import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherCondition
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import org.junit.runner.RunWith
 import java.time.LocalTime
+import java.util.Locale
 
+/**
+ * Verifies InsightFormatter still emits the same English prose after string
+ * extraction. Runs under Robolectric so the formatter can resolve real
+ * `R.string.*` resources from the bundled strings.xml — we want the test to
+ * fail if a translator (or a future refactor) silently changes the English
+ * template, not just compare against a hand-rolled copy that would drift.
+ */
+@RunWith(AndroidJUnit4::class)
 class InsightFormatterTest {
-    private val subject = InsightFormatter()
+    private val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+    private val subject = InsightFormatter.forContext(context, Locale.ENGLISH)
 
     private fun summary(
         period: ForecastPeriod = ForecastPeriod.TODAY,

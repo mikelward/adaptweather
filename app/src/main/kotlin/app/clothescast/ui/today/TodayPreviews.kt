@@ -17,6 +17,7 @@ import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherCondition
 import app.clothescast.ui.theme.ClothesCastTheme
@@ -174,13 +175,13 @@ internal fun EmptyStatePreview() {
 @Preview(name = "Today · insight loaded", widthDp = 360)
 @Composable
 internal fun InsightCardPreview() {
-    Frame { InsightCard(SAMPLE_INSIGHT) }
+    Frame { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
 }
 
 @Preview(name = "Today · insight (dark)", widthDp = 360)
 @Composable
 internal fun InsightCardDarkPreview() {
-    Frame(darkTheme = true) { InsightCard(SAMPLE_INSIGHT) }
+    Frame(darkTheme = true) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
 }
 
 @Preview(name = "Confidence · high", widthDp = 360)
