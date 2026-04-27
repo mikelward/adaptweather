@@ -9,6 +9,11 @@ import app.clothescast.notification.NotificationIconSweaterPreview
 import app.clothescast.notification.NotificationIconTShirtPreview
 import app.clothescast.notification.NotificationIconThickJacketPreview
 import app.clothescast.ui.settings.SettingsRootPreview
+import app.clothescast.widget.WidgetEmptyPreview
+import app.clothescast.widget.WidgetTodayJacketPantsPreview
+import app.clothescast.widget.WidgetTodayTShirtShortsPreview
+import app.clothescast.widget.WidgetTonightDarkPreview
+import app.clothescast.widget.WidgetTonightSweaterPantsPreview
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -18,14 +23,16 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 //
-// Calls every preview wrapper in `TodayPreviews.kt` and captures the result to
-// PNG under `app/snapshots/` — a *tracked* path, so GitHub renders image
-// diffs natively in the PR's "Files changed" view. CI commits
-// any new/updated PNGs back to the PR branch (see ci.yml), so reviewers see
-// pixel changes inline without downloading anything. `roborazzi.test.record=true`
-// in the build script means each run re-records; the diff "gate" is just
-// "the PNGs in the repo changed". When/if a hard-fail regression gate is
-// wanted on stable surfaces, switch those tests to verifyRoborazzi*.
+// Calls every preview wrapper across the app — `ui/today/TodayPreviews.kt`,
+// `notification/NotificationIconPreviews.kt`, `ui/settings/SettingsPreviews.kt`,
+// `widget/WidgetPreviews.kt` — and captures each to PNG under
+// `app/snapshots/` — a *tracked* path, so GitHub renders image diffs natively
+// in the PR's "Files changed" view. CI commits any new/updated PNGs back to
+// the PR branch (see ci.yml), so reviewers see pixel changes inline without
+// downloading anything. `roborazzi.test.record=true` in the build script means
+// each run re-records; the diff "gate" is just "the PNGs in the repo changed".
+// When/if a hard-fail regression gate is wanted on stable surfaces, switch
+// those tests to verifyRoborazzi*.
 //
 // **Sizing:** Studio honours each `@Preview`'s `widthDp` / `heightDp` in its
 // design pane, but those parameters are *metadata* — calling the preview
@@ -35,8 +42,9 @@ import org.robolectric.annotation.GraphicsMode
 // and snapshots agree on width; vertical extent is whatever the content
 // needs at that width.
 //
-// To add a new captured state, add a `@Preview internal fun XxxPreview()`
-// in `TodayPreviews.kt` and a one-line `capture { XxxPreview() }` test below.
+// To add a new captured state, add a `@Preview internal fun XxxPreview()` to
+// the relevant `*Previews.kt` file and a one-line `capture { XxxPreview() }`
+// test below.
 //
 // Robolectric `@GraphicsMode(NATIVE)` switches to the real Skia pipeline so
 // Compose can actually rasterise. SDK is pinned so renders are reproducible
@@ -92,6 +100,12 @@ class PreviewSnapshots {
     @Test fun notification_icon_tshirt() = capture { NotificationIconTShirtPreview() }
     @Test fun notification_icon_sweater() = capture { NotificationIconSweaterPreview() }
     @Test fun notification_icon_thick_jacket() = capture { NotificationIconThickJacketPreview() }
+
+    @Test fun widget_today_tshirt_shorts() = capture { WidgetTodayTShirtShortsPreview() }
+    @Test fun widget_tonight_sweater_pants() = capture { WidgetTonightSweaterPantsPreview() }
+    @Test fun widget_today_jacket_pants() = capture { WidgetTodayJacketPantsPreview() }
+    @Test fun widget_tonight_dark() = capture { WidgetTonightDarkPreview() }
+    @Test fun widget_empty() = capture { WidgetEmptyPreview() }
 
     @Test fun settings_root() = capture { SettingsRootPreview() }
 }

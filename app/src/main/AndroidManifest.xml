@@ -77,6 +77,20 @@
             </intent-filter>
         </receiver>
 
+        <!-- Home-screen App Widget showing the current period's outfit.
+             exported=true is required for the OS launcher to bind. -->
+        <receiver
+            android:name=".widget.OutfitWidgetReceiver"
+            android:label="@string/widget_label"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/outfit_widget_info" />
+        </receiver>
+
     </application>
 
 </manifest>

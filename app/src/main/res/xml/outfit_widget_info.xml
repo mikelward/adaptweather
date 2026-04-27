@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    AppWidget metadata for the outfit widget. Sized to roughly 2x2 cells on a
+    typical launcher (110dp grid step) so the two outfit icons + label fit
+    without truncation; resizable so the user can stretch it wider on a roomier
+    home screen. updatePeriodMillis is 0 because Glance refreshes are pushed by
+    FetchAndNotifyWorker via OutfitWidget.updateAll() — no polling.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="0"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:previewImage="@drawable/ic_outfit_tshirt"
+    android:description="@string/widget_description" />
