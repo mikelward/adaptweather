@@ -19,7 +19,9 @@
     <string name="today_outfit_bottom_long_pants">Long pants</string>
 
     <string name="today_forecast_title">Hourly forecast</string>
-    <string name="today_forecast_legend">Temperature and feels-like (%1$s) by hour</string>
+    <string name="today_forecast_min_max">Feels like %1$d – %2$d%3$s · Air %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Feels-like (%1$s) by hour · tap to switch to air temperature</string>
+    <string name="today_forecast_legend_air">Air temperature (%1$s) by hour · tap to switch to feels-like</string>
 
     <string name="today_confidence_high">High confidence — major models agree</string>
     <string name="today_confidence_medium">Medium confidence</string>

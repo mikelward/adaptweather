@@ -1,6 +1,7 @@
 package app.clothescast.ui.today
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Image
@@ -46,11 +51,13 @@ import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.symbol
+import app.clothescast.core.domain.model.toUnit
 import app.clothescast.work.FetchAndNotifyWorker
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -357,7 +364,25 @@ internal fun ConfidenceChip(info: ConfidenceInfo) {
 
 @Composable
 private fun ForecastCard(hourly: List<HourlyForecast>, temperatureUnit: TemperatureUnit) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    // Default to feels-like — matches the band classification the user sees in the
+    // summary sentence. Tap anywhere on the card to flip to raw 2 m air, which is
+    // typically what other weather apps lead with. We surface min/max for both
+    // either way so the comparison is always visible without a tap.
+    var showFeelsLike by rememberSaveable { mutableStateOf(true) }
+
+    val symbol = temperatureUnit.symbol()
+    val feelsLikeMinMax = remember(hourly, temperatureUnit) {
+        formatMinMax(hourly.map { it.feelsLikeC }, temperatureUnit)
+    }
+    val airMinMax = remember(hourly, temperatureUnit) {
+        formatMinMax(hourly.map { it.temperatureC }, temperatureUnit)
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { showFeelsLike = !showFeelsLike },
+    ) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -366,14 +391,39 @@ private fun ForecastCard(hourly: List<HourlyForecast>, temperatureUnit: Temperat
                 text = stringResource(R.string.today_forecast_title),
                 style = MaterialTheme.typography.titleSmall,
             )
-            ForecastChart(hourly = hourly, temperatureUnit = temperatureUnit)
+            if (feelsLikeMinMax != null && airMinMax != null) {
+                Text(
+                    text = stringResource(
+                        R.string.today_forecast_min_max,
+                        feelsLikeMinMax.first, feelsLikeMinMax.second, symbol,
+                        airMinMax.first, airMinMax.second, symbol,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            ForecastChart(
+                hourly = hourly,
+                temperatureUnit = temperatureUnit,
+                showFeelsLike = showFeelsLike,
+            )
+            val legendRes = if (showFeelsLike) {
+                R.string.today_forecast_legend_feels_like
+            } else {
+                R.string.today_forecast_legend_air
+            }
             Text(
-                text = stringResource(R.string.today_forecast_legend, temperatureUnit.symbol()),
+                text = stringResource(legendRes, symbol),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
+}
+
+private fun formatMinMax(values: List<Double>, unit: TemperatureUnit): Pair<Int, Int>? {
+    if (values.isEmpty()) return null
+    val converted = values.map { it.toUnit(unit) }
+    return converted.min().roundToInt() to converted.max().roundToInt()
 }
 
 private fun triggerRefresh(context: android.content.Context) {
