@@ -13,6 +13,7 @@ import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.NextPeriodClause
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WardrobeClause
@@ -177,6 +178,10 @@ class InsightCacheTest {
                 wardrobe = WardrobeClause(listOf("jumper", "jacket", "shorts", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
                 calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
+                nextPeriod = NextPeriodClause(
+                    precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(22, 0)),
+                    isColder = true,
+                ),
             ),
         )
 

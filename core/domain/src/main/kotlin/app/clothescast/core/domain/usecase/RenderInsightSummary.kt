@@ -9,6 +9,7 @@ import app.clothescast.core.domain.model.DailyForecast
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.NextPeriodClause
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WardrobeClause
@@ -39,6 +40,11 @@ import kotlin.math.roundToInt
  * 6. [CalendarTieInClause] — when wardrobe + precip both fired AND a calendar
  *    event overlaps the precip peak hour. Picks "umbrella" when on the wardrobe
  *    list, otherwise the first triggered item, mirroring rule 4's ordering.
+ * 7. [NextPeriodClause] — forward-looking heads-up about the *next* period
+ *    (tonight, after a TODAY pass; tomorrow daytime, after a TONIGHT pass).
+ *    Only emitted when the next period carries precip (≥30%) or is at least 3°C
+ *    colder (feels-like min) than the current period — quiet, normal-cycle
+ *    transitions stay silent.
  *
  * All temperature comparisons use feels-like values, matching the wardrobe rules.
  */
@@ -50,6 +56,7 @@ class RenderInsightSummary {
         alerts: List<WeatherAlert> = emptyList(),
         events: List<CalendarEvent> = emptyList(),
         period: ForecastPeriod = ForecastPeriod.TODAY,
+        next: DailyForecast? = null,
     ): InsightSummary {
         val items = todayTriggeredRules.map { it.item }
         val peak = peakPrecip(today)
@@ -61,6 +68,7 @@ class RenderInsightSummary {
             wardrobe = wardrobeClause(items),
             precip = peak?.let { PrecipClause(it.condition, it.time) },
             calendarTieIn = calendarTieInClause(items, peak, events),
+            nextPeriod = nextPeriodClause(today, next),
         )
     }
 
@@ -111,6 +119,22 @@ class RenderInsightSummary {
             condition = if (peak.condition == WeatherCondition.UNKNOWN) today.condition else peak.condition
         }
         return PeakPrecip(time, condition)
+    }
+
+    private fun nextPeriodClause(
+        current: DailyForecast,
+        next: DailyForecast?,
+    ): NextPeriodClause? {
+        if (next == null) return null
+        val nextPeak = peakPrecip(next)
+        val precipClause = nextPeak?.let { PrecipClause(it.condition, it.time) }
+        // ≥3°C feels-like-min drop, calibrated against the *current* period's min
+        // (not yesterday or some absolute floor) so the clause fires on a real
+        // cooling trend rather than the routine night-vs-day cycle. Same threshold
+        // as the existing [DeltaClause] rule for consistency.
+        val isColder = next.feelsLikeMinC <= current.feelsLikeMinC - 3.0
+        if (precipClause == null && !isColder) return null
+        return NextPeriodClause(precip = precipClause, isColder = isColder)
     }
 
     private fun calendarTieInClause(

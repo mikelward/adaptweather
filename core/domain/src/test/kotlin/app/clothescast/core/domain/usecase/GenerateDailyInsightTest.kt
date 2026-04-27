@@ -519,6 +519,110 @@ class GenerateDailyInsightTest {
     }
 
     @Test
+    fun `today period emits next-period clause for tonight when overnight is rainy`() = runTest {
+        val todayHourly = listOf(
+            HourlyForecast(LocalTime.of(9, 0), 18.0, 18.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
+            // 22:00 is in the tonight window (≥ 19:00) — drives the next-period rule.
+            HourlyForecast(LocalTime.of(22, 0), 16.0, 16.0, 70.0, WeatherCondition.RAIN),
+        )
+        val todayWithHourly = today.copy(hourly = todayHourly)
+        val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TODAY)
+
+        val next = result.insight.summary.nextPeriod
+        next.shouldNotBeNull()
+        next!!.precip.shouldNotBeNull()
+        next.precip!!.condition shouldBe WeatherCondition.RAIN
+        next.precip!!.time shouldBe LocalTime.of(22, 0)
+    }
+
+    @Test
+    fun `today period emits next-period clause when tonight is at least 3 degrees colder`() = runTest {
+        val todayHourly = listOf(
+            // Daytime range 9→18°C feels-like.
+            HourlyForecast(LocalTime.of(9, 0), 12.0, 9.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 18.0, 5.0, WeatherCondition.CLEAR),
+            // Overnight feels-like 4°C — daytime min 9°C, so a 5°C drop, well over 3°C.
+            HourlyForecast(LocalTime.of(22, 0), 8.0, 4.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val todayWithHourly = today.copy(hourly = todayHourly)
+        val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TODAY)
+
+        val next = result.insight.summary.nextPeriod
+        next.shouldNotBeNull()
+        next!!.isColder shouldBe true
+        next.precip.shouldBeNull()
+    }
+
+    @Test
+    fun `today period omits next-period clause on a quiet evening (no rain, only normal night cooling)`() = runTest {
+        val todayHourly = listOf(
+            HourlyForecast(LocalTime.of(9, 0), 18.0, 18.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
+            // Overnight feels-like 16°C — 2°C below daytime min, doesn't cross threshold.
+            HourlyForecast(LocalTime.of(22, 0), 18.0, 16.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val todayWithHourly = today.copy(hourly = todayHourly)
+        val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TODAY)
+
+        result.insight.summary.nextPeriod.shouldBeNull()
+    }
+
+    @Test
+    fun `tonight period emits next-period clause for tomorrow when tomorrow daytime is rainy`() = runTest {
+        val tomorrow = DailyForecast(
+            date = LocalDate.of(2026, 4, 26),
+            temperatureMinC = 10.0,
+            temperatureMaxC = 20.0,
+            feelsLikeMinC = 8.0,
+            feelsLikeMaxC = 18.0,
+            precipitationProbabilityMaxPct = 70.0,
+            precipitationMmTotal = 3.0,
+            condition = WeatherCondition.RAIN,
+        )
+        val tomorrowHourly = listOf(
+            // Pre-dawn (in tonight window, < 07:00) — must not drive the next-clause.
+            HourlyForecast(LocalTime.of(3, 0), 6.0, 4.0, 5.0, WeatherCondition.CLEAR),
+            // Daytime — drives the next-clause.
+            HourlyForecast(LocalTime.of(10, 0), 14.0, 12.0, 70.0, WeatherCondition.RAIN),
+            HourlyForecast(LocalTime.of(15, 0), 18.0, 16.0, 30.0, WeatherCondition.PARTLY_CLOUDY),
+        )
+        val weather = FakeWeatherRepository(
+            ForecastBundle(today, yesterday, tomorrow = tomorrow, tomorrowHourly = tomorrowHourly),
+        )
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TONIGHT)
+
+        val next = result.insight.summary.nextPeriod
+        next.shouldNotBeNull()
+        next!!.precip.shouldNotBeNull()
+        next.precip!!.condition shouldBe WeatherCondition.RAIN
+        next.precip!!.time shouldBe LocalTime.of(10, 0)
+    }
+
+    @Test
+    fun `tonight period omits next-period clause when tomorrow daily is unavailable`() = runTest {
+        // Legacy forecast_days=1 path — bundle has no tomorrow data, so the
+        // tonight insight has nothing to compare against.
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TONIGHT)
+
+        result.insight.summary.nextPeriod.shouldBeNull()
+    }
+
+    @Test
     fun `expired alerts are filtered before reaching the summary and the result`() = runTest {
         val stale = WeatherAlert(
             event = "Wind Advisory",

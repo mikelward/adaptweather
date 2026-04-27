@@ -72,6 +72,19 @@ class GenerateDailyInsight(
                 ?.let { OutfitSuggestion.fromForecast(it) }
             ForecastPeriod.TONIGHT -> bundle.tomorrow?.let { OutfitSuggestion.fromForecast(it) }
         }
+        // For the next-period text clause ("Tonight: rain at 22:00 and cooler.")
+        // we want apples-to-apples slices: TODAY's daytime vs TONIGHT's overnight,
+        // or TONIGHT's overnight vs tomorrow's *daytime*. The TONIGHT direction
+        // slices `bundle.tomorrow` to its daytime window — comparing against the
+        // raw 24h aggregates would mix in tomorrow's next-overnight low and
+        // falsely trigger the colder rule on every evening insight.
+        val nextForecast: DailyForecast? = when (period) {
+            ForecastPeriod.TODAY -> tonightForecast.takeIf { it.hourly.isNotEmpty() }
+            ForecastPeriod.TONIGHT -> bundle.tomorrow
+                ?.copy(hourly = bundle.tomorrowHourly)
+                ?.slicedForToday(morningStart = morningStart, eveningEnd = tonightStart)
+                ?.takeIf { it.hourly.isNotEmpty() }
+        }
         val todayTriggered = evaluateWardrobeRules(periodForecast, prefs.wardrobeRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
         // Failures (missing permission, provider crash) degrade to no events so a
@@ -94,6 +107,7 @@ class GenerateDailyInsight(
             alerts = activeAlerts,
             events = periodEvents,
             period = period,
+            next = nextForecast,
         )
         val insight = Insight(
             summary = summary,

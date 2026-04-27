@@ -29,6 +29,7 @@ data class InsightSummary(
     val wardrobe: WardrobeClause? = null,
     val precip: PrecipClause? = null,
     val calendarTieIn: CalendarTieInClause? = null,
+    val nextPeriod: NextPeriodClause? = null,
 )
 
 /**
@@ -79,6 +80,32 @@ data class CalendarTieInClause(
     val time: LocalTime,
     val title: String,
 )
+
+/**
+ * Forward-looking heads-up about the *next* period (TONIGHT after a TODAY pass,
+ * tomorrow daytime after a TONIGHT pass). Only emitted when the next period
+ * carries something the user actually needs to know about — precipitation
+ * (≥30% peak) or a notable cooling (next-period feels-like min at least 3°C
+ * lower than the current period's). Otherwise null, so quiet evenings don't get
+ * a noisy "Tonight: cooler." appendix every night when the temperature drops 5°C
+ * just because that's how nights work — the threshold is calibrated against the
+ * *current* period's min, so the clause fires on a real cold front, not the
+ * normal day-night cycle.
+ *
+ * Both signals can co-occur ("Tonight: rain at 22:00 and cooler."). The formatter
+ * picks the lead phrase from [InsightSummary.period]: TODAY's next is rendered
+ * "Tonight"; TONIGHT's is "Tomorrow".
+ */
+data class NextPeriodClause(
+    val precip: PrecipClause? = null,
+    val isColder: Boolean = false,
+) {
+    init {
+        require(precip != null || isColder) {
+            "NextPeriodClause must carry at least one signal (precip or isColder)"
+        }
+    }
+}
 
 /**
  * Bands classify a feels-like temperature (°C) into a glanceable label. Boundaries
