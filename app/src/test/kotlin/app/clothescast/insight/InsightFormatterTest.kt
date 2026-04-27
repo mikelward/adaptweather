@@ -199,4 +199,55 @@ class InsightFormatterTest {
         out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer today. " +
             "Wear a jumper and umbrella. Rain at 3pm."
     }
+
+    // ---------------------------------------------------------------------
+    // German locale — picks up values-de/strings.xml + GermanClothesPhraser.
+    // Spot-checks rather than mirroring every English case: the goal is to
+    // confirm the localized resources are actually wired through and that
+    // GermanClothesPhraser's bare-with-und join produces idiomatic prose.
+    // ---------------------------------------------------------------------
+
+    private val germanSubject = InsightFormatter.forContext(context, Locale.GERMAN)
+
+    @Test
+    fun `de — single band reads 'Heute wird es mild'`() {
+        germanSubject.format(summary()) shouldBe "Heute wird es mild."
+    }
+
+    @Test
+    fun `de — band range uses 'bis'`() {
+        germanSubject.format(summary(band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD))) shouldBe
+            "Heute wird es kühl bis mild."
+    }
+
+    @Test
+    fun `de — tonight lead-in becomes 'Heute Abend'`() {
+        germanSubject.format(summary(period = ForecastPeriod.TONIGHT)) shouldBe
+            "Heute Abend wird es mild."
+    }
+
+    @Test
+    fun `de — clothes list is bare comma + und with no articles`() {
+        germanSubject.format(
+            summary(clothes = ClothesClause(listOf("Pullover", "Jacke", "Regenschirm"))),
+        ) shouldBe "Heute wird es mild. Trag Pullover, Jacke und Regenschirm."
+    }
+
+    @Test
+    fun `de — precip uses 'um' between condition and time`() {
+        germanSubject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)))) shouldBe
+            "Heute wird es mild. Regen um 15:00."
+    }
+
+    @Test
+    fun `de — calendar tie-in reorders args via positional placeholders`() {
+        val out = germanSubject.format(
+            summary(
+                clothes = ClothesClause(listOf("Regenschirm")),
+                calendarTieIn = CalendarTieInClause("Regenschirm", LocalTime.of(15, 0), "Park-Lauf"),
+            ),
+        )
+        out shouldBe "Heute wird es mild. Trag Regenschirm. " +
+            "Denk an Regenschirm für Park-Lauf um 15:00."
+    }
 }

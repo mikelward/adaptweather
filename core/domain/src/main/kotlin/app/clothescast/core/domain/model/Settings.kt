@@ -51,6 +51,7 @@ enum class VoiceLocale(val bcp47: String?) {
     EN_US("en-US"),
     EN_GB("en-GB"),
     EN_AU("en-AU"),
+    DE_DE("de-DE"),
 }
 
 /**
@@ -72,6 +73,7 @@ enum class Region(val bcp47: String?) {
     EN_US("en-US"),
     EN_GB("en-GB"),
     EN_AU("en-AU"),
+    DE_DE("de-DE"),
 }
 
 data class UserPreferences(
