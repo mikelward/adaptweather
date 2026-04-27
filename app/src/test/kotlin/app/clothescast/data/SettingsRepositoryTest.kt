@@ -171,10 +171,15 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `setClothesRules with empty list persists empty list, not defaults`() = runTest {
+    fun `setClothesRules with empty list reads back as defaults`() = runTest {
+        // An empty stored list — whether set deliberately or left over from the
+        // editable-UI era when a user deleted all their rules — is treated as
+        // "no rules configured" and resolves to DEFAULTS at read time. Editing
+        // is locked (ClothesSettings is read-only), so otherwise such a user
+        // would have no way to recover the defaults.
         subject.setClothesRules(emptyList())
 
-        subject.preferences.first().clothesRules shouldBe emptyList()
+        subject.preferences.first().clothesRules shouldBe ClothesRule.DEFAULTS
     }
 
     @Test
