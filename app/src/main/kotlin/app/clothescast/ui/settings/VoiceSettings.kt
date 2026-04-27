@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
+import app.clothescast.insight.InsightFormatter
 import app.clothescast.tts.ELEVENLABS_VOICES
 import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GEMINI_VOICES
@@ -342,7 +343,7 @@ private suspend fun runTtsPreview(
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
         val text = app.insightCache.latest.first()
-            ?.let { app.clothescast.insight.InsightFormatter().format(it.summary) }
+            ?.let { InsightFormatter().format(it.summary) }
             ?: context.getString(R.string.settings_tts_test_sample)
         val locale = voiceLocale.resolve()
         try {
