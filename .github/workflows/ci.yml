@@ -319,6 +319,53 @@ jobs:
           set -o pipefail
           ./gradlew :app:assembleDebug --stacktrace --info 2>&1 | tee /tmp/android-build.log
 
+      - name: Upload debug APK
+        # Up here, before the release-AAB steps, so a bundleRelease failure
+        # doesn't gate this artifact behind a now-failed `success()`.
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Distribute via Firebase App Distribution
+        # On push to main only — feature-branch CI runs would otherwise spam
+        # testers with WIP builds. Skipped when secrets aren't set so the build
+        # still finishes on a fresh repo / fork. The env vars referenced here
+        # are populated at the job level (see env: block above) — the secrets
+        # context isn't allowed in step `if:` and step-level env isn't in scope.
+        #
+        # Ordered before the release-AAB steps so a bundleRelease failure on
+        # main doesn't skip FAD distribution under the `success()` gate — debug
+        # testers get the build either way; only the Play AAB artifact is lost.
+        if: |
+          success() &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main' &&
+          env.FIREBASE_APP_ID != '' &&
+          env.FIREBASE_SERVICE_ACCOUNT_JSON != ''
+        # Pinned to a specific commit SHA (rather than the floating @v1 tag) so
+        # a compromised upstream release can't silently swap in malicious code
+        # on our next CI run. Bump deliberately. SHA below is wzieba/Firebase-
+        # Distribution-Github-Action v1.7.1.
+        uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6 # v1.7.1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          # Tester group must exist in Firebase App Distribution console — see
+          # docs/firebase-app-distribution.md. "testers" is the convention; rename
+          # there + here together if you change it.
+          groups: testers
+          file: app/build/outputs/apk/debug/app-debug.apk
+          # Push notification on the tester's phone shows the first ~60 chars
+          # of these notes, so put the most useful info first. Commit subject
+          # is normally that.
+          releaseNotes: |
+            ${{ github.event.head_commit.message }}
+            ---
+            Build: ${{ github.run_number }} · ${{ github.sha }}
+
       - name: Decode upload keystore from secret
         # Push-to-main only. PR builds (incl. forks) skip — forks don't have the
         # secret, and even non-fork PRs don't need to burn ~3min signing a release
@@ -442,44 +489,3 @@ jobs:
           name: android-build-log
           path: /tmp/android-build.log
           retention-days: 14
-
-      - name: Upload debug APK
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
-          retention-days: 14
-
-      - name: Distribute via Firebase App Distribution
-        # On push to main only — feature-branch CI runs would otherwise spam
-        # testers with WIP builds. Skipped when secrets aren't set so the build
-        # still finishes on a fresh repo / fork. The env vars referenced here
-        # are populated at the job level (see env: block above) — the secrets
-        # context isn't allowed in step `if:` and step-level env isn't in scope.
-        if: |
-          success() &&
-          github.event_name == 'push' &&
-          github.ref == 'refs/heads/main' &&
-          env.FIREBASE_APP_ID != '' &&
-          env.FIREBASE_SERVICE_ACCOUNT_JSON != ''
-        # Pinned to a specific commit SHA (rather than the floating @v1 tag) so
-        # a compromised upstream release can't silently swap in malicious code
-        # on our next CI run. Bump deliberately. SHA below is wzieba/Firebase-
-        # Distribution-Github-Action v1.7.1.
-        uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6 # v1.7.1
-        with:
-          appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          # Tester group must exist in Firebase App Distribution console — see
-          # docs/firebase-app-distribution.md. "testers" is the convention; rename
-          # there + here together if you change it.
-          groups: testers
-          file: app/build/outputs/apk/debug/app-debug.apk
-          # Push notification on the tester's phone shows the first ~60 chars
-          # of these notes, so put the most useful info first. Commit subject
-          # is normally that.
-          releaseNotes: |
-            ${{ github.event.head_commit.message }}
-            ---
-            Build: ${{ github.run_number }} · ${{ github.sha }}
