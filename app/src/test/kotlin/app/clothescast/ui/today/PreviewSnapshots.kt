@@ -5,6 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.clothescast.notification.NotificationIconSweaterPreview
+import app.clothescast.notification.NotificationIconTShirtPreview
+import app.clothescast.notification.NotificationIconThickJacketPreview
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -82,4 +85,8 @@ class PreviewSnapshots {
 
     @Test fun work_status_running() = capture { WorkStatusRunningPreview() }
     @Test fun work_status_failed() = capture { WorkStatusFailedPreview() }
+
+    @Test fun notification_icon_tshirt() = capture { NotificationIconTShirtPreview() }
+    @Test fun notification_icon_sweater() = capture { NotificationIconSweaterPreview() }
+    @Test fun notification_icon_thick_jacket() = capture { NotificationIconThickJacketPreview() }
 }
