@@ -8,10 +8,12 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * Maps an [OpenMeteoResponse] (queried with past_days=1&forecast_days=1) into a
- * [ForecastBundle]. Index 0 in the daily arrays is yesterday, index 1 is today.
- * The hourly stream covers both days; we only attach today's hours to the today
- * forecast (yesterday's hourlies are not needed by the prompt).
+ * Maps an [OpenMeteoResponse] (queried with past_days=1&forecast_days=2) into a
+ * [ForecastBundle]. Index 0 in the daily arrays is yesterday, index 1 is today;
+ * tomorrow (index 2) is fetched only so the hourly stream reliably reaches end of
+ * today, and is otherwise discarded. The hourly stream covers all three days; we
+ * filter to today's date for the today forecast (yesterday's and tomorrow's
+ * hourlies are not needed downstream).
  */
 internal object OpenMeteoMapper {
     fun toBundle(response: OpenMeteoResponse): ForecastBundle {
