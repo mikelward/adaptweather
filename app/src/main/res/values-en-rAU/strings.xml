@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    en-AU overrides: Australia uses the same `jumper` vocabulary as the UK for
+    a `sweater`. Other items happen to match en-US (umbrella, shorts) so they
+    fall through to `values/`.
+-->
+<resources>
+    <string name="wardrobe_item_sweater">jumper</string>
+    <string name="wardrobe_phrase_sweater">a jumper</string>
+</resources>

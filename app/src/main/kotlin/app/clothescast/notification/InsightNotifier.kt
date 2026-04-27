@@ -17,6 +17,7 @@ import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.OutfitSuggestion
+import app.clothescast.core.domain.model.Region
 import app.clothescast.insight.InsightFormatter
 
 /**
@@ -27,12 +28,12 @@ import app.clothescast.insight.InsightFormatter
  */
 class InsightNotifier(
     private val context: Context,
-    private val formatter: InsightFormatter = InsightFormatter(),
+    private val formatter: InsightFormatter = InsightFormatter(context),
 ) {
 
-    fun notify(insight: Insight) {
+    fun notify(insight: Insight, region: Region = Region.AUTO) {
         if (!hasPostNotificationPermission()) return
-        val prose = formatter.format(insight.summary)
+        val prose = formatter.format(insight.summary, region)
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP

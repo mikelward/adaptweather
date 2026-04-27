@@ -67,16 +67,27 @@ class WardrobeRuleTest {
     }
 
     @Test
-    fun `defaults cover the four MVP cases`() {
+    fun `defaults cover the four MVP cases with US baseline keys`() {
+        // Item names are stored as US baseline keys; UK / AU users see "jumper"
+        // through the :app-side resource lookup, not by changing this domain
+        // default.
         val items = WardrobeRule.DEFAULTS.map { it.item }
-        items shouldBe listOf("jumper", "jacket", "shorts", "umbrella")
+        items shouldBe listOf("sweater", "jacket", "shorts", "umbrella")
     }
 
     @Test
-    fun `cold morning warm afternoon triggers both jumper and shorts`() {
+    fun `cold morning warm afternoon triggers sweater + jacket + shorts`() {
         // Realistic spring day: chilly start, warm peak.
         val day = forecast(min = 8.0, max = 25.0)
         val triggered = WardrobeRule.DEFAULTS.filter { it.appliesTo(day) }.map { it.item }
-        triggered shouldBe listOf("jumper", "jacket", "shorts")
+        triggered shouldBe listOf("sweater", "jacket", "shorts")
+    }
+
+    @Test
+    fun `legacy defaults are preserved for the SettingsRepository migration to detect`() {
+        // The exact-match migration in SettingsRepository.parseRules relies on
+        // this constant matching what was on disk before the localization landed.
+        val items = WardrobeRule.LEGACY_JUMPER_DEFAULTS.map { it.item }
+        items shouldBe listOf("jumper", "jacket", "shorts", "umbrella")
     }
 }

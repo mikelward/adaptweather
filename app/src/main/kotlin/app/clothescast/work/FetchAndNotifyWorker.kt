@@ -50,7 +50,7 @@ class FetchAndNotifyWorker(
     private val app: ClothesCastApplication
         get() = applicationContext as ClothesCastApplication
 
-    private val formatter = InsightFormatter()
+    private val formatter by lazy { InsightFormatter(applicationContext) }
 
     override suspend fun doWork(): Result {
         val prefs = try {
@@ -137,7 +137,7 @@ class FetchAndNotifyWorker(
             runCatching { app.insightCache.store(insight) }
                 .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
             deliver(insight, prefs)
-            Log.i(TAG, "Insight delivered for ${insight.forDate}: ${formatter.format(insight.summary)}")
+            Log.i(TAG, "Insight delivered for ${insight.forDate}: ${formatter.format(insight.summary, prefs.region)}")
             Result.success()
         } catch (e: ResponseException) {
             // OpenMeteo 4xx → fail; 5xx → retry with backoff.
@@ -189,10 +189,10 @@ class FetchAndNotifyWorker(
     private suspend fun deliverToday(insight: Insight, prefs: UserPreferences) {
         val mode = prefs.deliveryMode
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            app.insightNotifier.notify(insight)
+            app.insightNotifier.notify(insight, prefs.region)
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(formatter.format(insight.summary), prefs)
+            speakWithFallback(formatter.format(insight.summary, prefs.region), prefs)
         }
     }
 
@@ -210,14 +210,14 @@ class FetchAndNotifyWorker(
     private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences) {
         val mode = prefs.deliveryMode
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            app.tonightInsightNotifier.notify(insight)
+            app.tonightInsightNotifier.notify(insight, prefs.region)
         }
         if (!insight.hasEvents) {
             Log.i(TAG, "Tonight insight has no events; skipping TTS.")
             return
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(formatter.format(insight.summary), prefs)
+            speakWithFallback(formatter.format(insight.summary, prefs.region), prefs)
         }
     }
 

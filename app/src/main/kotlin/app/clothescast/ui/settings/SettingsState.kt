@@ -3,6 +3,7 @@ package app.clothescast.ui.settings
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
@@ -36,6 +37,7 @@ data class SettingsState(
     val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val useCalendarEvents: Boolean = false,
+    val region: Region = Region.AUTO,
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,
     val elevenLabsKeyConfigured: Boolean = false,

@@ -49,6 +49,7 @@ import app.clothescast.core.domain.model.ForecastConfidence
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.OutfitSuggestion
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.symbol
 import app.clothescast.core.domain.model.toUnit
@@ -133,7 +134,7 @@ private fun TodayContent(
             EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
             state.insight.outfit?.let { OutfitPreviewCard(it) }
-            InsightCard(state.insight)
+            InsightCard(state.insight, region = state.region)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
             }
@@ -297,8 +298,9 @@ private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom)
 }
 
 @Composable
-internal fun InsightCard(insight: Insight) {
-    val formatter = remember { InsightFormatter() }
+internal fun InsightCard(insight: Insight, region: Region = Region.AUTO) {
+    val context = LocalContext.current
+    val formatter = remember(context) { InsightFormatter(context) }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -311,7 +313,7 @@ internal fun InsightCard(insight: Insight) {
             )
             insight.confidence?.let { ConfidenceChip(it) }
             Text(
-                text = formatter.format(insight.summary),
+                text = formatter.format(insight.summary, region),
                 style = MaterialTheme.typography.headlineSmall,
             )
             Text(

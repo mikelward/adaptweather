@@ -342,8 +342,9 @@ private suspend fun runTtsPreview(
     // suspends off-Main internally, but AudioTrack.write/play are JNI calls and
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
+        val region = app.settingsRepository.preferences.first().region
         val text = app.insightCache.latest.first()
-            ?.let { InsightFormatter().format(it.summary) }
+            ?.let { InsightFormatter(context).format(it.summary, region) }
             ?: context.getString(R.string.settings_tts_test_sample)
         val locale = voiceLocale.resolve()
         try {

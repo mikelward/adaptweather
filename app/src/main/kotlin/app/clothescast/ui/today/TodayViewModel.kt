@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import app.clothescast.core.domain.model.Insight
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.data.InsightCache
 import app.clothescast.data.SettingsRepository
@@ -19,6 +20,7 @@ data class TodayState(
     val insight: Insight? = null,
     val workStatus: WorkStatus = WorkStatus.Idle,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
+    val region: Region = Region.AUTO,
 )
 
 sealed class WorkStatus {
@@ -41,6 +43,7 @@ class TodayViewModel(
             insight = insight,
             workStatus = workInfos.toStatus(),
             temperatureUnit = prefs.temperatureUnit,
+            region = prefs.region,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 

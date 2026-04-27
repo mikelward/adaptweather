@@ -206,4 +206,51 @@
     <string name="settings_about_privacy">Your Gemini API key (used for spoken-aloud TTS) is encrypted at rest using a key bound to the Android Keystore. Forecasts come from Open-Meteo (no key, no account); the daily summary text is rendered locally on-device. ClothesCast does not have a backend — nothing is sent to any server we control.</string>
     <string name="settings_about_source">Source code on GitHub</string>
     <string name="settings_about_dontkillmyapp">Background restrictions (dontkillmyapp.com)</string>
+
+    <!--
+        Region-localized wardrobe vocabulary. Resource names use the US English
+        baseline ("sweater", "umbrella") as keys so a UK / AU translator can
+        override only the values that differ. Two forms exist for each item:
+
+         - wardrobe_item_<key>: bare noun, used in the calendar tie-in clause
+           ("Bring an umbrella for your 15:00 park run.").
+         - wardrobe_phrase_<key>: article + noun for the head of the wardrobe
+           clause ("Wear an umbrella."). Plural-looking items take no article
+           ("shorts" -> "shorts", not "a shorts"); en-GB / en-AU overrides do
+           the article work themselves so the formatter doesn\'t need a
+           second-guess heuristic on regional noun forms.
+
+        Free-form items the user types into a custom rule have no resource
+        match and fall through to the literal string with the formatter\'s
+        a / an / no-article heuristic.
+    -->
+    <string name="wardrobe_item_sweater">sweater</string>
+    <string name="wardrobe_item_jacket">jacket</string>
+    <string name="wardrobe_item_shorts">shorts</string>
+    <string name="wardrobe_item_umbrella">umbrella</string>
+
+    <string name="wardrobe_phrase_sweater">a sweater</string>
+    <string name="wardrobe_phrase_jacket">a jacket</string>
+    <string name="wardrobe_phrase_shorts">shorts</string>
+    <string name="wardrobe_phrase_umbrella">an umbrella</string>
+
+    <!--
+        Feels-like temperature band labels. Currently identical across all
+        English regions; kept as resources so future tweaks (e.g. en-AU
+        "scorching" instead of "hot") can override here without touching the
+        formatter.
+    -->
+    <string name="temperature_band_freezing">freezing</string>
+    <string name="temperature_band_cold">cold</string>
+    <string name="temperature_band_cool">cool</string>
+    <string name="temperature_band_mild">mild</string>
+    <string name="temperature_band_warm">warm</string>
+    <string name="temperature_band_hot">hot</string>
+
+    <string name="settings_region_title">Region</string>
+    <string name="settings_region_description">Picks the English variant used in the morning and tonight summaries — affects vocabulary like \"sweater\" (US) vs \"jumper\" (UK / AU).</string>
+    <string name="settings_region_auto">Auto (follow phone language)</string>
+    <string name="settings_region_us">United States · sweater, umbrella</string>
+    <string name="settings_region_uk">United Kingdom · jumper, umbrella</string>
+    <string name="settings_region_au">Australia · jumper, umbrella</string>
 </resources>
