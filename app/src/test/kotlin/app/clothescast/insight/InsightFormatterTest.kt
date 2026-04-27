@@ -69,9 +69,9 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `clothes with a single article-able item emits 'a jumper'`() {
-        subject.format(summary(clothes = ClothesClause(listOf("jumper")))) shouldBe
-            "Today will be mild. Wear a jumper."
+    fun `clothes with a single article-able item emits 'a sweater'`() {
+        subject.format(summary(clothes = ClothesClause(listOf("sweater")))) shouldBe
+            "Today will be mild. Wear a sweater."
     }
 
     @Test
@@ -88,21 +88,21 @@ class InsightFormatterTest {
 
     @Test
     fun `clothes joins two items with 'and' and only the first item gets an article`() {
-        subject.format(summary(clothes = ClothesClause(listOf("jumper", "jacket")))) shouldBe
-            "Today will be mild. Wear a jumper and jacket."
+        subject.format(summary(clothes = ClothesClause(listOf("sweater", "jacket")))) shouldBe
+            "Today will be mild. Wear a sweater and jacket."
     }
 
     @Test
     fun `clothes Oxford-joins three items with article only on the first`() {
-        subject.format(summary(clothes = ClothesClause(listOf("jumper", "jacket", "umbrella")))) shouldBe
-            "Today will be mild. Wear a jumper, jacket, and umbrella."
+        subject.format(summary(clothes = ClothesClause(listOf("sweater", "jacket", "umbrella")))) shouldBe
+            "Today will be mild. Wear a sweater, jacket, and umbrella."
     }
 
     @Test
     fun `clothes Oxford-joins four items`() {
         subject.format(
-            summary(clothes = ClothesClause(listOf("jumper", "jacket", "shorts", "umbrella"))),
-        ) shouldBe "Today will be mild. Wear a jumper, jacket, shorts, and umbrella."
+            summary(clothes = ClothesClause(listOf("sweater", "jacket", "shorts", "umbrella"))),
+        ) shouldBe "Today will be mild. Wear a sweater, jacket, shorts, and umbrella."
     }
 
     @Test
@@ -192,12 +192,12 @@ class InsightFormatterTest {
                 alert = AlertClause("Flood Warning"),
                 band = BandClause(TemperatureBand.COOL, TemperatureBand.MILD),
                 delta = DeltaClause(6, DeltaClause.Direction.WARMER),
-                clothes = ClothesClause(listOf("jumper", "umbrella")),
+                clothes = ClothesClause(listOf("sweater", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
             ),
         )
         out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer today. " +
-            "Wear a jumper and umbrella. Rain at 3pm."
+            "Wear a sweater and umbrella. Rain at 3pm."
     }
 
     // ---------------------------------------------------------------------
@@ -231,6 +231,18 @@ class InsightFormatterTest {
         germanSubject.format(
             summary(clothes = ClothesClause(listOf("Pullover", "Jacke", "Regenschirm"))),
         ) shouldBe "Heute wird es mild. Trag Pullover, Jacke und Regenschirm."
+    }
+
+    @Test
+    fun `de — translates default English keywords to German`() {
+        // The DEFAULTS ship as English keys (sweater / jacket / shorts) so the
+        // outfit-card labels and the German prose stay in sync; the phraser's
+        // translation table maps them at format time. Anything not in the
+        // table (a user-typed custom item like "fluffy hat") would pass
+        // through unchanged.
+        germanSubject.format(
+            summary(clothes = ClothesClause(listOf("sweater", "jacket", "shorts"))),
+        ) shouldBe "Heute wird es mild. Trag Pullover, Jacke und Shorts."
     }
 
     @Test

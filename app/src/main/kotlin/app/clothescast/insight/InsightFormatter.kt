@@ -26,7 +26,7 @@ import java.util.Locale
  * matches [locale] — call sites use [forRegion] (or [forContext]) to obtain a
  * properly localized Resources for the user's [Region] choice.
  *
- * Article picking (English "a jumper" / "an umbrella" / bare "shorts") is
+ * Article picking (English "a sweater" / "an umbrella" / bare "shorts") is
  * locale-specific and dispatched via [ClothesPhraser.forLocale]. Languages
  * without an explicit phraser fall back to a no-article join.
  *

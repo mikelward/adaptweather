@@ -104,7 +104,7 @@ class GenerateDailyInsightTest {
         val insight = subject(london, prefs).insight
 
         // today: feels-like 6→25 → cold to warm; +8°C high vs yesterday → 8° warmer;
-        // clothes defaults at this temperature: jumper, jacket, shorts (umbrella was
+        // clothes defaults at this temperature: sweater, jacket, shorts (umbrella was
         // dropped — the precip clause carries the rain message);
         // 60% precipitation → noon fallback (no hourly entries on `today`).
         insight.summary.band.low shouldBe TemperatureBand.COLD
@@ -112,10 +112,10 @@ class GenerateDailyInsightTest {
         insight.summary.delta.shouldNotBeNull()
         insight.summary.delta!!.degrees shouldBe 8
         insight.summary.delta!!.direction shouldBe DeltaClause.Direction.WARMER
-        insight.summary.clothes!!.items.shouldContainExactly("jumper", "jacket", "shorts")
+        insight.summary.clothes!!.items.shouldContainExactly("sweater", "jacket", "shorts")
         insight.summary.precip!!.condition shouldBe WeatherCondition.RAIN
         insight.summary.precip!!.time shouldBe LocalTime.NOON
-        insight.recommendedItems.shouldContainExactly("jumper", "jacket", "shorts")
+        insight.recommendedItems.shouldContainExactly("sweater", "jacket", "shorts")
         insight.generatedAt shouldBe clockInstant
         insight.forDate shouldBe today.date
     }

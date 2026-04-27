@@ -35,7 +35,7 @@ internal interface ClothesPhraser {
  *    no article.
  *  - Items starting with a vowel letter take "an"; everything else takes "a".
  * Subsequent items in the list are emitted bare per the user-preferred phrasing
- * "Wear a jumper and jacket." rather than fully grammatical "a jumper and a jacket."
+ * "Wear a sweater and jacket." rather than fully grammatical "a sweater and a jacket."
  */
 internal class EnglishClothesPhraser(private val resources: Resources) : ClothesPhraser {
     override fun withArticle(item: String): String = when {
@@ -65,22 +65,74 @@ internal class EnglishClothesPhraser(private val resources: Resources) : Clothes
  * and a final "und"; no Oxford comma. The calendar tie-in ("Denk an …")
  * likewise emits the item bare.
  *
+ * Items are passed through [translate] first so the default English-keyed
+ * `ClothesRule` set ("sweater", "jacket", "shorts", "umbrella") doesn't leak
+ * into otherwise-German prose ("Trag sweater und jacket." → "Trag Pullover
+ * und Jacke."). Items not in the table fall through unchanged — better to
+ * echo the source key than guess wrong.
+ *
  * A future PR could thread a gender hint through `ClothesRule` so we can
  * pick a real article — until then, "Trag Pullover, Jacke und Regenschirm."
  * reads naturally enough.
  */
 internal class GermanClothesPhraser(private val resources: Resources) : ClothesPhraser {
-    override fun withArticle(item: String): String = item
+    override fun withArticle(item: String): String = translate(item)
 
-    override fun joinItems(items: List<String>): String = when (items.size) {
-        0 -> ""
-        1 -> items[0]
-        2 -> resources.getString(R.string.insight_clothes_join_two, items[0], items[1])
-        else -> resources.getString(
-            R.string.insight_clothes_join_many,
-            items[0],
-            items.subList(1, items.size - 1).joinToString(", "),
-            items.last(),
+    override fun joinItems(items: List<String>): String {
+        val translated = items.map(::translate)
+        return when (translated.size) {
+            0 -> ""
+            1 -> translated[0]
+            2 -> resources.getString(R.string.insight_clothes_join_two, translated[0], translated[1])
+            else -> resources.getString(
+                R.string.insight_clothes_join_many,
+                translated[0],
+                translated.subList(1, translated.size - 1).joinToString(", "),
+                translated.last(),
+            )
+        }
+    }
+
+    /**
+     * Maps the most common English clothes / weather-gear keywords to their
+     * German equivalents. Lookup is case-insensitive; output preserves German
+     * capitalization (German nouns are always capitalised). Anything not in
+     * the table falls through unchanged.
+     */
+    private fun translate(item: String): String =
+        EN_TO_DE[item.trim().lowercase(Locale.ROOT)] ?: item
+
+    private companion object {
+        // Defaults shipped in ClothesRule.DEFAULTS plus the obvious extras a user
+        // is likely to add (coat, scarf, gloves, hat, boots …). Kept tight rather
+        // than exhaustive — adding more is a one-line change. The canonical
+        // source key for the cold-weather top is "sweater" (matches the
+        // today_outfit_top_sweater label); en-GB / en-AU say "Jumper" only as
+        // a display override on that label, never as a stored item key.
+        private val EN_TO_DE: Map<String, String> = mapOf(
+            "sweater" to "Pullover",
+            "hoodie" to "Hoodie",
+            "jacket" to "Jacke",
+            "coat" to "Mantel",
+            "raincoat" to "Regenjacke",
+            "shirt" to "Hemd",
+            "t-shirt" to "T-Shirt",
+            "tshirt" to "T-Shirt",
+            "shorts" to "Shorts",
+            "pants" to "Hose",
+            "trousers" to "Hose",
+            "jeans" to "Jeans",
+            "umbrella" to "Regenschirm",
+            "hat" to "Hut",
+            "cap" to "Kappe",
+            "beanie" to "Mütze",
+            "scarf" to "Schal",
+            "gloves" to "Handschuhe",
+            "mittens" to "Fäustlinge",
+            "boots" to "Stiefel",
+            "socks" to "Socken",
+            "sunglasses" to "Sonnenbrille",
+            "sunscreen" to "Sonnencreme",
         )
     }
 }

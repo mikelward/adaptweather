@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Australian English overrides. Same shape as values-en-rGB/: only strings an
-en-AU speaker would notice as wrong, everything else falls back to values/.
-en-AU shares "jumper" with en-GB but doesn't share the "pants = underwear"
-collision, so the bottom label is just "Pants" (not "Trousers").
+Australian English overrides. en-AU is essentially en-US-flavoured for this
+app's vocabulary — the only label that diverges from the en-US base is
+"Sweater" (en-AU says "Jumper"). "Long pants" stays as-is: en-AU shares
+"pants" with en-US (no en-GB-style underwear collision).
 -->
 <resources>
     <string name="today_outfit_top_sweater">Jumper</string>
-    <string name="today_outfit_bottom_long_pants">Pants</string>
 </resources>
