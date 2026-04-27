@@ -19,13 +19,11 @@ import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
-import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
-import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -96,20 +94,30 @@ private fun FilledContent(period: ForecastPeriod, outfit: OutfitSuggestion) {
             text = context.getString(periodLabelRes(period)),
             style = labelStyle(),
         )
-        Spacer(modifier = GlanceModifier.height(6.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                provider = ImageProvider(topIconRes(outfit.top)),
-                contentDescription = context.getString(topLabelRes(outfit.top)),
-                modifier = GlanceModifier.size(56.dp),
-            )
-            Spacer(modifier = GlanceModifier.width(4.dp))
-            Image(
-                provider = ImageProvider(bottomIconRes(outfit.bottom)),
-                contentDescription = context.getString(bottomLabelRes(outfit.bottom)),
-                modifier = GlanceModifier.size(56.dp),
-            )
-        }
+        Spacer(modifier = GlanceModifier.height(4.dp))
+        // Top-over-bottom vertical stack matches the Today screen's
+        // OutfitPreviewCard so the home-screen glance reads the same way as
+        // the in-app card the user already knows.
+        Image(
+            provider = ImageProvider(topIconRes(outfit.top)),
+            contentDescription = context.getString(topLabelRes(outfit.top)),
+            modifier = GlanceModifier.size(48.dp),
+        )
+        Image(
+            provider = ImageProvider(bottomIconRes(outfit.bottom)),
+            contentDescription = context.getString(bottomLabelRes(outfit.bottom)),
+            modifier = GlanceModifier.size(48.dp),
+        )
+        Spacer(modifier = GlanceModifier.height(2.dp))
+        Text(
+            text = context.getString(topLabelRes(outfit.top)) +
+                " · " +
+                context.getString(bottomLabelRes(outfit.bottom)),
+            style = TextStyle(
+                color = GlanceTheme.colors.onSurfaceVariant,
+                fontSize = 11.sp,
+            ),
+        )
     }
 }
 
