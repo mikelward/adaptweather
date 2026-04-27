@@ -22,7 +22,11 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 
 /**
- * Renders today's hourly temperature and feels-like as two lines.
+ * Renders today's hourly temperature as a single line — feels-like or raw 2 m
+ * air, controlled by [showFeelsLike]. Defaults to feels-like because that's
+ * what the wardrobe rules and band sentence ("Today will be cool to mild")
+ * are evaluated against; surfacing the raw line by default invited "which
+ * line is which?" confusion. The parent toggles which series is shown.
  *
  * The hourly list is sourced from the cached Insight, populated by the morning
  * worker. When the cache predates this feature, [hourly] is empty and the chart
@@ -32,27 +36,23 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
  * we convert at the edge with [toUnit] so the chart matches the user's
  * temperatureUnit preference. The legend, rendered by the parent, carries the
  * unit symbol — the axis stays unitless to avoid "10°C, 15°C, 20°C" repetition.
- *
- * Series order:
- *   0 — raw 2 m air temperature
- *   1 — apparent / feels-like
- * Drawn in that order so feels-like sits on top, matching what the wardrobe
- * rules actually evaluate against.
  */
 @Composable
 fun ForecastChart(
     hourly: List<HourlyForecast>,
     temperatureUnit: TemperatureUnit,
+    showFeelsLike: Boolean,
     modifier: Modifier = Modifier,
 ) {
     if (hourly.isEmpty()) return
 
     val producer = remember { CartesianChartModelProducer() }
-    LaunchedEffect(hourly, temperatureUnit) {
+    LaunchedEffect(hourly, temperatureUnit, showFeelsLike) {
         producer.runTransaction {
             lineSeries {
-                series(hourly.map { it.temperatureC.toUnit(temperatureUnit) })
-                series(hourly.map { it.feelsLikeC.toUnit(temperatureUnit) })
+                val pick: (HourlyForecast) -> Double =
+                    if (showFeelsLike) { h -> h.feelsLikeC } else { h -> h.temperatureC }
+                series(hourly.map { pick(it).toUnit(temperatureUnit) })
             }
         }
     }
