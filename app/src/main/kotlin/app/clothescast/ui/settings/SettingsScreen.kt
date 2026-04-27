@@ -30,9 +30,9 @@ import app.clothescast.R
 
 /**
  * One sub-page per concern. Order in the enum matches the order shown in the
- * root list: schedule + clothes come first (the most-frequently-tweaked rules),
- * region + voice after (set once, mostly forgotten), API keys / data sources /
- * about at the bottom.
+ * root list: the most-frequently-tweaked rules at the top, set-once
+ * configuration in the middle, and API keys / data sources / about at the
+ * bottom.
  *
  * Public so callers (e.g. the onboarding flow) can deep-link into a specific
  * sub-page via [SettingsScreen]'s `initialRoute` param.
