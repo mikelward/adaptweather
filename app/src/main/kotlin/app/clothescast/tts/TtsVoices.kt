@@ -12,12 +12,15 @@ import app.clothescast.core.domain.model.VoiceLocale
  * to strings.xml.
  *
  * [locale] is the voice's *baked-in* accent — only meaningful for providers whose
- * voices have a fixed accent that can't be steered by prompt (ElevenLabs voice
- * clones). Null means the picker does not filter that voice by accent: Gemini's
- * prebuilt voices and OpenAI's `gpt-4o-mini-tts` voices both accept a prompt-
- * side accent directive at synthesis time (Gemini reliably; OpenAI imperfectly
- * — see the per-engine notes in `geminiAccentDirectiveFor` and
- * `openAiAccentInstructionFor`). The picker only filters by [locale] when it's
+ * voices have a fixed accent that can't be reliably steered by prompt. Both
+ * ElevenLabs voice clones and OpenAI's `gpt-4o-mini-tts` voices fall into this
+ * bucket: OpenAI's `instructions` field documents accent as steerable but in
+ * practice the voice's baked-in timbre dominates (we tried both vague and
+ * linguist-standard phrasings — "British English accent" and "Standard
+ * Southern British accent" — and neither shifts `nova` off American). Null
+ * means the picker does not filter that voice by accent — Gemini's prebuilt
+ * voices are language-agnostic personalities and reliably follow accent
+ * direction in the prompt. The picker only filters by [locale] when it's
  * non-null.
  */
 data class TtsVoiceOption(
@@ -34,11 +37,23 @@ data class TtsVoiceOption(
  * Voices with a null [TtsVoiceOption.locale] are accent-agnostic and always
  * pass the filter. [VoiceLocale.SYSTEM] disables filtering — the user has not
  * expressed a preference, so show everything.
+ *
+ * If [keepSelected] is supplied and points to a voice in the receiver list
+ * that doesn't match the filter, that voice is appended so the picker still
+ * shows the user's current selection. Without this, a user who'd persisted
+ * `nova` and then switched the variant to en-GB would see a picker label of
+ * "Voice: nova" with no `nova` row in the dialog — confusing UX. Pass `null`
+ * (the default) when this preservation isn't needed.
  */
-fun List<TtsVoiceOption>.filterByVariant(variant: VoiceLocale): List<TtsVoiceOption> {
+fun List<TtsVoiceOption>.filterByVariant(
+    variant: VoiceLocale,
+    keepSelected: String? = null,
+): List<TtsVoiceOption> {
     if (variant == VoiceLocale.SYSTEM) return this
     val matched = filter { it.locale == null || it.locale == variant }
-    return matched.ifEmpty { this }
+    if (matched.isEmpty()) return this
+    val selected = keepSelected?.let { id -> firstOrNull { it.id == id } }
+    return if (selected != null && selected !in matched) matched + selected else matched
 }
 
 val GEMINI_VOICES: List<TtsVoiceOption> = listOf(
@@ -60,13 +75,23 @@ val GEMINI_VOICES: List<TtsVoiceOption> = listOf(
     TtsVoiceOption("Sadaltager", "Sadaltager — Knowledgeable"),
 )
 
+// OpenAI's stock voices have *baked-in* accents. The `gpt-4o-mini-tts` model
+// documents `instructions` as accepting an accent direction, but field-testing
+// confirmed it doesn't shift the voice off its native accent — only `fable`
+// (the one British voice in the stock library) actually sounds non-American.
+// So treat them like ElevenLabs voices: tag each with its native accent and
+// filter the picker by the user's selected variant.
+//
+// `fable` is the only British voice. There is no Australian voice — en-AU
+// users see the full list via the empty-filter fallback in [filterByVariant].
+// The other five (alloy / echo / onyx / nova / shimmer) sound American.
 val OPENAI_VOICES: List<TtsVoiceOption> = listOf(
-    TtsVoiceOption("alloy", "alloy — Neutral"),
-    TtsVoiceOption("echo", "echo — Soft, male"),
-    TtsVoiceOption("fable", "fable — Storyteller"),
-    TtsVoiceOption("onyx", "onyx — Deep, male"),
-    TtsVoiceOption("nova", "nova — Bright, female"),
-    TtsVoiceOption("shimmer", "shimmer — Warm, female"),
+    TtsVoiceOption("alloy", "alloy — Neutral", VoiceLocale.EN_US),
+    TtsVoiceOption("echo", "echo — Soft, male", VoiceLocale.EN_US),
+    TtsVoiceOption("fable", "fable — Storyteller", VoiceLocale.EN_GB),
+    TtsVoiceOption("onyx", "onyx — Deep, male", VoiceLocale.EN_US),
+    TtsVoiceOption("nova", "nova — Bright, female", VoiceLocale.EN_US),
+    TtsVoiceOption("shimmer", "shimmer — Warm, female", VoiceLocale.EN_US),
 )
 
 // ElevenLabs voice IDs are opaque strings; the human-readable name only shows in

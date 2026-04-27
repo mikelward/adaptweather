@@ -19,7 +19,6 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
-import java.util.Locale
 
 class OpenAITtsClientTest {
 
@@ -69,10 +68,10 @@ class OpenAITtsClientTest {
 
     @Test
     fun `default model is gpt-4o-mini-tts`() = runTest {
-        // We bumped the default off `tts-1` because gpt-4o-mini-tts is the only
-        // OpenAI TTS model that honours the `instructions` field — without that
-        // the variant picker stays a no-op for OpenAI. Lock the default in a
-        // test so a careless edit can't silently regress accent steering.
+        // We bumped the default off `tts-1` because gpt-4o-mini-tts is a
+        // documented quality upgrade (positioned by OpenAI as comparable to
+        // tts-1-hd). Lock the default in a test so a careless edit doesn't
+        // silently regress users to the older model.
         var capturedBody: String? = null
         val client = OpenAITtsClient(
             httpClient = mockClient { capturedBody = capturedBodyOf(it) },
@@ -86,38 +85,11 @@ class OpenAITtsClientTest {
     }
 
     @Test
-    fun `request body includes british instructions for en-GB locale`() = runTest {
-        var capturedBody: String? = null
-        val client = OpenAITtsClient(
-            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
-            keyProvider = FakeKeyProvider("test-key"),
-        )
-
-        client.synthesize(text = "hello", locale = Locale.UK)
-
-        val body = checkNotNull(capturedBody)
-        body.shouldContain("\"instructions\":\"Speak with a Standard Southern British accent.\"")
-    }
-
-    @Test
-    fun `request body includes australian instructions for en-AU locale`() = runTest {
-        var capturedBody: String? = null
-        val client = OpenAITtsClient(
-            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
-            keyProvider = FakeKeyProvider("test-key"),
-        )
-
-        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
-
-        val body = checkNotNull(capturedBody)
-        body.shouldContain("General Australian accent")
-    }
-
-    @Test
-    fun `request body omits instructions when locale is null`() = runTest {
-        // No locale → no instructions field on the wire (kotlinx defaults
-        // `encodeDefaults = false`). Important because OpenAI's older TTS
-        // models reject unknown / unsupported fields with a 400.
+    fun `request body never includes the instructions field`() = runTest {
+        // Field-testing showed `instructions` doesn't reliably steer accent on
+        // gpt-4o-mini-tts (the voice's baked-in timbre dominates), so we don't
+        // send it at all — accent is voice-bound, controlled by the picker
+        // filter. This guards against re-introducing the dead plumbing.
         var capturedBody: String? = null
         val client = OpenAITtsClient(
             httpClient = mockClient { capturedBody = capturedBodyOf(it) },
@@ -125,22 +97,6 @@ class OpenAITtsClientTest {
         )
 
         client.synthesize(text = "hello")
-
-        val body = checkNotNull(capturedBody)
-        body.shouldNotContain("instructions")
-    }
-
-    @Test
-    fun `request body omits instructions for unknown english variants`() = runTest {
-        // en-CA isn't in our supported variant list — fall through to the
-        // model's default rather than picking a wrong-but-confident accent.
-        var capturedBody: String? = null
-        val client = OpenAITtsClient(
-            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
-            keyProvider = FakeKeyProvider("test-key"),
-        )
-
-        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-CA"))
 
         val body = checkNotNull(capturedBody)
         body.shouldNotContain("instructions")

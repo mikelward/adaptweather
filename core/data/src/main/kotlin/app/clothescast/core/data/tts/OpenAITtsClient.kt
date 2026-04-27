@@ -15,47 +15,20 @@ import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import java.util.Locale
 
-// `gpt-4o-mini-tts` is OpenAI's current TTS-of-record (March 2025). Unlike the
-// older `tts-1`, it accepts a natural-language `instructions` field that
-// steers accent, tone, and pacing — which is what makes the variant picker
-// audibly affect OpenAI playback. Cost works out to ~$0.015/min of audio,
-// roughly 35-40% more than tts-1's per-character rate but at meaningfully
-// higher quality (positioned by OpenAI as comparable to tts-1-hd). For
-// clothescast's two-clips-a-day usage the absolute monthly cost stays in
-// pennies on a BYOK key.
+// `gpt-4o-mini-tts` is OpenAI's current TTS-of-record (March 2025). The
+// upgrade from `tts-1` is a per-clip-quality win — positioned by OpenAI as
+// comparable to `tts-1-hd`. Cost works out to ~$0.015/min of audio, roughly
+// 35-40% more than tts-1's per-character rate; for clothescast's two-clips-
+// a-day usage the absolute monthly cost stays in pennies on a BYOK key.
+//
+// Earlier work tried to steer accent via the `instructions` field on this
+// model, but field-testing confirmed the voice's baked-in accent dominates
+// regardless of how the directive is worded. Voice-list filtering in
+// `TtsVoices` is now the only mechanism for giving the user a non-American
+// OpenAI voice (just `fable`, the only British voice in the stock library).
 const val DEFAULT_OPENAI_TTS_MODEL: String = "gpt-4o-mini-tts"
 const val DEFAULT_OPENAI_TTS_VOICE: String = "alloy"
-
-/**
- * Returns a one-line accent instruction for the OpenAI TTS `instructions`
- * field, or null when the locale doesn't map to a known English variant
- * (in which case the model's default applies).
- *
- * Uses linguist-standard accent labels (Standard Southern British, General
- * Australian, General American) rather than vague "British English accent"
- * phrasing — empirically, `gpt-4o-mini-tts` only weakly honours `instructions`
- * for accent (the voice's baked-in timbre dominates), so any nudge we get
- * comes from being as specific as possible. If the empirical effect on real
- * traffic remains marginal, the next step is to tag voices by their native
- * accent and filter the picker (mirroring the ElevenLabs approach).
- *
- * Mirrors the Gemini version — same wording, same coverage — so the audible
- * accent stays consistent across providers when the user picks the same variant.
- * Only honoured by `gpt-4o-mini-tts`; older OpenAI TTS models silently ignore
- * the field, which is fine for forward-compat if [DEFAULT_OPENAI_TTS_MODEL]
- * is ever overridden.
- */
-internal fun openAiAccentInstructionFor(locale: Locale): String? {
-    if (locale.language != "en") return null
-    return when (locale.country) {
-        "GB" -> "Speak with a Standard Southern British accent."
-        "AU" -> "Speak with a General Australian accent."
-        "US" -> "Speak with a General American accent."
-        else -> null
-    }
-}
 
 /**
  * OpenAI text-to-speech via `https://api.openai.com/v1/audio/speech`.
@@ -76,7 +49,6 @@ class OpenAITtsClient(
     suspend fun synthesize(
         text: String,
         voice: String = DEFAULT_OPENAI_TTS_VOICE,
-        locale: Locale? = null,
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException("OpenAI")
@@ -91,7 +63,6 @@ class OpenAITtsClient(
                     input = text,
                     voice = voice,
                     responseFormat = "pcm",
-                    instructions = locale?.let { openAiAccentInstructionFor(it) },
                 ),
             )
         }
