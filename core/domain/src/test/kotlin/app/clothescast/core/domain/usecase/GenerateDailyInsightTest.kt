@@ -254,6 +254,69 @@ class GenerateDailyInsightTest {
     }
 
     @Test
+    fun `today period slices hourly to the daytime window so peak precip ignores past dawn and late evening`() = runTest {
+        val todayHourly = listOf(
+            // Pre-morning: 6:00 with 80% rain — already past, must not surface.
+            HourlyForecast(LocalTime.of(6, 0), 8.0, 6.0, 80.0, WeatherCondition.RAIN),
+            // In-window: 09:00 quiet, 15:00 partly cloudy with 35% precip.
+            HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 35.0, WeatherCondition.PARTLY_CLOUDY),
+            // Late evening: 23:00 cloudy with 60% precip — user is asleep, must not
+            // be the headline for the daytime insight.
+            HourlyForecast(LocalTime.of(23, 0), 12.0, 10.0, 60.0, WeatherCondition.CLOUDY),
+        )
+        val todayWithHourly = today.copy(hourly = todayHourly)
+        val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs)
+
+        // Only hours in [07:00, 19:00) survive — the 06:00 and 23:00 entries are dropped.
+        result.insight.hourly.map { it.time } shouldBe listOf(LocalTime.of(9, 0), LocalTime.of(15, 0))
+        // Peak precip is the wettest in-window hour (15:00, partly cloudy at 35%) —
+        // not the 23:00 cloudy spike, which is what the pre-slice peak would have surfaced.
+        result.insight.summary.precip!!.condition shouldBe WeatherCondition.PARTLY_CLOUDY
+        result.insight.summary.precip!!.time shouldBe LocalTime.of(15, 0)
+    }
+
+    @Test
+    fun `today period recomputes aggregates from the daytime slice, not from the day-level fields`() = runTest {
+        val todayHourly = listOf(
+            // The day-level feelsLikeMinC on `today` is 6.0°C — but that's the pre-dawn
+            // low. The actual daytime range is 12→20°C, which is what the band sentence
+            // and wardrobe rules should see.
+            HourlyForecast(LocalTime.of(6, 0), 8.0, 6.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(23, 0), 6.0, 4.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val todayWithHourly = today.copy(hourly = todayHourly)
+        val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs)
+
+        // Daytime feels-like 12→20 → COOL to MILD. The 6.0°C / 4.0°C edges of the day
+        // are correctly ignored.
+        result.insight.summary.band.low shouldBe TemperatureBand.COOL
+        result.insight.summary.band.high shouldBe TemperatureBand.MILD
+    }
+
+    @Test
+    fun `today period falls back to day-level fields when no hourly is available`() = runTest {
+        // The default fixture has no hourly array; the slice is empty and the band
+        // sentence should still come through from the daily aggregates rather than
+        // collapsing to defaults.
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs)
+
+        result.insight.summary.band.low shouldBe TemperatureBand.COLD
+        result.insight.summary.band.high shouldBe TemperatureBand.WARM
+    }
+
+    @Test
     fun `tonight period leads with TONIGHT and skips the yesterday delta clause`() = runTest {
         val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
         val subject = GenerateDailyInsight(weather, clock = clock)

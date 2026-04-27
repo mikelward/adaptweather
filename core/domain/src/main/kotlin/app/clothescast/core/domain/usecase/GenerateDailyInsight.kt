@@ -37,18 +37,24 @@ class GenerateDailyInsight(
     ): DailyInsightResult {
         val bundle = weatherRepository.fetchForecast(location)
         val activeAlerts = bundle.alerts.filter { it.expires.isAfter(clock.instant()) }
-        // For TONIGHT, narrow the daily slice to the user-configured overnight
-        // window: from the user's tonight time today, wrapping past midnight, up
-        // to the user's morning time tomorrow. We thread `prefs.tonightSchedule.time`
-        // and `prefs.schedule.time` (not fixed constants) so a user who moved
-        // either dial sees an insight that matches the alarm that just fired.
+        // Each period is narrowed to the user-configured window so the insight
+        // talks about hours the user will actually walk into:
+        //  - TODAY = morning time → tonight time (e.g. 07:00–19:00)
+        //  - TONIGHT = tonight time → next morning time (e.g. 19:00–07:00, wrapping
+        //    past midnight via tomorrow's hourly)
+        // Both reads pull from `prefs.schedule.time` and `prefs.tonightSchedule.time`
+        // (not fixed constants) so a user who moved either dial sees an insight
+        // that matches the alarm that just fired.
+        val morningStart = prefs.schedule.time
         val tonightStart = prefs.tonightSchedule.time
-        val morningEnd = prefs.schedule.time
         val periodForecast = when (period) {
-            ForecastPeriod.TODAY -> bundle.today
+            ForecastPeriod.TODAY -> bundle.today.slicedForToday(
+                morningStart = morningStart,
+                eveningEnd = tonightStart,
+            )
             ForecastPeriod.TONIGHT -> bundle.today.slicedForTonight(
                 tonightStart = tonightStart,
-                morningEnd = morningEnd,
+                morningEnd = morningStart,
                 tomorrowHourly = bundle.tomorrowHourly,
             )
         }
@@ -99,6 +105,48 @@ class GenerateDailyInsight(
         // event that bleeds across the evening (treated as relevant context).
         ForecastPeriod.TONIGHT -> events.filter { it.allDay || !it.start.isBefore(tonightStart) }
     }
+}
+
+/**
+ * Slices [DailyForecast] to the daytime window (today at [morningStart] through
+ * today at [eveningEnd]). The TODAY counterpart of [slicedForTonight]: keeps the
+ * rendered insight, wardrobe evaluation and outfit suggestion focused on the
+ * hours the user is awake and out, not on past pre-dawn hours or a late-evening
+ * peak the user has already gone to bed for.
+ *
+ * Behaves like [slicedForTonight]:
+ *  - filters today's hourly to entries in `[morningStart, eveningEnd)`,
+ *  - recomputes daily-level aggregates ([feelsLikeMinC] etc.) from the slice so
+ *    the band sentence and wardrobe rules talk about the daytime range, not the
+ *    raw 24h day-level fields,
+ *  - rewrites [DailyForecast.condition] to the wettest in-window hour (preventing
+ *    the precip-peak fallback from naming a midday rain on a sunny afternoon),
+ *  - falls back to the original [DailyForecast] when the slice would be empty
+ *    (sparse fixtures, legacy day-level-only payloads, or a degenerate
+ *    `morningStart >= eveningEnd` window) so the pipeline always emits something.
+ */
+private fun DailyForecast.slicedForToday(
+    morningStart: LocalTime,
+    eveningEnd: LocalTime,
+): DailyForecast {
+    // Degenerate window (user's day end is at or before its start). Bail out
+    // rather than produce an empty or wrapped slice; the tonight pass covers
+    // overnight users via its own wrap.
+    if (!morningStart.isBefore(eveningEnd)) return this
+    val sliced = hourly.filter { it.time >= morningStart && it.time < eveningEnd }
+    if (sliced.isEmpty()) return copy(hourly = sliced)
+    return copy(
+        hourly = sliced,
+        temperatureMinC = sliced.minOf { it.temperatureC },
+        temperatureMaxC = sliced.maxOf { it.temperatureC },
+        feelsLikeMinC = sliced.minOf { it.feelsLikeC },
+        feelsLikeMaxC = sliced.maxOf { it.feelsLikeC },
+        precipitationProbabilityMaxPct = sliced.maxOf { it.precipitationProbabilityPct },
+        condition = sliced.maxByOrNull { it.precipitationProbabilityPct }
+            ?.condition
+            ?.takeIf { it != WeatherCondition.UNKNOWN }
+            ?: condition,
+    )
 }
 
 /**
