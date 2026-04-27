@@ -7,12 +7,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -44,6 +49,7 @@ internal fun ScheduleContent(
     padding: PaddingValues,
     onSetSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
+    onDone: (() -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier
@@ -55,6 +61,16 @@ internal fun ScheduleContent(
     ) {
         ScheduleCard(time, days, onSetSchedule)
         DeliveryModeCard(deliveryMode, onSetDeliveryMode)
+        if (onDone != null) {
+            Button(
+                onClick = onDone,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            ) {
+                Text(stringResource(R.string.onboarding_step_done))
+            }
+        }
     }
 }
 
@@ -100,6 +116,17 @@ private fun ScheduleCard(
                     },
                     label = {
                         Text(text = dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
+                    },
+                    leadingIcon = if (selected) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize),
+                            )
+                        }
+                    } else {
+                        null
                     },
                     colors = FilterChipDefaults.filterChipColors(),
                 )

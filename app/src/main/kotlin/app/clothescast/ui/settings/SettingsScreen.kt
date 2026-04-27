@@ -100,6 +100,11 @@ fun SettingsScreen(
                 padding = padding,
                 onSetSchedule = viewModel::setSchedule,
                 onSetDeliveryMode = viewModel::setDeliveryMode,
+                // Show a Done button only when this page is the deep-link
+                // landing from onboarding's "Continue" — gives the user an
+                // obvious way to finish setup and reach Today. In the regular
+                // settings flow they exit via the top-bar back arrow.
+                onDone = if (initialRoute == SettingsRoute.Schedule) onNavigateBack else null,
             )
             SettingsRoute.Wardrobe -> WardrobeContent(
                 rules = state.wardrobeRules,
