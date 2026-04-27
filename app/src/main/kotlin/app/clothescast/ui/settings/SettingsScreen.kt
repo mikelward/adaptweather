@@ -142,6 +142,9 @@ fun SettingsScreen(
                 onSetOpenAiVoice = viewModel::setOpenAiVoice,
                 onSetElevenLabsVoice = viewModel::setElevenLabsVoice,
                 onSetVoiceLocale = viewModel::setVoiceLocale,
+                onSetGeminiKey = viewModel::setApiKey,
+                onSetOpenAiKey = viewModel::setOpenAiKey,
+                onSetElevenLabsKey = viewModel::setElevenLabsKey,
             )
             SettingsRoute.ApiKeys -> ApiKeysContent(
                 geminiConfigured = state.apiKeyConfigured,

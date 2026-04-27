@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,6 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.TtsEngine
@@ -63,6 +68,9 @@ internal fun VoiceContent(
     onSetOpenAiVoice: (String) -> Unit,
     onSetElevenLabsVoice: (String) -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
+    onSetGeminiKey: (String) -> Unit,
+    onSetOpenAiKey: (String) -> Unit,
+    onSetElevenLabsKey: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -129,7 +137,11 @@ internal fun VoiceContent(
             when (selected) {
                 TtsEngine.GEMINI -> {
                     if (!geminiKeyConfigured) {
-                        MissingKeyHint(stringResource(R.string.settings_api_key_gemini_label))
+                        MissingKeyHint(
+                            engineName = stringResource(R.string.settings_api_key_gemini_label),
+                            placeholder = stringResource(R.string.settings_api_key_placeholder),
+                            onSaveKey = onSetGeminiKey,
+                        )
                     }
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
@@ -147,7 +159,11 @@ internal fun VoiceContent(
                 }
                 TtsEngine.OPENAI -> {
                     if (!openAiKeyConfigured) {
-                        MissingKeyHint(stringResource(R.string.settings_api_key_openai_label))
+                        MissingKeyHint(
+                            engineName = stringResource(R.string.settings_api_key_openai_label),
+                            placeholder = stringResource(R.string.settings_openai_key_placeholder),
+                            onSaveKey = onSetOpenAiKey,
+                        )
                     }
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
@@ -165,7 +181,11 @@ internal fun VoiceContent(
                 }
                 TtsEngine.ELEVENLABS -> {
                     if (!elevenLabsKeyConfigured) {
-                        MissingKeyHint(stringResource(R.string.settings_api_key_elevenlabs_label))
+                        MissingKeyHint(
+                            engineName = stringResource(R.string.settings_api_key_elevenlabs_label),
+                            placeholder = stringResource(R.string.settings_elevenlabs_key_placeholder),
+                            onSaveKey = onSetElevenLabsKey,
+                        )
                     }
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
@@ -193,15 +213,79 @@ internal fun VoiceContent(
 
 /**
  * Inline hint shown next to the engine picker when the chosen engine's key isn't
- * configured. Points the user up to the API keys section instead of trying to
- * collect the key here — keys are managed in one place now.
+ * configured. Tapping "Add API key" opens a paste dialog so the user can enter
+ * the key without leaving the Voice screen — the same key that the API keys
+ * page would store.
  */
 @Composable
-private fun MissingKeyHint(engineName: String) {
+private fun MissingKeyHint(
+    engineName: String,
+    placeholder: String,
+    onSaveKey: (String) -> Unit,
+) {
+    var dialogOpen by remember { mutableStateOf(false) }
     Text(
         text = stringResource(R.string.settings_tts_no_key_hint, engineName),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.error,
+    )
+    Button(
+        onClick = { dialogOpen = true },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(stringResource(R.string.settings_tts_add_api_key))
+    }
+    if (dialogOpen) {
+        AddApiKeyDialog(
+            engineName = engineName,
+            placeholder = placeholder,
+            onSave = {
+                onSaveKey(it)
+                dialogOpen = false
+            },
+            onDismiss = { dialogOpen = false },
+        )
+    }
+}
+
+@Composable
+private fun AddApiKeyDialog(
+    engineName: String,
+    placeholder: String,
+    onSave: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var input by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.settings_tts_add_api_key_title, engineName)) },
+        text = {
+            OutlinedTextField(
+                value = input,
+                onValueChange = { input = it },
+                singleLine = true,
+                visualTransformation = if (input.isEmpty()) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                placeholder = { Text(placeholder) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val trimmed = input.trim()
+                    if (trimmed.isNotEmpty()) onSave(trimmed)
+                },
+                enabled = input.isNotBlank(),
+            ) {
+                Text(stringResource(R.string.settings_tts_add_api_key_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.settings_tts_add_api_key_cancel))
+            }
+        },
     )
 }
 
