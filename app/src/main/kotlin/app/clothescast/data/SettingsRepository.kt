@@ -258,11 +258,13 @@ private fun Region.toJavaLocale(): Locale? = bcp47?.let { Locale.forLanguageTag(
 // Only the US uses Fahrenheit in everyday weather contexts. A handful of
 // dependencies (BS, BZ, KY, PW) also do, but they're rounding error and the
 // user can override via the unit picker if needed — not worth the extra surface.
-private fun defaultTemperatureUnitFor(locale: Locale): TemperatureUnit =
+// Internal so SettingsState can mirror the repository's defaults at construction
+// time, before the first DataStore emission lands.
+internal fun defaultTemperatureUnitFor(locale: Locale): TemperatureUnit =
     if (locale.country == "US") TemperatureUnit.FAHRENHEIT else TemperatureUnit.CELSIUS
 
 // Only the US sticks with imperial for weather-app distance contexts (wind
 // speed in mph, precipitation in inches). UK uses miles for *roads* but km/h
 // and mm for weather, so it lands on the metric default with everyone else.
-private fun defaultDistanceUnitFor(locale: Locale): DistanceUnit =
+internal fun defaultDistanceUnitFor(locale: Locale): DistanceUnit =
     if (locale.country == "US") DistanceUnit.MILES else DistanceUnit.KILOMETERS

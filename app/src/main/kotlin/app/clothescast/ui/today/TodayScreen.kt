@@ -80,7 +80,7 @@ fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
                     // the in-flight worker and starts another — re-issuing both requests.
                     // Disabling the button removes the foot-gun.
                     IconButton(
-                        onClick = { triggerRefresh(context) },
+                        onClick = { triggerRefresh(context, state.morningTime, state.tonightTime) },
                         enabled = !isWorking,
                     ) {
                         if (isWorking) {
@@ -109,7 +109,7 @@ fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
             state = state,
             padding = padding,
             isWorking = isWorking,
-            onRefresh = { triggerRefresh(context) },
+            onRefresh = { triggerRefresh(context, state.morningTime, state.tonightTime) },
         )
     }
 }
@@ -474,17 +474,24 @@ private fun formatMinMax(values: List<Double>, unit: TemperatureUnit): Pair<Int,
     return converted.min().roundToInt() to converted.max().roundToInt()
 }
 
-private fun triggerRefresh(context: android.content.Context) {
+private fun triggerRefresh(
+    context: android.content.Context,
+    morningTime: java.time.LocalTime,
+    tonightTime: java.time.LocalTime,
+) {
     // force=true so an explicit user tap bypasses the same-day cache and
     // actually regenerates. Without this, Refresh on the same calendar day
     // just redelivers the morning's payload — surprising when the user has
     // changed wardrobe rules, location, or the underlying forecast has moved.
     //
-    // Period follows wall-clock time so an evening tap (>=19:00 or <07:00)
-    // regenerates the tonight insight — that's the one whose primary outfit
-    // is "Tonight" and whose nextOutfit drives the "Tomorrow" card. A morning
-    // tap regenerates today, whose nextOutfit drives the "Tonight" card.
-    val period = if (java.time.LocalTime.now().isInTonightWindow()) {
+    // Period follows wall-clock time so an evening tap inside the user's
+    // tonight window regenerates the tonight insight — that's the one whose
+    // primary outfit is "Tonight" and whose nextOutfit drives the "Tomorrow"
+    // card. A morning tap regenerates today, whose nextOutfit drives the
+    // "Tonight" card. Window boundaries come from the user's actual schedule
+    // times (prefs.schedule.time / prefs.tonightSchedule.time) so a customised
+    // schedule doesn't desync from the manual refresh.
+    val period = if (java.time.LocalTime.now().isInTonightWindow(morningTime, tonightTime)) {
         ForecastPeriod.TONIGHT
     } else {
         ForecastPeriod.TODAY
@@ -497,15 +504,19 @@ private fun triggerRefresh(context: android.content.Context) {
     ).show()
 }
 
-/**
- * 19:00 inclusive through 07:00 exclusive — matches the default tonight /
- * morning schedule boundaries. Hardcoded rather than threaded from prefs so
- * the refresh trigger doesn't need a [TodayState] field; if the user has
- * shifted their schedule far from these defaults, the alarm-driven runs still
- * fire at their custom times and only the manual Refresh window is fixed.
- */
-private fun java.time.LocalTime.isInTonightWindow(): Boolean =
-    this >= java.time.LocalTime.of(19, 0) || this < java.time.LocalTime.of(7, 0)
+// [tonightTime] inclusive through [morningTime] exclusive — wraps midnight when
+// tonightTime > morningTime (the normal case). When the user has crossed them
+// (a tonight time earlier than morning, e.g. 06:30 / 07:00) the predicate
+// degenerates to the in-between sliver, which is fine: the user's two slots
+// effectively touch and either side of the line is reasonable.
+private fun java.time.LocalTime.isInTonightWindow(
+    morningTime: java.time.LocalTime,
+    tonightTime: java.time.LocalTime,
+): Boolean = if (tonightTime > morningTime) {
+    this >= tonightTime || this < morningTime
+} else {
+    this >= tonightTime && this < morningTime
+}
 
 private val DATE_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.getDefault())

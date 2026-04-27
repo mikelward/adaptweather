@@ -10,9 +10,12 @@ import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.core.domain.model.WardrobeRule
+import app.clothescast.data.defaultDistanceUnitFor
+import app.clothescast.data.defaultTemperatureUnitFor
 import app.clothescast.tts.defaultOpenAiVoiceFor
 import java.time.DayOfWeek
 import java.time.LocalTime
+import java.util.Locale
 
 /** What [SettingsScreen] needs to render. */
 data class SettingsState(
@@ -23,8 +26,11 @@ data class SettingsState(
     val tonightEnabled: Boolean = true,
     val deliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
     val region: Region = Region.SYSTEM,
-    val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
-    val distanceUnit: DistanceUnit = DistanceUnit.KILOMETERS,
+    // Match SettingsRepository's locale-aware defaults so en-US devices don't
+    // briefly render °C / km before the first DataStore emission overrides it.
+    // Region.SYSTEM falls through to the phone locale, mirroring the repository.
+    val temperatureUnit: TemperatureUnit = defaultTemperatureUnitFor(Locale.getDefault()),
+    val distanceUnit: DistanceUnit = defaultDistanceUnitFor(Locale.getDefault()),
     val wardrobeRules: List<WardrobeRule> = WardrobeRule.DEFAULTS,
     val location: Location? = null,
     val useDeviceLocation: Boolean = false,
