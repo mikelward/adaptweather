@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -26,7 +27,8 @@ import java.time.LocalTime
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val keyStore: SecureKeyStore,
-    private val rearmAlarm: (Schedule) -> Unit,
+    private val rearmAlarm: (Schedule, ForecastPeriod) -> Unit,
+    private val cancelAlarm: (ForecastPeriod) -> Unit,
     private val geocodingClient: OpenMeteoGeocodingClient,
 ) : ViewModel() {
 
@@ -40,6 +42,9 @@ class SettingsViewModel(
                     it.copy(
                         scheduleTime = prefs.schedule.time,
                         scheduleDays = prefs.schedule.days,
+                        tonightTime = prefs.tonightSchedule.time,
+                        tonightDays = prefs.tonightSchedule.days,
+                        tonightEnabled = prefs.tonightEnabled,
                         deliveryMode = prefs.deliveryMode,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
@@ -182,7 +187,30 @@ class SettingsViewModel(
             // The repository resolves zoneId fresh on each emission, so the schedule we read
             // back is the new one with the current zone.
             val updated = settingsRepository.preferences.first().schedule
-            rearmAlarm(updated)
+            rearmAlarm(updated, ForecastPeriod.TODAY)
+        }
+    }
+
+    fun setTonightSchedule(time: LocalTime, days: Set<DayOfWeek>) {
+        if (days.isEmpty()) return
+        viewModelScope.launch {
+            settingsRepository.setTonightSchedule(time, days)
+            val prefs = settingsRepository.preferences.first()
+            // Don't arm the alarm if tonight is disabled — would just trigger an
+            // ignored worker run.
+            if (prefs.tonightEnabled) rearmAlarm(prefs.tonightSchedule, ForecastPeriod.TONIGHT)
+        }
+    }
+
+    fun setTonightEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setTonightEnabled(enabled)
+            val prefs = settingsRepository.preferences.first()
+            if (prefs.tonightEnabled) {
+                rearmAlarm(prefs.tonightSchedule, ForecastPeriod.TONIGHT)
+            } else {
+                cancelAlarm(ForecastPeriod.TONIGHT)
+            }
         }
     }
 
@@ -202,7 +230,8 @@ class SettingsViewModel(
     class Factory(
         private val settingsRepository: SettingsRepository,
         private val keyStore: SecureKeyStore,
-        private val rearmAlarm: (Schedule) -> Unit,
+        private val rearmAlarm: (Schedule, ForecastPeriod) -> Unit,
+        private val cancelAlarm: (ForecastPeriod) -> Unit,
         private val geocodingClient: OpenMeteoGeocodingClient,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
@@ -210,7 +239,7 @@ class SettingsViewModel(
             require(modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
                 "Unknown ViewModel: ${modelClass.name}"
             }
-            return SettingsViewModel(settingsRepository, keyStore, rearmAlarm, geocodingClient) as T
+            return SettingsViewModel(settingsRepository, keyStore, rearmAlarm, cancelAlarm, geocodingClient) as T
         }
     }
 }

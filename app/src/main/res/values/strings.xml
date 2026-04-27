@@ -93,6 +93,12 @@
     <string name="settings_schedule_time_label">Time</string>
     <string name="settings_schedule_days_label">Days of the week</string>
 
+    <string name="settings_tonight_title">Tonight insight</string>
+    <string name="settings_tonight_description">A second insight in the evening that covers tonight\'s weather. Silent when there\'s nothing on your calendar; plays a sound and (if you\'ve enabled spoken-aloud delivery) reads itself out when you have evening events.</string>
+    <string name="settings_tonight_enabled">Show a tonight insight</string>
+    <string name="settings_tonight_time_label">Time</string>
+    <string name="settings_tonight_days_label">Days of the week</string>
+
     <string name="settings_delivery_title">How to deliver the daily insight</string>
     <string name="settings_delivery_notification_only">Notification only</string>
     <string name="settings_delivery_tts_only">Spoken aloud only</string>
@@ -163,6 +169,12 @@
     <string name="notification_channel_daily_insight_name">Daily insight</string>
     <string name="notification_channel_daily_insight_description">The morning weather summary you opted in to.</string>
     <string name="notification_daily_insight_title">Today\'s weather</string>
+
+    <string name="notification_channel_tonight_insight_default_name">Tonight insight (with events)</string>
+    <string name="notification_channel_tonight_insight_default_description">The evening weather summary when you have calendar events tonight. Plays your default notification sound.</string>
+    <string name="notification_channel_tonight_insight_silent_name">Tonight insight (silent)</string>
+    <string name="notification_channel_tonight_insight_silent_description">The evening weather summary when your evening is empty. Posted silently — you can glance at it on the lock screen, but it won\'t make a sound.</string>
+    <string name="notification_tonight_insight_title">Tonight\'s weather</string>
 
     <string name="notification_channel_weather_alerts_name">Severe weather alerts</string>
     <string name="notification_channel_weather_alerts_description">High-priority alerts for severe or extreme weather events affecting your area. Delivered as soon as the daily fetch detects them.</string>

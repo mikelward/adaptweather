@@ -5,6 +5,7 @@ import app.clothescast.core.domain.model.CalendarEvent
 import app.clothescast.core.domain.model.DailyForecast
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.Schedule
@@ -241,6 +242,98 @@ class GenerateDailyInsightTest {
         // The summary still composes — we just lose the calendar tie-in sentence.
         result.insight.summary.shouldContain("Today will be")
         result.insight.summary.shouldNotContain("for your")
+    }
+
+    @Test
+    fun `tonight period leads with Tonight will be and skips the yesterday delta sentence`() = runTest {
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TONIGHT)
+
+        result.insight.summary.shouldContain("Tonight will be")
+        result.insight.summary.shouldNotContain("Today will be")
+        // The morning pass already mentioned the +8°C delta against yesterday;
+        // the evening pass deliberately omits it.
+        result.insight.summary.shouldNotContain("warmer today")
+        result.insight.period shouldBe ForecastPeriod.TONIGHT
+    }
+
+    @Test
+    fun `tonight period filters hourly to the overnight window`() = runTest {
+        val hourly = listOf(
+            HourlyForecast(LocalTime.of(8, 0), 10.0, 8.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 24.0, 24.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(20, 0), 16.0, 14.0, 10.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(23, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val todayWithHourly = today.copy(hourly = hourly)
+        val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TONIGHT)
+
+        // Only 20:00 and 23:00 are in the >=19:00 tonight window.
+        result.insight.hourly.map { it.time } shouldBe listOf(LocalTime.of(20, 0), LocalTime.of(23, 0))
+    }
+
+    @Test
+    fun `tonight period flags hasEvents when an evening event is present and gates the calendar sentence by it`() = runTest {
+        val zone = ZoneId.of("Europe/London")
+        val rainyEvening = today.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(
+                HourlyForecast(LocalTime.of(8, 0), 10.0, 8.0, 5.0, WeatherCondition.CLEAR),
+                // Peak precip is in the tonight window, after 19:00.
+                HourlyForecast(LocalTime.of(20, 0), 16.0, 14.0, 80.0, WeatherCondition.RAIN),
+            ),
+        )
+        val morningStandup = CalendarEvent(
+            title = "standup",
+            start = LocalTime.of(9, 0),
+            end = LocalTime.of(9, 30),
+        )
+        val eveningGig = CalendarEvent(
+            title = "gig",
+            start = LocalTime.of(20, 0),
+            end = LocalTime.of(22, 0),
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(rainyEvening, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(morningStandup, eveningGig))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(
+            location = london,
+            prefs = prefs.copy(useCalendarEvents = true, schedule = Schedule.default(zone)),
+            period = ForecastPeriod.TONIGHT,
+        )
+
+        // Morning event must be filtered out for the tonight pass; the gig must drive the tie-in sentence.
+        result.insight.summary.shouldContain("for your 20:00 gig")
+        result.insight.summary.shouldNotContain("standup")
+        result.insight.hasEvents shouldBe true
+    }
+
+    @Test
+    fun `tonight period reports hasEvents=false when only morning events are present`() = runTest {
+        val zone = ZoneId.of("Europe/London")
+        val morningOnly = CalendarEvent(
+            title = "standup",
+            start = LocalTime.of(9, 0),
+            end = LocalTime.of(9, 30),
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
+        val calendar = FakeCalendarEventReader(events = listOf(morningOnly))
+        val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
+
+        val result = subject(
+            location = london,
+            prefs = prefs.copy(useCalendarEvents = true, schedule = Schedule.default(zone)),
+            period = ForecastPeriod.TONIGHT,
+        )
+
+        result.insight.hasEvents shouldBe false
     }
 
     @Test

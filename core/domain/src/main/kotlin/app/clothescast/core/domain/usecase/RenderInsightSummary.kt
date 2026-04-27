@@ -3,6 +3,7 @@ package app.clothescast.core.domain.usecase
 import app.clothescast.core.domain.model.AlertSeverity
 import app.clothescast.core.domain.model.CalendarEvent
 import app.clothescast.core.domain.model.DailyForecast
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.WardrobeRule
 import app.clothescast.core.domain.model.WeatherAlert
 import app.clothescast.core.domain.model.WeatherCondition
@@ -46,10 +47,15 @@ class RenderInsightSummary {
         todayTriggeredRules: List<WardrobeRule>,
         alerts: List<WeatherAlert> = emptyList(),
         events: List<CalendarEvent> = emptyList(),
+        period: ForecastPeriod = ForecastPeriod.TODAY,
     ): String = buildList {
         alertSentence(alerts)?.let { add(it) }
-        add(bandSentence(today))
-        deltaSentence(today, yesterday)?.let { add(it) }
+        add(bandSentence(today, period))
+        // Yesterday→today deltas don't carry meaning for the tonight pass — the
+        // user already heard the morning summary referencing that comparison.
+        if (period == ForecastPeriod.TODAY) {
+            deltaSentence(today, yesterday)?.let { add(it) }
+        }
         val items = todayTriggeredRules.map { it.item }
         wardrobeSentence(items)?.let { add(it) }
         val peak = peakPrecip(today)
@@ -64,11 +70,15 @@ class RenderInsightSummary {
         return "Alert: ${top.event}."
     }
 
-    private fun bandSentence(today: DailyForecast): String {
+    private fun bandSentence(today: DailyForecast, period: ForecastPeriod): String {
         val low = TemperatureBand.forCelsius(today.feelsLikeMinC)
         val high = TemperatureBand.forCelsius(today.feelsLikeMaxC)
         val label = if (low == high) low.label else "${low.label} to ${high.label}"
-        return "Today will be $label."
+        val lead = when (period) {
+            ForecastPeriod.TODAY -> "Today"
+            ForecastPeriod.TONIGHT -> "Tonight"
+        }
+        return "$lead will be $label."
     }
 
     private fun deltaSentence(today: DailyForecast, yesterday: DailyForecast): String? {

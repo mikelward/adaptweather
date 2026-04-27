@@ -5,10 +5,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
+import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.Insight
@@ -35,14 +39,13 @@ class InsightNotifier(private val context: Context) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
-        // TODO(notification-figure): when [insight.outfit] is non-null, also render the
-        // outfit icons (the same ic_outfit_* drawables the Today screen shows in
-        // OutfitPreviewCard) into a Bitmap sized for Notification.LARGE_ICON_SIZE and
-        // attach via .setLargeIcon(bitmap), so the expanded notification carries the
-        // same glanceable "what to wear today" cue the Today screen does. The small
-        // status-bar icon below already mirrors the recommended top.
+        // The small status-bar icon mirrors the recommended top (silhouette).
+        // The large icon picks up the same top in full colour so the expanded
+        // notification carries the same glanceable "what to wear today" cue the
+        // Today screen's OutfitPreviewCard does.
         val notification = NotificationCompat.Builder(context, CHANNEL_DAILY_INSIGHT)
             .setSmallIcon(smallIconFor(insight.outfit?.top))
+            .setLargeIcon(largeIconForTop(context, insight.outfit?.top))
             .setContentTitle(context.getString(R.string.notification_daily_insight_title))
             .setContentText(insight.summary)
             .setStyle(NotificationCompat.BigTextStyle().bigText(insight.summary))
@@ -77,6 +80,31 @@ class InsightNotifier(private val context: Context) {
             OutfitSuggestion.Top.SWEATER -> R.drawable.ic_notification_top_sweater
             OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_notification_top_thick_jacket
             OutfitSuggestion.Top.TSHIRT, null -> R.drawable.ic_notification_insight
+        }
+
+        /**
+         * Renders the recommended top as a Bitmap for [NotificationCompat.Builder.setLargeIcon].
+         * Reuses the full-colour `ic_outfit_top_*` drawables from [OutfitPreviewCard]
+         * so the notification visual matches the home-screen card. Returns null when
+         * the outfit is missing (older cached payloads), letting the system fall back
+         * to no large icon.
+         */
+        internal fun largeIconForTop(context: Context, top: OutfitSuggestion.Top?): Bitmap? {
+            val drawableRes = largeTopDrawable(top) ?: return null
+            val drawable = ResourcesCompat.getDrawable(context.resources, drawableRes, context.theme)
+                ?: return null
+            val sizePx = context.resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width)
+                .takeIf { it > 0 }
+                ?: 192
+            return drawable.toBitmap(width = sizePx, height = sizePx)
+        }
+
+        @DrawableRes
+        private fun largeTopDrawable(top: OutfitSuggestion.Top?): Int? = when (top) {
+            OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt
+            OutfitSuggestion.Top.SWEATER -> R.drawable.ic_outfit_sweater
+            OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_outfit_thick_jacket
+            null -> null
         }
     }
 }

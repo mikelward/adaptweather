@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.content.getSystemService
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Schedule
 import java.time.Clock
 import java.time.Instant
@@ -14,6 +15,11 @@ import java.time.Instant
 /**
  * Schedules an exact wake-up at the next occurrence of [Schedule]. Wraps AlarmManager
  * so the receiver code stays small and so we can stub the manager in tests.
+ *
+ * Two slots are supported via [ForecastPeriod]: the morning ([ForecastPeriod.TODAY])
+ * insight at the user's wake-up time, and the evening ([ForecastPeriod.TONIGHT])
+ * insight at the user's evening time. Each slot has its own request code + receiver
+ * action so AlarmManager keeps them independent and the receiver can route by action.
  *
  * Design choices:
  * - `setExactAndAllowWhileIdle` is the only primitive that fires at a precise wall-clock
@@ -29,14 +35,14 @@ class DailyAlarmScheduler(
     private val context: Context,
     private val clock: Clock = Clock.systemUTC(),
 ) {
-    fun schedule(schedule: Schedule) {
+    fun schedule(schedule: Schedule, period: ForecastPeriod = ForecastPeriod.TODAY) {
         val alarmManager = context.getSystemService<AlarmManager>() ?: run {
             Log.w(TAG, "AlarmManager unavailable; alarm not scheduled")
             return
         }
 
         val triggerAt: Instant = schedule.nextOccurrenceAfter(clock.instant())
-        val pendingIntent = pendingIntent(context)
+        val pendingIntent = pendingIntent(context, period)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
             // USE_EXACT_ALARM (API 33+) auto-grants this; on the API 31-32 shim path it's
@@ -44,28 +50,37 @@ class DailyAlarmScheduler(
             // fall back to setAndAllowWhileIdle so the user still gets the notification,
             // just possibly drifted by a few minutes.
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt.toEpochMilli(), pendingIntent)
-            Log.w(TAG, "Exact-alarm permission denied; using inexact alarm at $triggerAt")
+            Log.w(TAG, "Exact-alarm permission denied; using inexact alarm at $triggerAt for $period")
             return
         }
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt.toEpochMilli(), pendingIntent)
-        Log.i(TAG, "Daily insight alarm armed for $triggerAt")
+        Log.i(TAG, "Insight alarm armed for $triggerAt ($period)")
     }
 
-    fun cancel() {
+    fun cancel(period: ForecastPeriod = ForecastPeriod.TODAY) {
         val alarmManager = context.getSystemService<AlarmManager>() ?: return
-        alarmManager.cancel(pendingIntent(context))
+        alarmManager.cancel(pendingIntent(context, period))
     }
 
     companion object {
         private const val TAG = "DailyAlarmScheduler"
-        private const val ALARM_REQUEST_CODE = 0xADA1
+        private const val ALARM_REQUEST_CODE_TODAY = 0xADA1
+        private const val ALARM_REQUEST_CODE_TONIGHT = 0xADA2
 
-        internal fun pendingIntent(context: Context): PendingIntent {
-            val intent = Intent(context, AlarmReceiver::class.java).setAction(AlarmReceiver.ACTION_FIRE)
+        internal fun pendingIntent(context: Context, period: ForecastPeriod): PendingIntent {
+            val action = when (period) {
+                ForecastPeriod.TODAY -> AlarmReceiver.ACTION_FIRE
+                ForecastPeriod.TONIGHT -> AlarmReceiver.ACTION_FIRE_TONIGHT
+            }
+            val requestCode = when (period) {
+                ForecastPeriod.TODAY -> ALARM_REQUEST_CODE_TODAY
+                ForecastPeriod.TONIGHT -> ALARM_REQUEST_CODE_TONIGHT
+            }
+            val intent = Intent(context, AlarmReceiver::class.java).setAction(action)
             return PendingIntent.getBroadcast(
                 context,
-                ALARM_REQUEST_CODE,
+                requestCode,
                 intent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )

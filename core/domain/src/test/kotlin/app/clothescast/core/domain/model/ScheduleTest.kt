@@ -109,6 +109,18 @@ class ScheduleTest {
     }
 
     @Test
+    fun `defaultTonight has 7pm every day`() {
+        val schedule = Schedule.defaultTonight(london)
+        schedule.time shouldBe LocalTime.of(19, 0)
+        schedule.days shouldBe Schedule.EVERY_DAY
+    }
+
+    @Test
+    fun `defaultTonight uses provided zone`() {
+        Schedule.defaultTonight(sydney).zoneId shouldBe sydney
+    }
+
+    @Test
     fun `single-day schedule wraps to next week when now equals fire time`() {
         val schedule = Schedule(LocalTime.of(7, 0), setOf(DayOfWeek.MONDAY), london)
         // Monday 2026-04-27 at exactly 07:00 -> not strictly after, so next is following Monday.

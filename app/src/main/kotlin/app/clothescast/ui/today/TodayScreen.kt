@@ -231,6 +231,13 @@ internal fun EmptyState(onRefresh: () -> Unit, isWorking: Boolean = false) {
  * icons stacked vertically — shirt above pants — so the pair reads as a head-to-toe
  * outfit instead of two unrelated items. Icons are fixed-colour SVGs (not Material-themed)
  * so each garment stays recognisable in light or dark mode.
+ *
+ * TODO(outfit-weather-overlay): place a small weather glyph (sun / cloud / rain /
+ *   snow) over the centre of the top icon so a glance carries both "what to wear"
+ *   *and* "what's it doing outside" — e.g. a t-shirt with a sun, a sweater with a
+ *   raincloud. Use the same imagery for the product launcher icon (mipmap/ic_launcher,
+ *   ic_launcher_round, ic_launcher_background) so the home-screen icon, the
+ *   OutfitPreviewCard, and the notification large icon all read as one family.
  */
 @Composable
 internal fun OutfitPreviewCard(outfit: OutfitSuggestion) {

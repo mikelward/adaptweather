@@ -55,6 +55,18 @@ class SettingsRepository(
         }
     }
 
+    suspend fun setTonightSchedule(time: LocalTime, days: Set<DayOfWeek>) {
+        require(days.isNotEmpty()) { "Schedule must include at least one day" }
+        dataStore.edit { prefs ->
+            prefs[TONIGHT_TIME] = TIME_FORMAT.format(time)
+            prefs[TONIGHT_DAYS] = days.map { it.name }.toSet()
+        }
+    }
+
+    suspend fun setTonightEnabled(enabled: Boolean) {
+        dataStore.edit { it[TONIGHT_ENABLED] = enabled }
+    }
+
     suspend fun setDeliveryMode(mode: DeliveryMode) {
         dataStore.edit { it[DELIVERY_MODE] = mode.name }
     }
@@ -144,9 +156,20 @@ class SettingsRepository(
         val elevenLabsVoice = this[ELEVENLABS_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_ELEVENLABS_VOICE
         val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
+        val tonightTime = this[TONIGHT_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
+            ?: DEFAULT_TONIGHT_TIME
+        val tonightDays = this[TONIGHT_DAYS]?.mapNotNull { runCatching { DayOfWeek.valueOf(it) }.getOrNull() }
+            ?.toSet()
+            ?.takeIf { it.isNotEmpty() }
+            ?: Schedule.EVERY_DAY
+        // Default-on: existing installs that haven't seen the tonight pref yet get
+        // the silent overnight notification (it's quiet by default when there are
+        // no calendar events, so it's not noisy out of the box).
+        val tonightEnabled = this[TONIGHT_ENABLED] != false
+        val zone = zoneIdProvider()
 
         return UserPreferences(
-            schedule = Schedule(time = time, days = days, zoneId = zoneIdProvider()),
+            schedule = Schedule(time = time, days = days, zoneId = zone),
             deliveryMode = deliveryMode,
             temperatureUnit = temperatureUnit,
             distanceUnit = distanceUnit,
@@ -159,6 +182,8 @@ class SettingsRepository(
             elevenLabsVoice = elevenLabsVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
+            tonightSchedule = Schedule(time = tonightTime, days = tonightDays, zoneId = zone),
+            tonightEnabled = tonightEnabled,
         )
     }
 
@@ -198,9 +223,13 @@ class SettingsRepository(
         private val ELEVENLABS_VOICE = stringPreferencesKey("elevenlabs_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")
+        private val TONIGHT_TIME = stringPreferencesKey("tonight_time_hhmm")
+        private val TONIGHT_DAYS = stringSetPreferencesKey("tonight_days")
+        private val TONIGHT_ENABLED = booleanPreferencesKey("tonight_enabled")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)
+        private val DEFAULT_TONIGHT_TIME: LocalTime = LocalTime.of(19, 0)
 
         fun create(context: Context): SettingsRepository =
             SettingsRepository(context.settingsDataStore)
