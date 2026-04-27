@@ -259,11 +259,13 @@ class GenerateDailyInsightTest {
         val todayHourly = listOf(
             // Pre-morning: 6:00 with 80% rain — already past, must not surface.
             HourlyForecast(LocalTime.of(6, 0), 8.0, 6.0, 80.0, WeatherCondition.RAIN),
-            // In-window: 09:00 quiet, 15:00 partly cloudy with 35% precip.
+            // In-window: 09:00 quiet, 15:00 rain at 35%.
             HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
-            HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 35.0, WeatherCondition.PARTLY_CLOUDY),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 35.0, WeatherCondition.RAIN),
             // Late evening: 23:00 cloudy with 60% precip — user is asleep, must not
-            // be the headline for the daytime insight.
+            // be the headline for the daytime insight. (Cloudy conditions never
+            // earn a precip clause anyway, but the slicing assertion still cares
+            // that this entry doesn't reach `peakPrecip` in the first place.)
             HourlyForecast(LocalTime.of(23, 0), 12.0, 10.0, 60.0, WeatherCondition.CLOUDY),
         )
         val todayWithHourly = today.copy(hourly = todayHourly)
@@ -274,9 +276,9 @@ class GenerateDailyInsightTest {
 
         // Only hours in [07:00, 19:00) survive — the 06:00 and 23:00 entries are dropped.
         result.insight.hourly.map { it.time } shouldBe listOf(LocalTime.of(9, 0), LocalTime.of(15, 0))
-        // Peak precip is the wettest in-window hour (15:00, partly cloudy at 35%) —
-        // not the 23:00 cloudy spike, which is what the pre-slice peak would have surfaced.
-        result.insight.summary.precip!!.condition shouldBe WeatherCondition.PARTLY_CLOUDY
+        // Peak precip is the wettest in-window hour (15:00, rain at 35%) — not the
+        // 23:00 spike, which is what the pre-slice peak would have surfaced.
+        result.insight.summary.precip!!.condition shouldBe WeatherCondition.RAIN
         result.insight.summary.precip!!.time shouldBe LocalTime.of(15, 0)
     }
 
