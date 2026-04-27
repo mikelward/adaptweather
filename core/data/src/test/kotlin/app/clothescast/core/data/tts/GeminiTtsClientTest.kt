@@ -19,6 +19,7 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
+import java.util.Locale
 
 class GeminiTtsClientTest {
 
@@ -102,6 +103,62 @@ class GeminiTtsClientTest {
         val body = checkNotNull(capturedBody)
         body.shouldContain("clean, crisp studio voice")
         body.shouldContain("hello world")
+    }
+
+    @Test
+    fun `request body includes a british accent directive for en-GB locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", locale = Locale.UK)
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("British English accent")
+    }
+
+    @Test
+    fun `request body includes an australian accent directive for en-AU locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("Australian English accent")
+    }
+
+    @Test
+    fun `request body omits the accent directive for unknown english variants`() = runTest {
+        // en-CA isn't in our supported variant list — fall through to whatever the
+        // model defaults to rather than picking a wrong-but-confident accent.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-CA"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldNotContain("English accent")
     }
 
     @Test

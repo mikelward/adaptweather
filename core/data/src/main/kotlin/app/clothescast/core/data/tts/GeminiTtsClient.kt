@@ -19,6 +19,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import java.util.Base64
+import java.util.Locale
 
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
 const val DEFAULT_GEMINI_TTS_VOICE: String = "Kore"
@@ -37,6 +38,26 @@ internal const val GEMINI_API_VERSION = "v1beta"
 internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
     "Read the following in a clean, crisp studio voice with no audio effects, " +
         "background noise, or vinyl-style texture:\n\n"
+
+/**
+ * Returns a one-line accent instruction for Gemini's TTS prompt, or null when
+ * the locale doesn't map to a known English variant (in which case the model's
+ * default — North American English — applies).
+ *
+ * Gemini's prebuilt voices are language-agnostic and accept natural-language
+ * accent steering in the same prompt that carries the spoken text. The
+ * instruction is prepended to the user text alongside [GEMINI_TTS_STYLE_DIRECTIVE]
+ * and is interpreted as direction, not spoken back.
+ */
+internal fun geminiAccentDirectiveFor(locale: Locale): String? {
+    if (locale.language != "en") return null
+    return when (locale.country) {
+        "GB" -> "Speak with a British English accent."
+        "AU" -> "Speak with an Australian English accent."
+        "US" -> "Speak with a North American English accent."
+        else -> null
+    }
+}
 
 /**
  * Calls Gemini's audio-output model (e.g. `gemini-2.5-flash-preview-tts`). Uses the
@@ -62,9 +83,20 @@ class GeminiTtsClient(
     suspend fun synthesize(
         text: String,
         voiceName: String = DEFAULT_GEMINI_TTS_VOICE,
+        locale: Locale? = null,
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException()
+        }
+
+        val accent = locale?.let { geminiAccentDirectiveFor(it) }
+        val prompt = buildString {
+            append(GEMINI_TTS_STYLE_DIRECTIVE)
+            if (accent != null) {
+                append(accent)
+                append("\n\n")
+            }
+            append(text)
         }
 
         val httpResponse: HttpResponse = httpClient.post {
@@ -78,7 +110,7 @@ class GeminiTtsClient(
             setBody(
                 TtsRequest(
                     contents = listOf(
-                        TtsContent(parts = listOf(TtsTextPart(GEMINI_TTS_STYLE_DIRECTIVE + text))),
+                        TtsContent(parts = listOf(TtsTextPart(prompt))),
                     ),
                     generationConfig = TtsGenerationConfig(
                         responseModalities = listOf("AUDIO"),
