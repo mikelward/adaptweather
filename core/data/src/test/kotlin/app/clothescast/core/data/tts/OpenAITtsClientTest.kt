@@ -96,7 +96,7 @@ class OpenAITtsClientTest {
         client.synthesize(text = "hello", locale = Locale.UK)
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("\"instructions\":\"Speak with a British English accent.\"")
+        body.shouldContain("\"instructions\":\"Speak with a Standard Southern British accent.\"")
     }
 
     @Test
@@ -110,7 +110,7 @@ class OpenAITtsClientTest {
         client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("Australian English accent")
+        body.shouldContain("General Australian accent")
     }
 
     @Test

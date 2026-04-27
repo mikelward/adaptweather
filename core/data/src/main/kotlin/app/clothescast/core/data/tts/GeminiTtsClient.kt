@@ -52,9 +52,9 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
 internal fun geminiAccentDirectiveFor(locale: Locale): String? {
     if (locale.language != "en") return null
     return when (locale.country) {
-        "GB" -> "Speak with a British English accent."
-        "AU" -> "Speak with an Australian English accent."
-        "US" -> "Speak with a North American English accent."
+        "GB" -> "Speak with a Standard Southern British accent."
+        "AU" -> "Speak with a General Australian accent."
+        "US" -> "Speak with a General American accent."
         else -> null
     }
 }
