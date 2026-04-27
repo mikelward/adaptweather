@@ -15,6 +15,8 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -71,6 +73,11 @@ fun ForecastChart(
             bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = bottomFormatter),
         ),
         modelProducer = producer,
+        // Vico's default initial zoom is `max(fixed, content)`, which on a 24-point
+        // hourly series renders only the first ~10 hours and hides the rest behind
+        // a scroll. Force-fit instead so the full day is visible at a glance — this
+        // is a glanceable summary card, not an interactive explorer.
+        zoomState = rememberVicoZoomState(initialZoom = Zoom.Content),
         modifier = modifier
             .fillMaxWidth()
             .height(180.dp),

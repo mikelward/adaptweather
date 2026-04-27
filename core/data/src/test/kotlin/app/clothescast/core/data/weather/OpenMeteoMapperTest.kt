@@ -78,11 +78,11 @@ class OpenMeteoMapperTest {
 
     @Test
     fun `today hourly stays full when response includes a tomorrow day`() {
-        // Pinned by the forecast_days=2 request. Open-Meteo's hourly window for
-        // forecast_days=1 was stopping short of end-of-today on late-morning calls;
-        // bumping to 2 guarantees today's full 24 hours regardless of clock time.
-        // The mapper must keep ignoring tomorrow's daily slot and keep date-filtering
-        // tomorrow's hourly entries out of today.
+        // Pinned by the forecast_days=2 request — we ask for tomorrow's pre-dawn
+        // hourly so the tonight insight can wrap past midnight. The mapper must
+        // keep ignoring tomorrow's daily slot and keep date-filtering tomorrow's
+        // hourly entries out of today, so today's chart is unaffected by the
+        // extra day in the response.
         val threeDay = OpenMeteoResponse(
             timezone = "UTC",
             daily = DailyData(
