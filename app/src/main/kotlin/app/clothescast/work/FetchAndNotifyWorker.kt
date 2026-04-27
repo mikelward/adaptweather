@@ -50,8 +50,6 @@ class FetchAndNotifyWorker(
     private val app: ClothesCastApplication
         get() = applicationContext as ClothesCastApplication
 
-    private val formatter = InsightFormatter()
-
     override suspend fun doWork(): Result {
         val prefs = try {
             app.settingsRepository.preferences.first()
@@ -108,7 +106,7 @@ class FetchAndNotifyWorker(
         }
         if (cached != null) {
             Log.i(TAG, "Using cached $period insight for ${cached.forDate}.")
-            return runCatching { deliver(cached, prefs) }
+            return runCatching { deliver(cached, prefs, formatProse(cached, prefs)) }
                 .map { Result.success() }
                 .getOrElse {
                     Log.e(TAG, "Cached delivery failed; falling through to fresh generate.", it)
@@ -136,8 +134,12 @@ class FetchAndNotifyWorker(
             }
             runCatching { app.insightCache.store(insight) }
                 .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
-            deliver(insight, prefs)
-            Log.i(TAG, "Insight delivered for ${insight.forDate}: ${formatter.format(insight.summary)}")
+            // Render once per delivery so notification, TTS, and the audit log
+            // all share the same string and we don't reconfigure the
+            // Configuration-overridden Resources three times per fire.
+            val prose = formatProse(insight, prefs)
+            deliver(insight, prefs, prose)
+            Log.i(TAG, "Insight delivered for ${insight.forDate}: $prose")
             Result.success()
         } catch (e: ResponseException) {
             // OpenMeteo 4xx → fail; 5xx → retry with backoff.
@@ -179,20 +181,20 @@ class FetchAndNotifyWorker(
         return prefs.location ?: DEFAULT_LOCATION
     }
 
-    private suspend fun deliver(insight: Insight, prefs: UserPreferences) {
+    private suspend fun deliver(insight: Insight, prefs: UserPreferences, prose: String) {
         when (insight.period) {
-            ForecastPeriod.TODAY -> deliverToday(insight, prefs)
-            ForecastPeriod.TONIGHT -> deliverTonight(insight, prefs)
+            ForecastPeriod.TODAY -> deliverToday(insight, prefs, prose)
+            ForecastPeriod.TONIGHT -> deliverTonight(insight, prefs, prose)
         }
     }
 
-    private suspend fun deliverToday(insight: Insight, prefs: UserPreferences) {
+    private suspend fun deliverToday(insight: Insight, prefs: UserPreferences, prose: String) {
         val mode = prefs.deliveryMode
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            app.insightNotifier.notify(insight)
+            app.insightNotifier.notify(insight, prose)
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(formatter.format(insight.summary), prefs)
+            speakWithFallback(prose, prefs)
         }
     }
 
@@ -207,17 +209,20 @@ class FetchAndNotifyWorker(
      *    events tonight. If the evening is empty there's nothing to interrupt
      *    for, even on a TTS-enabled mode.
      */
-    private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences) {
+    private fun formatProse(insight: Insight, prefs: UserPreferences): String =
+        InsightFormatter.forRegion(applicationContext, prefs.region).format(insight.summary)
+
+    private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences, prose: String) {
         val mode = prefs.deliveryMode
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            app.tonightInsightNotifier.notify(insight)
+            app.tonightInsightNotifier.notify(insight, prose)
         }
         if (!insight.hasEvents) {
             Log.i(TAG, "Tonight insight has no events; skipping TTS.")
             return
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(formatter.format(insight.summary), prefs)
+            speakWithFallback(prose, prefs)
         }
     }
 

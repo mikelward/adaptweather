@@ -222,4 +222,99 @@
     <string name="settings_about_privacy_policy">Privacy policy</string>
     <string name="settings_about_source">Source code on GitHub</string>
     <string name="settings_about_dontkillmyapp">Background restrictions (dontkillmyapp.com)</string>
+
+    <!--
+    Insight prose templates rendered by InsightFormatter. Each clause is its own
+    string so translations can reorder phrasing per language (e.g. German verb-
+    final in subordinate clauses). The English forms here are byte-for-byte the
+    same prose the formatter emitted before extraction; do not adjust English
+    phrasing without updating InsightFormatterTest. The %1$s / %2$s positional
+    args let translations rearrange tokens.
+    -->
+
+    <!-- "Today" / "Tonight" lead-in for the band-temperature sentence. -->
+    <string name="insight_lead_today">Today</string>
+    <string name="insight_lead_tonight">Tonight</string>
+
+    <!-- Single-band sentence: %1$s = lead-in ("Today"), %2$s = band label ("mild"). -->
+    <string name="insight_band_single">%1$s will be %2$s.</string>
+    <!-- Range-band sentence: %1$s = lead-in, %2$s = low band, %3$s = high band. -->
+    <string name="insight_band_range">%1$s will be %2$s to %3$s.</string>
+
+    <!-- Band labels — used inside the band-sentence templates above. -->
+    <string name="insight_band_freezing">freezing</string>
+    <string name="insight_band_cold">cold</string>
+    <string name="insight_band_cool">cool</string>
+    <string name="insight_band_mild">mild</string>
+    <string name="insight_band_warm">warm</string>
+    <string name="insight_band_hot">hot</string>
+
+    <!-- Day-on-day temperature delta. %1$d is the rounded degree difference. -->
+    <string name="insight_delta_warmer">It will be %1$d° warmer today.</string>
+    <string name="insight_delta_cooler">It will be %1$d° cooler today.</string>
+
+    <!-- Severe-weather alert prefix. %1$s = event name (e.g. "Tornado Warning"). -->
+    <string name="insight_alert">Alert: %1$s.</string>
+
+    <!--
+    Clothes phrasing. The list of items is composed locale-by-locale so the
+    article picking ("a jumper" / "an umbrella" / bare "shorts") doesn't leak
+    cross-language. English-specific article logic lives in EnglishClothesPhraser;
+    other languages provide their own phraser implementation. The "Wear ..." outer
+    template wraps the locale-specific body.
+    -->
+    <!-- Wraps the joined items list: %1$s is the comma/and-joined body. -->
+    <string name="insight_clothes_wear">Wear %1$s.</string>
+    <!-- Article forms used by EnglishClothesPhraser for the *first* item only. -->
+    <string name="insight_clothes_article_a">a %1$s</string>
+    <string name="insight_clothes_article_an">an %1$s</string>
+    <!-- Two-item English join: %1$s = first item (with article), %2$s = second item bare. -->
+    <string name="insight_clothes_join_two">%1$s and %2$s</string>
+    <!-- Three-or-more English join: %1$s = first (with article), %2$s = comma-joined middle, %3$s = last item bare. -->
+    <string name="insight_clothes_join_many">%1$s, %2$s, and %3$s</string>
+
+    <!--
+    Precipitation peak: %1$s = humanised condition name, %2$s = a time phrase
+    composed from one of insight_precip_at_time / insight_precip_overnight.
+    Splitting the time into its own sub-template lets the "overnight" collapse
+    swap a verb-shaped phrase ("at 3pm" / "overnight") cleanly per locale.
+    -->
+    <string name="insight_precip">%1$s %2$s.</string>
+    <!-- Inserted as %2$s above when the peak hour is named — e.g. "at 3pm". -->
+    <string name="insight_precip_at_time">at %1$s</string>
+    <!-- Replaces the time phrase entirely for early-morning peaks (00:00–04:59)
+         when no calendar tie-in pins the hour. -->
+    <string name="insight_precip_overnight">overnight</string>
+
+    <!--
+    Spoken-time vocabulary used by InsightFormatter.spokenTime to emit forms
+    like "midnight", "noon", "3pm", "3:30pm". The 12h/am-pm logic itself is
+    English-specific; non-English locales fall back to a 24h ASCII format
+    until a dedicated formatter is added.
+    -->
+    <string name="insight_time_midnight">midnight</string>
+    <string name="insight_time_noon">noon</string>
+    <!-- %1$d = 1..12 hour. -->
+    <string name="insight_time_am">%1$dam</string>
+    <string name="insight_time_pm">%1$dpm</string>
+    <!-- %1$d = 1..12 hour, %2$d = 0..59 minute (zero-padded by the formatter). -->
+    <string name="insight_time_am_minutes">%1$d:%2$02dam</string>
+    <string name="insight_time_pm_minutes">%1$d:%2$02dpm</string>
+    <!-- Condition labels used inside insight_precip. Mirror WeatherCondition entries. -->
+    <string name="insight_condition_clear">Clear</string>
+    <string name="insight_condition_partly_cloudy">Partly cloudy</string>
+    <string name="insight_condition_cloudy">Cloudy</string>
+    <string name="insight_condition_fog">Fog</string>
+    <string name="insight_condition_drizzle">Drizzle</string>
+    <string name="insight_condition_rain">Rain</string>
+    <string name="insight_condition_snow">Snow</string>
+    <string name="insight_condition_thunderstorm">Thunderstorm</string>
+    <string name="insight_condition_unknown">Unknown</string>
+
+    <!--
+    Calendar tie-in — picks an event-relevant item for a specific upcoming
+    event. %1$s = item phrase (with article, via the same phraser as clothes),
+    %2$s = HH:mm event time, %3$s = event title.
+    -->
+    <string name="insight_calendar_tie_in">Bring %1$s for your %2$s %3$s.</string>
 </resources>

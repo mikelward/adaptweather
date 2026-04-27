@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.Insight
-import app.clothescast.insight.InsightFormatter
 
 /**
  * Posts the tonight insight as a system notification. Picks one of two channels
@@ -28,14 +27,10 @@ import app.clothescast.insight.InsightFormatter
  * posting; on Android 13+ a missing permission silently no-ops (the insight is
  * still cached and surfaced in-app the next time the user opens it).
  */
-class TonightInsightNotifier(
-    private val context: Context,
-    private val formatter: InsightFormatter = InsightFormatter(),
-) {
+class TonightInsightNotifier(private val context: Context) {
 
-    fun notify(insight: Insight) {
+    fun notify(insight: Insight, prose: String) {
         if (!hasPostNotificationPermission()) return
-        val prose = formatter.format(insight.summary)
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
