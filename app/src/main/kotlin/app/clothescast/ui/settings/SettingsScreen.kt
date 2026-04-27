@@ -31,7 +31,7 @@ import app.clothescast.R
 /**
  * One sub-page per concern. Order in the enum matches the order shown in the
  * root list: schedule + clothes come first (the most-frequently-tweaked rules),
- * voice + region after (set once, mostly forgotten), API keys / data sources /
+ * region + voice after (set once, mostly forgotten), API keys / data sources /
  * about at the bottom.
  *
  * Public so callers (e.g. the onboarding flow) can deep-link into a specific
@@ -41,8 +41,8 @@ enum class SettingsRoute(@StringRes val titleRes: Int) {
     Root(R.string.settings_title),
     Schedule(R.string.settings_root_schedule),
     Clothes(R.string.settings_root_clothes),
-    Voice(R.string.settings_root_voice),
     Region(R.string.settings_root_region),
+    Voice(R.string.settings_root_voice),
     ApiKeys(R.string.settings_root_api_keys),
     DataSources(R.string.settings_root_data_sources),
     About(R.string.settings_root_about),
@@ -118,6 +118,15 @@ fun SettingsScreen(
                 onReplace = viewModel::replaceClothesRule,
                 onDelete = viewModel::deleteClothesRule,
             )
+            SettingsRoute.Region -> RegionContent(
+                region = state.region,
+                temperatureUnit = state.temperatureUnit,
+                distanceUnit = state.distanceUnit,
+                padding = padding,
+                onSetRegion = viewModel::setRegion,
+                onSetTemperatureUnit = viewModel::setTemperatureUnit,
+                onSetDistanceUnit = viewModel::setDistanceUnit,
+            )
             SettingsRoute.Voice -> VoiceContent(
                 selected = state.ttsEngine,
                 geminiVoice = state.geminiVoice,
@@ -133,15 +142,6 @@ fun SettingsScreen(
                 onSetOpenAiVoice = viewModel::setOpenAiVoice,
                 onSetElevenLabsVoice = viewModel::setElevenLabsVoice,
                 onSetVoiceLocale = viewModel::setVoiceLocale,
-            )
-            SettingsRoute.Region -> RegionContent(
-                region = state.region,
-                temperatureUnit = state.temperatureUnit,
-                distanceUnit = state.distanceUnit,
-                padding = padding,
-                onSetRegion = viewModel::setRegion,
-                onSetTemperatureUnit = viewModel::setTemperatureUnit,
-                onSetDistanceUnit = viewModel::setDistanceUnit,
             )
             SettingsRoute.ApiKeys -> ApiKeysContent(
                 geminiConfigured = state.apiKeyConfigured,
