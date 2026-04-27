@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+First-pass German translation. Scope: just the spoken-aloud insight-prose
+templates (insight_* keys) + the German labels for the Region / VoiceLocale
+pickers. The rest of the UI is intentionally not yet translated — settings
+labels, onboarding, notifications etc. fall through to values/strings.xml
+(English) until a follow-up PR fills them in. Picking Region = DE_DE today
+gives the user a German morning summary spoken in German via Gemini, while
+the rest of the app stays in English.
+-->
+<resources>
+    <string name="settings_region_language_de_de">Deutsch (Deutschland)</string>
+    <string name="settings_tts_voice_locale_de_de">Deutsch (Deutschland)</string>
+
+    <!-- Insight prose templates — German equivalents of the keys in values/strings.xml. -->
+    <string name="insight_lead_today">Heute</string>
+    <string name="insight_lead_tonight">Heute Abend</string>
+
+    <!-- "Heute wird es mild." / "Heute wird es kühl bis mild." Subject-second
+         word order means the lead-in flows into "wird es ...". -->
+    <string name="insight_band_single">%1$s wird es %2$s.</string>
+    <string name="insight_band_range">%1$s wird es %2$s bis %3$s.</string>
+
+    <string name="insight_band_freezing">eiskalt</string>
+    <string name="insight_band_cold">kalt</string>
+    <string name="insight_band_cool">kühl</string>
+    <string name="insight_band_mild">mild</string>
+    <string name="insight_band_warm">warm</string>
+    <string name="insight_band_hot">heiß</string>
+
+    <string name="insight_delta_warmer">Heute wird es %1$d° wärmer.</string>
+    <string name="insight_delta_cooler">Heute wird es %1$d° kälter.</string>
+
+    <string name="insight_alert">Warnung: %1$s.</string>
+
+    <!--
+    Imperative "Trag …" — informal Du-form, matches the app's casual tone.
+    The body comes from GermanClothesPhraser, which lists items unprefixed
+    because we don't know each item's grammatical gender (der/die/das ⇒ einen
+    /eine/ein) without per-rule metadata. A flat comma-separated list reads
+    fine ("Trag Pullover, Jacke und Regenschirm.") and avoids guessing the
+    wrong article. A future PR could add a gender hint to ClothesRule.
+    -->
+    <string name="insight_clothes_wear">Trag %1$s.</string>
+    <!-- Articles unused by GermanClothesPhraser (defined for parity / future use). -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s und %2$s</string>
+    <!-- German doesn't use the Oxford comma — last item joined with "und" only. -->
+    <string name="insight_clothes_join_many">%1$s, %2$s und %3$s</string>
+
+    <!-- Same composed shape as the English template ("%1$s %2$s.") — German
+         likewise wants the type then the time-phrase, just with German tokens. -->
+    <string name="insight_precip">%1$s %2$s.</string>
+    <!-- "Regen um 15:00." — the time itself comes from the InsightFormatter
+         24h ASCII fallback for non-English locales (no insight_time_* needed). -->
+    <string name="insight_precip_at_time">um %1$s</string>
+    <!-- "Regen über Nacht." for the early-morning collapse. -->
+    <string name="insight_precip_overnight">über Nacht</string>
+
+    <string name="insight_condition_clear">Klar</string>
+    <string name="insight_condition_partly_cloudy">Teilweise bewölkt</string>
+    <string name="insight_condition_cloudy">Bewölkt</string>
+    <string name="insight_condition_fog">Nebel</string>
+    <string name="insight_condition_drizzle">Nieselregen</string>
+    <string name="insight_condition_rain">Regen</string>
+    <string name="insight_condition_snow">Schnee</string>
+    <string name="insight_condition_thunderstorm">Gewitter</string>
+    <string name="insight_condition_unknown">Unbekannt</string>
+
+    <!-- "Denk an Regenschirm für park run um 15:00." -->
+    <string name="insight_calendar_tie_in">Denk an %1$s für %3$s um %2$s.</string>
+</resources>

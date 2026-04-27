@@ -120,6 +120,7 @@
     <string name="settings_tts_voice_locale_en_us">English (United States)</string>
     <string name="settings_tts_voice_locale_en_gb">English (United Kingdom)</string>
     <string name="settings_tts_voice_locale_en_au">English (Australia)</string>
+    <string name="settings_tts_voice_locale_de_de">German (Germany)</string>
     <string name="settings_tts_test">Test voice</string>
     <!-- Shown next to the engine picker when the chosen engine's API key isn't
          configured. %1$s is the engine name ("Gemini" / "OpenAI" / "ElevenLabs"). -->
@@ -150,6 +151,7 @@
     <string name="settings_region_language_en_us">English (United States)</string>
     <string name="settings_region_language_en_gb">English (United Kingdom)</string>
     <string name="settings_region_language_en_au">English (Australia)</string>
+    <string name="settings_region_language_de_de">German (Germany)</string>
 
     <string name="settings_temperature_unit_title">Temperature unit</string>
     <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
