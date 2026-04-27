@@ -49,6 +49,28 @@ enum class VoiceLocale(val bcp47: String?) {
     EN_AU("en-AU"),
 }
 
+/**
+ * User-selectable English-language region. Drives wardrobe vocabulary
+ * (en-US "sweater" vs en-GB / en-AU "jumper") and any other prose that
+ * differs across English variants.
+ *
+ * [AUTO] follows the device locale — the right default for almost everyone,
+ * since their phone language already encodes their region preference. The
+ * explicit US / UK / AU options are for users whose phone locale doesn't
+ * match the vocabulary they want to read (e.g. a UK speaker on an en-US
+ * phone).
+ *
+ * The bcp47 tag is used by `:app`'s `InsightFormatter` to pick a
+ * region-specific Android resource configuration; for [AUTO] the formatter
+ * lets the platform's existing locale resolution pick.
+ */
+enum class Region(val bcp47: String?) {
+    AUTO(null),
+    US("en-US"),
+    UK("en-GB"),
+    AU("en-AU"),
+}
+
 data class UserPreferences(
     val schedule: Schedule,
     val deliveryMode: DeliveryMode,
@@ -107,6 +129,14 @@ data class UserPreferences(
      * the schedule settings page.
      */
     val tonightEnabled: Boolean = true,
+    /**
+     * English-language region used to localize wardrobe vocabulary and any
+     * other prose that varies across en-US / en-GB / en-AU. Default [Region.AUTO]
+     * follows the device locale — a fresh install on an Australian phone gets
+     * "jumper" without any setting change; the picker is only there for
+     * users who want to override.
+     */
+    val region: Region = Region.AUTO,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

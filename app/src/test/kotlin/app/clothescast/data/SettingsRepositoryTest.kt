@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.VoiceLocale
@@ -208,6 +209,54 @@ class SettingsRepositoryTest {
 
         subject.setUseCalendarEvents(false)
         subject.preferences.first().useCalendarEvents shouldBe false
+    }
+
+    @Test
+    fun `region defaults to AUTO when nothing stored`() = runTest {
+        subject.preferences.first().region shouldBe Region.AUTO
+    }
+
+    @Test
+    fun `region setter round-trips`() = runTest {
+        subject.setRegion(Region.UK)
+        subject.preferences.first().region shouldBe Region.UK
+
+        subject.setRegion(Region.US)
+        subject.preferences.first().region shouldBe Region.US
+    }
+
+    @Test
+    fun `unknown region name falls back to AUTO`() = runTest {
+        dataStore.edit {
+            it[stringPreferencesKey("region")] = "MARS"
+        }
+
+        subject.preferences.first().region shouldBe Region.AUTO
+    }
+
+    @Test
+    fun `pre-localization jumper defaults are silently migrated to sweater defaults`() = runTest {
+        // A user whose stored rule list exactly matches the old defaults gets the
+        // new US-baseline keys back, so the formatter can resolve "sweater" -> "jumper"
+        // through the en-GB / en-AU resource overrides without further user action.
+        subject.setWardrobeRules(WardrobeRule.LEGACY_JUMPER_DEFAULTS)
+
+        subject.preferences.first().wardrobeRules shouldBe WardrobeRule.DEFAULTS
+    }
+
+    @Test
+    fun `customised rules that are not exactly the legacy defaults are left alone`() = runTest {
+        // Same items as legacy but a tweaked threshold -> the user has clearly
+        // customised, so we don't touch the items even though the names are old.
+        val tweaked = listOf(
+            WardrobeRule("jumper", WardrobeRule.TemperatureBelow(15.0)),
+            WardrobeRule("jacket", WardrobeRule.TemperatureBelow(12.0)),
+            WardrobeRule("shorts", WardrobeRule.TemperatureAbove(24.0)),
+            WardrobeRule("umbrella", WardrobeRule.PrecipitationProbabilityAbove(50.0)),
+        )
+        subject.setWardrobeRules(tweaked)
+
+        subject.preferences.first().wardrobeRules shouldContainExactly tweaked
     }
 
     @Test

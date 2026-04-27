@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    en-GB overrides: the United Kingdom calls a `sweater` a `jumper`. Only the
+    differing strings live here; the formatter resolves the rest from the
+    `values/` baseline. The wardrobe rule still stores the canonical US key
+    `sweater` — the resource lookup turns it into `jumper` at render time, and
+    a region change picks up the new word without any cache invalidation or
+    refetch.
+-->
+<resources>
+    <string name="wardrobe_item_sweater">jumper</string>
+    <string name="wardrobe_phrase_sweater">a jumper</string>
+</resources>

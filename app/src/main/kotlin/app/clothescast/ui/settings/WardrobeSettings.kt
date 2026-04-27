@@ -33,15 +33,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.WardrobeRule
 
 @Composable
 internal fun WardrobeContent(
     rules: List<WardrobeRule>,
+    region: Region,
     padding: PaddingValues,
     onAdd: (WardrobeRule) -> Unit,
     onReplace: (Int, WardrobeRule) -> Unit,
     onDelete: (Int) -> Unit,
+    onRegionChange: (Region) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -51,8 +54,43 @@ internal fun WardrobeContent(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        RegionCard(region, onRegionChange)
         WardrobeRulesCard(rules, onAdd, onReplace, onDelete)
     }
+}
+
+@Composable
+private fun RegionCard(region: Region, onRegionChange: (Region) -> Unit) {
+    SectionCard(title = stringResource(R.string.settings_region_title)) {
+        Text(
+            text = stringResource(R.string.settings_region_description),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Region.entries.forEach { option ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(
+                    selected = region == option,
+                    onClick = { onRegionChange(option) },
+                )
+                Text(
+                    text = stringResource(regionLabel(option)),
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+        }
+    }
+}
+
+private fun regionLabel(region: Region): Int = when (region) {
+    Region.AUTO -> R.string.settings_region_auto
+    Region.US -> R.string.settings_region_us
+    Region.UK -> R.string.settings_region_uk
+    Region.AU -> R.string.settings_region_au
 }
 
 @Composable

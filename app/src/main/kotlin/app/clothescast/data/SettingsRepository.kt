@@ -12,6 +12,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
@@ -127,6 +128,10 @@ class SettingsRepository(
         dataStore.edit { it[USE_CALENDAR_EVENTS] = enabled }
     }
 
+    suspend fun setRegion(region: Region) {
+        dataStore.edit { it[REGION] = region.name }
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -166,6 +171,8 @@ class SettingsRepository(
         // the silent overnight notification (it's quiet by default when there are
         // no calendar events, so it's not noisy out of the box).
         val tonightEnabled = this[TONIGHT_ENABLED] != false
+        val region = this[REGION]?.let { runCatching { Region.valueOf(it) }.getOrNull() }
+            ?: Region.AUTO
         val zone = zoneIdProvider()
 
         return UserPreferences(
@@ -184,6 +191,7 @@ class SettingsRepository(
             useCalendarEvents = useCalendarEvents,
             tonightSchedule = Schedule(time = tonightTime, days = tonightDays, zoneId = zone),
             tonightEnabled = tonightEnabled,
+            region = region,
         )
     }
 
@@ -201,9 +209,18 @@ class SettingsRepository(
 
     private fun parseRules(raw: String?): List<WardrobeRule> {
         if (raw.isNullOrBlank()) return WardrobeRule.DEFAULTS
-        return runCatching {
+        val stored = runCatching {
             json.decodeFromString<List<WardrobeRuleDto>>(raw).map { it.toDomain() }
         }.getOrDefault(WardrobeRule.DEFAULTS)
+        // Silent migration: a user whose rule list is byte-identical to the
+        // pre-region-localization defaults (item names + thresholds) never
+        // customised them, so swap onto the new US-baseline keys so the
+        // formatter can localize ("jumper" -> resource lookup -> "sweater" /
+        // "jumper" depending on Region). Anyone who edited their rules — even
+        // by reordering or threshold-tweaking — keeps their literal items;
+        // we only touch the exact-match-old-defaults case.
+        if (stored == WardrobeRule.LEGACY_JUMPER_DEFAULTS) return WardrobeRule.DEFAULTS
+        return stored
     }
 
     companion object {
@@ -226,6 +243,7 @@ class SettingsRepository(
         private val TONIGHT_TIME = stringPreferencesKey("tonight_time_hhmm")
         private val TONIGHT_DAYS = stringSetPreferencesKey("tonight_days")
         private val TONIGHT_ENABLED = booleanPreferencesKey("tonight_enabled")
+        private val REGION = stringPreferencesKey("region")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

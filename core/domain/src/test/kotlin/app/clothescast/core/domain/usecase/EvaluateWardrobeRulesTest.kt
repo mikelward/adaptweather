@@ -37,19 +37,19 @@ class EvaluateWardrobeRulesTest {
     @Test
     fun `crisp morning warm afternoon triggers expected items in input order`() {
         val triggered = subject(forecast(min = 8.0, max = 25.0), WardrobeRule.DEFAULTS)
-        triggered.map { it.item }.shouldContainExactly("jumper", "jacket", "shorts")
+        triggered.map { it.item }.shouldContainExactly("sweater", "jacket", "shorts")
     }
 
     @Test
     fun `wet cold day triggers cold-weather items and umbrella`() {
         val triggered = subject(forecast(min = 10.0, max = 16.0, precip = 70.0), WardrobeRule.DEFAULTS)
-        triggered.map { it.item }.shouldContainExactly("jumper", "jacket", "umbrella")
+        triggered.map { it.item }.shouldContainExactly("sweater", "jacket", "umbrella")
     }
 
     @Test
-    fun `mild wet day triggers only umbrella and jumper`() {
+    fun `mild wet day triggers only umbrella and sweater`() {
         val triggered = subject(forecast(min = 14.0, max = 20.0, precip = 70.0), WardrobeRule.DEFAULTS)
-        triggered.map { it.item }.shouldContainExactly("jumper", "umbrella")
+        triggered.map { it.item }.shouldContainExactly("sweater", "umbrella")
     }
 
     @Test

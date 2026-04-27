@@ -8,6 +8,7 @@ import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
@@ -57,6 +58,7 @@ class SettingsViewModel(
                         elevenLabsVoice = prefs.elevenLabsVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
+                        region = prefs.region,
                     )
                 }
             }
@@ -174,6 +176,10 @@ class SettingsViewModel(
 
     fun setUseCalendarEvents(enabled: Boolean) {
         viewModelScope.launch { settingsRepository.setUseCalendarEvents(enabled) }
+    }
+
+    fun setRegion(region: Region) {
+        viewModelScope.launch { settingsRepository.setRegion(region) }
     }
 
     /** Used by the data-sources page's location dialog; safe to call from any dispatcher. */

@@ -113,10 +113,12 @@ fun SettingsScreen(
             )
             SettingsRoute.Wardrobe -> WardrobeContent(
                 rules = state.wardrobeRules,
+                region = state.region,
                 padding = padding,
                 onAdd = viewModel::addWardrobeRule,
                 onReplace = viewModel::replaceWardrobeRule,
                 onDelete = viewModel::deleteWardrobeRule,
+                onRegionChange = viewModel::setRegion,
             )
             SettingsRoute.Voice -> VoiceContent(
                 selected = state.ttsEngine,
