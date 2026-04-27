@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.Locale
 
 class OpenMeteoMapperTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -73,6 +74,44 @@ class OpenMeteoMapperTest {
         peak!!.time shouldBe LocalTime.of(15, 0)
         peak.precipitationProbabilityPct shouldBe 60.0
         peak.condition shouldBe WeatherCondition.RAIN
+    }
+
+    @Test
+    fun `today hourly stays full when response includes a tomorrow day`() {
+        // Pinned by the forecast_days=2 request. Open-Meteo's hourly window for
+        // forecast_days=1 was stopping short of end-of-today on late-morning calls;
+        // bumping to 2 guarantees today's full 24 hours regardless of clock time.
+        // The mapper must keep ignoring tomorrow's daily slot and keep date-filtering
+        // tomorrow's hourly entries out of today.
+        val threeDay = OpenMeteoResponse(
+            timezone = "UTC",
+            daily = DailyData(
+                time = listOf("2026-04-24", "2026-04-25", "2026-04-26"),
+                temperatureMin = listOf(12.0, 16.0, 14.0),
+                temperatureMax = listOf(18.0, 24.0, 22.0),
+                feelsLikeMin = listOf(10.0, 15.0, 13.0),
+                feelsLikeMax = listOf(17.0, 23.0, 21.0),
+                precipitationProbabilityMax = listOf(5, 60, 10),
+                precipitationSum = listOf(0.0, 4.5, 0.0),
+                weatherCode = listOf(2, 63, 1),
+            ),
+            hourly = HourlyData(
+                time = (0..23).map { String.format(Locale.ROOT, "2026-04-25T%02d:00", it) } +
+                    listOf("2026-04-26T00:00", "2026-04-26T01:00"),
+                temperature = (0..23).map { 16.0 + it } + listOf(14.0, 14.5),
+                feelsLike = (0..23).map { 15.0 + it } + listOf(13.0, 13.5),
+                precipitationProbability = (0..25).map { 0 },
+                weatherCode = (0..25).map { 0 },
+            ),
+        )
+
+        val today = OpenMeteoMapper.toBundle(threeDay).today
+
+        today.date shouldBe LocalDate.of(2026, 4, 25)
+        today.temperatureMaxC shouldBe 24.0
+        today.hourly shouldHaveSize 24
+        today.hourly.first().time shouldBe LocalTime.of(0, 0)
+        today.hourly.last().time shouldBe LocalTime.of(23, 0)
     }
 
     @Test

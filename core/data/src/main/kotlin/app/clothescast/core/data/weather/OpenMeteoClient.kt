@@ -17,9 +17,15 @@ import kotlinx.coroutines.coroutineScope
 internal const val OPEN_METEO_HOST = "api.open-meteo.com"
 
 /**
- * Open-Meteo `forecast` endpoint with past_days=1&forecast_days=1, returning yesterday's
- * actuals plus today's forecast in one call. Free, key-less. Free-tier soft cap is 10k
- * requests/day; this app makes one call per device per day.
+ * Open-Meteo `forecast` endpoint with past_days=1&forecast_days=2, returning yesterday's
+ * actuals plus today's and tomorrow's forecast in one call. Free, key-less. Free-tier
+ * soft cap is 10k requests/day; this app makes one call per device per day.
+ *
+ * `forecast_days=2` (not 1) so the hourly array reliably covers all 24 hours of today
+ * regardless of when in the day the worker fires. With `forecast_days=1` Open-Meteo's
+ * hourly window stops short of end-of-day for late-morning calls — the chart was
+ * truncating at "now" instead of showing the full afternoon. Tomorrow's hourly
+ * entries are filtered out by date in the mapper before the today forecast is built.
  *
  * Severe-weather alerts come from a second `/v1/warnings` call. The warnings endpoint
  * is best-effort: if it fails (4xx, 5xx, network), we return the forecast with an empty
@@ -62,7 +68,7 @@ class OpenMeteoClient(private val httpClient: HttpClient) : WeatherRepository {
             parameter("latitude", location.latitude)
             parameter("longitude", location.longitude)
             parameter("past_days", 1)
-            parameter("forecast_days", 1)
+            parameter("forecast_days", 2)
             parameter("timezone", "auto")
             parameter(
                 "daily",
