@@ -47,16 +47,30 @@ class GenerateDailyInsight(
         // that matches the alarm that just fired.
         val morningStart = prefs.schedule.time
         val tonightStart = prefs.tonightSchedule.time
+        val todayForecast = bundle.today.slicedForToday(
+            morningStart = morningStart,
+            eveningEnd = tonightStart,
+        )
+        val tonightForecast = bundle.today.slicedForTonight(
+            tonightStart = tonightStart,
+            morningEnd = morningStart,
+            tomorrowHourly = bundle.tomorrowHourly,
+        )
         val periodForecast = when (period) {
-            ForecastPeriod.TODAY -> bundle.today.slicedForToday(
-                morningStart = morningStart,
-                eveningEnd = tonightStart,
-            )
-            ForecastPeriod.TONIGHT -> bundle.today.slicedForTonight(
-                tonightStart = tonightStart,
-                morningEnd = morningStart,
-                tomorrowHourly = bundle.tomorrowHourly,
-            )
+            ForecastPeriod.TODAY -> todayForecast
+            ForecastPeriod.TONIGHT -> tonightForecast
+        }
+        // The home screen wants a side-by-side preview pair: "Today + Tonight"
+        // on a morning insight, "Tonight + Tomorrow" on an evening one. We
+        // compute the second outfit from the same forecast bundle so showing
+        // both costs no extra API call. Null when the underlying data isn't
+        // there (e.g. evening insight on a legacy bundle without tomorrow's
+        // daily aggregates) — the screen falls back to a single card.
+        val nextOutfit = when (period) {
+            ForecastPeriod.TODAY -> tonightForecast
+                .takeIf { it.hourly.isNotEmpty() }
+                ?.let { OutfitSuggestion.fromForecast(it) }
+            ForecastPeriod.TONIGHT -> bundle.tomorrow?.let { OutfitSuggestion.fromForecast(it) }
         }
         val todayTriggered = evaluateWardrobeRules(periodForecast, prefs.wardrobeRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
@@ -89,6 +103,7 @@ class GenerateDailyInsight(
             hourly = periodForecast.hourly,
             confidence = bundle.confidence,
             outfit = OutfitSuggestion.fromForecast(periodForecast),
+            nextOutfit = nextOutfit,
             period = period,
             hasEvents = periodEvents.isNotEmpty(),
         )

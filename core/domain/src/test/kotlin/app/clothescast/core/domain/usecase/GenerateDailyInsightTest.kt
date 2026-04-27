@@ -9,6 +9,7 @@ import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -368,6 +369,75 @@ class GenerateDailyInsightTest {
         // is what drives the tonight band sentence and outfit, not today's daytime min.
         result.insight.summary.band.low shouldBe TemperatureBand.FREEZING
         result.insight.summary.band.high shouldBe TemperatureBand.COOL
+    }
+
+    @Test
+    fun `today period populates nextOutfit from the overnight slice when hourly carries tonight hours`() = runTest {
+        val todayHourly = listOf(
+            HourlyForecast(LocalTime.of(8, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 26.0, 26.0, 5.0, WeatherCondition.CLEAR),
+            // Overnight hours dropping into the SWEATER band — drives a different
+            // nextOutfit than the daytime TSHIRT.
+            HourlyForecast(LocalTime.of(20, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(23, 0), 11.0, 9.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val warmDay = today.copy(
+            temperatureMinC = 20.0,
+            temperatureMaxC = 26.0,
+            feelsLikeMinC = 20.0,
+            feelsLikeMaxC = 26.0,
+            hourly = todayHourly,
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(warmDay, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TODAY)
+
+        result.insight.outfit shouldBe OutfitSuggestion(
+            top = OutfitSuggestion.Top.TSHIRT,
+            bottom = OutfitSuggestion.Bottom.SHORTS,
+        )
+        result.insight.nextOutfit shouldBe OutfitSuggestion(
+            top = OutfitSuggestion.Top.SWEATER,
+            bottom = OutfitSuggestion.Bottom.LONG_PANTS,
+        )
+    }
+
+    @Test
+    fun `tonight period populates nextOutfit from tomorrow's daily forecast`() = runTest {
+        val tomorrow = DailyForecast(
+            date = LocalDate.of(2026, 4, 26),
+            temperatureMinC = 14.0,
+            temperatureMaxC = 26.0,
+            feelsLikeMinC = 14.0,
+            feelsLikeMaxC = 26.0,
+            precipitationProbabilityMaxPct = 5.0,
+            precipitationMmTotal = 0.0,
+            condition = WeatherCondition.CLEAR,
+        )
+        val weather = FakeWeatherRepository(
+            ForecastBundle(today, yesterday, tomorrow = tomorrow),
+        )
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TONIGHT)
+
+        // Tomorrow's feels-like 14→26: SWEATER (min < 18) and LONG_PANTS
+        // (min ≤ 15 — shorts need both max > 22 and min > 15).
+        result.insight.nextOutfit shouldBe OutfitSuggestion(
+            top = OutfitSuggestion.Top.SWEATER,
+            bottom = OutfitSuggestion.Bottom.LONG_PANTS,
+        )
+    }
+
+    @Test
+    fun `tonight period leaves nextOutfit null when tomorrow daily is unavailable`() = runTest {
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TONIGHT)
+
+        result.insight.nextOutfit.shouldBeNull()
     }
 
     @Test

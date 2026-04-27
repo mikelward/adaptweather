@@ -36,14 +36,20 @@ internal object OpenMeteoMapper {
         val todayHourly = response.hourly.forDate(todayDate)
         val today = response.daily.toForecast(index = 1, date = todayDate, hourly = todayHourly)
 
-        val tomorrowHourly = if (response.daily.time.size >= 3) {
+        val (tomorrowHourly, tomorrow) = if (response.daily.time.size >= 3) {
             val tomorrowDate = LocalDate.parse(response.daily.time[2])
-            response.hourly.forDate(tomorrowDate)
+            val hourly = response.hourly.forDate(tomorrowDate)
+            hourly to response.daily.toForecast(index = 2, date = tomorrowDate, hourly = hourly)
         } else {
-            emptyList()
+            emptyList<HourlyForecast>() to null
         }
 
-        return ForecastBundle(today = today, yesterday = yesterday, tomorrowHourly = tomorrowHourly)
+        return ForecastBundle(
+            today = today,
+            yesterday = yesterday,
+            tomorrowHourly = tomorrowHourly,
+            tomorrow = tomorrow,
+        )
     }
 
     private fun DailyData.toForecast(index: Int, date: LocalDate, hourly: List<HourlyForecast>): DailyForecast {

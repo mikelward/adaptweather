@@ -12,6 +12,9 @@
     <string name="today_generated_at">Generated at %1$s</string>
 
     <string name="today_outfit_title">What to wear</string>
+    <string name="today_outfit_label_today">Today</string>
+    <string name="today_outfit_label_tonight">Tonight</string>
+    <string name="today_outfit_label_tomorrow">Tomorrow</string>
     <string name="today_outfit_top_tshirt">T-shirt</string>
     <string name="today_outfit_top_sweater">Sweater</string>
     <string name="today_outfit_top_thick_jacket">Thick jacket</string>

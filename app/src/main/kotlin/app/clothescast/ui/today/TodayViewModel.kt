@@ -32,14 +32,18 @@ class TodayViewModel(
     workManager: WorkManager,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
+    // Combine status across both unique-work names so the spinner / failure
+    // banner reflects an in-flight tonight refresh too — the Refresh button
+    // routes to TONIGHT when it's tapped between 19:00 and 07:00.
     val state: StateFlow<TodayState> = combine(
         insightCache.latest,
         workManager.getWorkInfosForUniqueWorkFlow(FetchAndNotifyWorker.UNIQUE_WORK_NAME),
+        workManager.getWorkInfosForUniqueWorkFlow(FetchAndNotifyWorker.UNIQUE_WORK_NAME_TONIGHT),
         settingsRepository.preferences,
-    ) { insight, workInfos, prefs ->
+    ) { insight, todayInfos, tonightInfos, prefs ->
         TodayState(
             insight = insight,
-            workStatus = workInfos.toStatus(),
+            workStatus = (todayInfos + tonightInfos).toStatus(),
             temperatureUnit = prefs.temperatureUnit,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())

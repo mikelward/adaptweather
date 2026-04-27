@@ -34,6 +34,15 @@ data class Insight(
      */
     val outfit: OutfitSuggestion? = null,
     /**
+     * The outfit for the period that follows [period] — tonight when this is a
+     * TODAY insight, tomorrow's daytime when this is a TONIGHT insight. Null
+     * when the underlying forecast didn't carry enough data (legacy fixtures,
+     * old caches) — the home screen falls back to a single-card layout in that
+     * case. Lets the home screen show "Today + Tonight" or "Tonight + Tomorrow"
+     * side-by-side from a single cached insight.
+     */
+    val nextOutfit: OutfitSuggestion? = null,
+    /**
      * Which slice of the day this insight is for. [ForecastPeriod.TODAY] is the
      * morning pass (covers 07:00–19:00); [ForecastPeriod.TONIGHT] is the evening
      * pass (covers 19:00–07:00). Defaults to TODAY so older cached insights from

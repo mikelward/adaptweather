@@ -38,6 +38,14 @@ data class ForecastBundle(
      * case rather than failing.
      */
     val tomorrowHourly: List<HourlyForecast> = emptyList(),
+    /**
+     * Tomorrow's full daily aggregates, when available. Used by the tonight
+     * insight to derive a next-day outfit preview ("Tomorrow" card) without
+     * burning a second forecast call. Null when the response only covered
+     * today (legacy `forecast_days=1`, sparse fixtures); the home screen
+     * falls back to a single-card layout in that case.
+     */
+    val tomorrow: DailyForecast? = null,
 ) {
     init {
         require(yesterday.date.isBefore(today.date)) {

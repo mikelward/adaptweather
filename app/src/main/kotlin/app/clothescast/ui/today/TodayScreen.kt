@@ -46,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.R
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.ForecastConfidence
+import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.OutfitSuggestion
@@ -132,7 +133,7 @@ private fun TodayContent(
         if (state.insight == null) {
             EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
-            state.insight.outfit?.let { OutfitPreviewCard(it) }
+            OutfitPreviewRow(state.insight)
             InsightCard(state.insight)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
@@ -228,47 +229,85 @@ internal fun EmptyState(onRefresh: () -> Unit, isWorking: Boolean = false) {
 }
 
 /**
- * Glanceable "What to wear" card. Shows the top + bottom as flat-colour GNOME-style
- * icons stacked vertically — shirt above pants — so the pair reads as a head-to-toe
- * outfit instead of two unrelated items. Icons are fixed-colour SVGs (not Material-themed)
- * so each garment stays recognisable in light or dark mode.
+ * Side-by-side "What to wear" row. Shows the primary outfit on the left and the
+ * upcoming-period outfit on the right — "Today + Tonight" on a morning insight,
+ * "Tonight + Tomorrow" on an evening one — so a glance covers both the next few
+ * hours and the next handover (heading-out outfit + coming-home outfit).
+ *
+ * Falls back to a single card when the insight didn't carry a [Insight.nextOutfit]
+ * (legacy cache payloads, or a tonight insight on a forecast bundle without
+ * tomorrow's daily aggregates).
  *
  * TODO(outfit-weather-overlay): place a small weather glyph (sun / cloud / rain /
  *   snow) over the centre of the top icon so a glance carries both "what to wear"
  *   *and* "what's it doing outside" — e.g. a t-shirt with a sun, a sweater with a
  *   raincloud. Use the same imagery for the product launcher icon (mipmap/ic_launcher,
  *   ic_launcher_round, ic_launcher_background) so the home-screen icon, the
- *   OutfitPreviewCard, and the notification large icon all read as one family.
+ *   outfit cards, and the notification large icon all read as one family.
  */
 @Composable
-internal fun OutfitPreviewCard(outfit: OutfitSuggestion) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+internal fun OutfitPreviewRow(insight: Insight) {
+    val primary = insight.outfit ?: return
+    val (primaryLabel, nextLabel) = outfitLabels(insight.period)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        OutfitPreviewCard(
+            outfit = primary,
+            label = stringResource(primaryLabel),
+            modifier = Modifier.weight(1f),
+        )
+        insight.nextOutfit?.let {
+            OutfitPreviewCard(
+                outfit = it,
+                label = stringResource(nextLabel),
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+private fun outfitLabels(period: ForecastPeriod): Pair<Int, Int> = when (period) {
+    ForecastPeriod.TODAY -> R.string.today_outfit_label_today to R.string.today_outfit_label_tonight
+    ForecastPeriod.TONIGHT -> R.string.today_outfit_label_tonight to R.string.today_outfit_label_tomorrow
+}
+
+@Composable
+internal fun OutfitPreviewCard(
+    outfit: OutfitSuggestion,
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    Card(modifier = modifier) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = stringResource(R.string.today_outfit_title),
+                text = label,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
             )
             Image(
                 painter = painterResource(id = topIconRes(outfit.top)),
                 contentDescription = stringResource(topLabelRes(outfit.top)),
-                modifier = Modifier.height(112.dp),
+                modifier = Modifier.height(96.dp),
             )
             Image(
                 painter = painterResource(id = bottomIconRes(outfit.bottom)),
                 contentDescription = stringResource(bottomLabelRes(outfit.bottom)),
-                modifier = Modifier.height(112.dp),
+                modifier = Modifier.height(96.dp),
             )
             Text(
                 text = stringResource(topLabelRes(outfit.top)) +
                     " · " +
                     stringResource(bottomLabelRes(outfit.bottom)),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
             )
         }
     }
@@ -440,13 +479,33 @@ private fun triggerRefresh(context: android.content.Context) {
     // actually regenerates. Without this, Refresh on the same calendar day
     // just redelivers the morning's payload — surprising when the user has
     // changed wardrobe rules, location, or the underlying forecast has moved.
-    FetchAndNotifyWorker.enqueueOneShot(context.applicationContext, force = true)
+    //
+    // Period follows wall-clock time so an evening tap (>=19:00 or <07:00)
+    // regenerates the tonight insight — that's the one whose primary outfit
+    // is "Tonight" and whose nextOutfit drives the "Tomorrow" card. A morning
+    // tap regenerates today, whose nextOutfit drives the "Tonight" card.
+    val period = if (java.time.LocalTime.now().isInTonightWindow()) {
+        ForecastPeriod.TONIGHT
+    } else {
+        ForecastPeriod.TODAY
+    }
+    FetchAndNotifyWorker.enqueueOneShot(context.applicationContext, force = true, period = period)
     Toast.makeText(
         context,
         context.getString(R.string.today_refresh_toast),
         Toast.LENGTH_SHORT,
     ).show()
 }
+
+/**
+ * 19:00 inclusive through 07:00 exclusive — matches the default tonight /
+ * morning schedule boundaries. Hardcoded rather than threaded from prefs so
+ * the refresh trigger doesn't need a [TodayState] field; if the user has
+ * shifted their schedule far from these defaults, the alarm-driven runs still
+ * fire at their custom times and only the manual Refresh window is fixed.
+ */
+private fun java.time.LocalTime.isInTonightWindow(): Boolean =
+    this >= java.time.LocalTime.of(19, 0) || this < java.time.LocalTime.of(7, 0)
 
 private val DATE_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.getDefault())

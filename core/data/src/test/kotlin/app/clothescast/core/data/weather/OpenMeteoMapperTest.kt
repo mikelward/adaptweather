@@ -223,6 +223,48 @@ class OpenMeteoMapperTest {
     }
 
     @Test
+    fun `tomorrow daily is populated when the response carries a third daily entry`() {
+        // The third daily entry is what feeds the home screen's "Tomorrow" outfit
+        // card on a tonight insight — populate min / max / feels-like / condition
+        // so [OutfitSuggestion.fromForecast] can pick a sensible top + bottom.
+        val threeDay = OpenMeteoResponse(
+            timezone = "UTC",
+            daily = DailyData(
+                time = listOf("2026-04-24", "2026-04-25", "2026-04-26"),
+                temperatureMin = listOf(12.0, 16.0, 14.0),
+                temperatureMax = listOf(18.0, 24.0, 21.0),
+                feelsLikeMin = listOf(10.0, 15.0, 13.0),
+                feelsLikeMax = listOf(17.0, 23.0, 20.0),
+                precipitationProbabilityMax = listOf(5, 60, 20),
+                precipitationSum = listOf(0.0, 4.5, 0.5),
+                weatherCode = listOf(2, 63, 3),
+            ),
+            hourly = HourlyData(
+                time = listOf("2026-04-26T03:00", "2026-04-26T06:00"),
+                temperature = listOf(6.0, 8.0),
+                feelsLike = listOf(3.0, 5.0),
+                precipitationProbability = listOf(5, 5),
+                weatherCode = listOf(2, 2),
+            ),
+        )
+
+        val tomorrow = OpenMeteoMapper.toBundle(threeDay).tomorrow
+
+        tomorrow shouldNotBe null
+        tomorrow!!.date shouldBe LocalDate.of(2026, 4, 26)
+        tomorrow.feelsLikeMinC shouldBe 13.0
+        tomorrow.feelsLikeMaxC shouldBe 20.0
+        tomorrow.condition shouldBe WeatherCondition.CLOUDY
+    }
+
+    @Test
+    fun `tomorrow daily is null when the response only carries two daily entries`() {
+        val bundle = OpenMeteoMapper.toBundle(loadFixture())
+
+        bundle.tomorrow shouldBe null
+    }
+
+    @Test
     fun `rejects responses missing two daily entries`() {
         val short = OpenMeteoResponse(
             timezone = "UTC",

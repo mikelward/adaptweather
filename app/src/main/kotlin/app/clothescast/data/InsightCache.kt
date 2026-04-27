@@ -102,6 +102,7 @@ class InsightCache(
         val forDateEpochDays: Long,
         val hourly: List<HourlyDto> = emptyList(),
         val outfit: OutfitDto? = null,
+        val nextOutfit: OutfitDto? = null,
         val period: String = ForecastPeriod.TODAY.name,
         val hasEvents: Boolean = false,
     ) {
@@ -112,6 +113,7 @@ class InsightCache(
             forDate = LocalDate.ofEpochDay(forDateEpochDays),
             hourly = hourly.map { it.toDomain() },
             outfit = outfit?.toDomain(),
+            nextOutfit = nextOutfit?.toDomain(),
             period = runCatching { ForecastPeriod.valueOf(period) }.getOrDefault(ForecastPeriod.TODAY),
             hasEvents = hasEvents,
         )
@@ -221,6 +223,7 @@ class InsightCache(
         forDateEpochDays = forDate.toEpochDay(),
         hourly = hourly.map { it.toDto() },
         outfit = outfit?.let { OutfitDto(it.top.name, it.bottom.name) },
+        nextOutfit = nextOutfit?.let { OutfitDto(it.top.name, it.bottom.name) },
         period = period.name,
         hasEvents = hasEvents,
     )
