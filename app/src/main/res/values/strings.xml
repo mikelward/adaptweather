@@ -115,7 +115,7 @@
     <string name="settings_tts_engine_elevenlabs">ElevenLabs (highest quality, online)</string>
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
-    <string name="settings_tts_voice_locale_label">English variant</string>
+    <string name="settings_tts_voice_locale_label">Language</string>
     <string name="settings_tts_voice_locale_system">Follow phone language</string>
     <string name="settings_tts_voice_locale_en_us">English (United States)</string>
     <string name="settings_tts_voice_locale_en_gb">English (United Kingdom)</string>
