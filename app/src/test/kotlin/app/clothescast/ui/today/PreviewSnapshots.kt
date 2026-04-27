@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.notification.NotificationIconSweaterPreview
 import app.clothescast.notification.NotificationIconTShirtPreview
 import app.clothescast.notification.NotificationIconThickJacketPreview
+import app.clothescast.ui.settings.SettingsRootPreview
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -91,4 +92,6 @@ class PreviewSnapshots {
     @Test fun notification_icon_tshirt() = capture { NotificationIconTShirtPreview() }
     @Test fun notification_icon_sweater() = capture { NotificationIconSweaterPreview() }
     @Test fun notification_icon_thick_jacket() = capture { NotificationIconThickJacketPreview() }
+
+    @Test fun settings_root() = capture { SettingsRootPreview() }
 }

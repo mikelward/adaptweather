@@ -172,7 +172,7 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun SettingsRoot(
+internal fun SettingsRoot(
     padding: PaddingValues,
     onNavigate: (SettingsRoute) -> Unit,
 ) {
