@@ -2,6 +2,8 @@ package app.clothescast.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,7 +76,7 @@ internal fun ScheduleContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ScheduleCard(
     time: LocalTime,
@@ -102,9 +104,10 @@ private fun ScheduleCard(
             text = stringResource(R.string.settings_schedule_days_label),
             style = MaterialTheme.typography.bodyMedium,
         )
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             DayOfWeek.entries.forEach { dow ->
                 val selected = dow in days
