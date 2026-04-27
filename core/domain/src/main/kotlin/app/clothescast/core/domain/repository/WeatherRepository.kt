@@ -2,6 +2,7 @@ package app.clothescast.core.domain.repository
 
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.DailyForecast
+import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.WeatherAlert
 
@@ -26,6 +27,17 @@ data class ForecastBundle(
     val yesterday: DailyForecast,
     val alerts: List<WeatherAlert> = emptyList(),
     val confidence: ConfidenceInfo? = null,
+    /**
+     * Tomorrow's hourly entries, when the underlying API response carried them.
+     * Used by the tonight insight to wrap from today's evening hours through to
+     * tomorrow morning (so "Tonight will be cold to mild" reflects the actual
+     * overnight low, and a 06:00 rain hour can drive the umbrella suggestion).
+     *
+     * Empty when the fetch only covered today (legacy `forecast_days=1` calls,
+     * sparse test fixtures). The tonight slice falls back to today-only in that
+     * case rather than failing.
+     */
+    val tomorrowHourly: List<HourlyForecast> = emptyList(),
 ) {
     init {
         require(yesterday.date.isBefore(today.date)) {
