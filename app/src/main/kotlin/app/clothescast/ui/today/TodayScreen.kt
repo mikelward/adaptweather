@@ -293,16 +293,21 @@ internal fun OutfitPreviewCard(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )
-            Image(
-                painter = painterResource(id = topIconRes(outfit.top)),
-                contentDescription = stringResource(topLabelRes(outfit.top)),
-                modifier = Modifier.height(96.dp),
-            )
-            Image(
-                painter = painterResource(id = bottomIconRes(outfit.bottom)),
-                contentDescription = stringResource(bottomLabelRes(outfit.bottom)),
-                modifier = Modifier.height(96.dp),
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painterResource(id = topIconRes(outfit.top)),
+                    contentDescription = stringResource(topLabelRes(outfit.top)),
+                    modifier = Modifier.height(96.dp),
+                )
+                Image(
+                    painter = painterResource(id = bottomIconRes(outfit.bottom)),
+                    contentDescription = stringResource(bottomLabelRes(outfit.bottom)),
+                    modifier = Modifier.height(96.dp),
+                )
+            }
             Text(
                 text = stringResource(topLabelRes(outfit.top)) +
                     " · " +
