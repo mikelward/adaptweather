@@ -74,6 +74,8 @@ class PreviewSnapshots {
     @Test fun outfit_jacket_shorts() = capture { OutfitJacketShortsPreview() }
     @Test fun outfit_jacket_pants() = capture { OutfitJacketPantsPreview() }
     @Test fun outfit_sweater_pants_dark() = capture { OutfitSweaterPantsDarkPreview() }
+    @Test fun outfit_row_today_tonight() = capture { OutfitRowTodayTonightPreview() }
+    @Test fun outfit_row_tonight_tomorrow() = capture { OutfitRowTonightTomorrowPreview() }
 
     @Test fun today_empty_state() = capture { EmptyStatePreview() }
     @Test fun today_insight_card() = capture { InsightCardPreview() }

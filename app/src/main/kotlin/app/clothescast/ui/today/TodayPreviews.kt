@@ -63,44 +63,105 @@ private val SAMPLE_INSIGHT = Insight(
 @Preview(name = "Outfit · t-shirt + shorts", widthDp = 360)
 @Composable
 internal fun OutfitTShirtShortsPreview() {
-    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.SHORTS)) }
+    Frame {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.SHORTS),
+            label = "Today",
+        )
+    }
 }
 
 @Preview(name = "Outfit · t-shirt + long pants", widthDp = 360)
 @Composable
 internal fun OutfitTShirtPantsPreview() {
-    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.LONG_PANTS)) }
+    Frame {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.LONG_PANTS),
+            label = "Today",
+        )
+    }
 }
 
 @Preview(name = "Outfit · sweater + shorts", widthDp = 360)
 @Composable
 internal fun OutfitSweaterShortsPreview() {
-    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.SHORTS)) }
+    Frame {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.SHORTS),
+            label = "Tonight",
+        )
+    }
 }
 
 @Preview(name = "Outfit · sweater + long pants", widthDp = 360)
 @Composable
 internal fun OutfitSweaterPantsPreview() {
-    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS)) }
+    Frame {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            label = "Tonight",
+        )
+    }
 }
 
 @Preview(name = "Outfit · thick jacket + shorts", widthDp = 360)
 @Composable
 internal fun OutfitJacketShortsPreview() {
-    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.SHORTS)) }
+    Frame {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.SHORTS),
+            label = "Tomorrow",
+        )
+    }
 }
 
 @Preview(name = "Outfit · thick jacket + long pants", widthDp = 360)
 @Composable
 internal fun OutfitJacketPantsPreview() {
-    Frame { OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.LONG_PANTS)) }
+    Frame {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.LONG_PANTS),
+            label = "Tomorrow",
+        )
+    }
 }
 
 @Preview(name = "Outfit · sweater + pants (dark)", widthDp = 360)
 @Composable
 internal fun OutfitSweaterPantsDarkPreview() {
     Frame(darkTheme = true) {
-        OutfitPreviewCard(OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS))
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            label = "Tonight",
+        )
+    }
+}
+
+@Preview(name = "Outfit row · today + tonight", widthDp = 360)
+@Composable
+internal fun OutfitRowTodayTonightPreview() {
+    Frame {
+        OutfitPreviewRow(
+            SAMPLE_INSIGHT.copy(
+                period = ForecastPeriod.TODAY,
+                outfit = OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.SHORTS),
+                nextOutfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            ),
+        )
+    }
+}
+
+@Preview(name = "Outfit row · tonight + tomorrow", widthDp = 360)
+@Composable
+internal fun OutfitRowTonightTomorrowPreview() {
+    Frame {
+        OutfitPreviewRow(
+            SAMPLE_INSIGHT.copy(
+                period = ForecastPeriod.TONIGHT,
+                outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+                nextOutfit = OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.LONG_PANTS),
+            ),
+        )
     }
 }
 
