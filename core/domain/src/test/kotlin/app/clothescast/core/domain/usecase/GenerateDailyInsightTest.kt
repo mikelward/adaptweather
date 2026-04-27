@@ -260,20 +260,58 @@ class GenerateDailyInsightTest {
     }
 
     @Test
-    fun `tonight period filters hourly to the overnight window`() = runTest {
-        val hourly = listOf(
+    fun `tonight period wraps from today's evening hours through tomorrow's pre-morning hours`() = runTest {
+        val todayHourly = listOf(
             HourlyForecast(LocalTime.of(8, 0), 10.0, 8.0, 5.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(15, 0), 24.0, 24.0, 5.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(20, 0), 16.0, 14.0, 10.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(23, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
         )
-        val todayWithHourly = today.copy(hourly = hourly)
+        val tomorrowHourly = listOf(
+            // 03:00 and 06:00 are inside the overnight window (< default morning 07:00).
+            // The 03:00 feels-like (3.0°C) is the actual overnight low — it's lower
+            // than anything in today's hourly slice, which is the whole point of
+            // wrapping past midnight.
+            HourlyForecast(LocalTime.of(3, 0), 6.0, 3.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(6, 0), 8.0, 5.0, 5.0, WeatherCondition.CLEAR),
+            // 08:00 is past morning end and must be excluded.
+            HourlyForecast(LocalTime.of(8, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val todayWithHourly = today.copy(hourly = todayHourly)
+        val weather = FakeWeatherRepository(
+            ForecastBundle(todayWithHourly, yesterday, tomorrowHourly = tomorrowHourly),
+        )
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs, ForecastPeriod.TONIGHT)
+
+        // 20:00 + 23:00 from today, then 03:00 + 06:00 from tomorrow. 08:00 is past the
+        // default 07:00 morning end and is dropped.
+        result.insight.hourly.map { it.time } shouldBe listOf(
+            LocalTime.of(20, 0),
+            LocalTime.of(23, 0),
+            LocalTime.of(3, 0),
+            LocalTime.of(6, 0),
+        )
+        // Aggregates recomputed from the slice — overnight low (4.0°C feels-like at 03:00)
+        // is what drives the tonight band sentence and outfit, not today's daytime min.
+        result.insight.summary.shouldContain("Tonight will be freezing to cool.")
+    }
+
+    @Test
+    fun `tonight period falls back to today-only when tomorrow hourly is unavailable`() = runTest {
+        val todayHourly = listOf(
+            HourlyForecast(LocalTime.of(8, 0), 10.0, 8.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(20, 0), 16.0, 14.0, 10.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(23, 0), 12.0, 10.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val todayWithHourly = today.copy(hourly = todayHourly)
+        // No tomorrowHourly on the bundle (legacy forecast_days=1 path).
         val weather = FakeWeatherRepository(ForecastBundle(todayWithHourly, yesterday))
         val subject = GenerateDailyInsight(weather, clock = clock)
 
         val result = subject(london, prefs, ForecastPeriod.TONIGHT)
 
-        // Only 20:00 and 23:00 are in the >=19:00 tonight window.
         result.insight.hourly.map { it.time } shouldBe listOf(LocalTime.of(20, 0), LocalTime.of(23, 0))
     }
 

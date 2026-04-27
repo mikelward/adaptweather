@@ -179,6 +179,50 @@ class OpenMeteoMapperTest {
     }
 
     @Test
+    fun `tomorrow hourly is exposed when the response carries a third daily entry`() {
+        val threeDay = OpenMeteoResponse(
+            timezone = "UTC",
+            daily = DailyData(
+                time = listOf("2026-04-24", "2026-04-25", "2026-04-26"),
+                temperatureMin = listOf(12.0, 16.0, 14.0),
+                temperatureMax = listOf(18.0, 24.0, 21.0),
+                feelsLikeMin = listOf(10.0, 15.0, 13.0),
+                feelsLikeMax = listOf(17.0, 23.0, 20.0),
+                precipitationProbabilityMax = listOf(5, 60, 20),
+                precipitationSum = listOf(0.0, 4.5, 0.5),
+                weatherCode = listOf(2, 63, 3),
+            ),
+            hourly = HourlyData(
+                time = listOf(
+                    "2026-04-25T20:00",
+                    "2026-04-25T23:00",
+                    "2026-04-26T03:00",
+                    "2026-04-26T06:00",
+                ),
+                temperature = listOf(16.0, 12.0, 6.0, 8.0),
+                feelsLike = listOf(14.0, 10.0, 3.0, 5.0),
+                precipitationProbability = listOf(10, 5, 5, 5),
+                weatherCode = listOf(2, 2, 2, 2),
+            ),
+        )
+
+        val bundle = OpenMeteoMapper.toBundle(threeDay)
+
+        bundle.today.hourly shouldHaveSize 2
+        bundle.tomorrowHourly shouldHaveSize 2
+        bundle.tomorrowHourly.first().time shouldBe LocalTime.of(3, 0)
+        bundle.tomorrowHourly.last().time shouldBe LocalTime.of(6, 0)
+    }
+
+    @Test
+    fun `tomorrow hourly is empty when the response only carries two daily entries`() {
+        // Backwards compat for older fixtures / a forecast_days=1 caller.
+        val bundle = OpenMeteoMapper.toBundle(loadFixture())
+
+        bundle.tomorrowHourly shouldBe emptyList()
+    }
+
+    @Test
     fun `rejects responses missing two daily entries`() {
         val short = OpenMeteoResponse(
             timezone = "UTC",

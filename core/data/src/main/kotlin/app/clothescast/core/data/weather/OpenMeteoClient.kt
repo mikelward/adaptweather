@@ -21,11 +21,17 @@ internal const val OPEN_METEO_HOST = "api.open-meteo.com"
  * actuals plus today's and tomorrow's forecast in one call. Free, key-less. Free-tier
  * soft cap is 10k requests/day; this app makes one call per device per day.
  *
- * `forecast_days=2` (not 1) so the hourly array reliably covers all 24 hours of today
- * regardless of when in the day the worker fires. With `forecast_days=1` Open-Meteo's
- * hourly window stops short of end-of-day for late-morning calls — the chart was
- * truncating at "now" instead of showing the full afternoon. Tomorrow's hourly
- * entries are filtered out by date in the mapper before the today forecast is built.
+ * `forecast_days=2` (not 1) does double duty:
+ *  - Today's hourly array reliably covers all 24 hours regardless of when in the day
+ *    the worker fires. With `forecast_days=1` Open-Meteo's hourly window stops short
+ *    of end-of-day for late-morning calls — the chart was truncating at "now" instead
+ *    of showing the full afternoon.
+ *  - Tomorrow's pre-dawn hourly entries are exposed via [ForecastBundle.tomorrowHourly]
+ *    so the tonight insight can wrap from 19:00 today through 07:00 next morning, and
+ *    its overnight low / pre-dawn rain reflect what the user will actually walk into.
+ *
+ * The mapper splits today's vs tomorrow's hourly entries by date and keeps the daily
+ * fields (yesterday + today only) untouched.
  *
  * Severe-weather alerts come from a second `/v1/warnings` call. The warnings endpoint
  * is best-effort: if it fails (4xx, 5xx, network), we return the forecast with an empty

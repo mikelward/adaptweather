@@ -9,11 +9,19 @@ import java.time.LocalTime
 
 /**
  * Maps an [OpenMeteoResponse] (queried with past_days=1&forecast_days=2) into a
- * [ForecastBundle]. Index 0 in the daily arrays is yesterday, index 1 is today;
- * tomorrow (index 2) is fetched only so the hourly stream reliably reaches end of
- * today, and is otherwise discarded. The hourly stream covers all three days; we
- * filter to today's date for the today forecast (yesterday's and tomorrow's
- * hourlies are not needed downstream).
+ * [ForecastBundle]. Index 0 in the daily arrays is yesterday, index 1 is today,
+ * index 2 (when present) is tomorrow. The daily fields for tomorrow are not surfaced
+ * — only its hourly entries — but the third daily entry is what makes Open-Meteo
+ * return tomorrow's hours at all.
+ *
+ * The hourly stream covers all three days. We split it by date: today's hours
+ * attach to the today forecast, tomorrow's hours flow through on
+ * [ForecastBundle.tomorrowHourly] so the tonight insight can wrap from 19:00 today
+ * into tomorrow's pre-dawn morning. Yesterday's hourlies are not needed downstream.
+ *
+ * Tolerates 2-entry responses (forecast_days=1) for backwards compatibility with
+ * older fixtures and any caller that downgrades the request — tomorrow's hourly
+ * just comes through empty in that case.
  */
 internal object OpenMeteoMapper {
     fun toBundle(response: OpenMeteoResponse): ForecastBundle {
@@ -28,7 +36,14 @@ internal object OpenMeteoMapper {
         val todayHourly = response.hourly.forDate(todayDate)
         val today = response.daily.toForecast(index = 1, date = todayDate, hourly = todayHourly)
 
-        return ForecastBundle(today = today, yesterday = yesterday)
+        val tomorrowHourly = if (response.daily.time.size >= 3) {
+            val tomorrowDate = LocalDate.parse(response.daily.time[2])
+            response.hourly.forDate(tomorrowDate)
+        } else {
+            emptyList()
+        }
+
+        return ForecastBundle(today = today, yesterday = yesterday, tomorrowHourly = tomorrowHourly)
     }
 
     private fun DailyData.toForecast(index: Int, date: LocalDate, hourly: List<HourlyForecast>): DailyForecast {

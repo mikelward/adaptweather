@@ -35,22 +35,37 @@ class AlarmReceiver : BroadcastReceiver() {
         }
         Log.i(TAG, "AlarmReceiver fired (action=${intent.action}, period=$period)")
 
-        // Enqueue the Worker synchronously — it does its own off-thread work.
-        FetchAndNotifyWorker.enqueueOneShot(context.applicationContext, period = period)
-
         val pending = goAsync()
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         scope.launch {
+            val appCtx = context.applicationContext
+            val app = appCtx as ClothesCastApplication
+            val scheduler = DailyAlarmScheduler(appCtx)
             try {
-                val app = context.applicationContext as ClothesCastApplication
                 val prefs = app.settingsRepository.preferences.first()
+                if (period == ForecastPeriod.TONIGHT && !prefs.tonightEnabled) {
+                    // The user disabled tonight after this alarm was already armed.
+                    // Cancel any future tonight alarm (belt-and-braces: SettingsViewModel
+                    // already cancels on toggle-off, but a stale OS-scheduled alarm or a
+                    // failed cancel would otherwise keep us re-arming forever) and skip
+                    // the worker enqueue so we don't pay alarm + work overhead daily.
+                    Log.i(TAG, "Tonight alarm fired but tonight is disabled; cancelling and not re-arming.")
+                    scheduler.cancel(ForecastPeriod.TONIGHT)
+                    return@launch
+                }
+                FetchAndNotifyWorker.enqueueOneShot(appCtx, period = period)
                 val schedule = when (period) {
                     ForecastPeriod.TODAY -> prefs.schedule
                     ForecastPeriod.TONIGHT -> prefs.tonightSchedule
                 }
-                DailyAlarmScheduler(context.applicationContext).schedule(schedule, period)
+                scheduler.schedule(schedule, period)
             } catch (t: Throwable) {
                 Log.e(TAG, "Re-arm failed for $period", t)
+                // Best-effort: still enqueue the worker even if pref read failed,
+                // so the user gets *something* if it's the morning slot.
+                if (period == ForecastPeriod.TODAY) {
+                    FetchAndNotifyWorker.enqueueOneShot(appCtx, period = period)
+                }
             } finally {
                 pending.finish()
             }
