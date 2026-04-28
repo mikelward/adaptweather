@@ -55,6 +55,30 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="settings_clothes_cond_precip_above">cuando la probabilidad de lluvia supera %.0f%%</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "Mencionar eventos de la tarde" toggle, and the nightly-only
+    "notificar solo cuando haya eventos" toggle. Description uses
+    German-style „…" quotes around the nested toggle label, matching the
+    locale house style.
+    -->
+    <string name="settings_schedule_title">ClothesCast diario</string>
+    <string name="settings_schedule_time_label">Hora</string>
+    <string name="settings_schedule_days_label">Días de la semana</string>
+    <string name="settings_daily_mention_evening_events">Mencionar eventos de la tarde</string>
+
+    <string name="settings_tonight_title">ClothesCast nocturno</string>
+    <string name="settings_tonight_description">Un segundo ClothesCast por la tarde que cubre el tiempo de esta noche. En tardes tranquilas se queda silencioso, o no aparece en absoluto si „Notificar solo cuando haya eventos de la tarde“ está activado; en tardes con eventos reproduce un sonido y (si has activado la lectura en voz alta) se lee solo.</string>
+    <string name="settings_tonight_enabled">Mostrar un ClothesCast nocturno</string>
+    <string name="settings_tonight_time_label">Hora</string>
+    <string name="settings_tonight_days_label">Días de la semana</string>
+    <string name="settings_tonight_notify_only_on_events">Notificar solo cuando haya eventos de la tarde</string>
+
+    <string name="settings_delivery_label">Entrega</string>
+    <string name="settings_delivery_notification_only">Solo notificación</string>
+    <string name="settings_delivery_tts_only">Solo lectura en voz alta</string>
+    <string name="settings_delivery_notification_and_tts">Notificación y lectura en voz alta</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tú-form throughout: "toca", "tu", "configura".
