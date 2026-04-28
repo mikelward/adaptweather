@@ -26,7 +26,7 @@ class OpenAITtsSpeaker(
         // Settings, not from anything we can send at synthesis time. So we drop
         // [locale] on the floor here, intentionally — see TtsVoices.kt for the
         // picker-side filter that surfaces the accent-appropriate voices.
-        val audio = client.synthesize(text = text, voice = voice)
+        val audio = client.synthesize(text = prepareForTts(text), voice = voice)
         PcmAudioPlayer.play(audio)
     }
 }

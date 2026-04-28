@@ -5,10 +5,10 @@
     <string name="today_title">Today</string>
     <string name="today_open_settings">Open Settings</string>
     <string name="today_refresh">Refresh</string>
-    <string name="today_refresh_toast_daily">Refreshing daily insight — it\'ll appear shortly.</string>
-    <string name="today_refresh_toast_nightly">Refreshing nightly insight — it\'ll appear shortly.</string>
-    <string name="today_empty_title">No insight yet</string>
-    <string name="today_empty_subtitle">The morning insight will appear here once it has been generated. Set your location in Settings, then tap Fetch now.</string>
+    <string name="today_refresh_toast_daily">Refreshing your daily ClothesCast — it\'ll appear shortly.</string>
+    <string name="today_refresh_toast_nightly">Refreshing your nightly ClothesCast — it\'ll appear shortly.</string>
+    <string name="today_empty_title">No ClothesCast yet</string>
+    <string name="today_empty_subtitle">Your morning ClothesCast will appear here once it has been generated. Set your location in Settings, then tap Fetch now.</string>
     <string name="today_fetch_now">Fetch now</string>
     <string name="today_generated_at">Generated at %1$s</string>
 
@@ -38,7 +38,7 @@
     <string name="today_confidence_low">Low confidence — forecasts disagree</string>
     <string name="today_confidence_spread">Spread: %1$.1f°C, %2$.0fpp precip across %3$d models</string>
 
-    <string name="today_working">Working — fetching the insight…</string>
+    <string name="today_working">Working — fetching your ClothesCast…</string>
     <string name="today_failed_title">Last attempt failed</string>
     <string name="today_failed_unexpected_http">Unexpected HTTP error from the forecast service.</string>
     <string name="today_failed_unhandled">An unexpected error occurred.</string>
@@ -46,7 +46,7 @@
     <string name="onboarding_title">Welcome to ClothesCast</string>
     <string name="onboarding_subtitle">Two quick choices and you\'re set. Everything else has a sensible default you can tweak later in Settings.</string>
     <string name="onboarding_notifications_title">Notifications</string>
-    <string name="onboarding_notifications_description">Required to deliver the daily insight. Grant once and ClothesCast will post tomorrow morning.</string>
+    <string name="onboarding_notifications_description">Required to deliver your daily ClothesCast. Grant once and ClothesCast will post tomorrow morning.</string>
     <string name="onboarding_notifications_grant">Grant notification permission</string>
     <string name="onboarding_location_title">Location</string>
     <string name="onboarding_location_description">Used to fetch the right forecast. Granting location lets ClothesCast read your device\'s coarse location each morning; otherwise pick a city manually.</string>
@@ -99,14 +99,14 @@
     <string name="settings_location_searching">Searching…</string>
     <string name="settings_location_no_results">No matches.</string>
 
-    <string name="settings_schedule_title">Daily insight</string>
+    <string name="settings_schedule_title">Daily ClothesCast</string>
     <string name="settings_schedule_time_label">Time</string>
     <string name="settings_schedule_days_label">Days of the week</string>
     <string name="settings_daily_mention_evening_events">Mention evening events</string>
 
-    <string name="settings_tonight_title">Nightly insight</string>
-    <string name="settings_tonight_description">A second insight in the evening that covers tonight\'s weather. On quiet evenings it stays silent, or doesn\'t appear at all if "Only notify when there are evening events" is on; on event evenings it plays a sound and (if you\'ve enabled spoken-aloud delivery) reads itself out.</string>
-    <string name="settings_tonight_enabled">Show a nightly insight</string>
+    <string name="settings_tonight_title">Nightly ClothesCast</string>
+    <string name="settings_tonight_description">A second ClothesCast in the evening that covers tonight\'s weather. On quiet evenings it stays silent, or doesn\'t appear at all if "Only notify when there are evening events" is on; on event evenings it plays a sound and (if you\'ve enabled spoken-aloud delivery) reads itself out.</string>
+    <string name="settings_tonight_enabled">Show a nightly ClothesCast</string>
     <string name="settings_tonight_time_label">Time</string>
     <string name="settings_tonight_days_label">Days of the week</string>
     <string name="settings_tonight_notify_only_on_events">Only notify when there are evening events</string>
@@ -117,7 +117,7 @@
     <string name="settings_delivery_notification_and_tts">Notification and spoken aloud</string>
 
     <string name="settings_tts_engine_title">Voice engine</string>
-    <string name="settings_tts_engine_description">Online engines (Gemini, OpenAI, ElevenLabs) sound much more natural but need a network call at speak-time and use your API key for synthesis (one short call per spoken insight). Falls back to the device voice if the chosen engine fails.</string>
+    <string name="settings_tts_engine_description">Online engines (Gemini, OpenAI, ElevenLabs) sound much more natural but need a network call at speak-time and use your API key for synthesis (one short call per spoken ClothesCast). Falls back to the device voice if the chosen engine fails.</string>
     <string name="settings_tts_engine_device">Device (offline, free)</string>
     <string name="settings_tts_engine_gemini">Gemini (high quality, online)</string>
     <string name="settings_tts_engine_openai">OpenAI (high quality, online)</string>
@@ -217,7 +217,7 @@
     <string name="settings_distance_unit_miles">Miles</string>
 
     <string name="settings_clothes_title">Clothes rules</string>
-    <string name="settings_clothes_description">If a forecast crosses one of these thresholds, ClothesCast mentions the item in the daily insight.</string>
+    <string name="settings_clothes_description">If a forecast crosses one of these thresholds, the item appears in your daily ClothesCast.</string>
 
     <!-- Garment dropdown labels — picker options when the user adds or edits a
          clothes rule. Stored on disk as the en-US key (e.g. "sweater"), so the
@@ -256,13 +256,13 @@
     <string name="settings_clothes_cond_temp_above">when max temperature is above %.0f°C</string>
     <string name="settings_clothes_cond_precip_above">when chance of rain is above %.0f%%</string>
 
-    <string name="notification_channel_daily_insight_name">Daily insight</string>
+    <string name="notification_channel_daily_insight_name">Daily ClothesCast</string>
     <string name="notification_channel_daily_insight_description">The morning weather summary you opted in to.</string>
     <string name="notification_daily_insight_title">Today\'s weather</string>
 
-    <string name="notification_channel_tonight_insight_default_name">Nightly insight (with events)</string>
+    <string name="notification_channel_tonight_insight_default_name">Nightly ClothesCast (with events)</string>
     <string name="notification_channel_tonight_insight_default_description">The evening weather summary when you have calendar events tonight. Plays your default notification sound.</string>
-    <string name="notification_channel_tonight_insight_silent_name">Nightly insight (silent)</string>
+    <string name="notification_channel_tonight_insight_silent_name">Nightly ClothesCast (silent)</string>
     <string name="notification_channel_tonight_insight_silent_description">The evening weather summary when your evening is empty. Posted silently — you can glance at it on the lock screen, but it won\'t make a sound.</string>
     <string name="notification_tonight_insight_title">Tonight\'s weather</string>
 
@@ -271,20 +271,20 @@
     <string name="notification_weather_alert_title">Weather alert: %1$s</string>
 
     <string name="settings_notification_permission_title">Notifications are blocked</string>
-    <string name="settings_notification_permission_description">Without notification permission, the daily insight has nowhere to go. Grant it so ClothesCast can post tomorrow morning.</string>
+    <string name="settings_notification_permission_description">Without notification permission, your daily ClothesCast has nowhere to go. Grant it so ClothesCast can post tomorrow morning.</string>
     <string name="settings_notification_permission_grant">Grant notification permission</string>
 
     <string name="settings_calendar_title">Calendar</string>
     <string name="settings_calendar_use_events">Use today\'s calendar events</string>
-    <string name="settings_calendar_description_off">When enabled, ClothesCast reads today\'s events from your device calendar so the morning insight can suggest items keyed to specific events — for example, "bring an umbrella for your 3pm park run". Only event titles and times are used; descriptions, attendees, and locations are read but never sent off-device.</string>
-    <string name="settings_calendar_description_on">Reading today\'s events from your device calendar to enrich the morning insight. Only titles and times are used in the rendered summary; descriptions and attendees are not. Everything stays on-device.</string>
+    <string name="settings_calendar_description_off">When enabled, ClothesCast reads today\'s events from your device calendar so your morning ClothesCast can suggest items keyed to specific events — for example, "bring an umbrella for your 3pm park run". Only event titles and times are used; descriptions, attendees, and locations are read but never sent off-device.</string>
+    <string name="settings_calendar_description_on">Reading today\'s events from your device calendar to enrich your morning ClothesCast. Only titles and times are used in the rendered summary; descriptions and attendees are not. Everything stays on-device.</string>
     <string name="settings_calendar_grant_permission">Grant calendar permission</string>
     <string name="settings_calendar_open_settings">Calendar permission denied. Grant it from system Settings.</string>
 
     <string name="settings_debug_title">Debug (debug builds only)</string>
-    <string name="settings_debug_description">Fire the daily-insight pipeline immediately. Useful for verifying without waiting until the scheduled time.</string>
-    <string name="settings_debug_fire_now">Fire insight now</string>
-    <string name="settings_debug_fire_toast">Insight worker enqueued</string>
+    <string name="settings_debug_description">Fire the daily ClothesCast pipeline immediately. Useful for verifying without waiting until the scheduled time.</string>
+    <string name="settings_debug_fire_now">Fire ClothesCast now</string>
+    <string name="settings_debug_fire_toast">ClothesCast worker enqueued</string>
 
     <string name="settings_about_title">About</string>
     <string name="settings_about_version">Version %1$s (%2$d)</string>

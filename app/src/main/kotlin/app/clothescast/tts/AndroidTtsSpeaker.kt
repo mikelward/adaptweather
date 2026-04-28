@@ -38,7 +38,7 @@ class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
         val tts = initEngine()
         try {
             applyBestVoice(tts, locale)
-            speakAndAwait(tts, text)
+            speakAndAwait(tts, prepareForTts(text))
         } finally {
             tts.shutdown()
         }
