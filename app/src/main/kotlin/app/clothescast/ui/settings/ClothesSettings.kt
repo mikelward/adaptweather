@@ -266,7 +266,10 @@ private fun ClothesRuleDialog(
             )
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 GarmentDropdown(
                     selected = garment,
                     onSelect = { garment = it },

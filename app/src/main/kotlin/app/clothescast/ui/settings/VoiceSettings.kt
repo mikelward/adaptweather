@@ -357,7 +357,7 @@ private fun VoiceLocalePicker(
                     .map { it to labelFor(it) }
                     .partition { it.first == VoiceLocale.SYSTEM }
                 val sorted = system + rest.sortedWith(compareBy(collator) { it.second })
-                Column {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     sorted.forEach { (option, label) ->
                         RadioRow(
                             label = label,
@@ -435,7 +435,7 @@ private fun VoicePicker(
             onDismissRequest = { dialogOpen = false },
             title = { Text(title) },
             text = {
-                Column {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     voices.forEach { option ->
                         RadioRow(
                             label = option.displayName,
