@@ -354,8 +354,8 @@
     <string name="insight_band_hot">hot</string>
 
     <!-- Day-on-day temperature delta. %1$d is the rounded degree difference. -->
-    <string name="insight_delta_warmer">It will be %1$d° warmer today.</string>
-    <string name="insight_delta_cooler">It will be %1$d° cooler today.</string>
+    <string name="insight_delta_warmer">It will be %1$d° warmer than yesterday.</string>
+    <string name="insight_delta_cooler">It will be %1$d° cooler than yesterday.</string>
 
     <!-- Severe-weather alert prefix. %1$s = event name (e.g. "Tornado Warning"). -->
     <string name="insight_alert">Alert: %1$s.</string>
