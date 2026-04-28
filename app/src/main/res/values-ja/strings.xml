@@ -189,6 +189,36 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="settings_tts_voice_locale_fa_ir">ペルシャ語（イラン）</string>
 
     <!--
+    API keys screen — three identical-shape blocks (Gemini, OpenAI,
+    ElevenLabs), each with status copy, paste-key placeholder, and
+    save / clear buttons. URLs stay verbatim with the conventional
+    space-around-Latin spacing.
+    -->
+    <string name="settings_api_keys_title">API キー</string>
+    <string name="settings_api_keys_description">使用したいオンライン音声エンジンの API キーを設定します。キーは Android Keystore で暗号化して保存されます。</string>
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
+
+    <string name="settings_api_key_status_set">Gemini キーが設定されています。</string>
+    <string name="settings_api_key_status_unset">Gemini キーが未設定です。aistudio.google.com で取得すると Gemini 音声を使用できます。</string>
+    <string name="settings_api_key_placeholder">Gemini API キーを貼り付け</string>
+    <string name="settings_api_key_save">Gemini キーを保存</string>
+    <string name="settings_api_key_clear">保存された Gemini キーを削除</string>
+
+    <string name="settings_openai_key_status_set">OpenAI キーが設定されています。</string>
+    <string name="settings_openai_key_status_unset">OpenAI キーが未設定です。platform.openai.com で取得すると OpenAI 音声を使用できます。</string>
+    <string name="settings_openai_key_placeholder">OpenAI API キーを貼り付け</string>
+    <string name="settings_openai_key_save">OpenAI キーを保存</string>
+    <string name="settings_openai_key_clear">保存された OpenAI キーを削除</string>
+
+    <string name="settings_elevenlabs_key_status_set">ElevenLabs キーが設定されています。</string>
+    <string name="settings_elevenlabs_key_status_unset">ElevenLabs キーが未設定です。elevenlabs.io で取得すると ElevenLabs 音声を使用できます。</string>
+    <string name="settings_elevenlabs_key_placeholder">ElevenLabs API キーを貼り付け</string>
+    <string name="settings_elevenlabs_key_save">ElevenLabs キーを保存</string>
+    <string name="settings_elevenlabs_key_clear">保存された ElevenLabs キーを削除</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ます-form (friendly-polite) throughout — that's the standard
