@@ -10,6 +10,18 @@ Chinese uses the ideographic period (。) for sentence endings.
     <string name="settings_tts_voice_locale_zh_cn">中文（简体）</string>
     <string name="settings_tts_voice_locale_label">语言</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">设置</string>
+    <string name="settings_back">返回</string>
+
+    <string name="settings_root_voice">语音</string>
+    <string name="settings_root_schedule">计划</string>
+    <string name="settings_root_region">地区</string>
+    <string name="settings_root_clothes">服装</string>
+    <string name="settings_root_api_keys">API 密钥</string>
+    <string name="settings_root_data_sources">数据源</string>
+    <string name="settings_root_about">关于</string>
+
     <string name="garment_sweater">毛衣</string>
     <string name="garment_hoodie">连帽衫</string>
     <string name="garment_jacket">夹克</string>
@@ -19,6 +31,10 @@ Chinese uses the ideographic period (。) for sentence endings.
     <string name="garment_shorts">短裤</string>
     <string name="garment_pants">长裤</string>
     <string name="garment_jeans">牛仔裤</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">穿衣规则</string>
+    <string name="settings_clothes_description">当天气预报达到其中某个阈值时，相应的服装会出现在你的每日 ClothesCast 里。</string>
 
     <string name="settings_clothes_empty">还没有规则。点击添加来创建一条。</string>
     <string name="settings_clothes_add">添加</string>
