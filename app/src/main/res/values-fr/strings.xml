@@ -196,6 +196,35 @@ agreement; garment names are listed without articles and read naturally in conte
     <string name="settings_tts_voice_locale_fa_ir">Persan (Iran)</string>
 
     <!--
+    API keys screen — three identical-shape blocks (Gemini, OpenAI,
+    ElevenLabs), each with status copy, paste-key placeholder, and
+    save / clear buttons. URLs stay verbatim.
+    -->
+    <string name="settings_api_keys_title">Clés API</string>
+    <string name="settings_api_keys_description">Configure les clés API pour les moteurs vocaux en ligne que tu veux utiliser. Les clés sont chiffrées au repos avec l\'Android Keystore.</string>
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
+
+    <string name="settings_api_key_status_set">Une clé Gemini est configurée.</string>
+    <string name="settings_api_key_status_unset">Aucune clé Gemini configurée. Obtiens-en une sur aistudio.google.com pour utiliser les voix Gemini.</string>
+    <string name="settings_api_key_placeholder">Colle ta clé API Gemini</string>
+    <string name="settings_api_key_save">Enregistrer la clé Gemini</string>
+    <string name="settings_api_key_clear">Effacer la clé Gemini enregistrée</string>
+
+    <string name="settings_openai_key_status_set">Une clé OpenAI est configurée.</string>
+    <string name="settings_openai_key_status_unset">Aucune clé OpenAI configurée. Obtiens-en une sur platform.openai.com pour utiliser les voix OpenAI.</string>
+    <string name="settings_openai_key_placeholder">Colle ta clé API OpenAI</string>
+    <string name="settings_openai_key_save">Enregistrer la clé OpenAI</string>
+    <string name="settings_openai_key_clear">Effacer la clé OpenAI enregistrée</string>
+
+    <string name="settings_elevenlabs_key_status_set">Une clé ElevenLabs est configurée.</string>
+    <string name="settings_elevenlabs_key_status_unset">Aucune clé ElevenLabs configurée. Obtiens-en une sur elevenlabs.io pour utiliser les voix ElevenLabs.</string>
+    <string name="settings_elevenlabs_key_placeholder">Colle ta clé API ElevenLabs</string>
+    <string name="settings_elevenlabs_key_save">Enregistrer la clé ElevenLabs</string>
+    <string name="settings_elevenlabs_key_clear">Effacer la clé ElevenLabs enregistrée</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. tu-form throughout: "appuie", "ton", "définis".
