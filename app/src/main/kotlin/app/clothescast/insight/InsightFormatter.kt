@@ -9,6 +9,7 @@ import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
+import app.clothescast.core.domain.model.EveningEventTieInClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
@@ -50,10 +51,7 @@ class InsightFormatter(
         summary.clothes?.let { add(formatClothes(it)) }
         summary.precip?.let { add(formatPrecip(it, hasCalendarTieIn = summary.calendarTieIn != null)) }
         summary.calendarTieIn?.let { add(formatCalendarTieIn(it)) }
-        // The evening tie-in reuses the same sentence template as calendarTieIn
-        // ("Bring a jacket for your 9pm dinner.") — same shape, separately
-        // gated, so they can coexist on a rainy-afternoon-plus-cold-evening day.
-        summary.eveningEventTieIn?.let { add(formatCalendarTieIn(it)) }
+        summary.eveningEventTieIn?.let { add(formatEveningEventTieIn(it)) }
     }.joinToString(" ")
 
     private fun formatAlert(alert: AlertClause): String =
@@ -78,6 +76,13 @@ class InsightFormatter(
         return resources.getString(template, delta.degrees)
     }
 
+    // TODO: "Wear an umbrella" reads awkwardly — umbrellas are carried, not worn.
+    // Either drop umbrella from the clothes list (it's already implied by the
+    // precip clause and the tonight calendar tie-in) or split the clause into
+    // a "Wear …" sentence for garments and a "Bring …" sentence for accessories
+    // like umbrella. Probably wants a small domain-side classification on
+    // ClothesRule (item kind: garment / accessory) rather than hard-coding
+    // umbrella here.
     private fun formatClothes(clothes: ClothesClause): String =
         resources.getString(R.string.insight_clothes_wear, phraser.joinItems(clothes.items))
 
@@ -100,6 +105,13 @@ class InsightFormatter(
             R.string.insight_calendar_tie_in,
             phraser.withArticle(tieIn.item),
             spokenTime(tieIn.time),
+            tieIn.title,
+        )
+
+    private fun formatEveningEventTieIn(tieIn: EveningEventTieInClause): String =
+        resources.getString(
+            R.string.insight_evening_event_tie_in,
+            phraser.withArticle(tieIn.item),
             tieIn.title,
         )
 

@@ -31,14 +31,17 @@ data class InsightSummary(
     val calendarTieIn: CalendarTieInClause? = null,
     /**
      * A second tie-in for morning insights: an evening event paired with a
-     * clothing tip derived from the *evening* forecast slice. Distinct from
-     * [calendarTieIn] (which is anchored on a precip peak in the morning's
-     * own slice) — this clause exists so the user gets a heads-up about
-     * evening conditions for their evening event without needing a separate
-     * nightly notification. Only emitted on TODAY when the user has the
-     * "Mention evening events" setting on.
+     * clothing tip derived from the *evening* forecast slice. Renders as
+     * "Bring a jacket for your dinner tonight." — no time, since the user
+     * already knows when their event is and the wording reads more like a
+     * conversational heads-up than a calendar reminder.
+     *
+     * Only emitted on TODAY when the user has the "Mention evening events"
+     * setting on. The TONIGHT pass uses [calendarTieIn] for its own event
+     * tie-ins, which keeps the time + title because it's anchored to a
+     * precip-peak hour the listener doesn't already know about.
      */
-    val eveningEventTieIn: CalendarTieInClause? = null,
+    val eveningEventTieIn: EveningEventTieInClause? = null,
 )
 
 /**
@@ -87,6 +90,18 @@ data class PrecipClause(val condition: WeatherCondition, val time: LocalTime)
 data class CalendarTieInClause(
     val item: String,
     val time: LocalTime,
+    val title: String,
+)
+
+/**
+ * Evening-event tie-in for the morning insight: a clothes [item] paired with a
+ * calendar event [title] happening tonight. The formatter renders this as
+ * "Bring <item> for your <title> tonight." — no time, because the user already
+ * knows when their evening event is and the conversational wording reads better
+ * than a redundant clock reference.
+ */
+data class EveningEventTieInClause(
+    val item: String,
     val title: String,
 )
 
