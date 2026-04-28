@@ -165,7 +165,7 @@ class GeminiTtsClientTest {
 
     @Test
     fun `request body omits the accent directive for unknown english variants`() = runTest {
-        // en-CA isn't in our supported variant list — fall through to whatever the
+        // en-NZ isn't in our supported variant list — fall through to whatever the
         // model defaults to rather than picking a wrong-but-confident accent.
         var capturedBody: String? = null
         val client = GeminiTtsClient(
@@ -177,7 +177,7 @@ class GeminiTtsClientTest {
             keyProvider = FakeKeyProvider("test-key"),
         )
 
-        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-CA"))
+        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-NZ"))
 
         val body = checkNotNull(capturedBody)
         // No accent directive at all — none of the SSB / General Australian /
