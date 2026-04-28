@@ -188,6 +188,35 @@ earlier passes accidentally mixed in.
     <string name="settings_tts_voice_locale_fa_ir">Персидский (Иран)</string>
 
     <!--
+    API keys screen — three identical-shape blocks (Gemini, OpenAI,
+    ElevenLabs), each with status copy, paste-key placeholder, and
+    save / clear buttons. URLs stay verbatim.
+    -->
+    <string name="settings_api_keys_title">Ключи API</string>
+    <string name="settings_api_keys_description">Настрой ключи API для онлайн-голосовых движков, которые ты хочешь использовать. Ключи зашифрованы с помощью Android Keystore.</string>
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
+
+    <string name="settings_api_key_status_set">Ключ Gemini настроен.</string>
+    <string name="settings_api_key_status_unset">Ключ Gemini не настроен. Получи на aistudio.google.com, чтобы использовать голоса Gemini.</string>
+    <string name="settings_api_key_placeholder">Вставь свой ключ API Gemini</string>
+    <string name="settings_api_key_save">Сохранить ключ Gemini</string>
+    <string name="settings_api_key_clear">Удалить сохранённый ключ Gemini</string>
+
+    <string name="settings_openai_key_status_set">Ключ OpenAI настроен.</string>
+    <string name="settings_openai_key_status_unset">Ключ OpenAI не настроен. Получи на platform.openai.com, чтобы использовать голоса OpenAI.</string>
+    <string name="settings_openai_key_placeholder">Вставь свой ключ API OpenAI</string>
+    <string name="settings_openai_key_save">Сохранить ключ OpenAI</string>
+    <string name="settings_openai_key_clear">Удалить сохранённый ключ OpenAI</string>
+
+    <string name="settings_elevenlabs_key_status_set">Ключ ElevenLabs настроен.</string>
+    <string name="settings_elevenlabs_key_status_unset">Ключ ElevenLabs не настроен. Получи на elevenlabs.io, чтобы использовать голоса ElevenLabs.</string>
+    <string name="settings_elevenlabs_key_placeholder">Вставь свой ключ API ElevenLabs</string>
+    <string name="settings_elevenlabs_key_save">Сохранить ключ ElevenLabs</string>
+    <string name="settings_elevenlabs_key_clear">Удалить сохранённый ключ ElevenLabs</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ты-form imperatives: "нажми", "установи", "твой".
