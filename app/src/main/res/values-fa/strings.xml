@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Persian (Farsi) translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+Persian is RTL; android:supportsRtl="true" is already set in the manifest.
+Persian word order is SOV (Subject-Object-Verb): object (the garment) precedes
+the verb in commands — "%1$s بپوشید" reads naturally as "[item] wear".
+Western Arabic numerals (0-9) are used for TTS compatibility.
+-->
+<resources>
+    <string name="settings_region_language_fa_ir">فارسی (ایران)</string>
+    <string name="settings_tts_voice_locale_fa_ir">فارسی (ایران)</string>
+    <string name="settings_tts_voice_locale_label">زبان</string>
+
+    <string name="garment_sweater">پلیور</string>
+    <string name="garment_hoodie">هودی</string>
+    <string name="garment_jacket">کت</string>
+    <string name="garment_coat">پالتو</string>
+    <string name="garment_tshirt">تی‌شرت</string>
+    <string name="garment_shirt">پیراهن</string>
+    <string name="garment_shorts">شلوارک</string>
+    <string name="garment_pants">شلوار</string>
+    <string name="garment_jeans">جین</string>
+
+    <string name="settings_clothes_empty">قانونی وجود ندارد. برای ایجاد یک قانون روی افزودن ضربه بزنید.</string>
+    <string name="settings_clothes_add">افزودن</string>
+    <string name="settings_clothes_edit">ویرایش</string>
+    <string name="settings_clothes_delete">حذف</string>
+    <string name="settings_clothes_dialog_add_title">افزودن قانون لباس</string>
+    <string name="settings_clothes_dialog_edit_title">ویرایش قانون لباس</string>
+    <string name="settings_clothes_item_label">لباس</string>
+    <string name="settings_clothes_condition_label">شرط</string>
+    <string name="settings_clothes_value_label_temp_c">آستانه (°C)</string>
+    <string name="settings_clothes_value_label_precip">آستانه (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">وقتی دمای احساس‌شده کمتر از</string>
+    <string name="settings_clothes_cond_type_temp_above">وقتی دمای احساس‌شده بیشتر از</string>
+    <string name="settings_clothes_cond_type_precip_above">وقتی احتمال بارندگی بیشتر از</string>
+    <string name="settings_clothes_cond_temp_below">وقتی حداقل دمای احساس‌شده کمتر از %.0f°C است</string>
+    <string name="settings_clothes_cond_temp_above">وقتی حداکثر دمای احساس‌شده بیشتر از %.0f°C است</string>
+    <string name="settings_clothes_cond_precip_above">وقتی احتمال بارندگی بیشتر از %.0f%% است</string>
+
+    <string name="today_outfit_top_tshirt">تی‌شرت</string>
+    <string name="today_outfit_top_sweater">پلیور</string>
+    <string name="today_outfit_top_thick_jacket">کت ضخیم</string>
+    <string name="today_outfit_bottom_shorts">شلوارک</string>
+    <string name="today_outfit_bottom_long_pants">شلوار بلند</string>
+
+    <string name="insight_lead_today">امروز</string>
+    <string name="insight_lead_tonight">امشب</string>
+    <!-- "امروز هوا معتدل خواهد بود." — SOV with lead first. -->
+    <string name="insight_band_single">%1$s هوا %2$s خواهد بود.</string>
+    <string name="insight_band_range">%1$s هوا بین %2$s و %3$s خواهد بود.</string>
+    <string name="insight_band_freezing">یخ‌زده</string>
+    <string name="insight_band_cold">سرد</string>
+    <string name="insight_band_cool">خنک</string>
+    <string name="insight_band_mild">معتدل</string>
+    <string name="insight_band_warm">گرم</string>
+    <string name="insight_band_hot">داغ</string>
+    <string name="insight_delta_warmer">امروز %1$d° گرم‌تر خواهد بود.</string>
+    <string name="insight_delta_cooler">امروز %1$d° سردتر خواهد بود.</string>
+    <string name="insight_alert">هشدار: %1$s.</string>
+    <!-- SOV: "%1$s را بپوشید" = "[item] را (object marker) wear". -->
+    <string name="insight_clothes_wear">%1$s را بپوشید.</string>
+    <!-- Persian has no indefinite article equivalent to English "a/an". -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <!-- "و" (va) = and. -->
+    <string name="insight_clothes_join_two">%1$s و %2$s</string>
+    <string name="insight_clothes_join_many">%1$s، %2$s و %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <!-- "ساعت 15" — "ساعت" = "hour/o\'clock". -->
+    <string name="insight_precip_at_time">ساعت %1$s</string>
+    <string name="insight_precip_overnight">در طول شب</string>
+    <string name="insight_condition_clear">آفتابی</string>
+    <string name="insight_condition_partly_cloudy">نیمه ابری</string>
+    <string name="insight_condition_cloudy">ابری</string>
+    <string name="insight_condition_fog">مه</string>
+    <string name="insight_condition_drizzle">نم‌نم باران</string>
+    <string name="insight_condition_rain">باران</string>
+    <string name="insight_condition_snow">برف</string>
+    <string name="insight_condition_thunderstorm">طوفان</string>
+    <string name="insight_condition_unknown">نامشخص</string>
+    <!-- SOV: "%1$s را امشب ببرید" = "[item] را tonight bring". -->
+    <string name="insight_tie_in">%1$s را امشب ببرید.</string>
+    <!-- %2$s is the spoken time — "ساعت" embedded here since time is a bare number. -->
+    <string name="insight_tie_in_with_rain">%1$s را امشب ببرید، باران ساعت %2$s.</string>
+    <!-- Bare number; "ساعت" comes from insight_precip_at_time. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+</resources>

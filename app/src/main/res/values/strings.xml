@@ -153,6 +153,9 @@
     <string name="settings_tts_voice_locale_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_tts_voice_locale_ja_jp">Japanese (Japan)</string>
     <string name="settings_tts_voice_locale_ko_kr">Korean (South Korea)</string>
+    <string name="settings_tts_voice_locale_ar_sa">Arabic (Saudi Arabia)</string>
+    <string name="settings_tts_voice_locale_he_il">Hebrew (Israel)</string>
+    <string name="settings_tts_voice_locale_fa_ir">Persian (Iran)</string>
     <string name="settings_tts_test">Test voice</string>
     <!-- Shown next to the engine picker when the chosen engine's API key isn't
          configured. %1$s is the engine name ("Gemini" / "OpenAI" / "ElevenLabs"). -->
@@ -207,6 +210,9 @@
     <string name="settings_region_language_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_region_language_ja_jp">Japanese (Japan)</string>
     <string name="settings_region_language_ko_kr">Korean (South Korea)</string>
+    <string name="settings_region_language_ar_sa">Arabic (Saudi Arabia)</string>
+    <string name="settings_region_language_he_il">Hebrew (Israel)</string>
+    <string name="settings_region_language_fa_ir">Persian (Iran)</string>
 
     <string name="settings_temperature_unit_title">Temperature unit</string>
     <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
