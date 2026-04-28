@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Indonesian translation. Resource folder is values-in/ because Android maps
+the ISO 639-1 code "id" to legacy Java code "in" for locale resolution.
+Scope: insight-prose templates, garment labels, clothes-rule editor, outfit-card
+labels, and region/voice-locale picker names. The rest of the UI falls through
+to values/strings.xml (English).
+-->
+<resources>
+    <string name="settings_region_language_id_id">Indonesia</string>
+    <string name="settings_tts_voice_locale_id_id">Indonesia</string>
+    <string name="settings_tts_voice_locale_label">Bahasa</string>
+
+    <string name="garment_sweater">Sweater</string>
+    <string name="garment_hoodie">Hoodie</string>
+    <string name="garment_jacket">Jaket</string>
+    <string name="garment_coat">Mantel</string>
+    <string name="garment_tshirt">Kaos</string>
+    <string name="garment_shirt">Kemeja</string>
+    <string name="garment_shorts">Celana pendek</string>
+    <string name="garment_pants">Celana panjang</string>
+    <string name="garment_jeans">Celana jeans</string>
+
+    <string name="settings_clothes_empty">Belum ada aturan. Ketuk Tambah untuk membuat satu.</string>
+    <string name="settings_clothes_add">Tambah</string>
+    <string name="settings_clothes_edit">Edit</string>
+    <string name="settings_clothes_delete">Hapus</string>
+    <string name="settings_clothes_dialog_add_title">Tambah aturan pakaian</string>
+    <string name="settings_clothes_dialog_edit_title">Edit aturan pakaian</string>
+    <string name="settings_clothes_item_label">Pakaian</string>
+    <string name="settings_clothes_condition_label">Pemicu</string>
+    <string name="settings_clothes_value_label_temp_c">Ambang batas (°C)</string>
+    <string name="settings_clothes_value_label_precip">Ambang batas (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Ketika terasa lebih dingin dari</string>
+    <string name="settings_clothes_cond_type_temp_above">Ketika terasa lebih panas dari</string>
+    <string name="settings_clothes_cond_type_precip_above">Ketika kemungkinan hujan di atas</string>
+    <string name="settings_clothes_cond_temp_below">ketika suhu terasa di bawah %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">ketika suhu terasa di atas %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">ketika kemungkinan hujan di atas %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Kaos</string>
+    <string name="today_outfit_top_sweater">Sweater</string>
+    <string name="today_outfit_top_thick_jacket">Jaket tebal</string>
+    <string name="today_outfit_bottom_shorts">Celana pendek</string>
+    <string name="today_outfit_bottom_long_pants">Celana panjang</string>
+
+    <string name="insight_lead_today">Hari ini</string>
+    <string name="insight_lead_tonight">Malam ini</string>
+    <!-- Indonesian SVO: "Hari ini cuacanya sejuk." -->
+    <string name="insight_band_single">%1$s cuacanya %2$s.</string>
+    <string name="insight_band_range">%1$s cuacanya antara %2$s hingga %3$s.</string>
+    <string name="insight_band_freezing">sangat dingin</string>
+    <string name="insight_band_cold">dingin</string>
+    <string name="insight_band_cool">sejuk</string>
+    <string name="insight_band_mild">hangat sedang</string>
+    <string name="insight_band_warm">hangat</string>
+    <string name="insight_band_hot">panas</string>
+    <string name="insight_delta_warmer">Hari ini %1$d° lebih panas.</string>
+    <string name="insight_delta_cooler">Hari ini %1$d° lebih dingin.</string>
+    <string name="insight_alert">Peringatan: %1$s.</string>
+    <string name="insight_clothes_wear">Kenakan %1$s.</string>
+    <!-- Indonesian has no grammatical articles. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s dan %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s, dan %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">pukul %1$s</string>
+    <string name="insight_precip_overnight">semalam</string>
+    <string name="insight_condition_clear">Cerah</string>
+    <string name="insight_condition_partly_cloudy">Sebagian berawan</string>
+    <string name="insight_condition_cloudy">Berawan</string>
+    <string name="insight_condition_fog">Kabut</string>
+    <string name="insight_condition_drizzle">Gerimis</string>
+    <string name="insight_condition_rain">Hujan</string>
+    <string name="insight_condition_snow">Salju</string>
+    <string name="insight_condition_thunderstorm">Badai petir</string>
+    <string name="insight_condition_unknown">Tidak diketahui</string>
+    <string name="insight_calendar_tie_in">Bawa %1$s untuk %3$s pukul %2$s.</string>
+</resources>

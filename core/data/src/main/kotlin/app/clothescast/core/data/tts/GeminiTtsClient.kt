@@ -88,6 +88,10 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "nl" to "Spreek in het Nederlands met een duidelijk en natuurlijk accent.",
     "sv" to "Tala på svenska med ett tydligt och naturligt uttal.",
     "tr" to "Türkçe konuş, net ve doğal bir Türkçe aksanıyla.",
+    "en-ZA" to "Speak with a South African English accent.",
+    "id" to "Bicara dalam bahasa Indonesia dengan aksen yang jelas dan alami.",
+    "fil" to "Magsalita sa Filipino na may malinaw at natural na diin.",
+    "vi" to "Nói tiếng Việt với giọng điệu rõ ràng và tự nhiên.",
 )
 
 /**

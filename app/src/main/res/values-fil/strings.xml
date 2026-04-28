@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Filipino translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+-->
+<resources>
+    <string name="settings_region_language_fil_ph">Filipino (Pilipinas)</string>
+    <string name="settings_tts_voice_locale_fil_ph">Filipino (Pilipinas)</string>
+    <string name="settings_tts_voice_locale_label">Wika</string>
+
+    <string name="garment_sweater">Sweater</string>
+    <string name="garment_hoodie">Hoodie</string>
+    <string name="garment_jacket">Jacket</string>
+    <string name="garment_coat">Makapal na amerikana</string>
+    <string name="garment_tshirt">T-shirt</string>
+    <string name="garment_shirt">Polo</string>
+    <string name="garment_shorts">Short</string>
+    <string name="garment_pants">Mahabang pantalon</string>
+    <string name="garment_jeans">Maong</string>
+
+    <string name="settings_clothes_empty">Wala pang panuntunan. I-tap ang Magdagdag para lumikha.</string>
+    <string name="settings_clothes_add">Magdagdag</string>
+    <string name="settings_clothes_edit">I-edit</string>
+    <string name="settings_clothes_delete">Burahin</string>
+    <string name="settings_clothes_dialog_add_title">Magdagdag ng panuntunan sa damit</string>
+    <string name="settings_clothes_dialog_edit_title">I-edit ang panuntunan sa damit</string>
+    <string name="settings_clothes_item_label">Damit</string>
+    <string name="settings_clothes_condition_label">Kondisyon</string>
+    <string name="settings_clothes_value_label_temp_c">Limitasyon (°C)</string>
+    <string name="settings_clothes_value_label_precip">Limitasyon (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Kapag malamig nang mas mababa sa</string>
+    <string name="settings_clothes_cond_type_temp_above">Kapag mainit nang higit sa</string>
+    <string name="settings_clothes_cond_type_precip_above">Kapag ang tsansa ng ulan ay higit sa</string>
+    <string name="settings_clothes_cond_temp_below">kapag ang nararamdamang pinakamababang temperatura ay mas mababa sa %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">kapag ang nararamdamang pinakamataas na temperatura ay higit sa %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">kapag ang tsansa ng ulan ay higit sa %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_sweater">Sweater</string>
+    <string name="today_outfit_top_thick_jacket">Makapal na jacket</string>
+    <string name="today_outfit_bottom_shorts">Short</string>
+    <string name="today_outfit_bottom_long_pants">Mahabang pantalon</string>
+
+    <string name="insight_lead_today">Ngayon</string>
+    <string name="insight_lead_tonight">Ngayong gabi</string>
+    <!-- Filipino: "Ngayon, magiging malamig." -->
+    <string name="insight_band_single">%1$s, magiging %2$s.</string>
+    <string name="insight_band_range">%1$s, magiging %2$s hanggang %3$s.</string>
+    <string name="insight_band_freezing">napakalamig</string>
+    <string name="insight_band_cold">malamig</string>
+    <string name="insight_band_cool">medyo malamig</string>
+    <string name="insight_band_mild">katamtaman</string>
+    <string name="insight_band_warm">mainit-init</string>
+    <string name="insight_band_hot">mainit</string>
+    <string name="insight_delta_warmer">Ngayon ay %1$d° mas mainit.</string>
+    <string name="insight_delta_cooler">Ngayon ay %1$d° mas malamig.</string>
+    <string name="insight_alert">Babala: %1$s.</string>
+    <string name="insight_clothes_wear">Magsuot ng %1$s.</string>
+    <!-- Filipino particles ("ng") are omitted in list context for naturalness. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s at %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s, at %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">ng %1$s</string>
+    <string name="insight_precip_overnight">buong gabi</string>
+    <string name="insight_condition_clear">Maliwanag</string>
+    <string name="insight_condition_partly_cloudy">Bahagyang maulap</string>
+    <string name="insight_condition_cloudy">Maulap</string>
+    <string name="insight_condition_fog">Hamog</string>
+    <string name="insight_condition_drizzle">Ambon</string>
+    <string name="insight_condition_rain">Ulan</string>
+    <string name="insight_condition_snow">Niyebe</string>
+    <string name="insight_condition_thunderstorm">Bagyo</string>
+    <string name="insight_condition_unknown">Hindi kilala</string>
+    <string name="insight_calendar_tie_in">Magdala ng %1$s para sa %3$s ng %2$s.</string>
+</resources>

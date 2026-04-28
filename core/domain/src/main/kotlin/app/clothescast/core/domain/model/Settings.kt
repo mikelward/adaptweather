@@ -66,6 +66,10 @@ enum class VoiceLocale(val bcp47: String?) {
     NL_NL("nl-NL"),
     SV_SE("sv-SE"),
     TR_TR("tr-TR"),
+    EN_ZA("en-ZA"),
+    ID_ID("id-ID"),
+    FIL_PH("fil-PH"),
+    VI_VN("vi-VN"),
 }
 
 /**
@@ -102,6 +106,10 @@ enum class Region(val bcp47: String?) {
     NL_NL("nl-NL"),
     SV_SE("sv-SE"),
     TR_TR("tr-TR"),
+    EN_ZA("en-ZA"),
+    ID_ID("id-ID"),
+    FIL_PH("fil-PH"),
+    VI_VN("vi-VN"),
 }
 
 data class UserPreferences(
