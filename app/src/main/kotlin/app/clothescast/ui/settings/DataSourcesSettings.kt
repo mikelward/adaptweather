@@ -135,6 +135,24 @@ private fun DeviceLocationToggleRow(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
+    // Track background-permission state so the "Grant always-on" prompt actually
+    // disappears when the user returns from system Settings having granted it —
+    // without an on-resume re-check the composable keeps the stale value from
+    // first composition and the button lingers forever.
+    var backgroundGranted by remember {
+        mutableStateOf(hasBackgroundLocationPermission(context))
+    }
+    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                backgroundGranted = hasBackgroundLocationPermission(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     val foregroundLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
     ) { granted ->
@@ -169,7 +187,7 @@ private fun DeviceLocationToggleRow(
         )
     }
 
-    if (checked && !hasBackgroundLocationPermission(context)) {
+    if (checked && !backgroundGranted) {
         TextButton(
             onClick = { openAppDetails(context) },
             modifier = Modifier.fillMaxWidth(),

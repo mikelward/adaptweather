@@ -205,7 +205,10 @@ class FetchAndNotifyWorker(
 
     private suspend fun resolveLocation(prefs: UserPreferences): Location {
         if (prefs.useDeviceLocation) {
-            val device = runCatching { app.locationResolver.resolve() }.getOrNull()
+            // resolve() catches and DiagLog-warns about the actual failures
+            // (SecurityException from a missing background grant, disabled
+            // providers, timeouts) — don't double-wrap and lose the cause.
+            val device = app.locationResolver.resolve()
             if (device != null) {
                 DiagLog.i(TAG, "Using device-resolved location at ${device.latitude}, ${device.longitude}.")
                 return device
