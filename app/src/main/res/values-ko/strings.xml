@@ -104,6 +104,91 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="settings_tts_add_api_key_cancel">취소</string>
 
     <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale
+    labels in Korean style ("영어 (미국)", "프랑스어 (캐나다)", "중국어 (간체)",
+    …). The locale tag stored on disk (en-US / fr-CA / zh-CN) is
+    unchanged; only the displayed label localizes.
+    -->
+    <string name="settings_region_language_title">언어</string>
+    <string name="settings_region_language_description">표시되는 텍스트와 알림의 언어를 설정해요.</string>
+    <string name="settings_region_language_system">시스템 언어 설정 따라가기</string>
+    <string name="settings_region_language_en_us">영어 (미국)</string>
+    <string name="settings_region_language_en_gb">영어 (영국)</string>
+    <string name="settings_region_language_en_au">영어 (호주)</string>
+    <string name="settings_region_language_en_ca">영어 (캐나다)</string>
+    <string name="settings_region_language_en_za">영어 (남아프리카공화국)</string>
+    <string name="settings_region_language_de_de">독일어 (독일)</string>
+    <string name="settings_region_language_fr_fr">프랑스어 (프랑스)</string>
+    <string name="settings_region_language_fr_ca">프랑스어 (캐나다)</string>
+    <string name="settings_region_language_it_it">이탈리아어 (이탈리아)</string>
+    <string name="settings_region_language_es_es">스페인어 (스페인)</string>
+    <string name="settings_region_language_es_mx">스페인어 (멕시코)</string>
+    <string name="settings_region_language_ru_ru">러시아어 (러시아)</string>
+    <string name="settings_region_language_pl_pl">폴란드어 (폴란드)</string>
+    <string name="settings_region_language_hr_hr">크로아티아어 (크로아티아)</string>
+    <string name="settings_region_language_uk_ua">우크라이나어 (우크라이나)</string>
+    <string name="settings_region_language_pt_br">포르투갈어 (브라질)</string>
+    <string name="settings_region_language_nl_nl">네덜란드어 (네덜란드)</string>
+    <string name="settings_region_language_sv_se">스웨덴어 (스웨덴)</string>
+    <string name="settings_region_language_tr_tr">터키어 (터키)</string>
+    <string name="settings_region_language_id_id">인도네시아어 (인도네시아)</string>
+    <string name="settings_region_language_fil_ph">필리핀어 (필리핀)</string>
+    <string name="settings_region_language_vi_vn">베트남어 (베트남)</string>
+    <string name="settings_region_language_zh_cn">중국어 (간체)</string>
+    <string name="settings_region_language_hi_in">힌디어 (인도)</string>
+    <string name="settings_region_language_bn_bd">벵골어 (방글라데시)</string>
+    <string name="settings_region_language_ja_jp">일본어 (일본)</string>
+    <string name="settings_region_language_ar_sa">아랍어 (사우디아라비아)</string>
+    <string name="settings_region_language_he_il">히브리어 (이스라엘)</string>
+    <string name="settings_region_language_fa_ir">페르시아어 (이란)</string>
+
+    <!-- Region screen — units pickers. -->
+    <string name="settings_temperature_unit_title">온도 단위</string>
+    <string name="settings_temperature_unit_celsius">섭씨 (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">화씨 (°F)</string>
+    <string name="settings_distance_unit_title">거리 단위</string>
+    <string name="settings_distance_unit_kilometers">킬로미터</string>
+    <string name="settings_distance_unit_miles">마일</string>
+
+    <!--
+    Voice locale picker labels — same Korean language-name translations
+    as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface.
+    -->
+    <string name="settings_tts_voice_locale_en_us">영어 (미국)</string>
+    <string name="settings_tts_voice_locale_en_gb">영어 (영국)</string>
+    <string name="settings_tts_voice_locale_en_au">영어 (호주)</string>
+    <string name="settings_tts_voice_locale_en_ca">영어 (캐나다)</string>
+    <string name="settings_tts_voice_locale_en_za">영어 (남아프리카공화국)</string>
+    <string name="settings_tts_voice_locale_de_de">독일어 (독일)</string>
+    <string name="settings_tts_voice_locale_fr_fr">프랑스어 (프랑스)</string>
+    <string name="settings_tts_voice_locale_fr_ca">프랑스어 (캐나다)</string>
+    <string name="settings_tts_voice_locale_it_it">이탈리아어 (이탈리아)</string>
+    <string name="settings_tts_voice_locale_es_es">스페인어 (스페인)</string>
+    <string name="settings_tts_voice_locale_es_mx">스페인어 (멕시코)</string>
+    <string name="settings_tts_voice_locale_ru_ru">러시아어 (러시아)</string>
+    <string name="settings_tts_voice_locale_pl_pl">폴란드어 (폴란드)</string>
+    <string name="settings_tts_voice_locale_hr_hr">크로아티아어 (크로아티아)</string>
+    <string name="settings_tts_voice_locale_uk_ua">우크라이나어 (우크라이나)</string>
+    <string name="settings_tts_voice_locale_pt_br">포르투갈어 (브라질)</string>
+    <string name="settings_tts_voice_locale_nl_nl">네덜란드어 (네덜란드)</string>
+    <string name="settings_tts_voice_locale_sv_se">스웨덴어 (스웨덴)</string>
+    <string name="settings_tts_voice_locale_tr_tr">터키어 (터키)</string>
+    <string name="settings_tts_voice_locale_id_id">인도네시아어 (인도네시아)</string>
+    <string name="settings_tts_voice_locale_fil_ph">필리핀어 (필리핀)</string>
+    <string name="settings_tts_voice_locale_vi_vn">베트남어 (베트남)</string>
+    <string name="settings_tts_voice_locale_zh_cn">중국어 (간체)</string>
+    <string name="settings_tts_voice_locale_hi_in">힌디어 (인도)</string>
+    <string name="settings_tts_voice_locale_bn_bd">벵골어 (방글라데시)</string>
+    <string name="settings_tts_voice_locale_ja_jp">일본어 (일본)</string>
+    <string name="settings_tts_voice_locale_ar_sa">아랍어 (사우디아라비아)</string>
+    <string name="settings_tts_voice_locale_he_il">히브리어 (이스라엘)</string>
+    <string name="settings_tts_voice_locale_fa_ir">페르시아어 (이란)</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. 해요체 (polite-formal) throughout — that's the standard
