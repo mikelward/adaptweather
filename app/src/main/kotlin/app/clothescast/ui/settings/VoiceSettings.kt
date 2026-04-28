@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.insight.InsightFormatter
 import app.clothescast.tts.ELEVENLABS_VOICES
 import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GEMINI_VOICES
@@ -48,7 +47,6 @@ import app.clothescast.tts.filterByVariant
 import app.clothescast.tts.resolve
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -431,9 +429,10 @@ private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
 }
 
 /**
- * Plays a preview through the chosen engine + voice. Source text is the latest
- * cached insight if there is one (so the user hears what the actual morning
- * delivery would sound like), otherwise a short fixed sample.
+ * Plays a preview through the chosen engine + voice. Uses a fixed weather-y
+ * sample (rather than the latest cached prose) so every preview tap exercises
+ * the brand name's pronunciation and costs the same number of BYOK tokens —
+ * making it easier to compare engines and voices on identical words.
  *
  * Errors are surfaced as a Toast so the user can see *why* the voice failed
  * (most often: missing or wrong API key for the chosen provider).
@@ -452,9 +451,7 @@ private suspend fun runTtsPreview(
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
         val locale = voiceLocale.resolve()
-        val text = app.insightCache.latest.first()
-            ?.let { InsightFormatter.forContext(context, locale).format(it.summary) }
-            ?: context.getString(R.string.settings_tts_test_sample)
+        val text = context.getString(R.string.settings_tts_test_sample)
         try {
             when (engine) {
                 TtsEngine.GEMINI ->
