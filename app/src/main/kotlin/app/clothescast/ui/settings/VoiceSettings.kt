@@ -47,6 +47,7 @@ import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.filterByVariant
 import app.clothescast.tts.resolve
+import app.clothescast.tts.withSpeechAudioFocus
 import java.text.Collator
 import java.util.Locale
 import kotlinx.coroutines.CancellationException
@@ -490,38 +491,40 @@ private suspend fun runTtsPreview(
         val voiceConfig = Configuration(context.resources.configuration).apply { setLocale(locale) }
         val text = context.createConfigurationContext(voiceConfig)
             .getString(R.string.settings_tts_test_sample)
-        try {
-            when (engine) {
-                TtsEngine.GEMINI ->
-                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text, locale)
-                TtsEngine.OPENAI ->
-                    OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text, locale)
-                TtsEngine.ELEVENLABS ->
-                    ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = elevenLabsVoice).speak(text, locale)
-                TtsEngine.DEVICE ->
-                    app.deviceTtsSpeaker.speak(text, locale)
-            }
-        } catch (_: CancellationException) {
-            // Composable scope cancelled (user navigated away mid-preview); not an error.
-        } catch (t: Throwable) {
-            // TTS exceptions already name their provider in the message
-            // (e.g. "Gemini TTS HTTP 400: …"); don't double that up.
-            val message = t.message?.takeIf { it.isNotBlank() } ?: t.javaClass.simpleName
-            DiagLog.w("VoiceSettings", "TTS preview failed for $engine", t)
-            // Toast.show() posts internally, but Toast.makeText()'s constructor needs
-            // a Looper on the calling thread — Dispatchers.IO has none, so hop to Main.
-            withContext(Dispatchers.Main) {
-                android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
-            }
-            // Fall back to the on-device engine so the user still hears the preview
-            // and can confirm audio output is working — mirrors FetchAndNotifyWorker.
-            if (engine != TtsEngine.DEVICE) {
-                try {
-                    app.deviceTtsSpeaker.speak(text, locale)
-                } catch (_: CancellationException) {
-                    // user moved on; fine
-                } catch (fallback: Throwable) {
-                    DiagLog.w("VoiceSettings", "Device TTS fallback also failed", fallback)
+        withSpeechAudioFocus(context) {
+            try {
+                when (engine) {
+                    TtsEngine.GEMINI ->
+                        GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text, locale)
+                    TtsEngine.OPENAI ->
+                        OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text, locale)
+                    TtsEngine.ELEVENLABS ->
+                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = elevenLabsVoice).speak(text, locale)
+                    TtsEngine.DEVICE ->
+                        app.deviceTtsSpeaker.speak(text, locale)
+                }
+            } catch (_: CancellationException) {
+                // Composable scope cancelled (user navigated away mid-preview); not an error.
+            } catch (t: Throwable) {
+                // TTS exceptions already name their provider in the message
+                // (e.g. "Gemini TTS HTTP 400: …"); don't double that up.
+                val message = t.message?.takeIf { it.isNotBlank() } ?: t.javaClass.simpleName
+                DiagLog.w("VoiceSettings", "TTS preview failed for $engine", t)
+                // Toast.show() posts internally, but Toast.makeText()'s constructor needs
+                // a Looper on the calling thread — Dispatchers.IO has none, so hop to Main.
+                withContext(Dispatchers.Main) {
+                    android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+                }
+                // Fall back to the on-device engine so the user still hears the preview
+                // and can confirm audio output is working — mirrors FetchAndNotifyWorker.
+                if (engine != TtsEngine.DEVICE) {
+                    try {
+                        app.deviceTtsSpeaker.speak(text, locale)
+                    } catch (_: CancellationException) {
+                        // user moved on; fine
+                    } catch (fallback: Throwable) {
+                        DiagLog.w("VoiceSettings", "Device TTS fallback also failed", fallback)
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 package app.clothescast.tts
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
@@ -37,6 +38,7 @@ class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
     override suspend fun speak(text: String, locale: Locale) {
         val tts = initEngine()
         try {
+            tts.setAudioAttributes(SPEECH_AUDIO_ATTRS)
             applyBestVoice(tts, locale)
             speakAndAwait(tts, prepareForTts(text))
         } finally {
@@ -140,5 +142,12 @@ class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
     companion object {
         private const val TAG = "AndroidTtsSpeaker"
         private const val GOOGLE_TTS_PACKAGE = "com.google.android.tts"
+
+        // Match the cloud-TTS path (PcmAudioPlayer): tag the stream as assistant
+        // speech so audio focus / ducking works the same way regardless of engine.
+        private val SPEECH_AUDIO_ATTRS: AudioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ASSISTANT)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+            .build()
     }
 }
