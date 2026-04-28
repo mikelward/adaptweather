@@ -93,6 +93,31 @@ the rest of the app stays in English.
     <string name="settings_delivery_notification_and_tts">Benachrichtigung und gesprochen</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key hint
+    and the in-line "Add API key" dialog.
+    -->
+    <string name="settings_tts_engine_title">Sprach-Engine</string>
+    <string name="settings_tts_engine_description">Online-Engines (Gemini, OpenAI, ElevenLabs) klingen deutlich natürlicher, brauchen aber beim Sprechen einen Netzwerkaufruf und nutzen deinen API-Schlüssel für die Synthese (ein kurzer Aufruf pro gesprochenem ClothesCast). Greift auf die Gerätestimme zurück, wenn die gewählte Engine fehlschlägt.</string>
+    <string name="settings_tts_engine_device">Gerät (offline, kostenlos)</string>
+    <string name="settings_tts_engine_gemini">Gemini (hohe Qualität, online)</string>
+    <string name="settings_tts_engine_openai">OpenAI (hohe Qualität, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (höchste Qualität, online)</string>
+
+    <string name="settings_tts_voice_label">Stimme</string>
+    <string name="settings_tts_voice_dismiss">Fertig</string>
+    <string name="settings_tts_voice_locale_description">Legt den Akzent der gesprochenen Stimme fest. Ändert den angezeigten Text nicht.</string>
+    <string name="settings_tts_voice_locale_system">Telefonsprache verwenden</string>
+
+    <string name="settings_tts_test">Stimme testen</string>
+    <string name="settings_tts_test_in_flight">Teste — bitte warten…</string>
+    <string name="settings_tts_no_key_hint">Kein %1$s-Schlüssel konfiguriert — füg einen hinzu, um diese Engine zu nutzen.</string>
+    <string name="settings_tts_add_api_key">API-Schlüssel hinzufügen</string>
+    <string name="settings_tts_add_api_key_title">%1$s-API-Schlüssel hinzufügen</string>
+    <string name="settings_tts_add_api_key_save">Speichern</string>
+    <string name="settings_tts_add_api_key_cancel">Abbrechen</string>
+
+    <!--
     Today screen — top-bar, refresh toasts, empty state, generation timestamp,
     outfit card, hourly chart, confidence chip, work-status banner. Tone is
     Du-form imperative (intimate / spousal register), matching the app's
