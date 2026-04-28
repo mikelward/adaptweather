@@ -198,14 +198,25 @@ private fun DeviceLocationToggleRow(
                     return@Switch
                 }
                 when {
-                    !hasCoarseLocationPermission(context) -> rationaleOpen = true
-                    !backgroundGranted -> {
-                        // Foreground already granted from a previous attempt; just
-                        // chase the missing background grant directly.
-                        onCheckedChange(true)
+                    !hasCoarseLocationPermission(context) -> {
+                        // Pre-Q has no separate "Allow all the time" choice — coarse
+                        // grant *is* always-on — so the rationale dialog's copy doesn't
+                        // apply. Skip straight to the foreground request there; the
+                        // background launcher + denied dialog also no-op on pre-Q
+                        // because hasBackgroundLocationPermission() returns true.
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                            backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            rationaleOpen = true
+                        } else {
+                            foregroundLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
                         }
+                    }
+                    !backgroundGranted -> {
+                        // Only reachable on Q+ — hasBackgroundLocationPermission()
+                        // returns true on pre-Q so backgroundGranted is always true
+                        // there. Foreground was granted in a previous attempt; chase
+                        // the missing background grant directly.
+                        onCheckedChange(true)
+                        backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                     }
                     else -> onCheckedChange(true)
                 }
