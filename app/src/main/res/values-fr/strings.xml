@@ -15,6 +15,18 @@ agreement; garment names are listed without articles and read naturally in conte
     <string name="settings_tts_voice_locale_fr_ca">Français (Canada)</string>
     <string name="settings_tts_voice_locale_label">Langue</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_back">Retour</string>
+
+    <string name="settings_root_voice">Voix</string>
+    <string name="settings_root_schedule">Programmation</string>
+    <string name="settings_root_region">Région</string>
+    <string name="settings_root_clothes">Vêtements</string>
+    <string name="settings_root_api_keys">Clés API</string>
+    <string name="settings_root_data_sources">Sources de données</string>
+    <string name="settings_root_about">À propos</string>
+
     <string name="garment_sweater">Pull</string>
     <string name="garment_hoodie">Sweat à capuche</string>
     <string name="garment_jacket">Veste</string>
@@ -24,6 +36,10 @@ agreement; garment names are listed without articles and read naturally in conte
     <string name="garment_shorts">Short</string>
     <string name="garment_pants">Pantalon</string>
     <string name="garment_jeans">Jean</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">Règles vestimentaires</string>
+    <string name="settings_clothes_description">Si une prévision dépasse l\'un de ces seuils, le vêtement apparaît dans ton ClothesCast quotidien.</string>
 
     <string name="settings_clothes_empty">Aucune règle. Appuie sur Ajouter pour en créer une.</string>
     <string name="settings_clothes_add">Ajouter</string>
