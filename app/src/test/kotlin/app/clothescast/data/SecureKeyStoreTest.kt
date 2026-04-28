@@ -104,32 +104,6 @@ class SecureKeyStoreTest {
         dataStore.data.first()[GEMINI_KEY_PREFERENCE] shouldBe null
     }
 
-    @Test
-    fun `setOpenAi then getOpenAi returns the same key, and is independent of Gemini`() = runTest {
-        subject.set("gemini-key")
-        subject.setOpenAi("sk-openai")
-
-        subject.get() shouldBe "gemini-key"
-        subject.getOpenAi() shouldBe "sk-openai"
-    }
-
-    @Test
-    fun `clearOpenAi removes the OpenAI key without affecting the Gemini key`() = runTest {
-        subject.set("gemini-key")
-        subject.setOpenAi("sk-openai")
-        subject.clearOpenAi()
-
-        subject.get() shouldBe "gemini-key"
-        shouldThrow<MissingApiKeyException> { subject.getOpenAi() }
-    }
-
-    @Test
-    fun `openAiKeyProvider is a live view onto the stored OpenAI key`() = runTest {
-        subject.setOpenAi("sk-from-provider")
-
-        subject.openAiKeyProvider.get() shouldBe "sk-from-provider"
-    }
-
     private companion object {
         // Mirrors SecureKeyStore's private Gemini preference key name. Kept in sync
         // deliberately so the test can assert against the on-disk preference name.

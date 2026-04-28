@@ -19,7 +19,6 @@ import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.tts.defaultOpenAiVoiceFor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -130,14 +129,6 @@ class SettingsRepository(
         dataStore.edit { it[GEMINI_VOICE] = voice }
     }
 
-    suspend fun setOpenAiVoice(voice: String) {
-        dataStore.edit { it[OPENAI_VOICE] = voice }
-    }
-
-    suspend fun setElevenLabsVoice(voice: String) {
-        dataStore.edit { it[ELEVENLABS_VOICE] = voice }
-    }
-
     suspend fun setDeviceVoice(voice: String?) {
         dataStore.edit {
             // Null clears the pin → speaker reverts to auto-pick; the worker
@@ -172,7 +163,7 @@ class SettingsRepository(
             ?: Region.SYSTEM
         // Resolve units off the user's region — SYSTEM falls through to the
         // phone locale. Once they explicitly pick a unit it sticks regardless
-        // of region (mirrors how openAiVoice handles voiceLocale).
+        // of region.
         val regionLocale = region.toJavaLocale() ?: systemLocaleProvider()
         val temperatureUnit = this[TEMPERATURE_UNIT]?.let { runCatching { TemperatureUnit.valueOf(it) }.getOrNull() }
             ?: defaultTemperatureUnitFor(regionLocale)
@@ -187,12 +178,6 @@ class SettingsRepository(
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
-        // OpenAI default depends on locale (en-GB → fable; everything else → nova).
-        // Resolve only after voiceLocale is known so the picked voice matches.
-        val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
-            ?: defaultOpenAiVoiceFor(voiceLocale)
-        val elevenLabsVoice = this[ELEVENLABS_VOICE]?.takeIf { it.isNotBlank() }
-            ?: UserPreferences.DEFAULT_ELEVENLABS_VOICE
         val deviceVoice = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
         val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
         val tonightTime = this[TONIGHT_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
@@ -220,8 +205,6 @@ class SettingsRepository(
             useDeviceLocation = useDeviceLocation,
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
-            openAiVoice = openAiVoice,
-            elevenLabsVoice = elevenLabsVoice,
             deviceVoice = deviceVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
@@ -272,8 +255,6 @@ class SettingsRepository(
         private val USE_DEVICE_LOCATION = booleanPreferencesKey("use_device_location")
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
-        private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
-        private val ELEVENLABS_VOICE = stringPreferencesKey("elevenlabs_voice")
         private val DEVICE_VOICE = stringPreferencesKey("device_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")

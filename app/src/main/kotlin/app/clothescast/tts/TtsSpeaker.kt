@@ -21,12 +21,11 @@ interface TtsSpeaker {
 
 /**
  * Rewrites the brand name "ClothesCast" → "Clothes Cast" before handing text to a
- * TTS engine. Every engine we ship — device TTS, Gemini, OpenAI, ElevenLabs —
- * tends to elide the `s` at the `s‑c` cluster boundary, producing "ClotheCast".
- * Splitting on a literal space is the only trick that works across all four
- * (SSML / phoneme markup support is uneven and the OpenAI / ElevenLabs REST
- * endpoints don't accept it). The notification body keeps the unbroken
- * spelling — only the spoken path goes through this transform.
+ * TTS engine. Both engines we ship — device TTS and Gemini — tend to elide the
+ * `s` at the `s‑c` cluster boundary, producing "ClotheCast". Splitting on a
+ * literal space is the trick that works across both. The notification body
+ * keeps the unbroken spelling — only the spoken path goes through this
+ * transform.
  */
 internal fun prepareForTts(text: String): String =
     text.replace("ClothesCast", "Clothes Cast")

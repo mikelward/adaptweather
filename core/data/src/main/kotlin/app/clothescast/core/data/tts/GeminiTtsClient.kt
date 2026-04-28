@@ -41,8 +41,8 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * documents the input text as a style-steerable prompt — preambles like this
  * are interpreted as direction and not spoken back. We use it to suppress the
  * lo-fi "vinyl crackle" character the model otherwise bakes into the output
- * across the full clip (OpenAI TTS, going through the same player at the same
- * 24 kHz, has none of it — so this is server-side, not playback-side).
+ * across the full clip — confirmed server-side rather than playback-side by
+ * comparing against other 24 kHz PCM sources through the same AudioTrack path.
  */
 internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
     "Read the following in a clean, crisp studio voice with no audio effects, " +
@@ -183,8 +183,7 @@ class GeminiTtsClient(
         // Without an explicit status check we'd quietly deserialize a 4xx error body
         // (e.g. {"error": {"code": 403, "message": "..."}}) as a TtsResponse with
         // default empty `candidates`, hiding the actual reason behind the generic
-        // empty-response exception. Mirror OpenAITtsClient's approach: pull the body
-        // on a non-success status, surface it.
+        // empty-response exception. Pull the body on a non-success status, surface it.
         if (!httpResponse.status.isSuccess()) {
             throw GeminiTtsHttpException(httpResponse.status, httpResponse.bodyAsBytes())
         }

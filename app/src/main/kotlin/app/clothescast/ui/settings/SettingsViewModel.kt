@@ -72,8 +72,6 @@ class SettingsViewModel(
                         useDeviceLocation = prefs.useDeviceLocation,
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
-                        openAiVoice = prefs.openAiVoice,
-                        elevenLabsVoice = prefs.elevenLabsVoice,
                         deviceVoice = prefs.deviceVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
@@ -141,44 +139,8 @@ class SettingsViewModel(
         }
     }
 
-    fun setOpenAiKey(key: String) {
-        viewModelScope.launch {
-            keyStore.setOpenAi(key.trim())
-            refreshApiKeyStatus()
-        }
-    }
-
-    fun clearOpenAiKey() {
-        viewModelScope.launch {
-            keyStore.clearOpenAi()
-            refreshApiKeyStatus()
-        }
-    }
-
-    fun setElevenLabsKey(key: String) {
-        viewModelScope.launch {
-            keyStore.setElevenLabs(key.trim())
-            refreshApiKeyStatus()
-        }
-    }
-
-    fun clearElevenLabsKey() {
-        viewModelScope.launch {
-            keyStore.clearElevenLabs()
-            refreshApiKeyStatus()
-        }
-    }
-
     fun setGeminiVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setGeminiVoice(voice) }
-    }
-
-    fun setOpenAiVoice(voice: String) {
-        viewModelScope.launch { settingsRepository.setOpenAiVoice(voice) }
-    }
-
-    fun setElevenLabsVoice(voice: String) {
-        viewModelScope.launch { settingsRepository.setElevenLabsVoice(voice) }
     }
 
     fun setDeviceVoice(voice: String?) {
@@ -308,15 +270,7 @@ class SettingsViewModel(
 
     private suspend fun refreshApiKeyStatus() {
         val gemini = runCatching { keyStore.get().isNotBlank() }.getOrDefault(false)
-        val openAi = runCatching { keyStore.getOpenAi().isNotBlank() }.getOrDefault(false)
-        val elevenLabs = runCatching { keyStore.getElevenLabs().isNotBlank() }.getOrDefault(false)
-        _state.update {
-            it.copy(
-                apiKeyConfigured = gemini,
-                openAiKeyConfigured = openAi,
-                elevenLabsKeyConfigured = elevenLabs,
-            )
-        }
+        _state.update { it.copy(apiKeyConfigured = gemini) }
     }
 
     class Factory(

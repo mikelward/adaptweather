@@ -112,16 +112,13 @@ displayed label localizes.
     <string name="settings_delivery_notification_and_tts">알림과 음성 읽기</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "API 키 추가" dialog.
     -->
     <string name="settings_tts_engine_title">음성 엔진</string>
-    <string name="settings_tts_engine_description">온라인 엔진(Gemini, OpenAI, ElevenLabs)은 훨씬 더 자연스럽게 들리지만, 읽기 시점에 네트워크 호출이 필요하고 합성에 API 키를 사용해요(읽어주는 ClothesCast당 짧은 호출 1회). 선택한 엔진이 실패하면 기기 음성으로 대체됩니다.</string>
     <string name="settings_tts_engine_device">기기 (오프라인, 무료)</string>
     <string name="settings_tts_engine_gemini">Gemini (고품질, 온라인)</string>
-    <string name="settings_tts_engine_openai">OpenAI (고품질, 온라인)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (최고 품질, 온라인)</string>
 
     <string name="settings_tts_voice_label">음성</string>
     <string name="settings_tts_voice_dismiss">완료</string>
@@ -236,33 +233,19 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_fa_ir">페르시아어 (이란)</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
-    save / clear buttons. URLs stay verbatim.
+    API keys screen — single block (Gemini) with status copy, paste-key
+    placeholder, and save / clear buttons. URL (aistudio.google.com) stays
+    verbatim.
     -->
     <string name="settings_api_keys_title">API 키</string>
     <string name="settings_api_keys_description">사용하려는 온라인 음성 엔진의 API 키를 설정하세요. 키는 Android Keystore로 암호화되어 저장됩니다.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Gemini 키가 설정되어 있어요.</string>
     <string name="settings_api_key_status_unset">Gemini 키가 설정되지 않았어요. Gemini 음성을 사용하려면 aistudio.google.com에서 받으세요.</string>
     <string name="settings_api_key_placeholder">Gemini API 키 붙여넣기</string>
     <string name="settings_api_key_save">Gemini 키 저장</string>
     <string name="settings_api_key_clear">저장된 Gemini 키 삭제</string>
-
-    <string name="settings_openai_key_status_set">OpenAI 키가 설정되어 있어요.</string>
-    <string name="settings_openai_key_status_unset">OpenAI 키가 설정되지 않았어요. OpenAI 음성을 사용하려면 platform.openai.com에서 받으세요.</string>
-    <string name="settings_openai_key_placeholder">OpenAI API 키 붙여넣기</string>
-    <string name="settings_openai_key_save">OpenAI 키 저장</string>
-    <string name="settings_openai_key_clear">저장된 OpenAI 키 삭제</string>
-
-    <string name="settings_elevenlabs_key_status_set">ElevenLabs 키가 설정되어 있어요.</string>
-    <string name="settings_elevenlabs_key_status_unset">ElevenLabs 키가 설정되지 않았어요. ElevenLabs 음성을 사용하려면 elevenlabs.io에서 받으세요.</string>
-    <string name="settings_elevenlabs_key_placeholder">ElevenLabs API 키 붙여넣기</string>
-    <string name="settings_elevenlabs_key_save">ElevenLabs 키 저장</string>
-    <string name="settings_elevenlabs_key_clear">저장된 ElevenLabs 키 삭제</string>
 
     <!--
     Location screen — device-location toggle, manual city search +

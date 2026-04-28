@@ -104,16 +104,13 @@ label localizes.
     <string name="settings_delivery_notification_and_tts">通知和语音朗读</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "添加 API 密钥" dialog.
     -->
     <string name="settings_tts_engine_title">语音引擎</string>
-    <string name="settings_tts_engine_description">在线引擎（Gemini、OpenAI、ElevenLabs）听起来更自然，但在朗读时需要联网，并使用你的 API 密钥进行合成（每次朗读 ClothesCast 时调用一次）。如果选定的引擎失败，会回退到设备语音。</string>
     <string name="settings_tts_engine_device">设备（离线，免费）</string>
     <string name="settings_tts_engine_gemini">Gemini（高质量，在线）</string>
-    <string name="settings_tts_engine_openai">OpenAI（高质量，在线）</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs（最高质量，在线）</string>
 
     <string name="settings_tts_voice_label">语音</string>
     <string name="settings_tts_voice_dismiss">完成</string>
@@ -214,34 +211,19 @@ label localizes.
     <string name="settings_tts_voice_locale_fa_ir">波斯语（伊朗）</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
-    save / clear buttons. URLs stay verbatim with the conventional
-    space-around-Latin spacing.
+    API keys screen — single block (Gemini) with status copy, paste-key
+    placeholder, and save / clear buttons. URL (aistudio.google.com) stays
+    verbatim.
     -->
     <string name="settings_api_keys_title">API 密钥</string>
     <string name="settings_api_keys_description">配置你要使用的在线语音引擎的 API 密钥。密钥会使用 Android Keystore 加密存储。</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">已配置 Gemini 密钥。</string>
     <string name="settings_api_key_status_unset">未配置 Gemini 密钥。可在 aistudio.google.com 获取一个，以使用 Gemini 语音。</string>
     <string name="settings_api_key_placeholder">粘贴你的 Gemini API 密钥</string>
     <string name="settings_api_key_save">保存 Gemini 密钥</string>
     <string name="settings_api_key_clear">清除已保存的 Gemini 密钥</string>
-
-    <string name="settings_openai_key_status_set">已配置 OpenAI 密钥。</string>
-    <string name="settings_openai_key_status_unset">未配置 OpenAI 密钥。可在 platform.openai.com 获取一个，以使用 OpenAI 语音。</string>
-    <string name="settings_openai_key_placeholder">粘贴你的 OpenAI API 密钥</string>
-    <string name="settings_openai_key_save">保存 OpenAI 密钥</string>
-    <string name="settings_openai_key_clear">清除已保存的 OpenAI 密钥</string>
-
-    <string name="settings_elevenlabs_key_status_set">已配置 ElevenLabs 密钥。</string>
-    <string name="settings_elevenlabs_key_status_unset">未配置 ElevenLabs 密钥。可在 elevenlabs.io 获取一个，以使用 ElevenLabs 语音。</string>
-    <string name="settings_elevenlabs_key_placeholder">粘贴你的 ElevenLabs API 密钥</string>
-    <string name="settings_elevenlabs_key_save">保存 ElevenLabs 密钥</string>
-    <string name="settings_elevenlabs_key_clear">清除已保存的 ElevenLabs 密钥</string>
 
     <!--
     Location screen — device-location toggle, manual city search +

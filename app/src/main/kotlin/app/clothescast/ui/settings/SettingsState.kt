@@ -13,7 +13,6 @@ import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.defaultDistanceUnitFor
 import app.clothescast.data.defaultTemperatureUnitFor
 import app.clothescast.tts.DeviceVoice
-import app.clothescast.tts.defaultOpenAiVoiceFor
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.util.Locale
@@ -40,12 +39,6 @@ data class SettingsState(
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
-    // Match SettingsRepository's locale-aware default so the picker doesn't
-    // briefly render "alloy" before the first DataStore emission overrides it.
-    // When voiceLocale is SYSTEM (the default), this resolves through the phone's
-    // current locale → fable on en-GB, nova everywhere else.
-    val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
-    val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,
     /**
      * On-device voice ID the user has pinned, or `null` for "auto-pick the
      * highest-quality voice for [voiceLocale]" (the default for installs
@@ -73,6 +66,4 @@ data class SettingsState(
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val useCalendarEvents: Boolean = false,
     val apiKeyConfigured: Boolean = false,
-    val openAiKeyConfigured: Boolean = false,
-    val elevenLabsKeyConfigured: Boolean = false,
 )

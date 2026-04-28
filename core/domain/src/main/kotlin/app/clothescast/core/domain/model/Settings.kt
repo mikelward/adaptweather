@@ -14,12 +14,8 @@ enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
  * - [GEMINI] uses Gemini's audio-output model (`gemini-2.5-flash-preview-tts`) over
  *   the BYOK Gemini key. Near-human quality, requires network at speak-time, costs
  *   a small amount per character. Falls back to [DEVICE] if the call fails.
- * - [OPENAI] uses OpenAI's `audio/speech` endpoint over a separate BYOK OpenAI key.
- *   Comparable quality to Gemini; falls back to [DEVICE] on failure.
- * - [ELEVENLABS] uses ElevenLabs's `text-to-speech` endpoint over a separate BYOK
- *   ElevenLabs key; falls back to [DEVICE] on failure.
  */
-enum class TtsEngine { DEVICE, GEMINI, OPENAI, ELEVENLABS }
+enum class TtsEngine { DEVICE, GEMINI }
 
 /**
  * User-selectable accent / language preference for spoken playback. Used by
@@ -30,15 +26,6 @@ enum class TtsEngine { DEVICE, GEMINI, OPENAI, ELEVENLABS }
  *  - [TtsEngine.GEMINI] passes the locale through as a natural-language
  *    accent directive prepended to the prompt — Gemini's prebuilt voices are
  *    language-agnostic personalities and follow that direction.
- *  - [TtsEngine.OPENAI] and [TtsEngine.ELEVENLABS] both filter the voice
- *    picker to voices whose baked-in accent matches the variant, falling
- *    back to the full list if no voice matches. Their voices have fixed
- *    accents that prompt-steering can't reliably override (we tried; only
- *    voice selection actually changes the audible accent), so the variant
- *    has to drive *which voice* gets used rather than *how* a given voice
- *    speaks. For OpenAI, [defaultOpenAiVoiceFor] also picks a sensible
- *    starting voice for first-launch users (en-GB → `fable`, else `nova`)
- *    so the user hears the right accent before they ever open Settings.
  *
  * [SYSTEM] means "follow the phone's locale" — the right default for almost
  * everyone, since their device language already encodes their accent
@@ -155,17 +142,6 @@ data class UserPreferences(
      */
     val geminiVoice: String = DEFAULT_GEMINI_VOICE,
     /**
-     * OpenAI voice name (e.g. "alloy", "echo"). Only consulted when [ttsEngine]
-     * == [TtsEngine.OPENAI].
-     */
-    val openAiVoice: String = DEFAULT_OPENAI_VOICE,
-    /**
-     * ElevenLabs voice ID — the opaque library identifier (e.g.
-     * "EXAVITQu4vr4xnSDxMaL" for Sarah). Only consulted when [ttsEngine]
-     * == [TtsEngine.ELEVENLABS].
-     */
-    val elevenLabsVoice: String = DEFAULT_ELEVENLABS_VOICE,
-    /**
      * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
      * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)
      * means "auto-pick the highest-quality voice for [voiceLocale]" — the
@@ -225,8 +201,5 @@ data class UserPreferences(
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"
-        const val DEFAULT_OPENAI_VOICE = "alloy"
-        // Sarah — the most generally pleasant of ElevenLabs's stock library voices.
-        const val DEFAULT_ELEVENLABS_VOICE = "EXAVITQu4vr4xnSDxMaL"
     }
 }

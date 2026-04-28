@@ -108,16 +108,13 @@ the displayed label localizes.
     <string name="settings_delivery_notification_and_tts">通知と音声読み上げ</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "API キーを追加" dialog.
     -->
     <string name="settings_tts_engine_title">音声エンジン</string>
-    <string name="settings_tts_engine_description">オンラインエンジン（Gemini、OpenAI、ElevenLabs）はずっと自然に聞こえますが、読み上げ時にネットワーク呼び出しが必要で、合成にあなたの API キーを使用します（読み上げる ClothesCast ごとに1回の短い呼び出し）。選択したエンジンが失敗した場合、端末の音声にフォールバックします。</string>
     <string name="settings_tts_engine_device">端末（オフライン、無料）</string>
     <string name="settings_tts_engine_gemini">Gemini（高品質、オンライン）</string>
-    <string name="settings_tts_engine_openai">OpenAI（高品質、オンライン）</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs（最高品質、オンライン）</string>
 
     <string name="settings_tts_voice_label">音声</string>
     <string name="settings_tts_voice_dismiss">完了</string>
@@ -219,34 +216,19 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_fa_ir">ペルシャ語（イラン）</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
-    save / clear buttons. URLs stay verbatim with the conventional
-    space-around-Latin spacing.
+    API keys screen — single block (Gemini) with status copy, paste-key
+    placeholder, and save / clear buttons. URL (aistudio.google.com) stays
+    verbatim.
     -->
     <string name="settings_api_keys_title">API キー</string>
     <string name="settings_api_keys_description">使用したいオンライン音声エンジンの API キーを設定します。キーは Android Keystore で暗号化して保存されます。</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Gemini キーが設定されています。</string>
     <string name="settings_api_key_status_unset">Gemini キーが未設定です。aistudio.google.com で取得すると Gemini 音声を使用できます。</string>
     <string name="settings_api_key_placeholder">Gemini API キーを貼り付け</string>
     <string name="settings_api_key_save">Gemini キーを保存</string>
     <string name="settings_api_key_clear">保存された Gemini キーを削除</string>
-
-    <string name="settings_openai_key_status_set">OpenAI キーが設定されています。</string>
-    <string name="settings_openai_key_status_unset">OpenAI キーが未設定です。platform.openai.com で取得すると OpenAI 音声を使用できます。</string>
-    <string name="settings_openai_key_placeholder">OpenAI API キーを貼り付け</string>
-    <string name="settings_openai_key_save">OpenAI キーを保存</string>
-    <string name="settings_openai_key_clear">保存された OpenAI キーを削除</string>
-
-    <string name="settings_elevenlabs_key_status_set">ElevenLabs キーが設定されています。</string>
-    <string name="settings_elevenlabs_key_status_unset">ElevenLabs キーが未設定です。elevenlabs.io で取得すると ElevenLabs 音声を使用できます。</string>
-    <string name="settings_elevenlabs_key_placeholder">ElevenLabs API キーを貼り付け</string>
-    <string name="settings_elevenlabs_key_save">ElevenLabs キーを保存</string>
-    <string name="settings_elevenlabs_key_clear">保存された ElevenLabs キーを削除</string>
 
     <!--
     Location screen — device-location toggle, manual city search +
