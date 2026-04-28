@@ -164,6 +164,108 @@ class GeminiTtsClientTest {
     }
 
     @Test
+    fun `request body picks the saudi arabic directive for ar-SA locale`() = runTest {
+        // PR #218 split the previously-language-only `ar` directive into four
+        // country-specific entries so the picker variants we offer in
+        // Settings actually steer Gemini, not just label the picker. Pin on
+        // the country-distinct "بنطق سعودي" (Saudi pronunciation) so a swap
+        // to a different country's directive surfaces here.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-SA"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق سعودي")
+    }
+
+    @Test
+    fun `request body picks the egyptian arabic directive for ar-EG locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-EG"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق مصري")
+    }
+
+    @Test
+    fun `request body picks the emirati arabic directive for ar-AE locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-AE"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق إماراتي")
+    }
+
+    @Test
+    fun `request body picks the moroccan arabic directive for ar-MA locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-MA"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق مغربي")
+    }
+
+    @Test
+    fun `request body falls back to the bare ar directive for unrecognised arabic variants`() = runTest {
+        // ar-LB (Lebanon) isn't enumerated — fall through to the language-only
+        // `ar` entry so the model still gets a "read this in Arabic" nudge
+        // rather than no directive at all. Pinning on the bare `ar` directive
+        // (no country word) verifies the language-only fallback path.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-LB"))
+
+        val body = checkNotNull(capturedBody)
+        // Bare `ar` directive omits the country adjective.
+        body.shouldContain("اقرأ النص التالي بالعربية بنطق")
+        body.shouldNotContain("سعودي")
+        body.shouldNotContain("مصري")
+    }
+
+    @Test
     fun `request body omits the accent directive for unknown english variants`() = runTest {
         // en-NZ isn't in our supported variant list — fall through to whatever the
         // model defaults to rather than picking a wrong-but-confident accent.
