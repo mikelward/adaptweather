@@ -278,6 +278,24 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_calendar_grant_permission">Dopusti pristup kalendaru</string>
     <string name="settings_calendar_open_settings">Pristup kalendaru odbijen. Dopusti ga u postavkama sustava.</string>
 
+    <!-- Debug screen — visible only on debug builds. -->
+    <string name="settings_debug_title">Debug (samo u debug verzijama)</string>
+    <string name="settings_debug_description">Odmah pokreni dnevni ClothesCast tijek. Korisno za provjeru bez čekanja na zakazano vrijeme.</string>
+    <string name="settings_debug_fire_now">Pokreni ClothesCast sada</string>
+    <string name="settings_debug_fire_toast">ClothesCast worker u redu čekanja</string>
+
+    <!-- About screen — version line, build-type suffix, privacy summary,
+         outbound links / actions. -->
+    <string name="settings_about_title">O aplikaciji</string>
+    <string name="settings_about_version">Verzija %1$s (%2$d)</string>
+    <string name="settings_about_build_type_suffix"> · %1$s verzija</string>
+    <string name="settings_about_privacy">Tvoj Gemini API ključ (za glasovni TTS) šifriran je ključem vezanim uz Android Keystore. Prognoze dolaze s Open-Meteoa (bez ključa, bez računa); tekst dnevnog sažetka generira se lokalno na uređaju. ClothesCast nema backend — ništa se ne šalje ni na jedan server koji mi kontroliramo.</string>
+    <string name="settings_about_privacy_policy">Politika privatnosti</string>
+    <string name="settings_about_source">Izvorni kod na GitHubu</string>
+    <string name="settings_about_dontkillmyapp">Pozadinska ograničenja (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">Podijeli izvješće o grešci</string>
+    <string name="settings_about_version_copied">Verzija kopirana u međuspremnik</string>
+
     <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
