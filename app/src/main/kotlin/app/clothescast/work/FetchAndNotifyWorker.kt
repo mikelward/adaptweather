@@ -25,6 +25,7 @@ import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.resolve
 import app.clothescast.widget.OutfitWidget
+import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -171,6 +172,16 @@ class FetchAndNotifyWorker(
             DiagLog.w(TAG, "Request timeout; retrying.", e); Result.retry()
         } catch (e: IOException) {
             DiagLog.w(TAG, "Network IO failure; retrying.", e); Result.retry()
+        } catch (e: NoTransformationFoundException) {
+            // Belt-and-braces for OpenMeteoClient's expectSuccess=true: the
+            // gateway occasionally returns a 5xx with a text/html error page,
+            // and if the response validator ever doesn't fire (R8 quirk, an
+            // un-flagged call site) the JSON deserializer throws this instead
+            // of ResponseException. Treat as transient and retry — the
+            // alternative is the cryptic Ktor message landing on the failure
+            // card.
+            DiagLog.w(TAG, "Content-type mismatch from upstream (likely 5xx HTML body); retrying.", e)
+            Result.retry()
         } catch (t: Throwable) {
             DiagLog.e(TAG, "Unhandled error; failing.", t)
             Result.failure(reason(REASON_UNHANDLED, summarize(t)))
