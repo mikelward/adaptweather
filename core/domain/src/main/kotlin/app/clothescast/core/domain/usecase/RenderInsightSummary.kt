@@ -21,7 +21,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * Builds the structured [InsightSummary] for a daily generation pass: up to six
+ * Builds the structured [InsightSummary] for a daily generation pass: up to seven
  * independent clauses, each driven by an independent rule. The presentation layer
  * (an Android-side formatter) turns this into the final prose, so anything
  * region- or locale-specific (clothes vocab, sentence templates, time formatting)
@@ -40,6 +40,15 @@ import kotlin.math.roundToInt
  * 6. [CalendarTieInClause] — when clothes + precip both fired AND a calendar
  *    event overlaps the precip peak hour. Picks "umbrella" when on the clothes
  *    list, otherwise the first triggered item, mirroring rule 4's ordering.
+ *    **Only emitted on [ForecastPeriod.TONIGHT].** On TODAY the bare precip
+ *    clause ("Rain at 3pm.") is enough — the listener already knows about
+ *    their morning event, so chaining a tie-in just repeats what they heard.
+ * 7. [EveningEventTieInClause] — the morning's heads-up about a cold/rainy
+ *    evening event, paired with a clothes item drawn from the *evening*
+ *    forecast slice. Only emits on [ForecastPeriod.TODAY], gated on the
+ *    caller passing non-empty [eveningEvents] + [eveningTriggeredRules]
+ *    (which the use case in turn gates on the user opting in via
+ *    "Mention evening events").
  *
  * All temperature comparisons use feels-like values, matching the clothes rules.
  */

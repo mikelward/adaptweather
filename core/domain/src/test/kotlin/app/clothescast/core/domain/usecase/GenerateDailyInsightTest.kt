@@ -196,44 +196,30 @@ class GenerateDailyInsightTest {
     @Test
     fun `calendar reader is consulted for today's date and zone when opted in`() = runTest {
         val zone = ZoneId.of("Europe/London")
-        val rainyHourly = today.copy(
-            precipitationProbabilityMaxPct = 60.0,
-            condition = WeatherCondition.RAIN,
-            hourly = listOf(
-                HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN),
-            ),
-        )
         val event = CalendarEvent(
             title = "park run",
             start = LocalTime.of(14, 30),
             end = LocalTime.of(16, 0),
         )
-        val weather = FakeWeatherRepository(ForecastBundle(rainyHourly, yesterday))
+        val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
         val calendar = FakeCalendarEventReader(events = listOf(event))
         val subject = GenerateDailyInsight(weather, calendarEventReader = calendar, clock = clock)
 
-        // Defaults are temperature-only now, so a 22°C rainy hour wouldn't trigger
-        // any clothes rule and the tie-in would short-circuit on `items.isEmpty()`.
-        // Add an umbrella rule explicitly — modelling a user who's personalised
-        // their wet-weather accessory — so the test still exercises the calendar
-        // tie-in path it's meant to cover.
-        val rules = ClothesRule.DEFAULTS +
-            ClothesRule("umbrella", ClothesRule.PrecipitationProbabilityAbove(50.0))
         val result = subject(
             location = london,
             prefs = prefs.copy(
                 useCalendarEvents = true,
                 schedule = Schedule.default(zone),
-                clothesRules = rules,
             ),
         )
 
         calendar.lastDate shouldBe today.date
         calendar.lastZone shouldBe zone
-        val tieIn = result.insight.summary.calendarTieIn
-        tieIn.shouldNotBeNull()
-        tieIn!!.title shouldBe "park run"
-        tieIn.time shouldBe LocalTime.of(15, 0)
+        // The morning rain tie-in is suppressed on TODAY (PR #149); the tonight
+        // pass still carries the existing CalendarTieInClause — see the
+        // `tonight period` test below for the firing case. This test only cares
+        // that the reader was consulted with the right (date, zone).
+        result.insight.summary.calendarTieIn.shouldBeNull()
     }
 
     @Test

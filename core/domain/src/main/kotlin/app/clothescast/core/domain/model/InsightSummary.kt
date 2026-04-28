@@ -3,11 +3,12 @@ package app.clothescast.core.domain.model
 import java.time.LocalTime
 
 /**
- * The structured form of a daily insight. Each clause is a pure-data description of
- * one of the six independent rules in [app.clothescast.core.domain.usecase.RenderInsightSummary]
- * (alert, band, delta, clothes, precip, calendar tie-in); the corresponding prose
- * is produced by an Android-side formatter that resolves item keys and templates
- * through string resources.
+ * The structured form of a daily insight. Each clause is a pure-data description
+ * of one of the seven independent rules in
+ * [app.clothescast.core.domain.usecase.RenderInsightSummary] (alert, band, delta,
+ * clothes, precip, calendar tie-in, evening-event tie-in); the corresponding
+ * prose is produced by an Android-side formatter that resolves item keys and
+ * templates through string resources.
  *
  * Splitting "what to say" (this) from "how to say it" (the formatter) lets us:
  *  - Localize clothes vocab per region without re-fetching the forecast — the
@@ -17,9 +18,14 @@ import java.time.LocalTime
  *    Android dependency, so it stays pure-Kotlin testable on the JVM.
  *
  * The [period] determines a couple of presentation choices: the band sentence's
- * lead-in ("Today will be …" vs "Tonight will be …"), and whether the [delta]
+ * lead-in ("Today will be …" vs "Tonight will be …"), whether the [delta]
  * clause is emitted at all (tonight skips the yesterday-vs-today comparison the
- * morning pass already covered).
+ * morning pass already covered), which tie-in clause carries event-mentions
+ * (TONIGHT uses [calendarTieIn]; TODAY uses [eveningEventTieIn] when the user
+ * opts in via "Mention evening events"), and whether [calendarTieIn] is
+ * suppressed entirely (it is on TODAY — the bare precip clause is enough,
+ * since the morning event the listener is mentally parsed against is already
+ * known to them).
  */
 data class InsightSummary(
     val period: ForecastPeriod,
