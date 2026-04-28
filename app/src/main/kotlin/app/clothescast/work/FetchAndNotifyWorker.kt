@@ -24,6 +24,7 @@ import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.resolve
+import app.clothescast.tts.withSpeechAudioFocus
 import app.clothescast.widget.OutfitWidget
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -278,37 +279,39 @@ class FetchAndNotifyWorker(
      */
     private suspend fun speakWithFallback(text: String, prefs: UserPreferences) {
         val locale = prefs.voiceLocale.resolve()
-        when (prefs.ttsEngine) {
-            TtsEngine.GEMINI -> {
-                try {
-                    GeminiTtsSpeaker(app.geminiTtsClient, voiceName = prefs.geminiVoice).speak(text, locale)
-                    return
-                } catch (t: Throwable) {
-                    DiagLog.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
+        withSpeechAudioFocus(applicationContext) {
+            when (prefs.ttsEngine) {
+                TtsEngine.GEMINI -> {
+                    try {
+                        GeminiTtsSpeaker(app.geminiTtsClient, voiceName = prefs.geminiVoice).speak(text, locale)
+                        return@withSpeechAudioFocus
+                    } catch (t: Throwable) {
+                        DiagLog.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
+                    }
                 }
-            }
-            TtsEngine.OPENAI -> {
-                try {
-                    OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text, locale)
-                    return
-                } catch (t: Throwable) {
-                    DiagLog.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
+                TtsEngine.OPENAI -> {
+                    try {
+                        OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text, locale)
+                        return@withSpeechAudioFocus
+                    } catch (t: Throwable) {
+                        DiagLog.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
+                    }
                 }
-            }
-            TtsEngine.ELEVENLABS -> {
-                try {
-                    ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = prefs.elevenLabsVoice).speak(text, locale)
-                    return
-                } catch (t: Throwable) {
-                    DiagLog.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)
+                TtsEngine.ELEVENLABS -> {
+                    try {
+                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = prefs.elevenLabsVoice).speak(text, locale)
+                        return@withSpeechAudioFocus
+                    } catch (t: Throwable) {
+                        DiagLog.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)
+                    }
                 }
+                TtsEngine.DEVICE -> Unit
             }
-            TtsEngine.DEVICE -> Unit
-        }
-        try {
-            app.deviceTtsSpeaker.speak(text, locale)
-        } catch (t: Throwable) {
-            DiagLog.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
+            try {
+                app.deviceTtsSpeaker.speak(text, locale)
+            } catch (t: Throwable) {
+                DiagLog.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
+            }
         }
     }
 
