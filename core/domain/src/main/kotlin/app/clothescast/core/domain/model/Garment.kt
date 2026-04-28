@@ -1,5 +1,7 @@
 package app.clothescast.core.domain.model
 
+import java.util.Locale
+
 /**
  * Catalog of garments the user can pick from when adding or editing a
  * [ClothesRule] in Settings. Each entry has a stable, en-US-flavoured
@@ -46,7 +48,7 @@ enum class Garment(val itemKey: String) {
          * fall back to the raw string.
          */
         fun fromKey(key: String): Garment? {
-            val normalized = key.trim().lowercase()
+            val normalized = key.trim().lowercase(Locale.ROOT)
             entries.firstOrNull { it.itemKey == normalized }?.let { return it }
             return when (normalized) {
                 "tshirt" -> TSHIRT

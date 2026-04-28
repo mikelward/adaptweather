@@ -2,6 +2,7 @@ package app.clothescast.core.domain.model
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import java.util.Locale
 
 class GarmentTest {
 
@@ -37,5 +38,19 @@ class GarmentTest {
     fun `fromKey returns null for unknown items`() {
         Garment.fromKey("kilt") shouldBe null
         Garment.fromKey("") shouldBe null
+    }
+
+    @Test
+    fun `fromKey does not depend on process locale`() {
+        val originalDefault = Locale.getDefault()
+        Locale.setDefault(Locale.forLanguageTag("tr-TR"))
+        try {
+            // In Turkish locale, lowercase("SHIRT") with default-locale rules
+            // becomes "shırt" (dotless ı), which won't match the stored key
+            // "shirt". fromKey must stay locale-invariant.
+            Garment.fromKey("SHIRT") shouldBe Garment.SHIRT
+        } finally {
+            Locale.setDefault(originalDefault)
+        }
     }
 }
