@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Bengali (Bangladesh) translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+The values-bn/ folder serves bn-BD; a values-bn-rIN/ overlay can add
+West Bengal vocabulary differences in a future PR.
+-->
+<resources>
+    <string name="settings_region_language_bn_bd">বাংলা (বাংলাদেশ)</string>
+    <string name="settings_tts_voice_locale_bn_bd">বাংলা (বাংলাদেশ)</string>
+    <string name="settings_tts_voice_locale_label">ভাষা</string>
+
+    <string name="garment_sweater">সোয়েটার</string>
+    <string name="garment_hoodie">হুডি</string>
+    <string name="garment_jacket">জ্যাকেট</string>
+    <string name="garment_coat">কোট</string>
+    <string name="garment_tshirt">টি-শার্ট</string>
+    <string name="garment_shirt">শার্ট</string>
+    <string name="garment_shorts">শর্টস</string>
+    <string name="garment_pants">প্যান্ট</string>
+    <string name="garment_jeans">জিন্স</string>
+
+    <string name="settings_clothes_empty">কোনো নিয়ম নেই। একটি তৈরি করতে যোগ করুন-এ ট্যাপ করুন।</string>
+    <string name="settings_clothes_add">যোগ করুন</string>
+    <string name="settings_clothes_edit">সম্পাদনা করুন</string>
+    <string name="settings_clothes_delete">মুছুন</string>
+    <string name="settings_clothes_dialog_add_title">পোশাকের নিয়ম যোগ করুন</string>
+    <string name="settings_clothes_dialog_edit_title">পোশাকের নিয়ম সম্পাদনা করুন</string>
+    <string name="settings_clothes_item_label">পোশাক</string>
+    <string name="settings_clothes_condition_label">শর্ত</string>
+    <string name="settings_clothes_value_label_temp_c">সীমা (°C)</string>
+    <string name="settings_clothes_value_label_precip">সীমা (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">যখন অনুভব হয় তার চেয়ে ঠান্ডা</string>
+    <string name="settings_clothes_cond_type_temp_above">যখন অনুভব হয় তার চেয়ে গরম</string>
+    <string name="settings_clothes_cond_type_precip_above">যখন বৃষ্টির সম্ভাবনা বেশি</string>
+    <string name="settings_clothes_cond_temp_below">যখন সর্বনিম্ন অনুভূত তাপমাত্রা %.0f°C-এর নিচে</string>
+    <string name="settings_clothes_cond_temp_above">যখন সর্বোচ্চ অনুভূত তাপমাত্রা %.0f°C-এর বেশি</string>
+    <string name="settings_clothes_cond_precip_above">যখন বৃষ্টির সম্ভাবনা %.0f%%-এর বেশি</string>
+
+    <string name="today_outfit_top_tshirt">টি-শার্ট</string>
+    <string name="today_outfit_top_sweater">সোয়েটার</string>
+    <string name="today_outfit_top_thick_jacket">মোটা জ্যাকেট</string>
+    <string name="today_outfit_bottom_shorts">শর্টস</string>
+    <string name="today_outfit_bottom_long_pants">প্যান্ট</string>
+
+    <string name="insight_lead_today">আজ</string>
+    <string name="insight_lead_tonight">আজ রাতে</string>
+    <!-- "আজ আবহাওয়া মনোরম থাকবে।" -->
+    <string name="insight_band_single">%1$s আবহাওয়া %2$s থাকবে।</string>
+    <string name="insight_band_range">%1$s আবহাওয়া %2$s থেকে %3$s থাকবে।</string>
+    <string name="insight_band_freezing">হিমশীতল</string>
+    <string name="insight_band_cold">ঠান্ডা</string>
+    <string name="insight_band_cool">শীতল</string>
+    <string name="insight_band_mild">মনোরম</string>
+    <string name="insight_band_warm">উষ্ণ</string>
+    <string name="insight_band_hot">গরম</string>
+    <string name="insight_delta_warmer">আজ %1$d° বেশি গরম।</string>
+    <string name="insight_delta_cooler">আজ %1$d° বেশি ঠান্ডা।</string>
+    <string name="insight_alert">সতর্কতা: %1$s।</string>
+    <string name="insight_clothes_wear">%1$s পরুন।</string>
+    <!-- Bengali has no grammatical articles. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s এবং %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s এবং %3$s</string>
+    <string name="insight_precip">%1$s %2$s।</string>
+    <string name="insight_precip_at_time">%1$s-এ</string>
+    <string name="insight_precip_overnight">সারারাত</string>
+    <string name="insight_condition_clear">পরিষ্কার</string>
+    <string name="insight_condition_partly_cloudy">আংশিক মেঘলা</string>
+    <string name="insight_condition_cloudy">মেঘলা</string>
+    <string name="insight_condition_fog">কুয়াশা</string>
+    <string name="insight_condition_drizzle">গুঁড়ি গুঁড়ি বৃষ্টি</string>
+    <string name="insight_condition_rain">বৃষ্টি</string>
+    <string name="insight_condition_snow">তুষার</string>
+    <string name="insight_condition_thunderstorm">বজ্রপাত</string>
+    <string name="insight_condition_unknown">অজানা</string>
+    <!-- "মিটিং (15:00)-এর জন্য কোট নিন।" -->
+    <string name="insight_calendar_tie_in">%3$s (%2$s)-এর জন্য %1$s নিন।</string>
+</resources>
