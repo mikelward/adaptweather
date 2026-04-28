@@ -84,4 +84,6 @@ Chinese uses the ideographic period (。) for sentence endings.
     <!-- "15点" / "15点30分" — Chinese spoken time. insight_precip_at_time is a passthrough. -->
     <string name="insight_time_hour">%1$d点</string>
     <string name="insight_time_hour_minutes">%1$d点%2$d分</string>
+
+    <string name="settings_tts_test_sample">今天的 ClothesCast：温和，下午 3 点有雨。请穿一件外套。</string>
 </resources>

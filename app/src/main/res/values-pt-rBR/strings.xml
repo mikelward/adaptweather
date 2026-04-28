@@ -78,4 +78,6 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <!-- "15h" / "15h30" — Brazilian Portuguese hour notation, TTS reads naturally. -->
     <string name="insight_time_hour">%1$dh</string>
     <string name="insight_time_hour_minutes">%1$dh%2$02d</string>
+
+    <string name="settings_tts_test_sample">Seu ClothesCast de hoje: ameno, com chuva às 15h. Use uma jaqueta.</string>
 </resources>

@@ -85,4 +85,6 @@ Japanese uses the ideographic period (。) for sentence endings.
     <!-- "15時" / "15時30分" — Japanese spoken time; postposition "頃" comes from insight_precip_at_time. -->
     <string name="insight_time_hour">%1$d時</string>
     <string name="insight_time_hour_minutes">%1$d時%2$d分</string>
+
+    <string name="settings_tts_test_sample">今日の ClothesCast：穏やか、午後3時に雨。ジャケットを着てください。</string>
 </resources>

@@ -84,4 +84,6 @@ the 을/를 object particle which depends on the noun's final consonant.
     <!-- "15시" / "15시 30분" — Korean spoken time; postposition "경에" comes from insight_precip_at_time. -->
     <string name="insight_time_hour">%1$d시</string>
     <string name="insight_time_hour_minutes">%1$d시 %2$d분</string>
+
+    <string name="settings_tts_test_sample">오늘의 ClothesCast: 온화함, 오후 3시에 비. 재킷을 입으세요.</string>
 </resources>

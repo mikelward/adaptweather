@@ -88,4 +88,6 @@ standard in Israeli digital communication.
     <!-- Bare number; "בשעה" comes from insight_precip_at_time. -->
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+    <string name="settings_tts_test_sample">ה-ClothesCast של היום: נעים, עם גשם בשעה 15:00. לבש מעיל.</string>
 </resources>

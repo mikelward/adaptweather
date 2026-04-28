@@ -77,4 +77,6 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <!-- "15" — preposition "в" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+    <string name="settings_tts_test_sample">Ваш сегодняшний ClothesCast: мягкая погода, дождь в 15:00. Наденьте куртку.</string>
 </resources>
