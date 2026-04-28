@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Simplified Chinese (Mainland China) translation. Scope: insight-prose templates,
+garment labels, clothes-rule editor, outfit-card labels, and region/voice-locale
+picker names. The rest of the UI falls through to values/strings.xml (English).
+Chinese uses the ideographic period (。) for sentence endings.
+-->
+<resources>
+    <string name="settings_region_language_zh_cn">中文（简体）</string>
+    <string name="settings_tts_voice_locale_zh_cn">中文（简体）</string>
+    <string name="settings_tts_voice_locale_label">语言</string>
+
+    <string name="garment_sweater">毛衣</string>
+    <string name="garment_hoodie">连帽衫</string>
+    <string name="garment_jacket">夹克</string>
+    <string name="garment_coat">大衣</string>
+    <string name="garment_tshirt">T恤</string>
+    <string name="garment_shirt">衬衫</string>
+    <string name="garment_shorts">短裤</string>
+    <string name="garment_pants">长裤</string>
+    <string name="garment_jeans">牛仔裤</string>
+
+    <string name="settings_clothes_empty">还没有规则。点击添加来创建一条。</string>
+    <string name="settings_clothes_add">添加</string>
+    <string name="settings_clothes_edit">编辑</string>
+    <string name="settings_clothes_delete">删除</string>
+    <string name="settings_clothes_dialog_add_title">添加穿衣规则</string>
+    <string name="settings_clothes_dialog_edit_title">编辑穿衣规则</string>
+    <string name="settings_clothes_item_label">服装</string>
+    <string name="settings_clothes_condition_label">触发条件</string>
+    <string name="settings_clothes_value_label_temp_c">阈值 (°C)</string>
+    <string name="settings_clothes_value_label_precip">阈值 (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">当体感温度低于</string>
+    <string name="settings_clothes_cond_type_temp_above">当体感温度高于</string>
+    <string name="settings_clothes_cond_type_precip_above">当降水概率超过</string>
+    <string name="settings_clothes_cond_temp_below">当最低体感温度低于 %.0f°C 时</string>
+    <string name="settings_clothes_cond_temp_above">当最高体感温度高于 %.0f°C 时</string>
+    <string name="settings_clothes_cond_precip_above">当降水概率超过 %.0f%% 时</string>
+
+    <string name="today_outfit_top_tshirt">T恤</string>
+    <string name="today_outfit_top_sweater">毛衣</string>
+    <string name="today_outfit_top_thick_jacket">厚外套</string>
+    <string name="today_outfit_bottom_shorts">短裤</string>
+    <string name="today_outfit_bottom_long_pants">长裤</string>
+
+    <string name="insight_lead_today">今天</string>
+    <string name="insight_lead_tonight">今晚</string>
+    <!-- "今天天气温和。" / "今晚天气寒冷至凉爽。" -->
+    <string name="insight_band_single">%1$s天气%2$s。</string>
+    <string name="insight_band_range">%1$s天气%2$s至%3$s。</string>
+    <string name="insight_band_freezing">极寒</string>
+    <string name="insight_band_cold">寒冷</string>
+    <string name="insight_band_cool">凉爽</string>
+    <string name="insight_band_mild">温和</string>
+    <string name="insight_band_warm">温暖</string>
+    <string name="insight_band_hot">炎热</string>
+    <string name="insight_delta_warmer">今天气温升高%1$d°。</string>
+    <string name="insight_delta_cooler">今天气温下降%1$d°。</string>
+    <string name="insight_alert">警告：%1$s。</string>
+    <string name="insight_clothes_wear">穿上%1$s。</string>
+    <!-- Chinese has no grammatical articles. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s和%2$s</string>
+    <!-- Chinese uses the enumeration comma (、) between list items. -->
+    <string name="insight_clothes_join_many">%1$s、%2$s和%3$s</string>
+    <!-- "雨（15:00）。" / "雨（整夜）。" — parenthetical time fits Chinese style. -->
+    <string name="insight_precip">%1$s（%2$s）。</string>
+    <string name="insight_precip_at_time">%1$s</string>
+    <string name="insight_precip_overnight">整夜</string>
+    <string name="insight_condition_clear">晴</string>
+    <string name="insight_condition_partly_cloudy">多云</string>
+    <string name="insight_condition_cloudy">阴</string>
+    <string name="insight_condition_fog">雾</string>
+    <string name="insight_condition_drizzle">毛毛雨</string>
+    <string name="insight_condition_rain">雨</string>
+    <string name="insight_condition_snow">雪</string>
+    <string name="insight_condition_thunderstorm">雷暴</string>
+    <string name="insight_condition_unknown">未知</string>
+    <!-- "为3点的会议带上雨伞。" — time before event name follows Chinese convention. -->
+    <string name="insight_calendar_tie_in">为%2$s的%3$s带上%1$s。</string>
+</resources>
