@@ -45,6 +45,7 @@ import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.filterByVariant
 import app.clothescast.tts.resolve
+import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -105,6 +106,11 @@ internal fun VoiceContent(
         // (en-GB → fable, else nova) as well as the device engine, so users on any
         // engine can pick it without first switching engine.
         SectionCard(title = stringResource(R.string.settings_tts_voice_locale_label)) {
+            Text(
+                text = stringResource(R.string.settings_tts_voice_locale_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             VoiceLocalePicker(
                 selected = voiceLocale,
                 enabled = !isPreviewing,
@@ -295,12 +301,20 @@ private fun VoiceLocalePicker(
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
     val title = stringResource(R.string.settings_tts_voice_locale_label)
+    // Mirrors RegionSettings: append the resolved phone-locale tag to the
+    // "Follow phone language" entry so the user can see what System actually
+    // means on their device (e.g. en-GB) without leaving the screen.
+    val systemTag = remember { Locale.getDefault().toLanguageTag() }
+    val labelFor: @Composable (VoiceLocale) -> String = { option ->
+        val base = stringResource(voiceLocaleLabel(option))
+        if (option == VoiceLocale.SYSTEM) "$base ($systemTag)" else base
+    }
     OutlinedButton(
         onClick = { dialogOpen = true },
         enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Text("$title: ${stringResource(voiceLocaleLabel(selected))}")
+        Text("$title: ${labelFor(selected)}")
     }
     if (dialogOpen) {
         AlertDialog(
@@ -310,7 +324,7 @@ private fun VoiceLocalePicker(
                 Column {
                     VoiceLocale.entries.forEach { option ->
                         RadioRow(
-                            label = stringResource(voiceLocaleLabel(option)),
+                            label = labelFor(option),
                             selected = option == selected,
                             onSelect = {
                                 onSelect(option)

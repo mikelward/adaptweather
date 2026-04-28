@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -15,6 +18,7 @@ import app.clothescast.R
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
+import java.util.Locale
 
 @Composable
 internal fun RegionContent(
@@ -35,9 +39,21 @@ internal fun RegionContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         SectionCard(title = stringResource(R.string.settings_region_language_title)) {
+            Text(
+                text = stringResource(R.string.settings_region_language_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            // System tag exposed next to "Follow system locale" so the user can
+            // verify what their phone is actually resolving to (e.g. "en-GB").
+            // Locale.getDefault() matches what InsightFormatter.forRegion falls
+            // back to when Region.SYSTEM is selected, so this is the same
+            // locale that drives the rendered prose.
+            val systemTag = remember { Locale.getDefault().toLanguageTag() }
             Region.entries.forEach { option ->
+                val base = stringResource(regionLabel(option))
                 RadioRow(
-                    label = stringResource(regionLabel(option)),
+                    label = if (option == Region.SYSTEM) "$base ($systemTag)" else base,
                     selected = option == region,
                     onSelect = { onSetRegion(option) },
                 )

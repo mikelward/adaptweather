@@ -127,6 +127,9 @@
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
     <string name="settings_tts_voice_locale_label">Language</string>
+    <!-- Caption under Voice > Language: only the spoken accent, not the on-screen
+         text. Pairs with settings_region_language_description. -->
+    <string name="settings_tts_voice_locale_description">Sets the accent of the spoken voice. Doesn\'t change the displayed text.</string>
     <string name="settings_tts_voice_locale_system">Follow phone language</string>
     <string name="settings_tts_voice_locale_en_us">English (United States)</string>
     <string name="settings_tts_voice_locale_en_gb">English (United Kingdom)</string>
@@ -184,6 +187,11 @@
     <string name="settings_elevenlabs_key_clear">Clear stored ElevenLabs key</string>
 
     <string name="settings_region_language_title">Language</string>
+    <!-- Caption rendered under the Region > Language title, pairing with
+         settings_tts_voice_locale_description so the user can tell which knob
+         changes which surface. The bug we keep getting reported is "I'm en-GB
+         but it still says sweater" — that's this setting, not Voice. -->
+    <string name="settings_region_language_description">Sets the language of the displayed text and notifications.</string>
     <string name="settings_region_language_system">Follow system locale</string>
     <string name="settings_region_language_en_us">English (United States)</string>
     <string name="settings_region_language_en_gb">English (United Kingdom)</string>
