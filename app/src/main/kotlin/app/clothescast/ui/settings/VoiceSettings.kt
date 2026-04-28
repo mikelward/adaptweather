@@ -334,11 +334,11 @@ private fun VoiceLocalePicker(
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
     val title = stringResource(R.string.settings_tts_voice_locale_label)
-    // Mirrors RegionSettings: append the resolved phone-locale tag to the
-    // "Follow phone language" entry so the user can see what System actually
-    // means on their device (e.g. en-GB) without leaving the screen.
+    // Show the actual runtime locale VoiceLocale.SYSTEM resolves to (device
+    // default), which can differ from the app UI language when the user sets
+    // an in-app language override.
     val uiLocale = LocalContext.current.resourcesLocale()
-    val systemTag = remember(uiLocale) { uiLocale.toLanguageTag() }
+    val systemTag = remember { VoiceLocale.SYSTEM.resolve().toLanguageTag() }
     val labelFor: @Composable (VoiceLocale) -> String = { option ->
         val base = stringResource(voiceLocaleLabel(option))
         if (option == VoiceLocale.SYSTEM) "$base ($systemTag)" else base
