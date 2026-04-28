@@ -16,4 +16,28 @@ that a Mexican speaker would notice as wrong is overridden here.
     <string name="settings_clothes_add">Agregar</string>
     <string name="settings_clothes_empty">Sin reglas. Toca Agregar para crear una.</string>
     <string name="settings_clothes_dialog_add_title">Agregar regla de ropa</string>
+
+    <!-- Mexican Spanish prefers "Configuración" over the Spain-Spanish
+         "Ajustes" for Android Settings; mirrors the platform's own
+         es-rMX system label. Re-write every es-ES sentence that
+         embeds "los/las ajustes" with "la configuración". -->
+    <string name="settings_title">Configuración</string>
+    <string name="today_open_settings">Abrir configuración</string>
+    <string name="today_empty_subtitle">Tu ClothesCast matutino aparecerá aquí cuando se genere. Configura tu ubicación en la configuración y toca Obtener ahora.</string>
+    <string name="onboarding_subtitle">Dos elecciones rápidas y ya está. Todo lo demás tiene un valor predeterminado razonable que podrás ajustar más tarde en la configuración.</string>
+    <string name="settings_location_grant_background">Conceder ubicación en segundo plano (configuración del sistema)</string>
+    <string name="settings_location_description_device_on">Si está activo, ClothesCast lee la ubicación aproximada de tu dispositivo en el momento de la notificación (solo torre de telefonía / WiFi — sin GPS por hardware). La ubicación de abajo se usa como respaldo si la lectura del dispositivo falla. La ubicación en segundo plano debe concederse en la configuración del sistema, o el Worker matutino no podrá leerla.</string>
+    <string name="settings_calendar_open_settings">Acceso al calendario denegado. Concédelo en la configuración del sistema.</string>
+
+    <!-- Mexican Spanish prefers "agregar" over the Spain-Spanish "añadir"
+         for "Add" — mirrors the existing settings_clothes_add override
+         a few lines up. -->
+    <string name="settings_tts_no_key_hint">No hay clave de %1$s configurada — agrega una para habilitar este motor.</string>
+    <string name="settings_tts_add_api_key">Agregar clave API</string>
+    <string name="settings_tts_add_api_key_title">Agregar clave API de %1$s</string>
+
+    <!-- Mexican Spanish prefers "reportar" over "informar de" for
+         bug reports / error reporting — both verb and noun forms. -->
+    <string name="today_report_a_bug">Reportar un error</string>
+    <string name="settings_about_share_bug_report">Compartir reporte de error</string>
 </resources>
