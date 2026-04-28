@@ -78,6 +78,31 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="settings_delivery_notification_and_tts">通知と音声読み上げ</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "API キーを追加" dialog.
+    -->
+    <string name="settings_tts_engine_title">音声エンジン</string>
+    <string name="settings_tts_engine_description">オンラインエンジン（Gemini、OpenAI、ElevenLabs）はずっと自然に聞こえますが、読み上げ時にネットワーク呼び出しが必要で、合成にあなたの API キーを使用します（読み上げる ClothesCast ごとに1回の短い呼び出し）。選択したエンジンが失敗した場合、端末の音声にフォールバックします。</string>
+    <string name="settings_tts_engine_device">端末（オフライン、無料）</string>
+    <string name="settings_tts_engine_gemini">Gemini（高品質、オンライン）</string>
+    <string name="settings_tts_engine_openai">OpenAI（高品質、オンライン）</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs（最高品質、オンライン）</string>
+
+    <string name="settings_tts_voice_label">音声</string>
+    <string name="settings_tts_voice_dismiss">完了</string>
+    <string name="settings_tts_voice_locale_description">読み上げ音声のアクセントを設定します。表示テキストは変更しません。</string>
+    <string name="settings_tts_voice_locale_system">端末の言語に従う</string>
+
+    <string name="settings_tts_test">音声をテスト</string>
+    <string name="settings_tts_test_in_flight">テスト中 — お待ちください…</string>
+    <string name="settings_tts_no_key_hint">%1$s キーが未設定です — このエンジンを使用するには追加してください。</string>
+    <string name="settings_tts_add_api_key">API キーを追加</string>
+    <string name="settings_tts_add_api_key_title">%1$s API キーを追加</string>
+    <string name="settings_tts_add_api_key_save">保存</string>
+    <string name="settings_tts_add_api_key_cancel">キャンセル</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ます-form (friendly-polite) throughout — that's the standard
