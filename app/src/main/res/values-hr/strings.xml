@@ -224,6 +224,25 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_elevenlabs_key_clear">Izbriši spremljeni ElevenLabs ključ</string>
 
     <!--
+    Location screen — device-location toggle, manual city search +
+    selection, and the "no location set" empty state.
+    -->
+    <string name="settings_location_title">Lokacija</string>
+    <string name="settings_location_use_device">Koristi lokaciju uređaja</string>
+    <string name="settings_location_grant_background">Dopusti pozadinsku lokaciju (postavke sustava)</string>
+    <string name="settings_location_unset">Lokacija nije postavljena — koristi se London</string>
+    <string name="settings_location_description">Prognoza se dohvaća za ovu lokaciju. Pretraži po imenu grada; rezultati dolaze iz Open-Meteovog besplatnog servisa za geokodiranje.</string>
+    <string name="settings_location_description_device_on">Kada je uključeno, ClothesCast pri vremenu obavijesti čita približnu lokaciju tvog uređaja (samo mobilni odašiljač / WiFi — bez GPS-a). Lokacija ispod služi kao rezerva ako čitanje uređaja zakaže. Pozadinska lokacija mora biti dopuštena u postavkama sustava, inače je jutarnji Worker ne može pročitati.</string>
+    <string name="settings_location_set">Postavi lokaciju</string>
+    <string name="settings_location_change">Promijeni lokaciju</string>
+    <string name="settings_location_clear">Obriši lokaciju</string>
+    <string name="settings_location_search_title">Pretraži lokaciju</string>
+    <string name="settings_location_query_label">Grad ili mjesto</string>
+    <string name="settings_location_search">Pretraži</string>
+    <string name="settings_location_searching">Pretraživanje…</string>
+    <string name="settings_location_no_results">Nema rezultata.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ti-form imperatives: "dodirni", "postavi", "tvoj".
