@@ -269,6 +269,24 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_calendar_grant_permission">Conceder acesso ao calendário</string>
     <string name="settings_calendar_open_settings">Acesso ao calendário negado. Conceda nas configurações do sistema.</string>
 
+    <!-- Debug screen — visible only on debug builds. -->
+    <string name="settings_debug_title">Depuração (somente em builds de depuração)</string>
+    <string name="settings_debug_description">Dispara imediatamente o pipeline do ClothesCast diário. Útil para verificar sem esperar o horário agendado.</string>
+    <string name="settings_debug_fire_now">Disparar ClothesCast agora</string>
+    <string name="settings_debug_fire_toast">Worker do ClothesCast enfileirado</string>
+
+    <!-- About screen — version line, build-type suffix, privacy summary,
+         outbound links / actions. -->
+    <string name="settings_about_title">Sobre</string>
+    <string name="settings_about_version">Versão %1$s (%2$d)</string>
+    <string name="settings_about_build_type_suffix"> · build %1$s</string>
+    <string name="settings_about_privacy">Sua chave API Gemini (usada para a leitura em voz alta TTS) é criptografada em repouso com uma chave vinculada ao Android Keystore. As previsões vêm da Open-Meteo (sem chave, sem conta); o texto do resumo diário é gerado localmente no aparelho. ClothesCast não tem backend — nada é enviado para nenhum servidor que controlamos.</string>
+    <string name="settings_about_privacy_policy">Política de privacidade</string>
+    <string name="settings_about_source">Código-fonte no GitHub</string>
+    <string name="settings_about_dontkillmyapp">Restrições em segundo plano (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">Compartilhar relatório de bug</string>
+    <string name="settings_about_version_copied">Versão copiada para a área de transferência</string>
+
     <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
