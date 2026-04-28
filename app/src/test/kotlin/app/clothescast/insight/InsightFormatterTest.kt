@@ -408,4 +408,35 @@ class InsightFormatterTest {
         )
         out shouldBe "Today will be mild. Wear a sweater."
     }
+
+    @Test
+    fun `clothes clause is omitted when all entries are blank`() {
+        val out = subject.format(
+            summary(
+                clothes = ClothesClause(listOf(" ", "\t", "")),
+            ),
+        )
+        out shouldBe "Today will be mild."
+    }
+
+    @Test
+    fun `calendar tie-in is omitted when item is blank`() {
+        val out = subject.format(
+            summary(
+                period = ForecastPeriod.TONIGHT,
+                calendarTieIn = CalendarTieInClause(" "),
+            ),
+        )
+        out shouldBe "Tonight will be mild."
+    }
+
+    @Test
+    fun `evening event tie-in is omitted when item is blank even when rain time exists`() {
+        val out = subject.format(
+            summary(
+                eveningEventTieIn = EveningEventTieInClause(" ", rainTime = LocalTime.of(21, 0)),
+            ),
+        )
+        out shouldBe "Today will be mild."
+    }
 }
