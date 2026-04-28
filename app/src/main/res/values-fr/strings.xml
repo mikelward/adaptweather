@@ -128,7 +128,7 @@ zh-CN) is unchanged; only the displayed label localizes.
 
     <string name="settings_tts_test">Tester la voix</string>
     <string name="settings_tts_test_in_flight">Test en cours — patiente…</string>
-    <string name="settings_tts_no_key_hint">Aucune clé %1$s configurée — ajoutes-en une pour activer ce moteur.</string>
+    <string name="settings_tts_no_key_hint">Aucune clé %1$s configurée — ajoute-en une pour activer ce moteur.</string>
     <string name="settings_tts_add_api_key">Ajouter une clé API</string>
     <string name="settings_tts_add_api_key_title">Ajouter une clé API %1$s</string>
     <string name="settings_tts_add_api_key_save">Enregistrer</string>
