@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Italian translation. Scope: insight-prose templates, garment labels, clothes-rule
-editor, outfit-card labels, and region/voice-locale picker names.
+Italian translation — full UI coverage. Informal tu-form throughout
+(intimate / spousal register), matching the existing insight prose
+("Indossa …", "Porta …", "Il tuo ClothesCast di oggi"). No Lei-form.
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. Italian
+  locales use `insight_time_hour` / `_hour_minutes` ("15" / "15 e 30")
+  which are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in an
+  Italian runtime.
+
+Italian forces gender agreement on predicate adjectives in the tu-form;
+the welcome leans on the conventional masc-default "Benvenuto" and
+the subtitle uses the invariable "sei a posto" so a one-time greeting
+doesn't have to pick a gender for the user. The rest of the file is
+plain tu-form imperative.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the Italian names for every offered
+locale (Inglese (Stati Uniti), Francese (Canada), Cinese
+(semplificato), …). The locale tag stored on disk (en-US / fr-CA /
+zh-CN) is unchanged; only the displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_it_it">Italiano (Italia)</string>
