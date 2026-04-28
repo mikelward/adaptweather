@@ -109,12 +109,17 @@ class InsightFormatter(
     }
 
     private fun formatTieIn(item: String): String? {
+        // Short-circuit before article picking: prefixArticle("") emits "a "
+        // via the "a %1$s" template, which is non-blank and would slip past a
+        // post-rendering isBlank() check.
+        if (item.isBlank()) return null
         val renderedItem = phraser.withArticle(item)
         if (renderedItem.isBlank()) return null
         return resources.getString(R.string.insight_tie_in, renderedItem)
     }
 
     private fun formatEveningEventTieIn(tieIn: EveningEventTieInClause): String? {
+        if (tieIn.item.isBlank()) return null
         val renderedItem = phraser.withArticle(tieIn.item)
         if (renderedItem.isBlank()) return null
         // Local capture so the null check enables smart cast — the property
