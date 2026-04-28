@@ -47,6 +47,7 @@ import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.filterByVariant
 import app.clothescast.tts.resolve
+import java.text.Collator
 import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -323,10 +324,19 @@ private fun VoiceLocalePicker(
             onDismissRequest = { dialogOpen = false },
             title = { Text(title) },
             text = {
+                // Sort by the resolved display label using a locale-aware
+                // collator (so e.g. "Ç" sorts with "C" in fr-FR, "Ä" with "A"
+                // in de-DE). SYSTEM stays pinned at the top — it's a "follow
+                // device" option, not a language to sort with the rest.
+                val collator = remember { Collator.getInstance(Locale.getDefault()) }
+                val (system, rest) = VoiceLocale.entries
+                    .map { it to labelFor(it) }
+                    .partition { it.first == VoiceLocale.SYSTEM }
+                val sorted = system + rest.sortedWith(compareBy(collator) { it.second })
                 Column {
-                    VoiceLocale.entries.forEach { option ->
+                    sorted.forEach { (option, label) ->
                         RadioRow(
-                            label = labelFor(option),
+                            label = label,
                             selected = option == selected,
                             onSelect = {
                                 onSelect(option)
