@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Simplified Chinese (Mainland China) translation. Scope: insight-prose templates,
-garment labels, clothes-rule editor, outfit-card labels, and region/voice-locale
-picker names. The rest of the UI falls through to values/strings.xml (English).
-Chinese uses the ideographic period (。) for sentence endings.
+Simplified Chinese (Mainland China) translation — full UI coverage.
+Casual register throughout: 你 (informal "you") rather than 您 (formal),
+bare imperatives without 请 / 烦请 ("打开设置" rather than "请打开设置").
+That's the spousal-tone equivalent in Chinese (no separate tu/vous
+distinction beyond the 你/您 pronoun choice and the 请-prefix politeness).
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. zh-CN uses
+  `insight_time_hour` / `_hour_minutes` ("15点" / "15点30分") which
+  are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a
+  zh-CN runtime.
+
+Typography conventions:
+- Sentence-final period 。 (ideographic full stop), not Latin "."
+- List enumeration uses 、 between items (not Latin comma)
+- Quotes around nested labels use Chinese full-width "…" (not the
+  German „…" form used in the Romance / Germanic locales)
+- Parentheses use full-width （ ） around Chinese content; Latin ( )
+  only when the parenthetical is itself Latin script (e.g. URLs)
+- Latin brand names ("ClothesCast", "Open-Meteo") and Latin URLs keep
+  the conventional space-around-Latin spacing zh-CN typography uses
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the zh-CN names for every offered
+locale (英语（美国）, 法语（加拿大）, 中文（简体）, …). The locale tag stored
+on disk (en-US / fr-CA / zh-CN) is unchanged; only the displayed
+label localizes.
 -->
 <resources>
     <string name="settings_region_language_zh_cn">中文（简体）</string>
