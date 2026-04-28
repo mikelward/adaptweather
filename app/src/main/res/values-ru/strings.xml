@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Russian translation. Tone is informal "ты"-form throughout (intimate /
-spousal register), matching the spouse-style register the user wants.
-Avoid formal "Вы"-form ("Наденьте", "Возьмите", "Нажмите", "Ваш") that
-earlier passes accidentally mixed in.
+Russian translation — full UI coverage. Informal ты-form throughout
+(intimate / spousal register). No Вы-form anywhere.
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. Russian
+  uses `insight_time_hour` / `_hour_minutes` ("15" / "15:30") which
+  are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a ru
+  runtime.
+
+Russian forces gender agreement on past-tense verbs and predicate
+adjectives in the ты-form ("ты включил" vs. "ты включила"). The
+welcome leans on the conventional fixed greeting "Добро пожаловать"
+(no agreement); the Schedule and notification descriptions use passive
+phrasing where ты-form past-participle would force a gender ("если
+включено озвучивание" rather than "если ты включил озвучивание"; "Утренняя
+сводка погоды, которая включена" rather than "которую ты включил").
+Beyond those exceptions the rest stays in plain ты-form imperative.
+
+Quotes around nested labels use Russian guillemet «…» — locale-native
+style. Brand "ClothesCast" stays in Latin script.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the Russian names for every offered
+locale (Английский (США), Французский (Канада), Китайский (упрощённый),
+…). The locale tag stored on disk (en-US / fr-CA / zh-CN) is unchanged;
+only the displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_ru_ru">Русский (Россия)</string>
