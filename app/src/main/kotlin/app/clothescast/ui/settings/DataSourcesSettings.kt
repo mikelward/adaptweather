@@ -142,6 +142,9 @@ private fun DeviceLocationToggleRow(
     var backgroundGranted by remember {
         mutableStateOf(hasBackgroundLocationPermission(context))
     }
+    var rationaleOpen by remember { mutableStateOf(false) }
+    var backgroundDeniedOpen by remember { mutableStateOf(false) }
+
     val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
@@ -153,6 +156,17 @@ private fun DeviceLocationToggleRow(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    // Background launcher: on Android 11+ this auto-deep-links into the system
+    // Settings location picker; on Android 10 it shows the inline dialog. If the
+    // user ends up granting only foreground we surface a follow-up dialog so
+    // they understand the daily worker will fall back to the saved location.
+    val backgroundLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        backgroundGranted = granted
+        if (!granted) backgroundDeniedOpen = true
+    }
+
     val foregroundLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
     ) { granted ->
@@ -160,6 +174,11 @@ private fun DeviceLocationToggleRow(
         // hit our isPermissionGranted check, return null, and quietly fall through to
         // the settings location every day.
         onCheckedChange(granted)
+        if (granted && !hasBackgroundLocationPermission(context) &&
+            android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
+        ) {
+            backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }
     }
 
     Row(
@@ -178,10 +197,17 @@ private fun DeviceLocationToggleRow(
                     onCheckedChange(false)
                     return@Switch
                 }
-                if (hasCoarseLocationPermission(context)) {
-                    onCheckedChange(true)
-                } else {
-                    foregroundLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                when {
+                    !hasCoarseLocationPermission(context) -> rationaleOpen = true
+                    !backgroundGranted -> {
+                        // Foreground already granted from a previous attempt; just
+                        // chase the missing background grant directly.
+                        onCheckedChange(true)
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                            backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        }
+                    }
+                    else -> onCheckedChange(true)
                 }
             },
         )
@@ -192,6 +218,44 @@ private fun DeviceLocationToggleRow(
             onClick = { openAppDetails(context) },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.settings_location_grant_background)) }
+    }
+
+    if (rationaleOpen) {
+        AlertDialog(
+            onDismissRequest = { rationaleOpen = false },
+            title = { Text(stringResource(R.string.settings_location_rationale_title)) },
+            text = { Text(stringResource(R.string.settings_location_rationale_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    rationaleOpen = false
+                    foregroundLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                }) { Text(stringResource(R.string.settings_location_rationale_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { rationaleOpen = false }) {
+                    Text(stringResource(R.string.settings_location_rationale_dismiss))
+                }
+            },
+        )
+    }
+
+    if (backgroundDeniedOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundDeniedOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_denied_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_denied_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundDeniedOpen = false
+                    openAppDetails(context)
+                }) { Text(stringResource(R.string.settings_location_background_denied_open)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundDeniedOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_denied_keep))
+                }
+            },
+        )
     }
 }
 
