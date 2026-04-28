@@ -109,8 +109,24 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "bn" to "অনুগ্রহ করে বাংলায় স্পষ্ট ও প্রাকৃতিক উচ্চারণে পড়ুন।",
     "ja" to "はっきりと自然な発音で日本語で読んでください。",
     "ko" to "명확하고 자연스러운 발음으로 한국어로 읽어주세요。",
-    // Language-only entries cover all regional Arabic/Persian variants.
+    // Arabic: directives nudge the model to read MSA prose with the named
+    // country's accent (Egyptian / Saudi / Emirati / Moroccan), not to
+    // code-switch to the colloquial dialect — the :app formatter produces
+    // MSA, so a code-switch instruction would mismatch the input. The bare
+    // `ar` entry stays as the fallback for any future ar-* locale we don't
+    // explicitly enumerate. Whether Gemini's audio model reliably produces
+    // a recognisably-different accent per country for Arabic is empirical
+    // and worth a listening test (it does so well for English / Spanish /
+    // Mandarin variants; community reports for Arabic are mixed). Worst
+    // case it ignores the country qualifier and we get generic MSA — same
+    // as before the split, no regression.
+    "ar-SA" to "اقرأ النص التالي بالعربية الفصحى بنطق سعودي واضح وطبيعي.",
+    "ar-EG" to "اقرأ النص التالي بالعربية الفصحى بنطق مصري واضح وطبيعي.",
+    "ar-AE" to "اقرأ النص التالي بالعربية الفصحى بنطق إماراتي واضح وطبيعي.",
+    "ar-MA" to "اقرأ النص التالي بالعربية الفصحى بنطق مغربي واضح وطبيعي.",
     "ar" to "اقرأ النص التالي بالعربية بنطق واضح وطبيعي.",
+    // Hebrew / Persian remain language-only — only he-IL / fa-IR are offered
+    // in the picker, so there's nothing to disambiguate.
     "he" to "קרא/י את הטקסט הבא בעברית בהגייה ברורה וטבעית.",
     "fa" to "متن زیر را به فارسی با تلفظ واضح و طبیعی بخوانید.",
 )
