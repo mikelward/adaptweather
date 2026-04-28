@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Croatian translation. Scope: insight-prose templates, garment labels, clothes-rule
-editor, outfit-card labels, and region/voice-locale picker names.
+Croatian translation. Tone is informal "ti"-form throughout (intimate /
+spousal register), matching the existing settings_tts_test_sample's
+"Tvoj … Obuci jaknu." Avoid the formal "Vi"-form ("Obucite", "Ponesite",
+"Dodirnite") that earlier passes accidentally mixed in.
 -->
 <resources>
     <string name="settings_region_language_hr_hr">Hrvatski (Hrvatska)</string>
@@ -18,7 +20,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="garment_pants">Hlače</string>
     <string name="garment_jeans">Traperice</string>
 
-    <string name="settings_clothes_empty">Nema pravila. Dodirnite Dodaj za kreiranje.</string>
+    <string name="settings_clothes_empty">Nema pravila. Dodirni Dodaj za kreiranje.</string>
     <string name="settings_clothes_add">Dodaj</string>
     <string name="settings_clothes_edit">Uredi</string>
     <string name="settings_clothes_delete">Izbriši</string>
@@ -54,7 +56,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_delta_warmer">Danas će biti %1$d° toplije.</string>
     <string name="insight_delta_cooler">Danas će biti %1$d° hladnije.</string>
     <string name="insight_alert">Upozorenje: %1$s.</string>
-    <string name="insight_clothes_wear">Obucite %1$s.</string>
+    <string name="insight_clothes_wear">Obuci %1$s.</string>
     <string name="insight_clothes_article_a">%1$s</string>
     <string name="insight_clothes_article_an">%1$s</string>
     <string name="insight_clothes_join_two">%1$s i %2$s</string>
@@ -72,8 +74,8 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_thunderstorm">Grmljavina</string>
     <string name="insight_condition_unknown">Nepoznato</string>
     <string name="insight_calendar_tie_in">Ponesite %1$s na %3$s u %2$s.</string>
-    <string name="insight_tie_in">Ponesite %1$s večeras.</string>
-    <string name="insight_tie_in_with_rain">Ponesite %1$s večeras, kiša u %2$s.</string>
+    <string name="insight_tie_in">Ponesi %1$s večeras.</string>
+    <string name="insight_tie_in_with_rain">Ponesi %1$s večeras, kiša u %2$s.</string>
     <!-- "15" — preposition "u" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
