@@ -172,6 +172,15 @@ data class UserPreferences(
      * the user explicitly diverges them.
      */
     val tonightDeliveryMode: DeliveryMode = deliveryMode,
+    /**
+     * When true, the nightly insight only posts a notification (and only speaks
+     * via TTS) on evenings with calendar events; on event-free evenings it
+     * still refreshes silently — caches the insight and updates the widget /
+     * Today card — but skips the notification entirely. When false (default),
+     * the silent notification channel still posts a no-sound notification on
+     * empty evenings, which is what the existing tonight notifier did.
+     */
+    val tonightNotifyOnlyOnEvents: Boolean = false,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

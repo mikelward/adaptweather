@@ -126,6 +126,17 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `tonightNotifyOnlyOnEvents defaults to false and round-trips`() = runTest {
+        subject.preferences.first().tonightNotifyOnlyOnEvents shouldBe false
+
+        subject.setTonightNotifyOnlyOnEvents(true)
+        subject.preferences.first().tonightNotifyOnlyOnEvents shouldBe true
+
+        subject.setTonightNotifyOnlyOnEvents(false)
+        subject.preferences.first().tonightNotifyOnlyOnEvents shouldBe false
+    }
+
+    @Test
     fun `region defaults to SYSTEM when nothing stored`() = runTest {
         subject.preferences.first().region shouldBe Region.SYSTEM
     }

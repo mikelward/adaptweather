@@ -504,11 +504,11 @@ private fun triggerRefresh(
         ForecastPeriod.TODAY
     }
     FetchAndNotifyWorker.enqueueOneShot(context.applicationContext, force = true, period = period)
-    Toast.makeText(
-        context,
-        context.getString(R.string.today_refresh_toast),
-        Toast.LENGTH_SHORT,
-    ).show()
+    val toastRes = when (period) {
+        ForecastPeriod.TODAY -> R.string.today_refresh_toast_daily
+        ForecastPeriod.TONIGHT -> R.string.today_refresh_toast_nightly
+    }
+    Toast.makeText(context, context.getString(toastRes), Toast.LENGTH_SHORT).show()
 }
 
 // [tonightTime] inclusive through [morningTime] exclusive — wraps midnight when
