@@ -104,6 +104,94 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="settings_tts_add_api_key_cancel">Cancelar</string>
 
     <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale
+    labels in Spanish style ("Inglés (Estados Unidos)", "Francés
+    (Canadá)", "Chino (simplificado)", …). The locale tag stored on
+    disk (en-US / fr-CA / zh-CN) is unchanged; only the displayed label
+    localizes.
+    -->
+    <string name="settings_region_language_title">Idioma</string>
+    <string name="settings_region_language_description">Establece el idioma del texto mostrado y las notificaciones.</string>
+    <string name="settings_region_language_system">Seguir la configuración regional del sistema</string>
+    <string name="settings_region_language_en_us">Inglés (Estados Unidos)</string>
+    <string name="settings_region_language_en_gb">Inglés (Reino Unido)</string>
+    <string name="settings_region_language_en_au">Inglés (Australia)</string>
+    <string name="settings_region_language_en_ca">Inglés (Canadá)</string>
+    <string name="settings_region_language_en_za">Inglés (Sudáfrica)</string>
+    <string name="settings_region_language_de_de">Alemán (Alemania)</string>
+    <string name="settings_region_language_fr_fr">Francés (Francia)</string>
+    <string name="settings_region_language_fr_ca">Francés (Canadá)</string>
+    <string name="settings_region_language_it_it">Italiano (Italia)</string>
+    <string name="settings_region_language_ru_ru">Ruso (Rusia)</string>
+    <string name="settings_region_language_pl_pl">Polaco (Polonia)</string>
+    <string name="settings_region_language_hr_hr">Croata (Croacia)</string>
+    <string name="settings_region_language_uk_ua">Ucraniano (Ucrania)</string>
+    <string name="settings_region_language_pt_br">Portugués (Brasil)</string>
+    <string name="settings_region_language_nl_nl">Neerlandés (Países Bajos)</string>
+    <string name="settings_region_language_sv_se">Sueco (Suecia)</string>
+    <string name="settings_region_language_tr_tr">Turco (Turquía)</string>
+    <string name="settings_region_language_id_id">Indonesio (Indonesia)</string>
+    <string name="settings_region_language_fil_ph">Filipino (Filipinas)</string>
+    <string name="settings_region_language_vi_vn">Vietnamita (Vietnam)</string>
+    <string name="settings_region_language_zh_cn">Chino (simplificado)</string>
+    <string name="settings_region_language_hi_in">Hindi (India)</string>
+    <string name="settings_region_language_bn_bd">Bengalí (Bangladés)</string>
+    <string name="settings_region_language_ja_jp">Japonés (Japón)</string>
+    <string name="settings_region_language_ko_kr">Coreano (Corea del Sur)</string>
+    <string name="settings_region_language_ar_sa">Árabe (Arabia Saudita)</string>
+    <string name="settings_region_language_he_il">Hebreo (Israel)</string>
+    <string name="settings_region_language_fa_ir">Persa (Irán)</string>
+
+    <!-- Region screen — units pickers (Temperature: Celsius / Fahrenheit;
+         Distance: Kilómetros / Millas). The unit symbols (°C, °F) stay
+         unchanged. -->
+    <string name="settings_temperature_unit_title">Unidad de temperatura</string>
+    <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">Fahrenheit (°F)</string>
+    <string name="settings_distance_unit_title">Unidad de distancia</string>
+    <string name="settings_distance_unit_kilometers">Kilómetros</string>
+    <string name="settings_distance_unit_miles">Millas</string>
+
+    <!--
+    Voice locale picker labels — same Spanish language-name translations
+    as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface. The two pickers steer different
+    things: Region is the *displayed text*, Voice locale is the *spoken
+    accent*.
+    -->
+    <string name="settings_tts_voice_locale_en_us">Inglés (Estados Unidos)</string>
+    <string name="settings_tts_voice_locale_en_gb">Inglés (Reino Unido)</string>
+    <string name="settings_tts_voice_locale_en_au">Inglés (Australia)</string>
+    <string name="settings_tts_voice_locale_en_ca">Inglés (Canadá)</string>
+    <string name="settings_tts_voice_locale_en_za">Inglés (Sudáfrica)</string>
+    <string name="settings_tts_voice_locale_de_de">Alemán (Alemania)</string>
+    <string name="settings_tts_voice_locale_fr_fr">Francés (Francia)</string>
+    <string name="settings_tts_voice_locale_fr_ca">Francés (Canadá)</string>
+    <string name="settings_tts_voice_locale_it_it">Italiano (Italia)</string>
+    <string name="settings_tts_voice_locale_ru_ru">Ruso (Rusia)</string>
+    <string name="settings_tts_voice_locale_pl_pl">Polaco (Polonia)</string>
+    <string name="settings_tts_voice_locale_hr_hr">Croata (Croacia)</string>
+    <string name="settings_tts_voice_locale_uk_ua">Ucraniano (Ucrania)</string>
+    <string name="settings_tts_voice_locale_pt_br">Portugués (Brasil)</string>
+    <string name="settings_tts_voice_locale_nl_nl">Neerlandés (Países Bajos)</string>
+    <string name="settings_tts_voice_locale_sv_se">Sueco (Suecia)</string>
+    <string name="settings_tts_voice_locale_tr_tr">Turco (Turquía)</string>
+    <string name="settings_tts_voice_locale_id_id">Indonesio (Indonesia)</string>
+    <string name="settings_tts_voice_locale_fil_ph">Filipino (Filipinas)</string>
+    <string name="settings_tts_voice_locale_vi_vn">Vietnamita (Vietnam)</string>
+    <string name="settings_tts_voice_locale_zh_cn">Chino (simplificado)</string>
+    <string name="settings_tts_voice_locale_hi_in">Hindi (India)</string>
+    <string name="settings_tts_voice_locale_bn_bd">Bengalí (Bangladés)</string>
+    <string name="settings_tts_voice_locale_ja_jp">Japonés (Japón)</string>
+    <string name="settings_tts_voice_locale_ko_kr">Coreano (Corea del Sur)</string>
+    <string name="settings_tts_voice_locale_ar_sa">Árabe (Arabia Saudita)</string>
+    <string name="settings_tts_voice_locale_he_il">Hebreo (Israel)</string>
+    <string name="settings_tts_voice_locale_fa_ir">Persa (Irán)</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tú-form throughout: "toca", "tu", "configura".
