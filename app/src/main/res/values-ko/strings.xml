@@ -457,5 +457,4 @@ displayed label localizes.
     <string name="insight_time_hour">%1$d시</string>
     <string name="insight_time_hour_minutes">%1$d시 %2$d분</string>
 
-    <string name="settings_tts_test_sample">오늘의 ClothesCast: 온화함, 오후 3시에 비. 재킷을 입으세요.</string>
 </resources>

@@ -184,7 +184,6 @@
     <string name="settings_tts_add_api_key_save">Save</string>
     <string name="settings_tts_add_api_key_cancel">Cancel</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
-    <string name="settings_tts_test_sample">Today\'s ClothesCast: mild, with rain at 3pm. Wear a jacket.</string>
 
     <string name="settings_openai_key_status_set">An OpenAI key is configured.</string>
     <string name="settings_openai_key_status_unset">No OpenAI key configured. Get one at platform.openai.com to use OpenAI voices.</string>

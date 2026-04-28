@@ -81,5 +81,4 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="insight_time_hour">%1$d giờ</string>
     <string name="insight_time_hour_minutes">%1$d giờ %2$d phút</string>
 
-    <string name="settings_tts_test_sample">ClothesCast hôm nay: dịu nhẹ, có mưa lúc 3 giờ chiều. Hãy mặc áo khoác.</string>
 </resources>

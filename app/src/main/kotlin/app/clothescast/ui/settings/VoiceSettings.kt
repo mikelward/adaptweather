@@ -1,7 +1,6 @@
 package app.clothescast.ui.settings
 
 import app.clothescast.diag.DiagLog
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,8 +39,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
+import app.clothescast.core.domain.model.BandClause
+import app.clothescast.core.domain.model.ClothesClause
+import app.clothescast.core.domain.model.DeltaClause
+import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
+import app.clothescast.insight.InsightFormatter
 import app.clothescast.tts.DeviceVoice
 import app.clothescast.tts.ELEVENLABS_VOICES
 import app.clothescast.tts.ElevenLabsTtsSpeaker
@@ -595,12 +601,19 @@ private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
 }
 
 /**
- * Plays a preview through the chosen engine + voice. Uses a fixed weather-y
- * sample (rather than the latest cached prose) so every preview tap exercises
- * the brand name's pronunciation and costs the same number of BYOK tokens —
- * making it easier to compare engines and voices on identical words. The
- * sample is read in the selected *voice locale* so the preview matches the
- * accent and language the user is auditioning, not the app's UI locale.
+ * Plays a preview through the chosen engine + voice. Builds a fixed canned
+ * [InsightSummary] and renders it through the same [InsightFormatter] the
+ * real briefing pipeline uses, so the preview reads exactly like a real
+ * morning briefing in the chosen voice locale — no separate per-locale
+ * sample string to keep in sync with the prose templates. The summary is
+ * deliberately broad enough to exercise band + delta + multi-item clothes
+ * clauses on every preview tap, and costs the same number of BYOK tokens
+ * each time so engines / voices compare on identical words.
+ *
+ * The sample is rendered in the selected *voice locale* so the preview
+ * matches the accent and language the user is auditioning, not the app's
+ * UI locale. Brand-prefix framing ("Today's ClothesCast: …") is omitted
+ * for now — see TODO(brand-intro) in [FetchAndNotifyWorker.formatProse].
  *
  * Errors are surfaced as a Toast so the user can see *why* the voice failed
  * (most often: missing or wrong API key for the chosen provider).
@@ -620,14 +633,11 @@ private suspend fun runTtsPreview(
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
         val locale = voiceLocale.resolve()
-        // Fetch the sample in the *voice* locale, not the app's UI locale —
-        // playing English prose through a Japanese voice is exactly the
-        // mismatch the user picked the locale to avoid. Falls back to the
-        // default values/strings.xml entry for any locale we haven't
-        // translated yet.
-        val voiceConfig = Configuration(context.resources.configuration).apply { setLocale(locale) }
-        val text = context.createConfigurationContext(voiceConfig)
-            .getString(R.string.settings_tts_test_sample)
+        // Render the canned sample in the *voice* locale, not the app's UI
+        // locale — playing English prose through a Japanese voice is exactly
+        // the mismatch the user picked the locale to avoid. The formatter
+        // resolves to values/strings.xml for any locale without an override.
+        val text = InsightFormatter.forContext(context, locale).format(SAMPLE_SUMMARY)
         withSpeechAudioFocus(context) {
             try {
                 when (engine) {
@@ -674,3 +684,15 @@ private fun ttsEngineLabel(engine: TtsEngine): Int = when (engine) {
     TtsEngine.OPENAI -> R.string.settings_tts_engine_openai
     TtsEngine.ELEVENLABS -> R.string.settings_tts_engine_elevenlabs
 }
+
+// Canned forecast for the voice preview: a cold day 7° down on yesterday with
+// sweater + jacket as the clothes pick. Renders (en-US) as "Today will be cold.
+// It will be 7° cooler today. Wear a sweater and jacket." — exercises band,
+// delta, and a multi-item clothes clause without dragging in a precip / tie-in
+// time that would force a different number of TTS tokens per locale.
+private val SAMPLE_SUMMARY = InsightSummary(
+    period = ForecastPeriod.TODAY,
+    band = BandClause(TemperatureBand.COLD, TemperatureBand.COLD),
+    delta = DeltaClause(degrees = 7, direction = DeltaClause.Direction.COOLER),
+    clothes = ClothesClause(items = listOf("sweater", "jacket")),
+)

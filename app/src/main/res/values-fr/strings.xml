@@ -442,5 +442,4 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_time_hour">%1$dh</string>
     <string name="insight_time_hour_minutes">%1$dh%2$02d</string>
 
-    <string name="settings_tts_test_sample">Ton ClothesCast d\'aujourd\'hui : doux, avec de la pluie à 15 h. Porte une veste.</string>
 </resources>
