@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Australian English overrides. en-AU is essentially en-US-flavoured for this
-app's vocabulary — the only label that diverges from the en-US base is
-"Sweater" (en-AU says "Jumper"). "Long pants" stays as-is: en-AU shares
-"pants" with en-US (no en-GB-style underwear collision).
+Australian English overrides. The natural en-AU choice for this app's
+vocabulary is "Jumper" (cold-weather top) + "Pants" (long-pants garment) —
+"jumper" is universal Aussie usage, and "pants" doesn't trigger the en-GB
+underwear collision in en-AU.
+
+Why this file lists "Pants" + "Long pants" explicitly even though they
+match the en-US default: Android's API 24+ resource resolver ranks
+candidate values-en-rXX folders by CLDR locale-similarity, and en-AU and
+en-GB both descend from en-001 (English-World) while en-US doesn't — so
+without an explicit en-rAU override the resolver picks values-en-rGB
+("Trousers") as a closer match than the en-US-flavoured default. We
+re-state the en-US choice here to block that en-rGB inheritance.
+
+Future en-rGB additions silently leak to en-AU the same way; mirror them
+here whenever en-AU should diverge.
 -->
 <resources>
     <string name="today_outfit_top_sweater">Jumper</string>
+    <string name="today_outfit_bottom_long_pants">Long pants</string>
+    <!-- "Shorts" is what en-US says too and en-rGB doesn't currently
+         override it, so this isn't blocking a leak today — it's pinning
+         the natural en-AU choice in case a future en-rGB override (or a
+         CLDR change) starts pulling something else in. -->
+    <string name="today_outfit_bottom_shorts">Shorts</string>
 
-    <!-- Clothes-rule garment dropdown — en-AU shares "Jumper" with en-GB but
-         keeps "Pants" (no underwear collision like en-GB has). -->
+    <!-- Clothes-rule garment dropdown — same vocabulary swap as the
+         outfit-card labels above. en-AU agrees with en-GB on "Jumper"
+         but stays with "Pants" (no underwear collision) and "Shorts". -->
     <string name="garment_sweater">Jumper</string>
+    <string name="garment_pants">Pants</string>
+    <string name="garment_shorts">Shorts</string>
 </resources>

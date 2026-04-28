@@ -34,6 +34,11 @@ internal interface ClothesPhraser {
 
 /**
  * English article picker.
+ *  - Stored item keys ("sweater", "pants", "t-shirt") are translated through
+ *    the locale's `garment_*` resources first so en-GB / en-AU prose says
+ *    "Wear a jumper" / en-GB "Wear trousers" while en-US still says
+ *    "Wear a sweater" / "Wear pants". Items not in the [Garment] catalog
+ *    (e.g. "umbrella", user-typed extras) pass through unchanged.
  *  - Items ending in 's' are treated as plural (shorts, boots, gloves) and take
  *    no article.
  *  - Items starting with a vowel letter take "an"; everything else takes "a".
@@ -41,24 +46,36 @@ internal interface ClothesPhraser {
  * "Wear a sweater and jacket." rather than fully grammatical "a sweater and a jacket."
  */
 internal class EnglishClothesPhraser(private val resources: Resources) : ClothesPhraser {
-    override fun withArticle(item: String): String = when {
-        item.endsWith("s", ignoreCase = true) -> item
-        item.firstOrNull()?.let { it.lowercaseChar() in "aeiou" } == true ->
-            resources.getString(R.string.insight_clothes_article_an, item)
-        else -> resources.getString(R.string.insight_clothes_article_a, item)
+    override fun withArticle(item: String): String = prefixArticle(translate(item))
+
+    override fun joinItems(items: List<String>): String {
+        val translated = items.map(::translate)
+        return when (translated.size) {
+            0 -> ""
+            1 -> prefixArticle(translated[0])
+            2 -> resources.getString(R.string.insight_clothes_join_two, prefixArticle(translated[0]), translated[1])
+            else -> resources.getString(
+                R.string.insight_clothes_join_many,
+                prefixArticle(translated[0]),
+                translated.subList(1, translated.size - 1).joinToString(", "),
+                translated.last(),
+            )
+        }
     }
 
-    override fun joinItems(items: List<String>): String = when (items.size) {
-        0 -> ""
-        1 -> withArticle(items[0])
-        2 -> resources.getString(R.string.insight_clothes_join_two, withArticle(items[0]), items[1])
-        else -> resources.getString(
-            R.string.insight_clothes_join_many,
-            withArticle(items[0]),
-            items.subList(1, items.size - 1).joinToString(", "),
-            items.last(),
-        )
+    private fun prefixArticle(display: String): String = when {
+        display.endsWith("s", ignoreCase = true) -> display
+        display.firstOrNull()?.let { it.lowercaseChar() in "aeiou" } == true ->
+            resources.getString(R.string.insight_clothes_article_an, display)
+        else -> resources.getString(R.string.insight_clothes_article_a, display)
     }
+
+    // Lowercased so the noun reads naturally mid-sentence ("Wear a jumper.")
+    // — the `garment_*` resources are title-cased for the dropdown UI, and the
+    // article picker also wants to see the *display* string (en-GB "trousers"
+    // ends in 's' → bare; en-GB "umbrella" stays vowel-led → "an umbrella").
+    private fun translate(item: String): String =
+        resources.localizedGarmentLabel(item)?.lowercase(Locale.ENGLISH) ?: item
 }
 
 /**
@@ -177,25 +194,8 @@ internal class ResourceClothesPhraser(private val resources: Resources) : Clothe
         }
     }
 
-    private fun translate(item: String): String {
-        val garment = Garment.fromKey(item) ?: return item
-        val resId = GARMENT_RES_IDS[garment] ?: return item
-        return resources.getString(resId)
-    }
-
-    private companion object {
-        val GARMENT_RES_IDS: Map<Garment, Int> = mapOf(
-            Garment.SWEATER to R.string.garment_sweater,
-            Garment.HOODIE to R.string.garment_hoodie,
-            Garment.JACKET to R.string.garment_jacket,
-            Garment.COAT to R.string.garment_coat,
-            Garment.TSHIRT to R.string.garment_tshirt,
-            Garment.SHIRT to R.string.garment_shirt,
-            Garment.SHORTS to R.string.garment_shorts,
-            Garment.PANTS to R.string.garment_pants,
-            Garment.JEANS to R.string.garment_jeans,
-        )
-    }
+    private fun translate(item: String): String =
+        resources.localizedGarmentLabel(item) ?: item
 }
 
 /**
@@ -207,4 +207,28 @@ internal class BareClothesPhraser : ClothesPhraser {
     override fun withArticle(item: String): String = item
 
     override fun joinItems(items: List<String>): String = items.joinToString(", ")
+}
+
+private val GARMENT_RES_IDS: Map<Garment, Int> = mapOf(
+    Garment.SWEATER to R.string.garment_sweater,
+    Garment.HOODIE to R.string.garment_hoodie,
+    Garment.JACKET to R.string.garment_jacket,
+    Garment.COAT to R.string.garment_coat,
+    Garment.TSHIRT to R.string.garment_tshirt,
+    Garment.SHIRT to R.string.garment_shirt,
+    Garment.SHORTS to R.string.garment_shorts,
+    Garment.PANTS to R.string.garment_pants,
+    Garment.JEANS to R.string.garment_jeans,
+)
+
+/**
+ * Look up the locale-specific display label for a stored garment key
+ * (e.g. "sweater" → "Sweater" / "Jumper" / "Pullover" depending on resources).
+ * Returns null when the key isn't in the catalog (caller should fall back to
+ * the raw item — this preserves user-typed extras like "umbrella" or "boots").
+ */
+internal fun Resources.localizedGarmentLabel(item: String): String? {
+    val garment = Garment.fromKey(item) ?: return null
+    val resId = GARMENT_RES_IDS[garment] ?: return null
+    return getString(resId)
 }
