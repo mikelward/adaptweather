@@ -107,6 +107,25 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `tonightDeliveryMode falls back to deliveryMode when not set`() = runTest {
+        // Existing installs that haven't seen the per-period split yet keep their
+        // old shared-mode behaviour: tonight inherits the day card's selection.
+        subject.setDeliveryMode(DeliveryMode.NOTIFICATION_AND_TTS)
+
+        subject.preferences.first().tonightDeliveryMode shouldBe DeliveryMode.NOTIFICATION_AND_TTS
+    }
+
+    @Test
+    fun `setTonightDeliveryMode round-trips and is independent of deliveryMode`() = runTest {
+        subject.setDeliveryMode(DeliveryMode.NOTIFICATION_ONLY)
+        subject.setTonightDeliveryMode(DeliveryMode.TTS_ONLY)
+
+        val prefs = subject.preferences.first()
+        prefs.deliveryMode shouldBe DeliveryMode.NOTIFICATION_ONLY
+        prefs.tonightDeliveryMode shouldBe DeliveryMode.TTS_ONLY
+    }
+
+    @Test
     fun `region defaults to SYSTEM when nothing stored`() = runTest {
         subject.preferences.first().region shouldBe Region.SYSTEM
     }

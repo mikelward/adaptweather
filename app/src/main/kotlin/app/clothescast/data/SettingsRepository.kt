@@ -74,6 +74,10 @@ class SettingsRepository(
         dataStore.edit { it[DELIVERY_MODE] = mode.name }
     }
 
+    suspend fun setTonightDeliveryMode(mode: DeliveryMode) {
+        dataStore.edit { it[TONIGHT_DELIVERY_MODE] = mode.name }
+    }
+
     suspend fun setRegion(region: Region) {
         dataStore.edit { it[REGION] = region.name }
     }
@@ -143,6 +147,11 @@ class SettingsRepository(
             ?: Schedule.EVERY_DAY
         val deliveryMode = this[DELIVERY_MODE]?.let { runCatching { DeliveryMode.valueOf(it) }.getOrNull() }
             ?: DeliveryMode.NOTIFICATION_ONLY
+        // Tonight's mode falls back to [deliveryMode] when absent so existing
+        // installs keep the old "shared mode" behaviour until the user
+        // explicitly diverges the two cards in Settings.
+        val tonightDeliveryMode = this[TONIGHT_DELIVERY_MODE]?.let { runCatching { DeliveryMode.valueOf(it) }.getOrNull() }
+            ?: deliveryMode
         val region = this[REGION]?.let { runCatching { Region.valueOf(it) }.getOrNull() }
             ?: Region.SYSTEM
         // Resolve units off the user's region — SYSTEM falls through to the
@@ -198,6 +207,7 @@ class SettingsRepository(
             useCalendarEvents = useCalendarEvents,
             tonightSchedule = Schedule(time = tonightTime, days = tonightDays, zoneId = zone),
             tonightEnabled = tonightEnabled,
+            tonightDeliveryMode = tonightDeliveryMode,
         )
     }
 
@@ -247,6 +257,7 @@ class SettingsRepository(
         private val TONIGHT_TIME = stringPreferencesKey("tonight_time_hhmm")
         private val TONIGHT_DAYS = stringSetPreferencesKey("tonight_days")
         private val TONIGHT_ENABLED = booleanPreferencesKey("tonight_enabled")
+        private val TONIGHT_DELIVERY_MODE = stringPreferencesKey("tonight_delivery_mode")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

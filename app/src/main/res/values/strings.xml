@@ -98,17 +98,17 @@
     <string name="settings_location_searching">Searching…</string>
     <string name="settings_location_no_results">No matches.</string>
 
-    <string name="settings_schedule_title">When to deliver the daily insight</string>
+    <string name="settings_schedule_title">Day</string>
     <string name="settings_schedule_time_label">Time</string>
     <string name="settings_schedule_days_label">Days of the week</string>
 
-    <string name="settings_tonight_title">Tonight insight</string>
+    <string name="settings_tonight_title">Night</string>
     <string name="settings_tonight_description">A second insight in the evening that covers tonight\'s weather. Silent when there\'s nothing on your calendar; plays a sound and (if you\'ve enabled spoken-aloud delivery) reads itself out when you have evening events.</string>
-    <string name="settings_tonight_enabled">Show a tonight insight</string>
+    <string name="settings_tonight_enabled">Show a night insight</string>
     <string name="settings_tonight_time_label">Time</string>
     <string name="settings_tonight_days_label">Days of the week</string>
 
-    <string name="settings_delivery_title">How to deliver the daily insight</string>
+    <string name="settings_delivery_label">Delivery</string>
     <string name="settings_delivery_notification_only">Notification only</string>
     <string name="settings_delivery_tts_only">Spoken aloud only</string>
     <string name="settings_delivery_notification_and_tts">Notification and spoken aloud</string>

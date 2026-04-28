@@ -47,6 +47,7 @@ class SettingsViewModel(
                         tonightDays = prefs.tonightSchedule.days,
                         tonightEnabled = prefs.tonightEnabled,
                         deliveryMode = prefs.deliveryMode,
+                        tonightDeliveryMode = prefs.tonightDeliveryMode,
                         region = prefs.region,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
@@ -122,6 +123,10 @@ class SettingsViewModel(
 
     fun setDeliveryMode(mode: DeliveryMode) {
         viewModelScope.launch { settingsRepository.setDeliveryMode(mode) }
+    }
+
+    fun setTonightDeliveryMode(mode: DeliveryMode) {
+        viewModelScope.launch { settingsRepository.setTonightDeliveryMode(mode) }
     }
 
     fun setRegion(region: Region) {
