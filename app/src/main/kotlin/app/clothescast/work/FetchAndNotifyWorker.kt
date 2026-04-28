@@ -1,7 +1,7 @@
 package app.clothescast.work
 
 import android.content.Context
-import android.util.Log
+import app.clothescast.diag.DiagLog
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -56,7 +56,7 @@ class FetchAndNotifyWorker(
         val prefs = try {
             app.settingsRepository.preferences.first()
         } catch (t: Throwable) {
-            Log.e(TAG, "Failed to read user preferences; retrying", t)
+            DiagLog.e(TAG, "Failed to read user preferences; retrying", t)
             return Result.retry()
         }
 
@@ -68,7 +68,7 @@ class FetchAndNotifyWorker(
         // toggle is honoured here so a stale alarm doesn't ship a tonight insight
         // after the user disabled the feature.
         if (period == ForecastPeriod.TONIGHT && !prefs.tonightEnabled) {
-            Log.i(TAG, "Tonight insight is disabled; skipping.")
+            DiagLog.i(TAG, "Tonight insight is disabled; skipping.")
             return Result.success()
         }
 
@@ -84,7 +84,7 @@ class FetchAndNotifyWorker(
         val forceRequested = inputData.getBoolean(KEY_FORCE_REFRESH, false)
         val forceRefresh = forceRequested && requestedEpochDay == today.toEpochDay()
         if (forceRequested && !forceRefresh) {
-            Log.i(TAG, "Ignoring force refresh from a previous day (requested=$requestedEpochDay, today=${today.toEpochDay()}).")
+            DiagLog.i(TAG, "Ignoring force refresh from a previous day (requested=$requestedEpochDay, today=${today.toEpochDay()}).")
         }
 
         // 24h cost cap: if we already generated an insight for today, redeliver it
@@ -101,17 +101,17 @@ class FetchAndNotifyWorker(
         // cache). Avoids a full Refresh tap when the clothes / forecast has moved
         // since the morning generation.
         val cached = if (forceRefresh) {
-            Log.i(TAG, "Force refresh requested; bypassing today's cache.")
+            DiagLog.i(TAG, "Force refresh requested; bypassing today's cache.")
             null
         } else {
             runCatching { app.insightCache.forPeriodToday(today, period) }.getOrNull()
         }
         if (cached != null) {
-            Log.i(TAG, "Using cached $period insight for ${cached.forDate}.")
+            DiagLog.i(TAG, "Using cached $period insight for ${cached.forDate}.")
             return runCatching { deliver(cached, prefs, formatProse(cached, prefs)) }
                 .map { Result.success() }
                 .getOrElse {
-                    Log.e(TAG, "Cached delivery failed; falling through to fresh generate.", it)
+                    DiagLog.e(TAG, "Cached delivery failed; falling through to fresh generate.", it)
                     fresh(location, prefs, period)
                 }
         }
@@ -132,7 +132,7 @@ class FetchAndNotifyWorker(
             // summary itself is blank or suppressed.
             result.alerts.filter { it.isHighPriority() }.forEach { alert ->
                 runCatching { app.weatherAlertNotifier.notify(alert) }
-                    .onFailure { Log.w(TAG, "Severe alert notification failed for ${alert.event}.", it) }
+                    .onFailure { DiagLog.w(TAG, "Severe alert notification failed for ${alert.event}.", it) }
             }
             runCatching { app.insightCache.store(insight) }
                 .onSuccess {
@@ -143,36 +143,36 @@ class FetchAndNotifyWorker(
                     // here is non-blocking; the widget will catch up on the
                     // next successful fetch.
                     runCatching { OutfitWidget().updateAll(applicationContext) }
-                        .onFailure { Log.w(TAG, "Outfit widget update failed.", it) }
+                        .onFailure { DiagLog.w(TAG, "Outfit widget update failed.", it) }
                 }
-                .onFailure { Log.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
+                .onFailure { DiagLog.w(TAG, "Insight cache write failed; not blocking delivery.", it) }
             // Render once per delivery so notification, TTS, and the audit log
             // all share the same string and we don't reconfigure the
             // Configuration-overridden Resources three times per fire.
             val prose = formatProse(insight, prefs)
             deliver(insight, prefs, prose)
-            Log.i(TAG, "Insight delivered for ${insight.forDate}: $prose")
+            DiagLog.i(TAG, "Insight delivered for ${insight.forDate}: $prose")
             Result.success()
         } catch (e: ResponseException) {
             // OpenMeteo 4xx → fail; 5xx → retry with backoff.
             val status = e.response.status
             if (status.value in 500..599) {
-                Log.w(TAG, "Server error $status from OpenMeteo; retrying.")
+                DiagLog.w(TAG, "Server error $status from OpenMeteo; retrying.")
                 Result.retry()
             } else {
-                Log.e(TAG, "Unexpected HTTP status $status from OpenMeteo", e)
+                DiagLog.e(TAG, "Unexpected HTTP status $status from OpenMeteo", e)
                 Result.failure(reason(REASON_UNEXPECTED_HTTP, "$status"))
             }
         } catch (e: ConnectTimeoutException) {
-            Log.w(TAG, "Connect timeout; retrying.", e); Result.retry()
+            DiagLog.w(TAG, "Connect timeout; retrying.", e); Result.retry()
         } catch (e: SocketTimeoutException) {
-            Log.w(TAG, "Socket timeout; retrying.", e); Result.retry()
+            DiagLog.w(TAG, "Socket timeout; retrying.", e); Result.retry()
         } catch (e: HttpRequestTimeoutException) {
-            Log.w(TAG, "Request timeout; retrying.", e); Result.retry()
+            DiagLog.w(TAG, "Request timeout; retrying.", e); Result.retry()
         } catch (e: IOException) {
-            Log.w(TAG, "Network IO failure; retrying.", e); Result.retry()
+            DiagLog.w(TAG, "Network IO failure; retrying.", e); Result.retry()
         } catch (t: Throwable) {
-            Log.e(TAG, "Unhandled error; failing.", t)
+            DiagLog.e(TAG, "Unhandled error; failing.", t)
             Result.failure(reason(REASON_UNHANDLED, summarize(t)))
         }
     }
@@ -183,7 +183,7 @@ class FetchAndNotifyWorker(
 
     // First line of the exception message only — Ktor's NoTransformationFoundException
     // packs the URL, body excerpt, and a FAQ link into a multi-line wall of text.
-    // Full stack trace stays in logcat (Log.e above).
+    // Full stack trace stays in logcat and the diag ring buffer (DiagLog.e above).
     private fun summarize(t: Throwable): String {
         val firstLine = t.message?.lineSequence()?.firstOrNull { it.isNotBlank() }?.trim()
         val joined = if (firstLine.isNullOrEmpty()) t.javaClass.simpleName
@@ -195,10 +195,10 @@ class FetchAndNotifyWorker(
         if (prefs.useDeviceLocation) {
             val device = runCatching { app.locationResolver.resolve() }.getOrNull()
             if (device != null) {
-                Log.i(TAG, "Using device-resolved location at ${device.latitude}, ${device.longitude}.")
+                DiagLog.i(TAG, "Using device-resolved location at ${device.latitude}, ${device.longitude}.")
                 return device
             }
-            Log.i(TAG, "Device location unavailable; falling back to settings location.")
+            DiagLog.i(TAG, "Device location unavailable; falling back to settings location.")
         }
         return prefs.location ?: DEFAULT_LOCATION
     }
@@ -246,12 +246,12 @@ class FetchAndNotifyWorker(
         // log "skipping" when a notification would otherwise have posted.
         val skipEmptyEveningNotification = canNotify && prefs.tonightNotifyOnlyOnEvents && !insight.hasEvents
         if (skipEmptyEveningNotification) {
-            Log.i(TAG, "Tonight insight has no events and notify-only-on-events is on; skipping notification.")
+            DiagLog.i(TAG, "Tonight insight has no events and notify-only-on-events is on; skipping notification.")
         } else if (canNotify) {
             app.tonightInsightNotifier.notify(insight, prose)
         }
         if (!insight.hasEvents) {
-            Log.i(TAG, "Tonight insight has no events; skipping TTS.")
+            DiagLog.i(TAG, "Tonight insight has no events; skipping TTS.")
             return
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
@@ -273,7 +273,7 @@ class FetchAndNotifyWorker(
                     GeminiTtsSpeaker(app.geminiTtsClient, voiceName = prefs.geminiVoice).speak(text, locale)
                     return
                 } catch (t: Throwable) {
-                    Log.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
+                    DiagLog.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
                 }
             }
             TtsEngine.OPENAI -> {
@@ -281,7 +281,7 @@ class FetchAndNotifyWorker(
                     OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text, locale)
                     return
                 } catch (t: Throwable) {
-                    Log.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
+                    DiagLog.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
                 }
             }
             TtsEngine.ELEVENLABS -> {
@@ -289,7 +289,7 @@ class FetchAndNotifyWorker(
                     ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = prefs.elevenLabsVoice).speak(text, locale)
                     return
                 } catch (t: Throwable) {
-                    Log.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)
+                    DiagLog.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)
                 }
             }
             TtsEngine.DEVICE -> Unit
@@ -297,7 +297,7 @@ class FetchAndNotifyWorker(
         try {
             app.deviceTtsSpeaker.speak(text, locale)
         } catch (t: Throwable) {
-            Log.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
+            DiagLog.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
         }
     }
 

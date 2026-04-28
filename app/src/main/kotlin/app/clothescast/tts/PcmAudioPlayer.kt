@@ -3,7 +3,7 @@ package app.clothescast.tts
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
-import android.util.Log
+import app.clothescast.diag.DiagLog
 import app.clothescast.core.data.tts.PcmAudio
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -31,7 +31,7 @@ internal object PcmAudioPlayer {
         // truncated mid-sample; setting a marker past the last whole frame would
         // either click or never fire.
         if (pcm.size % 2 != 0) {
-            Log.w(TAG, "PCM payload has odd byte count (${pcm.size}); aborting playback")
+            DiagLog.w(TAG, "PCM payload has odd byte count (${pcm.size}); aborting playback")
             return
         }
 
@@ -41,7 +41,7 @@ internal object PcmAudioPlayer {
             AudioFormat.ENCODING_PCM_16BIT,
         )
         if (minBuffer <= 0) {
-            Log.w(TAG, "getMinBufferSize returned $minBuffer for ${audio.sampleRate}Hz; aborting playback")
+            DiagLog.w(TAG, "getMinBufferSize returned $minBuffer for ${audio.sampleRate}Hz; aborting playback")
             return
         }
         // A few periods of headroom smooth over jitter on slower devices without
@@ -75,7 +75,7 @@ internal object PcmAudioPlayer {
             while (offset < pcm.size) {
                 val written = track.write(pcm, offset, pcm.size - offset)
                 if (written <= 0) {
-                    Log.w(TAG, "AudioTrack.write returned $written at offset $offset; aborting playback")
+                    DiagLog.w(TAG, "AudioTrack.write returned $written at offset $offset; aborting playback")
                     return
                 }
                 offset += written
@@ -99,6 +99,6 @@ internal object PcmAudioPlayer {
             )
             cont.invokeOnCancellation { runCatching { track.stop() } }
         }
-        Log.i(TAG, "Played $markerInFrames PCM frames")
+        DiagLog.i(TAG, "Played $markerInFrames PCM frames")
     }
 }

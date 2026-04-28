@@ -74,6 +74,14 @@ class SecureKeyStore(
         .map { it[GEMINI_PREF_KEY] != null }
         .distinctUntilChanged()
 
+    val openAiKeyConfiguredFlow: Flow<Boolean> = dataStore.data
+        .map { it[OPENAI_PREF_KEY] != null }
+        .distinctUntilChanged()
+
+    val elevenLabsKeyConfiguredFlow: Flow<Boolean> = dataStore.data
+        .map { it[ELEVENLABS_PREF_KEY] != null }
+        .distinctUntilChanged()
+
     /**
      * KeyProvider view onto the OpenAI key. Used to wire `OpenAITtsClient` while
      * keeping the underlying SecureKeyStore as the single source of truth for

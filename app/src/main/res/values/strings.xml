@@ -4,6 +4,8 @@
 
     <string name="today_title">Today</string>
     <string name="today_open_settings">Open Settings</string>
+    <string name="today_more_options">More options</string>
+    <string name="today_report_a_bug">Report a bug</string>
     <string name="today_refresh">Refresh</string>
     <string name="today_refresh_toast_daily">Refreshing your daily ClothesCast — it\'ll appear shortly.</string>
     <string name="today_refresh_toast_nightly">Refreshing your nightly ClothesCast — it\'ll appear shortly.</string>
@@ -313,6 +315,8 @@
     <string name="settings_about_privacy_policy">Privacy policy</string>
     <string name="settings_about_source">Source code on GitHub</string>
     <string name="settings_about_dontkillmyapp">Background restrictions (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">Share bug report</string>
+    <string name="settings_about_version_copied">Version copied to clipboard</string>
 
     <!--
     Insight prose templates rendered by InsightFormatter. Each clause is its own

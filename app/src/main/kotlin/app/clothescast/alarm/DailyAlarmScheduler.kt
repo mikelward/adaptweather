@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
+import app.clothescast.diag.DiagLog
 import androidx.core.content.getSystemService
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Schedule
@@ -37,7 +37,7 @@ class DailyAlarmScheduler(
 ) {
     fun schedule(schedule: Schedule, period: ForecastPeriod = ForecastPeriod.TODAY) {
         val alarmManager = context.getSystemService<AlarmManager>() ?: run {
-            Log.w(TAG, "AlarmManager unavailable; alarm not scheduled")
+            DiagLog.w(TAG, "AlarmManager unavailable; alarm not scheduled")
             return
         }
 
@@ -50,12 +50,12 @@ class DailyAlarmScheduler(
             // fall back to setAndAllowWhileIdle so the user still gets the notification,
             // just possibly drifted by a few minutes.
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt.toEpochMilli(), pendingIntent)
-            Log.w(TAG, "Exact-alarm permission denied; using inexact alarm at $triggerAt for $period")
+            DiagLog.w(TAG, "Exact-alarm permission denied; using inexact alarm at $triggerAt for $period")
             return
         }
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt.toEpochMilli(), pendingIntent)
-        Log.i(TAG, "Insight alarm armed for $triggerAt ($period)")
+        DiagLog.i(TAG, "Insight alarm armed for $triggerAt ($period)")
     }
 
     fun cancel(period: ForecastPeriod = ForecastPeriod.TODAY) {

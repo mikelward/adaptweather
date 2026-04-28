@@ -1,6 +1,10 @@
 package app.clothescast.ui.settings
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.os.Build
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,13 +18,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.clothescast.BuildConfig
 import app.clothescast.R
+import app.clothescast.diag.BugReport
+import app.clothescast.diag.findActivity
 import app.clothescast.work.FetchAndNotifyWorker
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun AboutContent(padding: PaddingValues) {
@@ -42,6 +50,8 @@ internal fun AboutContent(padding: PaddingValues) {
 @Composable
 private fun AboutCard() {
     val context = LocalContext.current
+    val activity = context.findActivity()
+    val coroutineScope = rememberCoroutineScope()
     SectionCard(title = stringResource(R.string.settings_about_title)) {
         // Release builds get a clean "Version 0.1.0+61.85d100b (61)". Anything else
         // (debug today, possibly internal QA flavours later) appends " · <type> build"
@@ -56,9 +66,22 @@ private fun AboutCard() {
         } else {
             ""
         }
+        val fullVersionLine = versionText + buildTypeSuffix
+        val copiedToast = stringResource(R.string.settings_about_version_copied)
         Text(
-            text = versionText + buildTypeSuffix,
+            text = fullVersionLine,
             style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    val cm = context.getSystemService(ClipboardManager::class.java)
+                    cm?.setPrimaryClip(ClipData.newPlainText("ClothesCast version", fullVersionLine))
+                    // Android 13+ shows its own clipboard preview; older devices need our toast
+                    // to know the tap actually did something.
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                        Toast.makeText(context, copiedToast, Toast.LENGTH_SHORT).show()
+                    }
+                },
         )
         Text(
             text = stringResource(R.string.settings_about_privacy),
@@ -78,6 +101,18 @@ private fun AboutCard() {
             onClick = { openUrl(context, "https://dontkillmyapp.com") },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.settings_about_dontkillmyapp)) }
+        TextButton(
+            onClick = {
+                if (activity != null) {
+                    coroutineScope.launch {
+                        // No screenshot from About — the About page itself isn't useful
+                        // to capture; Today's overflow menu owns the screenshot path.
+                        BugReport.share(activity, includeScreenshot = false)
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_about_share_bug_report)) }
     }
 }
 
