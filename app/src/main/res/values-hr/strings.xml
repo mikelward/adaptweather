@@ -54,6 +54,31 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_clothes_cond_precip_above">kada je vjerojatnost kiše veća od %.0f%%</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "Mention evening events" toggle, and the nightly-only
+    "notify only on events" toggle. The toggle label nested inside the
+    description uses the same low-9/low-9 quotes („…") the German file
+    uses — Croatian accepts both " and „… "; keeping a single house
+    style across the locales avoids visual drift.
+    -->
+    <string name="settings_schedule_title">Dnevni ClothesCast</string>
+    <string name="settings_schedule_time_label">Vrijeme</string>
+    <string name="settings_schedule_days_label">Dani u tjednu</string>
+    <string name="settings_daily_mention_evening_events">Spomeni večernje događaje</string>
+
+    <string name="settings_tonight_title">Noćni ClothesCast</string>
+    <string name="settings_tonight_description">Drugi ClothesCast navečer koji pokriva vrijeme za večeras. Tihim večerima ostaje bez zvuka ili se uopće ne pojavi ako je „Obavijesti samo kad ima večernjih događaja“ uključeno; večerima s događajima reproducira zvuk i (ako je uključen izgovor) sam se čita.</string>
+    <string name="settings_tonight_enabled">Prikaži noćni ClothesCast</string>
+    <string name="settings_tonight_time_label">Vrijeme</string>
+    <string name="settings_tonight_days_label">Dani u tjednu</string>
+    <string name="settings_tonight_notify_only_on_events">Obavijesti samo kad ima večernjih događaja</string>
+
+    <string name="settings_delivery_label">Isporuka</string>
+    <string name="settings_delivery_notification_only">Samo obavijest</string>
+    <string name="settings_delivery_tts_only">Samo izgovor</string>
+    <string name="settings_delivery_notification_and_tts">Obavijest i izgovor</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ti-form imperatives: "dodirni", "postavi", "tvoj".
