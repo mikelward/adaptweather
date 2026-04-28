@@ -281,4 +281,34 @@ class InsightFormatterTest {
         )
         out shouldBe "Heute wird es mild. Denk an Regenschirm für heute Abend, Regen um 21 Uhr."
     }
+
+    // ---------------------------------------------------------------------
+    // Spanish locale — picks up values-es/strings.xml + ResourceClothesPhraser.
+    // Tie-in tests pin the Spanish templates that previously fell through to
+    // the German strings ("Denk an … Grad …"), surfacing as "sieben Grad" in
+    // TTS for a Spanish-region user.
+    // ---------------------------------------------------------------------
+
+    private val spanishSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("es-ES"))
+
+    @Test
+    fun `es — calendar tie-in renders the Spanish template, not a German fallback`() {
+        val out = spanishSubject.format(
+            summary(
+                period = ForecastPeriod.TONIGHT,
+                calendarTieIn = CalendarTieInClause("paraguas"),
+            ),
+        )
+        out shouldBe "Esta noche hará templado. Lleva paraguas esta noche."
+    }
+
+    @Test
+    fun `es — evening event tie-in with rain renders the Spanish template`() {
+        val out = spanishSubject.format(
+            summary(
+                eveningEventTieIn = EveningEventTieInClause("paraguas", rainTime = LocalTime.of(21, 0)),
+            ),
+        )
+        out shouldBe "Hoy hará templado. Lleva paraguas esta noche, lluvia a las 21."
+    }
 }

@@ -76,6 +76,11 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="insight_condition_thunderstorm">Tormenta</string>
     <string name="insight_condition_unknown">Desconocido</string>
     <string name="insight_calendar_tie_in">Lleva %1$s para tu %3$s de las %2$s.</string>
+    <!-- Evening tie-in counterparts of the English insight_tie_in / insight_tie_in_with_rain.
+         Without these the Spanish formatter falls through to another locale that *does*
+         have the keys (German), which is how "sieben Grad" leaks into Spanish output. -->
+    <string name="insight_tie_in">Lleva %1$s esta noche.</string>
+    <string name="insight_tie_in_with_rain">Lleva %1$s esta noche, lluvia a las %2$s.</string>
     <!-- "15" — prepositions ("a las", "de las") come from surrounding templates. -->
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
