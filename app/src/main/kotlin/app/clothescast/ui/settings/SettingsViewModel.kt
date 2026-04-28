@@ -37,7 +37,6 @@ class SettingsViewModel(
     private val cancelAlarm: (ForecastPeriod) -> Unit,
     private val geocodingClient: OpenMeteoGeocodingClient,
     private val voiceEnumerator: TtsVoiceEnumerator,
-    private val isGoogleTtsInstalled: () -> Boolean,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -89,23 +88,41 @@ class SettingsViewModel(
             }
         }
         viewModelScope.launch { refreshApiKeyStatus() }
-        _state.update { it.copy(isGoogleTtsInstalled = isGoogleTtsInstalled()) }
     }
 
-    private fun refreshDeviceVoices(locale: VoiceLocale) {
+    /**
+     * Reloads the device-voice picker list for [locale] and resolves the
+     * "currently using" indicator. [pinnedIdOverride] lets [setDeviceVoice]
+     * pass the just-written pin so the indicator doesn't briefly resolve
+     * against the previous pin while the preferences flow catches up; the
+     * default reads the current state.
+     */
+    private fun refreshDeviceVoices(locale: VoiceLocale, pinnedIdOverride: String? = _state.value.deviceVoice) {
         deviceVoiceLoadJob?.cancel()
         deviceVoiceLoadJob = viewModelScope.launch {
-            // Both enumeration calls bind the engine, which is JNI work — keep
-            // it off the main dispatcher.
+            // All three enumerator calls bind the engine, which is JNI work
+            // — keep them off the main dispatcher.
             val resolvedLocale = locale.resolve()
             val voices = withContext(Dispatchers.IO) {
                 runCatching { voiceEnumerator.listVoices(resolvedLocale) }.getOrDefault(emptyList())
             }
-            val pinnedId = _state.value.deviceVoice
-            val effective = voices.firstOrNull { it.id == pinnedId }
-                ?: withContext(Dispatchers.IO) {
+            val pinnedId = pinnedIdOverride
+            val effective = if (pinnedId != null) {
+                // Fast path: pin is in the locale-filtered list. Slow path:
+                // pin is from a different locale variant within the same
+                // language (the speaker accepts these too). We only fall
+                // through to the second engine bind when the fast path
+                // misses, which is rare — most pins match the current
+                // locale.
+                voices.firstOrNull { it.id == pinnedId }
+                    ?: withContext(Dispatchers.IO) {
+                        runCatching { voiceEnumerator.findVoice(pinnedId) }.getOrNull()
+                    }
+            } else {
+                withContext(Dispatchers.IO) {
                     runCatching { voiceEnumerator.resolveAutoPick(resolvedLocale) }.getOrNull()
                 }
+            }
             _state.update { it.copy(deviceVoices = voices, effectiveDeviceVoice = effective) }
         }
     }
@@ -166,12 +183,14 @@ class SettingsViewModel(
 
     fun setDeviceVoice(voice: String?) {
         viewModelScope.launch {
+            // Update _state synchronously first so the picker reflects the
+            // new pin in the same frame, and so refreshDeviceVoices below
+            // resolves the "currently using" line against the *new* pin
+            // rather than the previous one. The DataStore emission that
+            // arrives a few hops later is idempotent.
+            _state.update { it.copy(deviceVoice = voice) }
             settingsRepository.setDeviceVoice(voice)
-            // Refresh the "currently using" indicator immediately — without
-            // this, the line lags the picker by one preferences-flow tick
-            // and the user sees their just-picked voice show as "loading"
-            // for ~50ms.
-            _state.value.voiceLocale.let { refreshDeviceVoices(it) }
+            refreshDeviceVoices(_state.value.voiceLocale, pinnedIdOverride = voice)
         }
     }
 
@@ -307,7 +326,6 @@ class SettingsViewModel(
         private val cancelAlarm: (ForecastPeriod) -> Unit,
         private val geocodingClient: OpenMeteoGeocodingClient,
         private val voiceEnumerator: TtsVoiceEnumerator,
-        private val isGoogleTtsInstalled: () -> Boolean,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -321,7 +339,6 @@ class SettingsViewModel(
                 cancelAlarm,
                 geocodingClient,
                 voiceEnumerator,
-                isGoogleTtsInstalled,
             ) as T
         }
     }

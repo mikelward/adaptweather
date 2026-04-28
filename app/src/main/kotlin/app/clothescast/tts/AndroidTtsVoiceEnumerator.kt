@@ -24,8 +24,30 @@ data class DeviceVoice(
  * JVM-only ViewModel tests can stub it.
  */
 interface TtsVoiceEnumerator {
+    /**
+     * Voices the device's TTS engine reports as supporting [locale], for
+     * display in the picker. Filters to exact-locale matches when any
+     * exist; relaxes to same-language and then to "all voices" when none
+     * do, so the picker is never empty if the engine has *any* voices.
+     */
     suspend fun listVoices(locale: Locale): List<DeviceVoice>
+
+    /**
+     * The voice [AndroidTtsSpeaker] would auto-pick for [locale] when the
+     * user hasn't pinned one. Used by Settings' "Currently using" line.
+     */
     suspend fun resolveAutoPick(locale: Locale): DeviceVoice?
+
+    /**
+     * Looks up a voice by id against the engine's *full* catalogue,
+     * regardless of locale. Use this for resolving the user's pinned voice
+     * — the speaker accepts a pin across locale variants as long as the
+     * language matches (e.g. an en-US pin is still honoured when
+     * [voiceLocale] is en-GB), so the picker UI's "Currently using" line
+     * needs to find the pinned voice even when the locale-filtered
+     * [listVoices] excludes it.
+     */
+    suspend fun findVoice(id: String): DeviceVoice?
 }
 
 /**
@@ -88,6 +110,17 @@ class AndroidTtsVoiceEnumerator(private val context: Context) : TtsVoiceEnumerat
         return try {
             val voices = runCatching { tts.voices }.getOrNull().orEmpty()
             pickBestVoice(voices, locale)?.toDomain()
+        } finally {
+            tts.shutdown()
+        }
+    }
+
+    override suspend fun findVoice(id: String): DeviceVoice? {
+        val tts = runCatching { initAndroidTtsEngine(context) }.getOrElse { return null }
+        return try {
+            runCatching { tts.voices }.getOrNull().orEmpty()
+                .firstOrNull { it.name == id }
+                ?.toDomain()
         } finally {
             tts.shutdown()
         }
