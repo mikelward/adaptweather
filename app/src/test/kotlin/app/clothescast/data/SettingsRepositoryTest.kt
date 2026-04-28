@@ -126,6 +126,17 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `dailyMentionEveningEvents defaults to false and round-trips`() = runTest {
+        subject.preferences.first().dailyMentionEveningEvents shouldBe false
+
+        subject.setDailyMentionEveningEvents(true)
+        subject.preferences.first().dailyMentionEveningEvents shouldBe true
+
+        subject.setDailyMentionEveningEvents(false)
+        subject.preferences.first().dailyMentionEveningEvents shouldBe false
+    }
+
+    @Test
     fun `tonightNotifyOnlyOnEvents defaults to false and round-trips`() = runTest {
         subject.preferences.first().tonightNotifyOnlyOnEvents shouldBe false
 

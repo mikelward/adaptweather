@@ -29,6 +29,16 @@ data class InsightSummary(
     val clothes: ClothesClause? = null,
     val precip: PrecipClause? = null,
     val calendarTieIn: CalendarTieInClause? = null,
+    /**
+     * A second tie-in for morning insights: an evening event paired with a
+     * clothing tip derived from the *evening* forecast slice. Distinct from
+     * [calendarTieIn] (which is anchored on a precip peak in the morning's
+     * own slice) — this clause exists so the user gets a heads-up about
+     * evening conditions for their evening event without needing a separate
+     * nightly notification. Only emitted on TODAY when the user has the
+     * "Mention evening events" setting on.
+     */
+    val eveningEventTieIn: CalendarTieInClause? = null,
 )
 
 /**

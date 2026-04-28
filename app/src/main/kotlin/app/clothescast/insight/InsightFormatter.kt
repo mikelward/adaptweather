@@ -50,6 +50,10 @@ class InsightFormatter(
         summary.clothes?.let { add(formatClothes(it)) }
         summary.precip?.let { add(formatPrecip(it, hasCalendarTieIn = summary.calendarTieIn != null)) }
         summary.calendarTieIn?.let { add(formatCalendarTieIn(it)) }
+        // The evening tie-in reuses the same sentence template as calendarTieIn
+        // ("Bring a jacket for your 9pm dinner.") — same shape, separately
+        // gated, so they can coexist on a rainy-afternoon-plus-cold-evening day.
+        summary.eveningEventTieIn?.let { add(formatCalendarTieIn(it)) }
     }.joinToString(" ")
 
     private fun formatAlert(alert: AlertClause): String =
