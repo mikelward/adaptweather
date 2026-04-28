@@ -103,6 +103,92 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="settings_tts_add_api_key_cancel">キャンセル</string>
 
     <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale
+    labels in Japanese style ("英語（米国）", "フランス語（カナダ）", "中国語
+    （簡体字）", …) using full-width parens. The locale tag stored on
+    disk (en-US / fr-CA / zh-CN) is unchanged; only the displayed
+    label localizes.
+    -->
+    <string name="settings_region_language_title">言語</string>
+    <string name="settings_region_language_description">表示テキストと通知の言語を設定します。</string>
+    <string name="settings_region_language_system">システムの言語設定に従う</string>
+    <string name="settings_region_language_en_us">英語（米国）</string>
+    <string name="settings_region_language_en_gb">英語（英国）</string>
+    <string name="settings_region_language_en_au">英語（オーストラリア）</string>
+    <string name="settings_region_language_en_ca">英語（カナダ）</string>
+    <string name="settings_region_language_en_za">英語（南アフリカ）</string>
+    <string name="settings_region_language_de_de">ドイツ語（ドイツ）</string>
+    <string name="settings_region_language_fr_fr">フランス語（フランス）</string>
+    <string name="settings_region_language_fr_ca">フランス語（カナダ）</string>
+    <string name="settings_region_language_it_it">イタリア語（イタリア）</string>
+    <string name="settings_region_language_es_es">スペイン語（スペイン）</string>
+    <string name="settings_region_language_es_mx">スペイン語（メキシコ）</string>
+    <string name="settings_region_language_ru_ru">ロシア語（ロシア）</string>
+    <string name="settings_region_language_pl_pl">ポーランド語（ポーランド）</string>
+    <string name="settings_region_language_hr_hr">クロアチア語（クロアチア）</string>
+    <string name="settings_region_language_uk_ua">ウクライナ語（ウクライナ）</string>
+    <string name="settings_region_language_pt_br">ポルトガル語（ブラジル）</string>
+    <string name="settings_region_language_nl_nl">オランダ語（オランダ）</string>
+    <string name="settings_region_language_sv_se">スウェーデン語（スウェーデン）</string>
+    <string name="settings_region_language_tr_tr">トルコ語（トルコ）</string>
+    <string name="settings_region_language_id_id">インドネシア語（インドネシア）</string>
+    <string name="settings_region_language_fil_ph">フィリピン語（フィリピン）</string>
+    <string name="settings_region_language_vi_vn">ベトナム語（ベトナム）</string>
+    <string name="settings_region_language_zh_cn">中国語（簡体字）</string>
+    <string name="settings_region_language_hi_in">ヒンディー語（インド）</string>
+    <string name="settings_region_language_bn_bd">ベンガル語（バングラデシュ）</string>
+    <string name="settings_region_language_ko_kr">韓国語（韓国）</string>
+    <string name="settings_region_language_ar_sa">アラビア語（サウジアラビア）</string>
+    <string name="settings_region_language_he_il">ヘブライ語（イスラエル）</string>
+    <string name="settings_region_language_fa_ir">ペルシャ語（イラン）</string>
+
+    <!-- Region screen — units pickers. -->
+    <string name="settings_temperature_unit_title">温度単位</string>
+    <string name="settings_temperature_unit_celsius">摂氏（°C）</string>
+    <string name="settings_temperature_unit_fahrenheit">華氏（°F）</string>
+    <string name="settings_distance_unit_title">距離単位</string>
+    <string name="settings_distance_unit_kilometers">キロメートル</string>
+    <string name="settings_distance_unit_miles">マイル</string>
+
+    <!--
+    Voice locale picker labels — same Japanese language-name translations
+    as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface.
+    -->
+    <string name="settings_tts_voice_locale_en_us">英語（米国）</string>
+    <string name="settings_tts_voice_locale_en_gb">英語（英国）</string>
+    <string name="settings_tts_voice_locale_en_au">英語（オーストラリア）</string>
+    <string name="settings_tts_voice_locale_en_ca">英語（カナダ）</string>
+    <string name="settings_tts_voice_locale_en_za">英語（南アフリカ）</string>
+    <string name="settings_tts_voice_locale_de_de">ドイツ語（ドイツ）</string>
+    <string name="settings_tts_voice_locale_fr_fr">フランス語（フランス）</string>
+    <string name="settings_tts_voice_locale_fr_ca">フランス語（カナダ）</string>
+    <string name="settings_tts_voice_locale_it_it">イタリア語（イタリア）</string>
+    <string name="settings_tts_voice_locale_es_es">スペイン語（スペイン）</string>
+    <string name="settings_tts_voice_locale_es_mx">スペイン語（メキシコ）</string>
+    <string name="settings_tts_voice_locale_ru_ru">ロシア語（ロシア）</string>
+    <string name="settings_tts_voice_locale_pl_pl">ポーランド語（ポーランド）</string>
+    <string name="settings_tts_voice_locale_hr_hr">クロアチア語（クロアチア）</string>
+    <string name="settings_tts_voice_locale_uk_ua">ウクライナ語（ウクライナ）</string>
+    <string name="settings_tts_voice_locale_pt_br">ポルトガル語（ブラジル）</string>
+    <string name="settings_tts_voice_locale_nl_nl">オランダ語（オランダ）</string>
+    <string name="settings_tts_voice_locale_sv_se">スウェーデン語（スウェーデン）</string>
+    <string name="settings_tts_voice_locale_tr_tr">トルコ語（トルコ）</string>
+    <string name="settings_tts_voice_locale_id_id">インドネシア語（インドネシア）</string>
+    <string name="settings_tts_voice_locale_fil_ph">フィリピン語（フィリピン）</string>
+    <string name="settings_tts_voice_locale_vi_vn">ベトナム語（ベトナム）</string>
+    <string name="settings_tts_voice_locale_zh_cn">中国語（簡体字）</string>
+    <string name="settings_tts_voice_locale_hi_in">ヒンディー語（インド）</string>
+    <string name="settings_tts_voice_locale_bn_bd">ベンガル語（バングラデシュ）</string>
+    <string name="settings_tts_voice_locale_ko_kr">韓国語（韓国）</string>
+    <string name="settings_tts_voice_locale_ar_sa">アラビア語（サウジアラビア）</string>
+    <string name="settings_tts_voice_locale_he_il">ヘブライ語（イスラエル）</string>
+    <string name="settings_tts_voice_locale_fa_ir">ペルシャ語（イラン）</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ます-form (friendly-polite) throughout — that's the standard
