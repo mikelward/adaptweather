@@ -198,6 +198,21 @@ class InsightFormatter(
 private fun Region.toJavaLocale(): Locale? = bcp47?.let { Locale.forLanguageTag(it) }
 
 private fun Context.localizedResources(locale: Locale): Resources {
-    val config = Configuration(resources.configuration).apply { setLocale(locale) }
+    // Android resource qualifiers still use legacy language codes for a couple
+    // of locales (`values-in`, `values-iw`). Locale.forLanguageTag() returns
+    // modern tags (`id`, `he`), and forcing those through setLocale can miss
+    // our translated string buckets and fall back to English.
+    val resourcesLocale = locale.toAndroidResourceLocale()
+    val config = Configuration(resources.configuration).apply { setLocale(resourcesLocale) }
     return createConfigurationContext(config).resources
+}
+
+private fun Locale.toAndroidResourceLocale(): Locale {
+    val normalizedLanguage = when (language.lowercase(Locale.ROOT)) {
+        "id" -> "in"
+        "he" -> "iw"
+        else -> language
+    }
+    if (normalizedLanguage == language) return this
+    return if (country.isNotBlank()) Locale(normalizedLanguage, country) else Locale(normalizedLanguage)
 }
