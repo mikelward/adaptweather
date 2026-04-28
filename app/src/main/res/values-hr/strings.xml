@@ -10,6 +10,18 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_tts_voice_locale_hr_hr">Hrvatski (Hrvatska)</string>
     <string name="settings_tts_voice_locale_label">Jezik</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Postavke</string>
+    <string name="settings_back">Natrag</string>
+
+    <string name="settings_root_voice">Glas</string>
+    <string name="settings_root_schedule">Raspored</string>
+    <string name="settings_root_region">Regija</string>
+    <string name="settings_root_clothes">Odjeća</string>
+    <string name="settings_root_api_keys">API ključevi</string>
+    <string name="settings_root_data_sources">Izvori podataka</string>
+    <string name="settings_root_about">O aplikaciji</string>
+
     <string name="garment_sweater">Džemper</string>
     <string name="garment_hoodie">Hoodie</string>
     <string name="garment_jacket">Jakna</string>
@@ -19,6 +31,10 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="garment_shorts">Kratke hlače</string>
     <string name="garment_pants">Hlače</string>
     <string name="garment_jeans">Traperice</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">Pravila odijevanja</string>
+    <string name="settings_clothes_description">Ako prognoza prijeđe jedan od ovih pragova, predmet se pojavljuje u tvom dnevnom ClothesCastu.</string>
 
     <string name="settings_clothes_empty">Nema pravila. Dodirni Dodaj za kreiranje.</string>
     <string name="settings_clothes_add">Dodaj</string>
