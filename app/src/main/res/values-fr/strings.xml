@@ -59,6 +59,30 @@ agreement; garment names are listed without articles and read naturally in conte
     <string name="settings_clothes_cond_precip_above">quand le risque de pluie dépasse %.0f%%</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "Mentionner les événements du soir" toggle, and the
+    nightly-only "notify only on events" toggle. Description uses
+    German-style „…" quotes around the nested toggle label, matching
+    the locale house style.
+    -->
+    <string name="settings_schedule_title">ClothesCast quotidien</string>
+    <string name="settings_schedule_time_label">Heure</string>
+    <string name="settings_schedule_days_label">Jours de la semaine</string>
+    <string name="settings_daily_mention_evening_events">Mentionner les événements du soir</string>
+
+    <string name="settings_tonight_title">ClothesCast nocturne</string>
+    <string name="settings_tonight_description">Un second ClothesCast le soir qui couvre la météo de ce soir. Les soirs tranquilles, il reste silencieux, ou n\'apparaît pas du tout si „Notifier uniquement les soirs avec événements“ est activé ; les soirs avec événements, il joue un son et (si tu as activé la lecture à voix haute) se lit tout seul.</string>
+    <string name="settings_tonight_enabled">Afficher un ClothesCast nocturne</string>
+    <string name="settings_tonight_time_label">Heure</string>
+    <string name="settings_tonight_days_label">Jours de la semaine</string>
+    <string name="settings_tonight_notify_only_on_events">Notifier uniquement les soirs avec événements</string>
+
+    <string name="settings_delivery_label">Diffusion</string>
+    <string name="settings_delivery_notification_only">Notification seule</string>
+    <string name="settings_delivery_tts_only">Lecture à voix haute seule</string>
+    <string name="settings_delivery_notification_and_tts">Notification et lecture à voix haute</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. tu-form throughout: "appuie", "ton", "définis".
