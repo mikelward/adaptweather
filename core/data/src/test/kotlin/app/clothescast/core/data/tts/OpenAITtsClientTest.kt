@@ -5,7 +5,6 @@ import app.clothescast.core.data.insight.MissingApiKeyException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.string.shouldNotContain
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -85,11 +84,13 @@ class OpenAITtsClientTest {
     }
 
     @Test
-    fun `request body never includes the instructions field`() = runTest {
-        // Field-testing showed `instructions` doesn't reliably steer accent on
-        // gpt-4o-mini-tts (the voice's baked-in timbre dominates), so we don't
-        // send it at all — accent is voice-bound, controlled by the picker
-        // filter. This guards against re-introducing the dead plumbing.
+    fun `request body sends a pace and clarity instruction`() = runTest {
+        // `instructions` doesn't steer accent on gpt-4o-mini-tts (the voice's
+        // baked-in timbre dominates — that part is voice-bound, controlled by
+        // the picker filter), but it *does* steer pace and enunciation. We
+        // send a constant directive aimed at the "too fast / dropped letters"
+        // complaints from field reports. Lock this in so the directive
+        // doesn't silently disappear from a careless edit.
         var capturedBody: String? = null
         val client = OpenAITtsClient(
             httpClient = mockClient { capturedBody = capturedBodyOf(it) },
@@ -99,7 +100,9 @@ class OpenAITtsClientTest {
         client.synthesize(text = "hello")
 
         val body = checkNotNull(capturedBody)
-        body.shouldNotContain("instructions")
+        body.shouldContain("\"instructions\":")
+        body.shouldContain("measured, conversational pace")
+        body.shouldContain("enunciating each word")
     }
 
     @Test
