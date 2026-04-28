@@ -37,11 +37,58 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_clothes_cond_temp_above">kada je osjećajna temperatura iznad %.0f°C</string>
     <string name="settings_clothes_cond_precip_above">kada je vjerojatnost kiše veća od %.0f%%</string>
 
+    <!--
+    Today screen — top bar, refresh toasts, empty state, generated-at
+    timestamp, outfit card, hourly chart, confidence chip, work-status
+    banner. ti-form imperatives: "dodirni", "postavi", "tvoj".
+    -->
+    <string name="today_title">Danas</string>
+    <string name="today_open_settings">Otvori postavke</string>
+    <string name="today_more_options">Više opcija</string>
+    <string name="today_report_a_bug">Prijavi grešku</string>
+    <string name="today_refresh">Osvježi</string>
+    <string name="today_refresh_toast_daily">Osvježavam tvoj dnevni ClothesCast — pojavit će se uskoro.</string>
+    <string name="today_refresh_toast_nightly">Osvježavam tvoj noćni ClothesCast — pojavit će se uskoro.</string>
+    <string name="today_empty_title">Još nema ClothesCasta</string>
+    <string name="today_empty_subtitle">Tvoj jutarnji ClothesCast pojavit će se ovdje čim bude generiran. Postavi svoju lokaciju u postavkama, a zatim dodirni Dohvati sada.</string>
+    <string name="today_fetch_now">Dohvati sada</string>
+    <string name="today_generated_at">Generirano u %1$s</string>
+
+    <string name="today_outfit_title">Što obući</string>
+    <string name="today_outfit_label_today">Danas</string>
+    <string name="today_outfit_label_tonight">Večeras</string>
+    <string name="today_outfit_label_tomorrow">Sutra</string>
+
     <string name="today_outfit_top_tshirt">Majica</string>
     <string name="today_outfit_top_sweater">Džemper</string>
     <string name="today_outfit_top_thick_jacket">Debela jakna</string>
     <string name="today_outfit_bottom_shorts">Kratke hlače</string>
     <string name="today_outfit_bottom_long_pants">Hlače</string>
+
+    <string name="today_forecast_title">Prognoza po satu</string>
+    <string name="today_forecast_min_max">Osjećaj %1$d – %2$d%3$s · Zrak %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Osjećajna temperatura (%1$s) po satu · dodirni za temperaturu zraka</string>
+    <string name="today_forecast_legend_air">Temperatura zraka (%1$s) po satu · dodirni za osjećajnu temperaturu</string>
+
+    <string name="today_confidence_high">Visoka pouzdanost — glavni modeli se slažu</string>
+    <string name="today_confidence_medium">Srednja pouzdanost</string>
+    <string name="today_confidence_low">Niska pouzdanost — prognoze se razlikuju</string>
+    <string name="today_confidence_spread">Raspršenost: %1$.1f°C, %2$.0fpp oborine preko %3$d modela</string>
+
+    <string name="today_working">Dohvaćam tvoj ClothesCast…</string>
+    <string name="today_failed_title">Posljednji pokušaj nije uspio</string>
+    <string name="today_failed_unexpected_http">Neočekivana HTTP greška od servisa za prognozu.</string>
+    <string name="today_failed_unhandled">Došlo je do neočekivane greške.</string>
+    <string name="today_failed_show_details">Prikaži detalje</string>
+    <string name="today_failed_hide_details">Sakrij detalje</string>
+
+    <!-- Home-screen App Widget. "Outfit" is in common Croatian use as a
+         loanword and matches the casual register; the empty state
+         localises to "Još nema outfita" with the genitive ending. -->
+    <string name="widget_label">Outfit</string>
+    <string name="widget_description">Outfit za trenutni period na prvi pogled.</string>
+    <string name="widget_empty_title">Još nema outfita</string>
+    <string name="widget_empty_subtitle">Dodirni za otvaranje ClothesCasta</string>
 
     <string name="insight_lead_today">Danas</string>
     <string name="insight_lead_tonight">Večeras</string>
