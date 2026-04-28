@@ -221,6 +221,25 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_elevenlabs_key_clear">Cancella chiave ElevenLabs salvata</string>
 
     <!--
+    Location screen — device-location toggle, manual city search +
+    selection, and the "no location set" empty state.
+    -->
+    <string name="settings_location_title">Posizione</string>
+    <string name="settings_location_use_device">Usa la posizione del dispositivo</string>
+    <string name="settings_location_grant_background">Concedi la posizione in background (impostazioni di sistema)</string>
+    <string name="settings_location_unset">Posizione non impostata — uso Londra come predefinita</string>
+    <string name="settings_location_description">La previsione viene recuperata per questa località. Cerca per nome di città; i risultati provengono dal servizio gratuito di geocoding di Open-Meteo.</string>
+    <string name="settings_location_description_device_on">Quando attivo, al momento della notifica ClothesCast legge la posizione approssimativa del tuo dispositivo (solo cella / WiFi — niente GPS hardware). La posizione qui sotto fa da riserva se la lettura dal dispositivo fallisce. La posizione in background deve essere concessa nelle impostazioni di sistema, altrimenti il Worker mattutino non può leggerla.</string>
+    <string name="settings_location_set">Imposta posizione</string>
+    <string name="settings_location_change">Cambia posizione</string>
+    <string name="settings_location_clear">Cancella posizione</string>
+    <string name="settings_location_search_title">Cerca una posizione</string>
+    <string name="settings_location_query_label">Città o luogo</string>
+    <string name="settings_location_search">Cerca</string>
+    <string name="settings_location_searching">Ricerca in corso…</string>
+    <string name="settings_location_no_results">Nessun risultato.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tu-form throughout: "tocca", "il tuo", "imposta".
