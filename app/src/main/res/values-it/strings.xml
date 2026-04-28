@@ -422,7 +422,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_condition_snow">Neve</string>
     <string name="insight_condition_thunderstorm">Temporale</string>
     <string name="insight_condition_unknown">Sconosciuto</string>
-    <string name="insight_calendar_tie_in">Porta %1$s per il tuo %3$s alle %2$s.</string>
     <string name="insight_tie_in">Porta %1$s stasera.</string>
     <string name="insight_tie_in_with_rain">Porta %1$s stasera, pioggia alle %2$s.</string>
     <!-- "15" / "15 e 30" — preposition "alle" comes from surrounding templates. -->

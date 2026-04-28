@@ -75,7 +75,6 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="insight_condition_thunderstorm">तूफ़ान</string>
     <string name="insight_condition_unknown">अज्ञात</string>
     <!-- "मीटिंग (15 बजे) के लिए कोट साथ लें।" -->
-    <string name="insight_calendar_tie_in">%3$s (%2$s) के लिए %1$s साथ लें।</string>
     <string name="insight_tie_in">आज रात %1$s साथ लें।</string>
     <string name="insight_tie_in_with_rain">आज रात %1$s साथ लें, %2$s बजे बारिश।</string>
     <!-- "15" — postposition "बजे" comes from insight_precip_at_time wrapper. -->

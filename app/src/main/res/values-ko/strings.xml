@@ -450,7 +450,6 @@ displayed label localizes.
     <string name="insight_condition_thunderstorm">뇌우</string>
     <string name="insight_condition_unknown">알 수 없음</string>
     <!-- "회의(15시)에 코트 챙기세요." -->
-    <string name="insight_calendar_tie_in">%3$s(%2$s)에 %1$s 챙기세요.</string>
     <string name="insight_tie_in">오늘 밤 %1$s 챙기세요.</string>
     <string name="insight_tie_in_with_rain">오늘 밤 %1$s 챙기세요, %2$s경에 비.</string>
     <!-- "15시" / "15시 30분" — Korean spoken time; postposition "경에" comes from insight_precip_at_time. -->

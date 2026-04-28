@@ -71,7 +71,6 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_snow">Śnieg</string>
     <string name="insight_condition_thunderstorm">Burza</string>
     <string name="insight_condition_unknown">Nieznane</string>
-    <string name="insight_calendar_tie_in">Weź %1$s na %3$s o %2$s.</string>
     <string name="insight_tie_in">Weź %1$s wieczorem.</string>
     <string name="insight_tie_in_with_rain">Weź %1$s wieczorem, deszcz o %2$s.</string>
     <!-- "15" — preposition "o" comes from surrounding templates. -->

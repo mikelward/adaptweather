@@ -72,7 +72,6 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_snow">Snö</string>
     <string name="insight_condition_thunderstorm">Åskväder</string>
     <string name="insight_condition_unknown">Okänt</string>
-    <string name="insight_calendar_tie_in">Ta med %1$s till din %3$s klockan %2$s.</string>
     <string name="insight_tie_in">Ta med %1$s i kväll.</string>
     <string name="insight_tie_in_with_rain">Ta med %1$s i kväll, regn klockan %2$s.</string>
     <!-- "15" — "klockan" comes from surrounding templates. -->

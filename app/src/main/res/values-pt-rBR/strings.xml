@@ -439,7 +439,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_condition_snow">Neve</string>
     <string name="insight_condition_thunderstorm">Tempestade</string>
     <string name="insight_condition_unknown">Desconhecido</string>
-    <string name="insight_calendar_tie_in">Leve %1$s para seu %3$s às %2$s.</string>
     <string name="insight_tie_in">Leve %1$s esta noite.</string>
     <string name="insight_tie_in_with_rain">Leve %1$s esta noite, chuva às %2$s.</string>
     <!-- "15h" / "15h30" — Brazilian Portuguese hour notation, TTS reads naturally. -->
