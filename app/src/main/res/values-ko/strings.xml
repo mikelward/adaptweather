@@ -11,6 +11,18 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="settings_tts_voice_locale_ko_kr">한국어 (대한민국)</string>
     <string name="settings_tts_voice_locale_label">언어</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">설정</string>
+    <string name="settings_back">뒤로</string>
+
+    <string name="settings_root_voice">음성</string>
+    <string name="settings_root_schedule">일정</string>
+    <string name="settings_root_region">지역</string>
+    <string name="settings_root_clothes">옷</string>
+    <string name="settings_root_api_keys">API 키</string>
+    <string name="settings_root_data_sources">데이터 소스</string>
+    <string name="settings_root_about">정보</string>
+
     <string name="garment_sweater">스웨터</string>
     <string name="garment_hoodie">후드티</string>
     <string name="garment_jacket">재킷</string>
@@ -20,6 +32,10 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="garment_shorts">반바지</string>
     <string name="garment_pants">긴바지</string>
     <string name="garment_jeans">청바지</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">옷 규칙</string>
+    <string name="settings_clothes_description">예보가 이 기준값들 중 하나를 넘으면 해당 옷이 매일 ClothesCast에 표시됩니다.</string>
 
     <string name="settings_clothes_empty">규칙이 없습니다. 추가를 탭하여 만드세요.</string>
     <string name="settings_clothes_add">추가</string>
