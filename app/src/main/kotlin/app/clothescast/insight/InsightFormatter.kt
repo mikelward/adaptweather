@@ -23,8 +23,12 @@ import java.util.Locale
  *
  * Strings live in `values[-xx]/strings.xml`; the formatter only composes them.
  * The injected [resources] is expected to have a Configuration whose locale
- * matches [locale] — call sites use [forRegion] (or [forContext]) to obtain a
- * properly localized Resources for the user's [Region] choice.
+ * resolves the correct translated string bucket for [locale] — call sites use
+ * [forRegion] (or [forContext]) to obtain a properly localized Resources for
+ * the user's [Region] choice. Note: for a small number of languages (currently
+ * Indonesian `id` and Hebrew `he`) Android's resource system still uses legacy
+ * qualifiers (`in`, `iw`), so the Resources locale may differ from [locale];
+ * see [toAndroidResourceLocale].
  *
  * Article picking (English "a sweater" / "an umbrella" / bare "shorts") is
  * locale-specific and dispatched via [ClothesPhraser.forLocale]. Languages
@@ -202,11 +206,22 @@ private fun Context.localizedResources(locale: Locale): Resources {
     // of locales (`values-in`, `values-iw`). Locale.forLanguageTag() returns
     // modern tags (`id`, `he`), and forcing those through setLocale can miss
     // our translated string buckets and fall back to English.
+    // As a result, for Indonesian and Hebrew the Resources locale (`in`/`iw`)
+    // intentionally differs from the InsightFormatter's [locale] field (`id`/`he`).
     val resourcesLocale = locale.toAndroidResourceLocale()
     val config = Configuration(resources.configuration).apply { setLocale(resourcesLocale) }
     return createConfigurationContext(config).resources
 }
 
+/**
+ * Maps modern BCP-47 language codes that Android still represents with legacy
+ * resource-qualifier codes to their legacy equivalents (`id`→`in`, `he`→`iw`),
+ * preserving any country subtag. All other locales are returned unchanged.
+ *
+ * This is intentionally applied only at the resource-lookup boundary so that
+ * [InsightFormatter.locale] (used for logic like article selection and time
+ * formatting) keeps the modern, standards-compliant tag.
+ */
 private fun Locale.toAndroidResourceLocale(): Locale {
     val normalizedLanguage = when (language.lowercase(Locale.ROOT)) {
         "id" -> "in"
