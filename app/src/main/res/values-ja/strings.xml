@@ -238,6 +238,41 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="settings_location_no_results">該当する結果がありません。</string>
 
     <!--
+    Notification channels (system Settings → App → Notifications) and
+    the per-channel notification titles. Three channels: daily, nightly
+    (default + silent variants), weather alerts.
+    -->
+    <string name="notification_channel_daily_insight_name">毎日の ClothesCast</string>
+    <string name="notification_channel_daily_insight_description">あなたが有効にした朝の天気要約です。</string>
+    <string name="notification_daily_insight_title">今日の天気</string>
+
+    <string name="notification_channel_tonight_insight_default_name">夜間の ClothesCast（予定あり）</string>
+    <string name="notification_channel_tonight_insight_default_description">今夜カレンダーに予定があるときの夜の天気要約です。既定の通知音を鳴らします。</string>
+    <string name="notification_channel_tonight_insight_silent_name">夜間の ClothesCast（無音）</string>
+    <string name="notification_channel_tonight_insight_silent_description">予定のない夜の天気要約です。無音で配信され、ロック画面で確認できますが、音は鳴りません。</string>
+    <string name="notification_tonight_insight_title">今夜の天気</string>
+
+    <string name="notification_channel_weather_alerts_name">悪天候警報</string>
+    <string name="notification_channel_weather_alerts_description">あなたの地域の重大または極端な気象現象に対する高優先度の警報です。日次取得で検出され次第、配信されます。</string>
+    <string name="notification_weather_alert_title">気象警報：%1$s</string>
+
+    <!-- Notification-permission card. -->
+    <string name="settings_notification_permission_title">通知がブロックされています</string>
+    <string name="settings_notification_permission_description">通知の許可がないと、毎日の ClothesCast の届け先がありません。許可すれば、ClothesCast は明日の朝に表示されます。</string>
+    <string name="settings_notification_permission_grant">通知を許可</string>
+
+    <!-- Calendar opt-in card. Description preserves the privacy
+         disclosure ("説明、参加者、場所は読み取られますが端末から外には出ません").
+         Quotes around the nested example use Japanese corner-bracket
+         「…」. -->
+    <string name="settings_calendar_title">カレンダー</string>
+    <string name="settings_calendar_use_events">今日のカレンダーの予定を使用</string>
+    <string name="settings_calendar_description_off">有効にすると、ClothesCast は端末のカレンダーから今日の予定を読み取り、朝の ClothesCast が特定の予定に合わせて服装を提案できるようになります — 例：「午後3時の公園ランニングのために傘を持参」。予定のタイトルと時刻のみが使用され、説明、参加者、場所は読み取られますが端末から外には出ません。</string>
+    <string name="settings_calendar_description_on">朝の ClothesCast を充実させるため、端末のカレンダーから今日の予定を読み取っています。要約にはタイトルと時刻のみを使用し、説明や参加者は使用しません。すべて端末内に留まります。</string>
+    <string name="settings_calendar_grant_permission">カレンダーへのアクセスを許可</string>
+    <string name="settings_calendar_open_settings">カレンダーへのアクセスが拒否されました。システム設定で許可してください。</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ます-form (friendly-polite) throughout — that's the standard
