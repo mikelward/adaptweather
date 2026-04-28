@@ -87,6 +87,31 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="widget_empty_title">Ancora nessun outfit</string>
     <string name="widget_empty_subtitle">Tocca per aprire ClothesCast</string>
 
+    <!--
+    Onboarding flow — first-run welcome, two permission steps, Gemini
+    API-key step. Italian forces gender agreement on predicate adjectives;
+    the welcome uses the conventional masc-default "Benvenuto" and the
+    subtitle rephrases "you're set" as the invariable "sei a posto" to
+    avoid forcing a gender on the user.
+    -->
+    <string name="onboarding_title">Benvenuto in ClothesCast</string>
+    <string name="onboarding_subtitle">Due scelte rapide e sei a posto. Tutto il resto ha un valore predefinito sensato che potrai regolare più tardi nelle impostazioni.</string>
+    <string name="onboarding_notifications_title">Notifiche</string>
+    <string name="onboarding_notifications_description">Necessarie per recapitare il tuo ClothesCast quotidiano. Concedile una volta e ClothesCast apparirà domattina.</string>
+    <string name="onboarding_notifications_grant">Concedi le notifiche</string>
+    <string name="onboarding_location_title">Posizione</string>
+    <string name="onboarding_location_description">Serve per recuperare la previsione corretta. Concedendo la posizione, ClothesCast può leggere ogni mattina la posizione approssimativa del tuo dispositivo; altrimenti scegli manualmente una città.</string>
+    <string name="onboarding_location_grant">Concedi l\'accesso alla posizione</string>
+    <string name="onboarding_location_denied_hint">Accesso alla posizione negato. Puoi invece scegliere una città manualmente.</string>
+    <string name="onboarding_location_enter_manual">Inserisci la posizione manualmente</string>
+    <string name="onboarding_location_using_device">Ogni mattina usiamo la posizione del tuo dispositivo.</string>
+
+    <string name="onboarding_gemini_title">Chiave API Gemini</string>
+    <string name="onboarding_gemini_description">Usata da ClothesCast per le voci parlate e la generazione delle previsioni. Ottienine una gratis su aistudio.google.com. La chiave è cifrata a riposo nell\'Android Keystore.</string>
+    <string name="onboarding_step_done">Fatto</string>
+    <string name="onboarding_skip">Salta per ora</string>
+    <string name="onboarding_continue">Continua</string>
+
     <string name="insight_lead_today">Oggi</string>
     <string name="insight_lead_tonight">Stasera</string>
     <string name="insight_band_single">%1$s sarà %2$s.</string>
