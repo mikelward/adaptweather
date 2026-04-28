@@ -43,7 +43,6 @@ only the displayed label localizes.
     <string name="settings_root_schedule">Расписание</string>
     <string name="settings_root_region">Регион</string>
     <string name="settings_root_clothes">Одежда</string>
-    <string name="settings_root_api_keys">Ключи API</string>
     <string name="settings_root_data_sources">Источники данных</string>
     <string name="settings_root_about">О приложении</string>
 

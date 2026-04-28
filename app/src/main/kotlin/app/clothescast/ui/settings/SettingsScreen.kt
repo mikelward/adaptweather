@@ -31,7 +31,8 @@ import app.clothescast.R
 /**
  * One sub-page per concern. Order in the enum matches the order shown in the
  * root list: the most-frequently-tweaked rules at the top, set-once
- * configuration in the middle, and API keys / data sources at the bottom.
+ * configuration in the middle, and data sources at the bottom. BYOK keys live
+ * inside Voice — the only thing they gate is cloud TTS.
  *
  * About is reachable as a deep-link target only — it's surfaced from Today's
  * overflow menu, not from the settings root list.
@@ -39,14 +40,13 @@ import app.clothescast.R
  * Public so callers (e.g. the onboarding flow, Today's overflow) can deep-link
  * into a specific sub-page via [SettingsScreen]'s `initialRoute` param.
  */
-enum class SettingsRoute(@StringRes val titleRes: Int) {
+enum class SettingsRoute(@StringRes val titleRes: Int, @StringRes val subtitleRes: Int? = null) {
     Root(R.string.settings_title),
-    Schedule(R.string.settings_root_schedule),
-    Clothes(R.string.settings_root_clothes),
-    Region(R.string.settings_root_region),
-    Voice(R.string.settings_root_voice),
-    ApiKeys(R.string.settings_root_api_keys),
-    DataSources(R.string.settings_root_data_sources),
+    Schedule(R.string.settings_root_schedule, R.string.settings_root_schedule_subtitle),
+    Clothes(R.string.settings_root_clothes, R.string.settings_root_clothes_subtitle),
+    Region(R.string.settings_root_region, R.string.settings_root_region_subtitle),
+    Voice(R.string.settings_root_voice, R.string.settings_root_voice_subtitle),
+    DataSources(R.string.settings_root_data_sources, R.string.settings_root_data_sources_subtitle),
     About(R.string.settings_root_about),
 }
 
@@ -155,15 +155,6 @@ fun SettingsScreen(
                 onSetDeviceVoice = viewModel::setDeviceVoice,
                 onSetVoiceLocale = viewModel::setVoiceLocale,
                 onSetGeminiKey = viewModel::setApiKey,
-                onSetOpenAiKey = viewModel::setOpenAiKey,
-                onSetElevenLabsKey = viewModel::setElevenLabsKey,
-            )
-            SettingsRoute.ApiKeys -> ApiKeysContent(
-                geminiConfigured = state.apiKeyConfigured,
-                openAiConfigured = state.openAiKeyConfigured,
-                elevenLabsConfigured = state.elevenLabsKeyConfigured,
-                padding = padding,
-                onSetGeminiKey = viewModel::setApiKey,
                 onClearGeminiKey = viewModel::clearApiKey,
                 onSetOpenAiKey = viewModel::setOpenAiKey,
                 onClearOpenAiKey = viewModel::clearOpenAiKey,
@@ -205,6 +196,7 @@ internal fun SettingsRoot(
             .forEach { destination ->
                 SettingsNavRow(
                     title = stringResource(destination.titleRes),
+                    subtitle = destination.subtitleRes?.let { stringResource(it) },
                     onClick = { onNavigate(destination) },
                 )
             }

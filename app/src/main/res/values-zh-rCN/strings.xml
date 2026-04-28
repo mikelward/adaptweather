@@ -44,7 +44,6 @@ label localizes.
     <string name="settings_root_schedule">计划</string>
     <string name="settings_root_region">地区</string>
     <string name="settings_root_clothes">服装</string>
-    <string name="settings_root_api_keys">API 密钥</string>
     <string name="settings_root_data_sources">数据源</string>
     <string name="settings_root_about">关于</string>
 
