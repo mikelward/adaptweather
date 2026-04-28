@@ -1,5 +1,6 @@
 package app.clothescast.insight
 
+import android.content.res.Configuration
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.core.domain.model.AlertClause
@@ -11,6 +12,7 @@ import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherCondition
 import io.kotest.matchers.shouldBe
@@ -206,6 +208,23 @@ class InsightFormatterTest {
         )
         out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer than yesterday. " +
             "Wear a sweater and umbrella. Rain at 3pm."
+    }
+
+    @Test
+    fun `region system follows the context locale instead of process default`() {
+        val originalDefault = Locale.getDefault()
+        Locale.setDefault(Locale.ENGLISH)
+        try {
+            val deConfig = Configuration(context.resources.configuration).apply {
+                setLocale(Locale.GERMANY)
+            }
+            val germanContext = context.createConfigurationContext(deConfig)
+
+            InsightFormatter.forRegion(germanContext, Region.SYSTEM).format(summary()) shouldBe
+                "Heute wird es mild."
+        } finally {
+            Locale.setDefault(originalDefault)
+        }
     }
 
     // ---------------------------------------------------------------------
