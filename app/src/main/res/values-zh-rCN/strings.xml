@@ -78,6 +78,31 @@ Chinese uses the ideographic period (。) for sentence endings.
     <string name="settings_delivery_notification_and_tts">通知和语音朗读</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "添加 API 密钥" dialog.
+    -->
+    <string name="settings_tts_engine_title">语音引擎</string>
+    <string name="settings_tts_engine_description">在线引擎（Gemini、OpenAI、ElevenLabs）听起来更自然，但在朗读时需要联网，并使用你的 API 密钥进行合成（每次朗读 ClothesCast 时调用一次）。如果选定的引擎失败，会回退到设备语音。</string>
+    <string name="settings_tts_engine_device">设备（离线，免费）</string>
+    <string name="settings_tts_engine_gemini">Gemini（高质量，在线）</string>
+    <string name="settings_tts_engine_openai">OpenAI（高质量，在线）</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs（最高质量，在线）</string>
+
+    <string name="settings_tts_voice_label">语音</string>
+    <string name="settings_tts_voice_dismiss">完成</string>
+    <string name="settings_tts_voice_locale_description">设置朗读语音的口音。不改变显示文本。</string>
+    <string name="settings_tts_voice_locale_system">跟随手机语言</string>
+
+    <string name="settings_tts_test">测试语音</string>
+    <string name="settings_tts_test_in_flight">测试中 — 请稍候…</string>
+    <string name="settings_tts_no_key_hint">未配置 %1$s 密钥 — 添加一个以启用此引擎。</string>
+    <string name="settings_tts_add_api_key">添加 API 密钥</string>
+    <string name="settings_tts_add_api_key_title">添加 %1$s API 密钥</string>
+    <string name="settings_tts_add_api_key_save">保存</string>
+    <string name="settings_tts_add_api_key_cancel">取消</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Casual register: 你 (informal "you") rather than 您 (formal),
