@@ -16,4 +16,10 @@ full re-translation.
          (en-US) on disk; only the displayed label changes. -->
     <string name="garment_sweater">Jumper</string>
     <string name="garment_pants">Trousers</string>
+
+    <!-- "Kilometres" with the British -re ending. The baseline spells it
+         "Kilometers" (en-US); the other metric-using English variants
+         (en-AU / en-CA / en-ZA) inherit this en-rGB form via CLDR
+         locale-similarity — they all descend from en-001 the same way. -->
+    <string name="settings_distance_unit_kilometers">Kilometres</string>
 </resources>

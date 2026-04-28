@@ -231,7 +231,7 @@
     <string name="settings_temperature_unit_fahrenheit">Fahrenheit (°F)</string>
 
     <string name="settings_distance_unit_title">Distance unit</string>
-    <string name="settings_distance_unit_kilometers">Kilometres</string>
+    <string name="settings_distance_unit_kilometers">Kilometers</string>
     <string name="settings_distance_unit_miles">Miles</string>
 
     <string name="settings_clothes_title">Clothes rules</string>
