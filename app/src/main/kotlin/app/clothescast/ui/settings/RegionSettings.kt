@@ -50,8 +50,11 @@ internal fun RegionContent(
             // verify what the app currently resolves to (e.g. "en-GB").
             // Use the context resources locale so this updates with runtime
             // app-language changes, instead of freezing the process default.
+            // Strip Unicode extensions (e.g. `-u-fw-mon` from a Monday-week
+            // device preference) — they're irrelevant to language/region and
+            // just clutter the picker label.
             val uiLocale = LocalContext.current.resourcesLocale()
-            val systemTag = remember(uiLocale) { uiLocale.toLanguageTag() }
+            val systemTag = remember(uiLocale) { uiLocale.stripExtensions().toLanguageTag() }
             // Sort by the resolved display label using a locale-aware collator
             // so the order reads naturally in the user's UI language. SYSTEM
             // stays pinned at the top — it's a "follow device" option, not a

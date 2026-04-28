@@ -341,7 +341,10 @@ private fun VoiceLocalePicker(
     // Don't memoize without a key: Locale.getDefault() can change at runtime
     // (device language switch) and we want the SYSTEM row to reflect the
     // current resolved tag immediately.
-    val systemTag = VoiceLocale.SYSTEM.resolve().toLanguageTag()
+    // Strip Unicode extensions (e.g. `-u-fw-mon` from a Monday-week device
+    // preference) — they're irrelevant to the spoken accent and just clutter
+    // the picker label.
+    val systemTag = VoiceLocale.SYSTEM.resolve().stripExtensions().toLanguageTag()
     val labelFor: @Composable (VoiceLocale) -> String = { option ->
         val base = stringResource(voiceLocaleLabel(option))
         if (option == VoiceLocale.SYSTEM) "$base ($systemTag)" else base
