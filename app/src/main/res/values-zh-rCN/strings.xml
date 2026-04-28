@@ -103,6 +103,91 @@ Chinese uses the ideographic period (。) for sentence endings.
     <string name="settings_tts_add_api_key_cancel">取消</string>
 
     <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale
+    labels in zh-CN style ("英语（美国）", "法语（加拿大）", "中文（简体）", …)
+    using full-width parens. The locale tag stored on disk (en-US /
+    fr-CA / zh-CN) is unchanged; only the displayed label localizes.
+    -->
+    <string name="settings_region_language_title">语言</string>
+    <string name="settings_region_language_description">设置显示文本和通知的语言。</string>
+    <string name="settings_region_language_system">跟随系统语言</string>
+    <string name="settings_region_language_en_us">英语（美国）</string>
+    <string name="settings_region_language_en_gb">英语（英国）</string>
+    <string name="settings_region_language_en_au">英语（澳大利亚）</string>
+    <string name="settings_region_language_en_ca">英语（加拿大）</string>
+    <string name="settings_region_language_en_za">英语（南非）</string>
+    <string name="settings_region_language_de_de">德语（德国）</string>
+    <string name="settings_region_language_fr_fr">法语（法国）</string>
+    <string name="settings_region_language_fr_ca">法语（加拿大）</string>
+    <string name="settings_region_language_it_it">意大利语（意大利）</string>
+    <string name="settings_region_language_es_es">西班牙语（西班牙）</string>
+    <string name="settings_region_language_es_mx">西班牙语（墨西哥）</string>
+    <string name="settings_region_language_ru_ru">俄语（俄罗斯）</string>
+    <string name="settings_region_language_pl_pl">波兰语（波兰）</string>
+    <string name="settings_region_language_hr_hr">克罗地亚语（克罗地亚）</string>
+    <string name="settings_region_language_uk_ua">乌克兰语（乌克兰）</string>
+    <string name="settings_region_language_pt_br">葡萄牙语（巴西）</string>
+    <string name="settings_region_language_nl_nl">荷兰语（荷兰）</string>
+    <string name="settings_region_language_sv_se">瑞典语（瑞典）</string>
+    <string name="settings_region_language_tr_tr">土耳其语（土耳其）</string>
+    <string name="settings_region_language_id_id">印尼语（印度尼西亚）</string>
+    <string name="settings_region_language_fil_ph">菲律宾语（菲律宾）</string>
+    <string name="settings_region_language_vi_vn">越南语（越南）</string>
+    <string name="settings_region_language_hi_in">印地语（印度）</string>
+    <string name="settings_region_language_bn_bd">孟加拉语（孟加拉国）</string>
+    <string name="settings_region_language_ja_jp">日语（日本）</string>
+    <string name="settings_region_language_ko_kr">韩语（韩国）</string>
+    <string name="settings_region_language_ar_sa">阿拉伯语（沙特阿拉伯）</string>
+    <string name="settings_region_language_he_il">希伯来语（以色列）</string>
+    <string name="settings_region_language_fa_ir">波斯语（伊朗）</string>
+
+    <!-- Region screen — units pickers. -->
+    <string name="settings_temperature_unit_title">温度单位</string>
+    <string name="settings_temperature_unit_celsius">摄氏度（°C）</string>
+    <string name="settings_temperature_unit_fahrenheit">华氏度（°F）</string>
+    <string name="settings_distance_unit_title">距离单位</string>
+    <string name="settings_distance_unit_kilometers">公里</string>
+    <string name="settings_distance_unit_miles">英里</string>
+
+    <!--
+    Voice locale picker labels — same Chinese language-name translations
+    as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface.
+    -->
+    <string name="settings_tts_voice_locale_en_us">英语（美国）</string>
+    <string name="settings_tts_voice_locale_en_gb">英语（英国）</string>
+    <string name="settings_tts_voice_locale_en_au">英语（澳大利亚）</string>
+    <string name="settings_tts_voice_locale_en_ca">英语（加拿大）</string>
+    <string name="settings_tts_voice_locale_en_za">英语（南非）</string>
+    <string name="settings_tts_voice_locale_de_de">德语（德国）</string>
+    <string name="settings_tts_voice_locale_fr_fr">法语（法国）</string>
+    <string name="settings_tts_voice_locale_fr_ca">法语（加拿大）</string>
+    <string name="settings_tts_voice_locale_it_it">意大利语（意大利）</string>
+    <string name="settings_tts_voice_locale_es_es">西班牙语（西班牙）</string>
+    <string name="settings_tts_voice_locale_es_mx">西班牙语（墨西哥）</string>
+    <string name="settings_tts_voice_locale_ru_ru">俄语（俄罗斯）</string>
+    <string name="settings_tts_voice_locale_pl_pl">波兰语（波兰）</string>
+    <string name="settings_tts_voice_locale_hr_hr">克罗地亚语（克罗地亚）</string>
+    <string name="settings_tts_voice_locale_uk_ua">乌克兰语（乌克兰）</string>
+    <string name="settings_tts_voice_locale_pt_br">葡萄牙语（巴西）</string>
+    <string name="settings_tts_voice_locale_nl_nl">荷兰语（荷兰）</string>
+    <string name="settings_tts_voice_locale_sv_se">瑞典语（瑞典）</string>
+    <string name="settings_tts_voice_locale_tr_tr">土耳其语（土耳其）</string>
+    <string name="settings_tts_voice_locale_id_id">印尼语（印度尼西亚）</string>
+    <string name="settings_tts_voice_locale_fil_ph">菲律宾语（菲律宾）</string>
+    <string name="settings_tts_voice_locale_vi_vn">越南语（越南）</string>
+    <string name="settings_tts_voice_locale_hi_in">印地语（印度）</string>
+    <string name="settings_tts_voice_locale_bn_bd">孟加拉语（孟加拉国）</string>
+    <string name="settings_tts_voice_locale_ja_jp">日语（日本）</string>
+    <string name="settings_tts_voice_locale_ko_kr">韩语（韩国）</string>
+    <string name="settings_tts_voice_locale_ar_sa">阿拉伯语（沙特阿拉伯）</string>
+    <string name="settings_tts_voice_locale_he_il">希伯来语（以色列）</string>
+    <string name="settings_tts_voice_locale_fa_ir">波斯语（伊朗）</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Casual register: 你 (informal "you") rather than 您 (formal),
