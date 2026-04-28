@@ -257,6 +257,41 @@ the rest of the app stays in English.
     <string name="settings_location_no_results">Keine Treffer.</string>
 
     <!--
+    Notification channels (system Settings → App → Notifications) and
+    the per-channel notification titles. Three channels: daily, nightly
+    (default + silent variants), and weather alerts.
+    -->
+    <string name="notification_channel_daily_insight_name">Täglicher ClothesCast</string>
+    <string name="notification_channel_daily_insight_description">Die morgendliche Wetterzusammenfassung, die du aktiviert hast.</string>
+    <string name="notification_daily_insight_title">Heutiges Wetter</string>
+
+    <string name="notification_channel_tonight_insight_default_name">Nächtlicher ClothesCast (mit Terminen)</string>
+    <string name="notification_channel_tonight_insight_default_description">Die abendliche Wetterzusammenfassung, wenn du heute Abend Termine hast. Spielt deinen Standard-Benachrichtigungston ab.</string>
+    <string name="notification_channel_tonight_insight_silent_name">Nächtlicher ClothesCast (lautlos)</string>
+    <string name="notification_channel_tonight_insight_silent_description">Die abendliche Wetterzusammenfassung an freien Abenden. Wird lautlos zugestellt — du kannst sie auf dem Sperrbildschirm sehen, sie macht aber keinen Ton.</string>
+    <string name="notification_tonight_insight_title">Wetter heute Abend</string>
+
+    <string name="notification_channel_weather_alerts_name">Unwetterwarnungen</string>
+    <string name="notification_channel_weather_alerts_description">Hochpriorisierte Warnungen für schwere oder extreme Wetterereignisse in deiner Region. Werden gesendet, sobald sie beim täglichen Abruf erkannt werden.</string>
+    <string name="notification_weather_alert_title">Wetterwarnung: %1$s</string>
+
+    <!-- Notification-permission card (Settings → top of any screen if
+         POST_NOTIFICATIONS is denied). -->
+    <string name="settings_notification_permission_title">Benachrichtigungen sind blockiert</string>
+    <string name="settings_notification_permission_description">Ohne Benachrichtigungserlaubnis hat dein täglicher ClothesCast nirgendwo hin. Erlaube sie, damit ClothesCast morgen früh erscheinen kann.</string>
+    <string name="settings_notification_permission_grant">Benachrichtigungen erlauben</string>
+
+    <!-- Calendar opt-in card (Settings → Schedule → Calendar). The
+         description explicitly calls out what is and isn't read off-device,
+         keeping the privacy disclosure in German parallel to the English. -->
+    <string name="settings_calendar_title">Kalender</string>
+    <string name="settings_calendar_use_events">Heutige Kalendertermine nutzen</string>
+    <string name="settings_calendar_description_off">Wenn aktiviert, liest ClothesCast die heutigen Termine aus deinem Gerätekalender, damit dein morgendlicher ClothesCast Vorschläge zu konkreten Terminen machen kann — zum Beispiel „Denk an einen Regenschirm für deinen Lauf im Park um 15 Uhr“. Nur Termintitel und Uhrzeiten werden genutzt; Beschreibungen, Teilnehmer und Orte werden gelesen, verlassen aber nie das Gerät.</string>
+    <string name="settings_calendar_description_on">Liest die heutigen Termine aus deinem Gerätekalender, um deinen morgendlichen ClothesCast zu ergänzen. In der gerenderten Zusammenfassung werden nur Titel und Uhrzeiten verwendet; Beschreibungen und Teilnehmer nicht. Alles bleibt auf dem Gerät.</string>
+    <string name="settings_calendar_grant_permission">Kalenderzugriff erlauben</string>
+    <string name="settings_calendar_open_settings">Kalenderzugriff abgelehnt. Erlaube ihn in den System-Einstellungen.</string>
+
+    <!--
     Today screen — top-bar, refresh toasts, empty state, generation timestamp,
     outfit card, hourly chart, confidence chip, work-status banner. Tone is
     Du-form imperative (intimate / spousal register), matching the app's
