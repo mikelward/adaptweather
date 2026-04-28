@@ -76,6 +76,31 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_delivery_notification_and_tts">Notificação e leitura em voz alta</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "Adicionar chave API" dialog.
+    -->
+    <string name="settings_tts_engine_title">Motor de voz</string>
+    <string name="settings_tts_engine_description">Os motores online (Gemini, OpenAI, ElevenLabs) soam muito mais naturais, mas exigem uma chamada de rede no momento da fala e usam sua chave API para a síntese (uma chamada curta por ClothesCast lido). Volta para a voz do aparelho se o motor escolhido falhar.</string>
+    <string name="settings_tts_engine_device">Aparelho (offline, grátis)</string>
+    <string name="settings_tts_engine_gemini">Gemini (alta qualidade, online)</string>
+    <string name="settings_tts_engine_openai">OpenAI (alta qualidade, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (qualidade máxima, online)</string>
+
+    <string name="settings_tts_voice_label">Voz</string>
+    <string name="settings_tts_voice_dismiss">Concluído</string>
+    <string name="settings_tts_voice_locale_description">Define o sotaque da voz falada. Não altera o texto exibido.</string>
+    <string name="settings_tts_voice_locale_system">Seguir o idioma do telefone</string>
+
+    <string name="settings_tts_test">Testar voz</string>
+    <string name="settings_tts_test_in_flight">Testando — aguarde…</string>
+    <string name="settings_tts_no_key_hint">Nenhuma chave %1$s configurada — adicione uma para habilitar este motor.</string>
+    <string name="settings_tts_add_api_key">Adicionar chave API</string>
+    <string name="settings_tts_add_api_key_title">Adicionar chave API %1$s</string>
+    <string name="settings_tts_add_api_key_save">Salvar</string>
+    <string name="settings_tts_add_api_key_cancel">Cancelar</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Brazilian Portuguese você-form (3rd-person singular
