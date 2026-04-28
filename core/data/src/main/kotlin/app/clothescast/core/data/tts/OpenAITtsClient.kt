@@ -18,10 +18,11 @@ import kotlinx.serialization.json.JsonPrimitive
 
 // `gpt-4o-mini-tts` is OpenAI's current TTS-of-record (March 2025). The
 // upgrade from `tts-1` is a per-clip-quality win — positioned by OpenAI as
-// comparable to `tts-1-hd`. Pricing is $0.60/M text input tokens + $12/M
-// audio output tokens, which works out to ~$0.015/min of audio (roughly
-// 35-40% more than tts-1's per-character rate); for clothescast's two-
-// clips-a-day usage that's ~$0.003/day, ~$0.09/month on a BYOK key.
+// comparable to `tts-1-hd`. Pricing, as of April 2026, is $0.60/M text
+// input tokens + $12/M audio output tokens, which works out to ~$0.015/min
+// of audio (roughly 35-40% more than tts-1's per-character rate); for
+// ClothesCast's two-clips-a-day usage that's ~$0.003/day, ~$0.09/month on
+// a BYOK key.
 //
 // Earlier work tried to steer accent via the `instructions` field on this
 // model, but field-testing confirmed the voice's baked-in accent dominates
