@@ -75,7 +75,8 @@ internal class EnglishClothesPhraser(private val resources: Resources) : Clothes
     // article picker also wants to see the *display* string (en-GB "trousers"
     // ends in 's' → bare; en-GB "umbrella" stays vowel-led → "an umbrella").
     private fun translate(item: String): String =
-        resources.localizedGarmentLabel(item)?.lowercase(Locale.ENGLISH) ?: item
+        resources.localizedGarmentLabel(item)?.lowercase(Locale.ENGLISH)
+            ?: item.trim().lowercase(Locale.ENGLISH)
 }
 
 /**

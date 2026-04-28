@@ -85,6 +85,12 @@ class InsightFormatterTest {
     }
 
     @Test
+    fun `clothes normalizes capitalized english items mid-sentence`() {
+        subject.format(summary(clothes = ClothesClause(listOf("Sweater", "Jacket")))) shouldBe
+            "Today will be mild. Wear a sweater and jacket."
+    }
+
+    @Test
     fun `clothes drops the article on plural-looking items`() {
         subject.format(summary(clothes = ClothesClause(listOf("shorts")))) shouldBe
             "Today will be mild. Wear shorts."
