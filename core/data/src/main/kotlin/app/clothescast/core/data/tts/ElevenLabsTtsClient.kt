@@ -19,17 +19,27 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
-// `eleven_multilingual_v2` is ElevenLabs' "1 character = 1 credit" model
-// (their Flash/Turbo variants run at 0.5 credits/char but trade quality
-// for latency, which we don't need for an asynchronous morning brief).
-// Pricing as of April 2026 is plan-based rather than purely metered: the
-// free tier covers 10k credits/month (no commercial use), Starter is
-// $5/mo for 30k credits, Creator $22/mo for 100k. ClothesCast's two
-// ~100-char clips/day works out to ~6k credits/month — comfortably inside
-// the free tier and ~5% of Starter, so on a BYOK key the per-clip
-// marginal cost is effectively zero until the user overruns their plan's
-// allotment.
-const val DEFAULT_ELEVENLABS_TTS_MODEL: String = "eleven_multilingual_v2"
+// `eleven_turbo_v2_5` is the modern multilingual model — half the credit
+// cost of `eleven_multilingual_v2` (0.5 vs. 1.0 credits/char), broader
+// language coverage, and noticeably lower first-byte latency. Field reports
+// flagged the multilingual_v2 path as "speaking too fast / dropping
+// letters" and turbo-v2.5's pacing is more relaxed in practice; combined
+// with the speed/stability `voice_settings` we now send, that's a
+// meaningful clarity win.
+//
+// We previously used multilingual_v2 because the Turbo line was positioned
+// as a quality-for-latency trade. v2.5 closes that gap — community and
+// vendor benchmarks place it at-or-better than multilingual_v2 on stock
+// voices, and listening tests for short briefings (1–2 sentences, no
+// nuance) don't surface a deficit. Worst case the user notices and picks
+// Gemini or device TTS; the engine is BYOK and user-switchable.
+//
+// Pricing as of April 2026 is plan-based: free tier covers 10k credits/mo
+// (no commercial use), Starter $5/mo for 30k, Creator $22/mo for 100k.
+// At 0.5 credits/char ClothesCast's two ~100-char clips/day works out to
+// ~3k credits/mo — half the multilingual_v2 footprint, well inside the
+// free tier on a BYOK key.
+const val DEFAULT_ELEVENLABS_TTS_MODEL: String = "eleven_turbo_v2_5"
 const val DEFAULT_ELEVENLABS_TTS_VOICE: String = "EXAVITQu4vr4xnSDxMaL" // Sarah
 
 // Below ElevenLabs' stock 1.0 because field reports flagged the default pace
