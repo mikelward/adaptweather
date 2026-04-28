@@ -338,7 +338,10 @@ private fun VoiceLocalePicker(
     // default), which can differ from the app UI language when the user sets
     // an in-app language override.
     val uiLocale = LocalContext.current.resourcesLocale()
-    val systemTag = remember { VoiceLocale.SYSTEM.resolve().toLanguageTag() }
+    // Don't memoize without a key: Locale.getDefault() can change at runtime
+    // (device language switch) and we want the SYSTEM row to reflect the
+    // current resolved tag immediately.
+    val systemTag = VoiceLocale.SYSTEM.resolve().toLanguageTag()
     val labelFor: @Composable (VoiceLocale) -> String = { option ->
         val base = stringResource(voiceLocaleLabel(option))
         if (option == VoiceLocale.SYSTEM) "$base ($systemTag)" else base
