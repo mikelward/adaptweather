@@ -2,6 +2,7 @@ package app.clothescast.insight
 
 import android.content.res.Resources
 import app.clothescast.R
+import app.clothescast.core.domain.model.Garment
 import java.util.Locale
 
 /**
@@ -10,7 +11,9 @@ import java.util.Locale
  * is grammar-specific (English needs "a" / "an" only on the first item; German
  * articles depend on grammatical gender; languages with no articles need
  * nothing) so each language plugs in its own [ClothesPhraser]. Unknown locales
- * fall through to [BareClothesPhraser], which just lists items without articles.
+ * fall through to [ResourceClothesPhraser], which translates known garment keys
+ * via the current locale's `garment_*` string resources and joins with the
+ * locale's `insight_clothes_join_*` templates.
  */
 internal interface ClothesPhraser {
     /** Article-prefixed form of a single item, used by the calendar tie-in clause. */
@@ -24,7 +27,7 @@ internal interface ClothesPhraser {
             when (locale.language) {
                 "en" -> EnglishClothesPhraser(resources)
                 "de" -> GermanClothesPhraser(resources)
-                else -> BareClothesPhraser()
+                else -> ResourceClothesPhraser(resources)
             }
     }
 }
@@ -143,9 +146,62 @@ internal class GermanClothesPhraser(private val resources: Resources) : ClothesP
 }
 
 /**
- * Fallback for locales without a dedicated phraser. Lists items as a comma /
- * and-joined sequence with no articles. Good enough for a first-pass
- * translation — a language-specific phraser can override later.
+ * Generic phraser for locales with no complex article grammar (Chinese, Hindi,
+ * Japanese, Korean, French, Spanish, etc.). Translates known garment keys via
+ * the current locale's `garment_*` Android string resources, applies the
+ * locale's `insight_clothes_article_a` template for [withArticle] (a no-op
+ * passthrough `%1$s` for languages without articles), and joins using the
+ * locale's `insight_clothes_join_*` templates.
+ *
+ * Unknown garment keys fall through unchanged — better to echo the source key
+ * than guess wrong. Replaces [BareClothesPhraser] in [ClothesPhraser.forLocale]
+ * so all non-en/de locales get translated garment names and locale-correct list
+ * punctuation rather than raw English keys comma-joined.
+ */
+internal class ResourceClothesPhraser(private val resources: Resources) : ClothesPhraser {
+    override fun withArticle(item: String): String =
+        resources.getString(R.string.insight_clothes_article_a, translate(item))
+
+    override fun joinItems(items: List<String>): String {
+        val translated = items.map(::translate)
+        return when (translated.size) {
+            0 -> ""
+            1 -> translated[0]
+            2 -> resources.getString(R.string.insight_clothes_join_two, translated[0], translated[1])
+            else -> resources.getString(
+                R.string.insight_clothes_join_many,
+                translated[0],
+                translated.subList(1, translated.size - 1).joinToString(", "),
+                translated.last(),
+            )
+        }
+    }
+
+    private fun translate(item: String): String {
+        val garment = Garment.fromKey(item) ?: return item
+        val resId = GARMENT_RES_IDS[garment] ?: return item
+        return resources.getString(resId)
+    }
+
+    private companion object {
+        val GARMENT_RES_IDS: Map<Garment, Int> = mapOf(
+            Garment.SWEATER to R.string.garment_sweater,
+            Garment.HOODIE to R.string.garment_hoodie,
+            Garment.JACKET to R.string.garment_jacket,
+            Garment.COAT to R.string.garment_coat,
+            Garment.TSHIRT to R.string.garment_tshirt,
+            Garment.SHIRT to R.string.garment_shirt,
+            Garment.SHORTS to R.string.garment_shorts,
+            Garment.PANTS to R.string.garment_pants,
+            Garment.JEANS to R.string.garment_jeans,
+        )
+    }
+}
+
+/**
+ * Bare comma-join with no translation. Used in tests; not returned from
+ * [ClothesPhraser.forLocale] — [ResourceClothesPhraser] handles the generic
+ * case there.
  */
 internal class BareClothesPhraser : ClothesPhraser {
     override fun withArticle(item: String): String = item
