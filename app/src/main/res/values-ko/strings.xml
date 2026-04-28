@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Korean translation — full UI coverage. 해요체 (polite-formal) throughout
-— that's the standard Korean app register, including for intimate /
-spousal addressing. Korean doesn't drop politeness for closeness in
-app UI; the spousal-tone equivalent is "warm polite" (해요체), not
-casual 반말.
+Korean translation — full UI coverage. The register is the natural
+Korean Android-app mix: 해요체 (friendlier polite, "설정해요" / "있어요")
+in interactive prose, toasts, button-adjacent copy, and the spousal-
+tone parts; 하십시오체 (formal-polite, "표시됩니다" / "재생합니다") in
+notification channel descriptions and system-Settings-style status
+copy where Android itself uses 하십시오체 and matching it reads more
+canonical. Korean doesn't drop politeness for closeness in app UI;
+the spousal-tone equivalent is "warm polite", not casual 반말.
 
 What is NOT overridden, by design:
 - `app_name` — brand identifier, identical across locales.
@@ -65,7 +68,7 @@ displayed label localizes.
 
     <!-- Clothes settings — top of the screen. -->
     <string name="settings_clothes_title">옷 규칙</string>
-    <string name="settings_clothes_description">예보가 이 기준값들 중 하나를 넘으면 해당 옷이 매일 ClothesCast에 표시됩니다.</string>
+    <string name="settings_clothes_description">예보가 이 기준값들 중 하나를 기준으로 위나 아래로 바뀌면 해당 옷이 매일 ClothesCast에 표시됩니다.</string>
 
     <string name="settings_clothes_empty">규칙이 없습니다. 추가를 탭하여 만드세요.</string>
     <string name="settings_clothes_add">추가</string>
@@ -122,7 +125,7 @@ displayed label localizes.
 
     <string name="settings_tts_voice_label">음성</string>
     <string name="settings_tts_voice_dismiss">완료</string>
-    <string name="settings_tts_voice_locale_description">음성의 억양을 설정해요. 표시되는 텍스트는 변경하지 않습니다.</string>
+    <string name="settings_tts_voice_locale_description">음성의 억양을 설정해요. 표시되는 텍스트는 변경하지 않아요.</string>
     <string name="settings_tts_voice_locale_system">휴대폰 언어 따라가기</string>
 
     <string name="settings_tts_test">음성 테스트</string>
@@ -270,7 +273,7 @@ displayed label localizes.
     <string name="settings_location_grant_background">백그라운드 위치 허용 (시스템 설정)</string>
     <string name="settings_location_unset">위치가 설정되지 않음 — 기본값으로 런던 사용</string>
     <string name="settings_location_description">이 장소에 대한 예보를 가져옵니다. 도시 이름으로 검색하세요. 결과는 Open-Meteo의 무료 지오코딩 서비스에서 가져옵니다.</string>
-    <string name="settings_location_description_device_on">활성화하면 ClothesCast가 알림 시점에 기기의 대략적인 위치를 읽어요(기지국 / WiFi만 사용 — GPS 하드웨어 측위는 사용하지 않음). 기기 읽기에 실패하면 아래 위치가 대체로 사용됩니다. 백그라운드 위치는 시스템 설정에서 허용해야 하며, 그렇지 않으면 아침 Worker가 읽을 수 없어요.</string>
+    <string name="settings_location_description_device_on">활성화하면 ClothesCast가 알림 시점에 기기의 대략적인 위치를 읽어요(기지국 / WiFi만 사용 — GPS 하드웨어 측위는 사용하지 않음). 기기 위치를 읽지 못하면 아래 위치를 대신 사용해요. 백그라운드 위치는 시스템 설정에서 허용해야 하며, 그렇지 않으면 아침 Worker가 읽을 수 없어요.</string>
     <string name="settings_location_set">위치 설정</string>
     <string name="settings_location_change">위치 변경</string>
     <string name="settings_location_clear">위치 지우기</string>
