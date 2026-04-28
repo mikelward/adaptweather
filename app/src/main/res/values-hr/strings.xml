@@ -404,7 +404,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="insight_condition_snow">Snijeg</string>
     <string name="insight_condition_thunderstorm">Grmljavina</string>
     <string name="insight_condition_unknown">Nepoznato</string>
-    <string name="insight_calendar_tie_in">Ponesi %1$s na %3$s u %2$s.</string>
     <string name="insight_tie_in">Ponesi %1$s večeras.</string>
     <string name="insight_tie_in_with_rain">Ponesi %1$s večeras, kiša u %2$s.</string>
     <!-- "15" — preposition "u" comes from surrounding templates. -->

@@ -435,7 +435,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_condition_snow">Neige</string>
     <string name="insight_condition_thunderstorm">Orage</string>
     <string name="insight_condition_unknown">Inconnu</string>
-    <string name="insight_calendar_tie_in">Prends %1$s pour %3$s à %2$s.</string>
     <string name="insight_tie_in">Prends %1$s ce soir.</string>
     <string name="insight_tie_in_with_rain">Prends %1$s ce soir, pluie à %2$s.</string>
     <!-- "15h" / "15h30" — French TTS reads as "quinze heures" / "quinze heures trente". -->

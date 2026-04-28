@@ -72,7 +72,6 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_snow">Kar</string>
     <string name="insight_condition_thunderstorm">Fırtına</string>
     <string name="insight_condition_unknown">Bilinmiyor</string>
-    <string name="insight_calendar_tie_in">%2$s\'deki %3$s için %1$s al.</string>
     <string name="insight_tie_in">Bu gece %1$s al.</string>
     <string name="insight_tie_in_with_rain">Bu gece %1$s al, saat %2$s\'de yağmur.</string>
     <!-- "15" — "saat" comes from surrounding templates. -->
