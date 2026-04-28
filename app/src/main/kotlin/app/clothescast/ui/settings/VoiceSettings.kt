@@ -1,5 +1,6 @@
 package app.clothescast.ui.settings
 
+import app.clothescast.diag.DiagLog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -472,7 +473,7 @@ private suspend fun runTtsPreview(
             // TTS exceptions already name their provider in the message
             // (e.g. "Gemini TTS HTTP 400: …"); don't double that up.
             val message = t.message?.takeIf { it.isNotBlank() } ?: t.javaClass.simpleName
-            app.clothescast.diag.DiagLog.w("VoiceSettings", "TTS preview failed for $engine", t)
+            DiagLog.w("VoiceSettings", "TTS preview failed for $engine", t)
             // Toast.show() posts internally, but Toast.makeText()'s constructor needs
             // a Looper on the calling thread — Dispatchers.IO has none, so hop to Main.
             withContext(Dispatchers.Main) {
@@ -486,7 +487,7 @@ private suspend fun runTtsPreview(
                 } catch (_: CancellationException) {
                     // user moved on; fine
                 } catch (fallback: Throwable) {
-                    app.clothescast.diag.DiagLog.w("VoiceSettings", "Device TTS fallback also failed", fallback)
+                    DiagLog.w("VoiceSettings", "Device TTS fallback also failed", fallback)
                 }
             }
         }
