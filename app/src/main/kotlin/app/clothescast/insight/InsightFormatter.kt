@@ -184,12 +184,12 @@ class InsightFormatter(
         private val OVERNIGHT_HOURS = 0..4
 
         /** Build a formatter that renders prose in [locale] using [context]'s resources. */
-        fun forContext(context: Context, locale: Locale = Locale.getDefault()): InsightFormatter =
+        fun forContext(context: Context, locale: Locale = context.currentResourcesLocale()): InsightFormatter =
             InsightFormatter(context.localizedResources(locale), locale)
 
         /** Convenience for the common path: render in the user's [Region]-derived locale. */
         fun forRegion(context: Context, region: Region): InsightFormatter {
-            val locale = region.toJavaLocale() ?: Locale.getDefault()
+            val locale = region.toJavaLocale() ?: context.currentResourcesLocale()
             return forContext(context, locale)
         }
     }
@@ -200,4 +200,11 @@ private fun Region.toJavaLocale(): Locale? = bcp47?.let { Locale.forLanguageTag(
 private fun Context.localizedResources(locale: Locale): Resources {
     val config = Configuration(resources.configuration).apply { setLocale(locale) }
     return createConfigurationContext(config).resources
+}
+
+private fun Context.currentResourcesLocale(): Locale {
+    val locales = resources.configuration.locales
+    if (!locales.isEmpty) return locales[0]
+    @Suppress("DEPRECATION")
+    return resources.configuration.locale
 }
