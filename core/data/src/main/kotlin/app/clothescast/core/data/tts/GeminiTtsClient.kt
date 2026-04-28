@@ -93,6 +93,9 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "fil" to "Magsalita sa Filipino na may malinaw at natural na diin.",
     "vi" to "Nói tiếng Việt với giọng điệu rõ ràng và tự nhiên.",
     "zh-CN" to "请用标准普通话朗读，发音清晰自然。",
+    // Language-only fallback covers generic zh locale and any zh-* variant
+    // not explicitly listed (zh-TW, zh-HK, etc.) — all are Mandarin-readable.
+    "zh" to "请用标准普通话朗读，发音清晰自然。",
     "hi" to "कृपया हिंदी में स्पष्ट और प्राकृतिक उच्चारण के साथ पढ़ें।",
     "bn" to "অনুগ্রহ করে বাংলায় স্পষ্ট ও প্রাকৃতিক উচ্চারণে পড়ুন।",
     "ja" to "はっきりと自然な発音で日本語で読んでください。",
