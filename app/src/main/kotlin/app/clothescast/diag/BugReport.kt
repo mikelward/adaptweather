@@ -19,7 +19,11 @@ import androidx.core.content.FileProvider
 import app.clothescast.BuildConfig
 import app.clothescast.ClothesCastApplication
 import app.clothescast.core.domain.model.ClothesRule
+import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.Insight
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.UserPreferences
+import app.clothescast.insight.InsightFormatter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
@@ -31,9 +35,10 @@ import kotlin.coroutines.resume
 
 /**
  * Builds a "paste-into-Claude" bug-report payload (version, device, settings,
- * recent log lines, last crash if any) and hands it off via [Intent.ACTION_SEND]
- * so the share sheet can deliver it to whichever app the user picks. Also drops
- * the text on the clipboard as a paste fallback.
+ * the latest cached today + tonight ClothesCasts, recent log lines, last crash
+ * if any) and hands it off via [Intent.ACTION_SEND] so the share sheet can
+ * deliver it to whichever app the user picks. Also drops the text on the
+ * clipboard as a paste fallback.
  */
 object BugReport {
     private const val FILE_PROVIDER_AUTHORITY_SUFFIX = ".fileprovider"
@@ -45,13 +50,13 @@ object BugReport {
      */
     suspend fun share(activity: Activity, includeScreenshot: Boolean) {
         val app = activity.application as ClothesCastApplication
-        val text = buildPayload(app)
+        val text = buildPayload(activity, app)
         val screenshotUri: Uri? = if (includeScreenshot) captureAndPersistScreenshot(activity) else null
         copyToClipboard(activity, text)
         startShare(activity, text, screenshotUri)
     }
 
-    private suspend fun buildPayload(app: ClothesCastApplication): String {
+    private suspend fun buildPayload(context: Context, app: ClothesCastApplication): String {
         val prefs = runCatching { app.settingsRepository.preferences.first() }.getOrNull()
         val keyStatus = runCatching {
             Triple(
@@ -60,6 +65,12 @@ object BugReport {
                 app.secureKeyStore.elevenLabsKeyConfiguredFlow.first(),
             )
         }.getOrDefault(Triple(false, false, false))
+        val today = runCatching {
+            app.insightCache.latestForPeriod(ForecastPeriod.TODAY).first()
+        }.getOrNull()
+        val tonight = runCatching {
+            app.insightCache.latestForPeriod(ForecastPeriod.TONIGHT).first()
+        }.getOrNull()
         val crash = DiagLog.readPersistedCrash()
         val recent = DiagLog.snapshot()
         val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US).format(Date())
@@ -89,6 +100,10 @@ object BugReport {
                 "OpenAI=${if (openAi) "set" else "unset"}, " +
                 "ElevenLabs=${if (elevenLabs) "set" else "unset"}")
             appendLine()
+            appendLine("--- Current ClothesCasts ---")
+            val region = prefs?.region ?: Region.SYSTEM
+            appendInsight("Today (TODAY)", today, context, region)
+            appendInsight("Tonight (TONIGHT)", tonight, context, region)
             if (!crash.isNullOrBlank()) {
                 appendLine("--- Last crash (from previous run) ---")
                 appendLine(crash.trim())
@@ -137,6 +152,44 @@ object BugReport {
             is ClothesRule.PrecipitationProbabilityAbove -> "precipMaxPct > ${c.percent}"
         }
         return "${rule.item} when $cond"
+    }
+
+    private fun StringBuilder.appendInsight(
+        label: String,
+        insight: Insight?,
+        context: Context,
+        region: Region,
+    ) {
+        appendLine("$label:")
+        if (insight == null) {
+            appendLine("  (no cached insight)")
+            appendLine()
+            return
+        }
+        val prose = runCatching { InsightFormatter.forRegion(context, region).format(insight.summary) }
+            .getOrElse { "(prose render failed: ${it.javaClass.simpleName})" }
+        appendLine("  Prose: $prose")
+        appendLine("  Generated: ${insight.generatedAt}")
+        appendLine("  For date: ${insight.forDate}")
+        insight.confidence?.let {
+            appendLine("  Confidence: ${it.level} (tempSpread=${it.tempSpreadC}°C, " +
+                "precipSpread=${it.precipSpreadPp}pp, ${it.modelsConsulted.size} models)")
+        }
+        insight.outfit?.let { appendLine("  Outfit: ${it.top} + ${it.bottom}") }
+        insight.nextOutfit?.let { appendLine("  Next outfit: ${it.top} + ${it.bottom}") }
+        appendLine("  Has events: ${insight.hasEvents}")
+        if (insight.recommendedItems.isNotEmpty()) {
+            appendLine("  Recommended items: ${insight.recommendedItems.joinToString(", ")}")
+        }
+        if (insight.hourly.isNotEmpty()) {
+            appendLine("  Hourly (${insight.hourly.size} entries) feels-like min/max: " +
+                "%.1f / %.1f °C".format(
+                    Locale.US,
+                    insight.hourly.minOf { it.feelsLikeC },
+                    insight.hourly.maxOf { it.feelsLikeC },
+                ))
+        }
+        appendLine()
     }
 
     private suspend fun captureAndPersistScreenshot(activity: Activity): Uri? {
