@@ -363,4 +363,16 @@ class InsightFormatterTest {
         )
         out shouldBe "Hoy hará templado. Lleva paraguas esta noche, lluvia a las 21."
     }
+
+    @Test
+    fun `id-ID locale resolves Indonesian insight strings instead of English fallback`() {
+        val indonesianSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("id-ID"))
+        indonesianSubject.format(summary()) shouldBe "Hari ini cuacanya hangat sedang."
+    }
+
+    @Test
+    fun `he-IL locale resolves Hebrew insight strings instead of English fallback`() {
+        val hebrewSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("he-IL"))
+        hebrewSubject.format(summary()) shouldBe "היום יהיה נעים."
+    }
 }
