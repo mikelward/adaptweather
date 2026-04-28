@@ -76,6 +76,31 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_delivery_notification_and_tts">Notifica e lettura vocale</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "Aggiungi chiave API" dialog.
+    -->
+    <string name="settings_tts_engine_title">Motore vocale</string>
+    <string name="settings_tts_engine_description">I motori online (Gemini, OpenAI, ElevenLabs) suonano molto più naturali, ma richiedono una chiamata di rete al momento della lettura e usano la tua chiave API per la sintesi (una breve chiamata per ogni ClothesCast letto). Ricade sulla voce del dispositivo se il motore scelto fallisce.</string>
+    <string name="settings_tts_engine_device">Dispositivo (offline, gratis)</string>
+    <string name="settings_tts_engine_gemini">Gemini (alta qualità, online)</string>
+    <string name="settings_tts_engine_openai">OpenAI (alta qualità, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (massima qualità, online)</string>
+
+    <string name="settings_tts_voice_label">Voce</string>
+    <string name="settings_tts_voice_dismiss">Fatto</string>
+    <string name="settings_tts_voice_locale_description">Imposta l\'accento della voce parlata. Non modifica il testo visualizzato.</string>
+    <string name="settings_tts_voice_locale_system">Segui la lingua del telefono</string>
+
+    <string name="settings_tts_test">Prova la voce</string>
+    <string name="settings_tts_test_in_flight">Test in corso — attendi…</string>
+    <string name="settings_tts_no_key_hint">Nessuna chiave %1$s configurata — aggiungine una per attivare questo motore.</string>
+    <string name="settings_tts_add_api_key">Aggiungi chiave API</string>
+    <string name="settings_tts_add_api_key_title">Aggiungi chiave API %1$s</string>
+    <string name="settings_tts_add_api_key_save">Salva</string>
+    <string name="settings_tts_add_api_key_cancel">Annulla</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tu-form throughout: "tocca", "il tuo", "imposta".
