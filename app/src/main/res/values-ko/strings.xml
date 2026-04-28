@@ -455,6 +455,6 @@ displayed label localizes.
     <string name="insight_tie_in_with_rain">오늘 밤 %1$s 챙기세요, %2$s경에 비.</string>
     <!-- "15시" / "15시 30분" — Korean spoken time; postposition "경에" comes from insight_precip_at_time. -->
     <string name="insight_time_hour">%1$d시</string>
-    <string name="insight_time_hour_minutes">%1$d시 %2$d분</string>
+    <string name="insight_time_hour_minutes">%1$d시 %2$02d분</string>
 
 </resources>

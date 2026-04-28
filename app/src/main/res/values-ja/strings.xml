@@ -442,6 +442,6 @@ the displayed label localizes.
     <string name="insight_tie_in_with_rain">今夜は%1$sを持っていきましょう。%2$s頃に雨。</string>
     <!-- "15時" / "15時30分" — Japanese spoken time; postposition "頃" comes from insight_precip_at_time. -->
     <string name="insight_time_hour">%1$d時</string>
-    <string name="insight_time_hour_minutes">%1$d時%2$d分</string>
+    <string name="insight_time_hour_minutes">%1$d時%2$02d分</string>
 
 </resources>

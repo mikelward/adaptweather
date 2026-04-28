@@ -427,6 +427,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_tie_in_with_rain">Porta %1$s stasera, pioggia alle %2$s.</string>
     <!-- "15" / "15 e 30" — preposition "alle" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d</string>
-    <string name="insight_time_hour_minutes">%1$d e %2$d</string>
+    <string name="insight_time_hour_minutes">%1$d e %2$02d</string>
 
 </resources>
