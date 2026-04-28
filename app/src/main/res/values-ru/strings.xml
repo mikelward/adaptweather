@@ -37,11 +37,58 @@ earlier passes accidentally mixed in.
     <string name="settings_clothes_cond_temp_above">когда ощущаемая температура выше %.0f°C</string>
     <string name="settings_clothes_cond_precip_above">когда вероятность дождя превышает %.0f%%</string>
 
+    <!--
+    Today screen — top bar, refresh toasts, empty state, generated-at
+    timestamp, outfit card, hourly chart, confidence chip, work-status
+    banner. ты-form imperatives: "нажми", "установи", "твой".
+    -->
+    <string name="today_title">Сегодня</string>
+    <string name="today_open_settings">Открыть настройки</string>
+    <string name="today_more_options">Ещё</string>
+    <string name="today_report_a_bug">Сообщить об ошибке</string>
+    <string name="today_refresh">Обновить</string>
+    <string name="today_refresh_toast_daily">Обновляю твой ежедневный ClothesCast — скоро появится.</string>
+    <string name="today_refresh_toast_nightly">Обновляю твой вечерний ClothesCast — скоро появится.</string>
+    <string name="today_empty_title">ClothesCast пока нет</string>
+    <string name="today_empty_subtitle">Твой утренний ClothesCast появится здесь, как только сгенерируется. Установи местоположение в настройках, затем нажми «Получить сейчас».</string>
+    <string name="today_fetch_now">Получить сейчас</string>
+    <string name="today_generated_at">Создано в %1$s</string>
+
+    <string name="today_outfit_title">Что надеть</string>
+    <string name="today_outfit_label_today">Сегодня</string>
+    <string name="today_outfit_label_tonight">Сегодня вечером</string>
+    <string name="today_outfit_label_tomorrow">Завтра</string>
+
     <string name="today_outfit_top_tshirt">Футболка</string>
     <string name="today_outfit_top_sweater">Свитер</string>
     <string name="today_outfit_top_thick_jacket">Тёплая куртка</string>
     <string name="today_outfit_bottom_shorts">Шорты</string>
     <string name="today_outfit_bottom_long_pants">Брюки</string>
+
+    <string name="today_forecast_title">Почасовой прогноз</string>
+    <string name="today_forecast_min_max">Ощущение %1$d – %2$d%3$s · Воздух %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Ощущаемая температура (%1$s) по часам · нажми, чтобы переключить на температуру воздуха</string>
+    <string name="today_forecast_legend_air">Температура воздуха (%1$s) по часам · нажми, чтобы переключить на ощущаемую температуру</string>
+
+    <string name="today_confidence_high">Высокая уверенность — основные модели согласны</string>
+    <string name="today_confidence_medium">Средняя уверенность</string>
+    <string name="today_confidence_low">Низкая уверенность — прогнозы расходятся</string>
+    <string name="today_confidence_spread">Разброс: %1$.1f°C, %2$.0fpp осадков по %3$d моделям</string>
+
+    <string name="today_working">Получаю твой ClothesCast…</string>
+    <string name="today_failed_title">Последняя попытка не удалась</string>
+    <string name="today_failed_unexpected_http">Неожиданная HTTP-ошибка от службы прогноза.</string>
+    <string name="today_failed_unhandled">Произошла непредвиденная ошибка.</string>
+    <string name="today_failed_show_details">Показать подробности</string>
+    <string name="today_failed_hide_details">Скрыть подробности</string>
+
+    <!-- Home-screen App Widget. "Образ" is the standard Russian
+         fashion-vocab word for an outfit / day's clothing combination,
+         more native than the loanword "Outfit". -->
+    <string name="widget_label">Образ</string>
+    <string name="widget_description">Образ для текущего периода — с одного взгляда.</string>
+    <string name="widget_empty_title">Образа пока нет</string>
+    <string name="widget_empty_subtitle">Нажми, чтобы открыть ClothesCast</string>
 
     <string name="insight_lead_today">Сегодня</string>
     <string name="insight_lead_tonight">Сегодня вечером</string>
