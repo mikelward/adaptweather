@@ -48,7 +48,7 @@ class InsightFormatter(
         summary.alert?.let { add(formatAlert(it)) }
         add(formatBand(summary.period, summary.band))
         summary.delta?.let { add(formatDelta(it)) }
-        summary.clothes?.let { add(formatClothes(it)) }
+        summary.clothes?.let(::formatClothes)?.let(::add)
         summary.precip?.let { add(formatPrecip(it)) }
         // Both tie-in clauses share the item-only "Bring a X tonight." form;
         // the evening one additionally folds in the evening forecast's rain
@@ -57,8 +57,8 @@ class InsightFormatter(
         // rain. The clauses are separate fields because they're gated
         // differently (TONIGHT precip-peak overlap vs. TODAY evening-event
         // opt-in).
-        summary.calendarTieIn?.let { add(formatTieIn(it.item)) }
-        summary.eveningEventTieIn?.let { add(formatEveningEventTieIn(it)) }
+        summary.calendarTieIn?.let { formatTieIn(it.item) }?.let(::add)
+        summary.eveningEventTieIn?.let(::formatEveningEventTieIn)?.let(::add)
     }.joinToString(" ")
 
     private fun formatAlert(alert: AlertClause): String =
@@ -90,8 +90,11 @@ class InsightFormatter(
     // like umbrella. Probably wants a small domain-side classification on
     // ClothesRule (item kind: garment / accessory) rather than hard-coding
     // umbrella here.
-    private fun formatClothes(clothes: ClothesClause): String =
-        resources.getString(R.string.insight_clothes_wear, phraser.joinItems(clothes.items))
+    private fun formatClothes(clothes: ClothesClause): String? {
+        val items = phraser.joinItems(clothes.items)
+        if (items.isBlank()) return null
+        return resources.getString(R.string.insight_clothes_wear, items)
+    }
 
     private fun formatPrecip(precip: PrecipClause): String {
         val type = resources.getString(conditionRes(precip.condition))
@@ -105,17 +108,22 @@ class InsightFormatter(
         return resources.getString(R.string.insight_precip, type, timePhrase)
     }
 
-    private fun formatTieIn(item: String): String =
-        resources.getString(R.string.insight_tie_in, phraser.withArticle(item))
+    private fun formatTieIn(item: String): String? {
+        val renderedItem = phraser.withArticle(item)
+        if (renderedItem.isBlank()) return null
+        return resources.getString(R.string.insight_tie_in, renderedItem)
+    }
 
-    private fun formatEveningEventTieIn(tieIn: EveningEventTieInClause): String {
+    private fun formatEveningEventTieIn(tieIn: EveningEventTieInClause): String? {
+        val renderedItem = phraser.withArticle(tieIn.item)
+        if (renderedItem.isBlank()) return null
         // Local capture so the null check enables smart cast — the property
         // lives on a :core:domain data class and Kotlin won't smart-cast a
         // public API property across modules.
-        val rainTime = tieIn.rainTime ?: return formatTieIn(tieIn.item)
+        val rainTime = tieIn.rainTime ?: return resources.getString(R.string.insight_tie_in, renderedItem)
         return resources.getString(
             R.string.insight_tie_in_with_rain,
-            phraser.withArticle(tieIn.item),
+            renderedItem,
             spokenTime(rainTime),
         )
     }
