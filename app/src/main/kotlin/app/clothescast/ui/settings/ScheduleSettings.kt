@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -294,6 +295,7 @@ private fun DaysSelector(
         text = label,
         style = MaterialTheme.typography.bodyMedium,
     )
+    val uiLocale = LocalContext.current.resourcesLocale()
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -308,7 +310,7 @@ private fun DaysSelector(
                     if (next.isNotEmpty()) onChange(next)
                 },
                 label = {
-                    Text(text = dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
+                    Text(text = dow.getDisplayName(TextStyle.SHORT, uiLocale))
                 },
                 leadingIcon = if (selected) {
                     {
@@ -352,3 +354,10 @@ private fun deliveryModeLabel(mode: DeliveryMode): Int = when (mode) {
 }
 
 private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+private fun android.content.Context.resourcesLocale(): Locale {
+    val locales = resources.configuration.locales
+    if (!locales.isEmpty) return locales[0]
+    @Suppress("DEPRECATION")
+    return resources.configuration.locale
+}

@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
@@ -46,16 +47,16 @@ internal fun RegionContent(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             // System tag exposed next to "Follow system locale" so the user can
-            // verify what their phone is actually resolving to (e.g. "en-GB").
-            // Locale.getDefault() matches what InsightFormatter.forRegion falls
-            // back to when Region.SYSTEM is selected, so this is the same
-            // locale that drives the rendered prose.
-            val systemTag = remember { Locale.getDefault().toLanguageTag() }
+            // verify what the app currently resolves to (e.g. "en-GB").
+            // Use the context resources locale so this updates with runtime
+            // app-language changes, instead of freezing the process default.
+            val uiLocale = LocalContext.current.resourcesLocale()
+            val systemTag = remember(uiLocale) { uiLocale.toLanguageTag() }
             // Sort by the resolved display label using a locale-aware collator
             // so the order reads naturally in the user's UI language. SYSTEM
             // stays pinned at the top — it's a "follow device" option, not a
             // language to sort with the rest.
-            val collator = remember { Collator.getInstance(Locale.getDefault()) }
+            val collator = remember(uiLocale) { Collator.getInstance(uiLocale) }
             val labelled = Region.entries.map { option ->
                 val base = stringResource(regionLabel(option))
                 option to if (option == Region.SYSTEM) "$base ($systemTag)" else base
@@ -133,4 +134,11 @@ private fun temperatureUnitLabel(unit: TemperatureUnit): Int = when (unit) {
 private fun distanceUnitLabel(unit: DistanceUnit): Int = when (unit) {
     DistanceUnit.KILOMETERS -> R.string.settings_distance_unit_kilometers
     DistanceUnit.MILES -> R.string.settings_distance_unit_miles
+}
+
+private fun android.content.Context.resourcesLocale(): Locale {
+    val locales = resources.configuration.locales
+    if (!locales.isEmpty) return locales[0]
+    @Suppress("DEPRECATION")
+    return resources.configuration.locale
 }

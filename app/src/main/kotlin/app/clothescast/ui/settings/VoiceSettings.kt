@@ -337,7 +337,8 @@ private fun VoiceLocalePicker(
     // Mirrors RegionSettings: append the resolved phone-locale tag to the
     // "Follow phone language" entry so the user can see what System actually
     // means on their device (e.g. en-GB) without leaving the screen.
-    val systemTag = remember { Locale.getDefault().toLanguageTag() }
+    val uiLocale = LocalContext.current.resourcesLocale()
+    val systemTag = remember(uiLocale) { uiLocale.toLanguageTag() }
     val labelFor: @Composable (VoiceLocale) -> String = { option ->
         val base = stringResource(voiceLocaleLabel(option))
         if (option == VoiceLocale.SYSTEM) "$base ($systemTag)" else base
@@ -358,7 +359,7 @@ private fun VoiceLocalePicker(
                 // collator (so e.g. "Ç" sorts with "C" in fr-FR, "Ä" with "A"
                 // in de-DE). SYSTEM stays pinned at the top — it's a "follow
                 // device" option, not a language to sort with the rest.
-                val collator = remember { Collator.getInstance(Locale.getDefault()) }
+                val collator = remember(uiLocale) { Collator.getInstance(uiLocale) }
                 val (system, rest) = VoiceLocale.entries
                     .map { it to labelFor(it) }
                     .partition { it.first == VoiceLocale.SYSTEM }
@@ -696,3 +697,10 @@ private val SAMPLE_SUMMARY = InsightSummary(
     delta = DeltaClause(degrees = 7, direction = DeltaClause.Direction.COOLER),
     clothes = ClothesClause(items = listOf("sweater", "jacket")),
 )
+
+private fun android.content.Context.resourcesLocale(): Locale {
+    val locales = resources.configuration.locales
+    if (!locales.isEmpty) return locales[0]
+    @Suppress("DEPRECATION")
+    return resources.configuration.locale
+}
