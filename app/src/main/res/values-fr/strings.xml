@@ -278,6 +278,24 @@ agreement; garment names are listed without articles and read naturally in conte
     <string name="settings_calendar_grant_permission">Autoriser l\'accès au calendrier</string>
     <string name="settings_calendar_open_settings">Accès au calendrier refusé. Autorise-le dans les paramètres du système.</string>
 
+    <!-- Debug screen — visible only on debug builds. -->
+    <string name="settings_debug_title">Débogage (uniquement sur les builds de débogage)</string>
+    <string name="settings_debug_description">Lance immédiatement le pipeline du ClothesCast quotidien. Utile pour vérifier sans attendre l\'heure programmée.</string>
+    <string name="settings_debug_fire_now">Lancer ClothesCast maintenant</string>
+    <string name="settings_debug_fire_toast">Worker ClothesCast en file d\'attente</string>
+
+    <!-- About screen — version line, build-type suffix, privacy summary,
+         outbound links / actions. -->
+    <string name="settings_about_title">À propos</string>
+    <string name="settings_about_version">Version %1$s (%2$d)</string>
+    <string name="settings_about_build_type_suffix"> · build %1$s</string>
+    <string name="settings_about_privacy">Ta clé API Gemini (utilisée pour la lecture vocale TTS) est chiffrée au repos avec une clé liée à l\'Android Keystore. Les prévisions viennent d\'Open-Meteo (sans clé, sans compte) ; le texte du résumé quotidien est généré localement sur l\'appareil. ClothesCast n\'a pas de backend — rien n\'est envoyé à un serveur que nous contrôlons.</string>
+    <string name="settings_about_privacy_policy">Politique de confidentialité</string>
+    <string name="settings_about_source">Code source sur GitHub</string>
+    <string name="settings_about_dontkillmyapp">Restrictions en arrière-plan (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">Partager un rapport de bug</string>
+    <string name="settings_about_version_copied">Version copiée dans le presse-papiers</string>
+
     <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
