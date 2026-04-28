@@ -54,6 +54,30 @@ Chinese uses the ideographic period (。) for sentence endings.
     <string name="settings_clothes_cond_precip_above">当降水概率超过 %.0f%% 时</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "提及晚间日程" toggle, and the nightly-only "notify only on
+    events" toggle. Description uses the standard Chinese full-width
+    curly quotes "…" around the nested toggle label (the locale's own
+    house style; the German „…" form isn't Chinese typography).
+    -->
+    <string name="settings_schedule_title">每日 ClothesCast</string>
+    <string name="settings_schedule_time_label">时间</string>
+    <string name="settings_schedule_days_label">星期</string>
+    <string name="settings_daily_mention_evening_events">提及晚间日程</string>
+
+    <string name="settings_tonight_title">夜间 ClothesCast</string>
+    <string name="settings_tonight_description">晚间的第二份 ClothesCast，覆盖今晚的天气。在没有日程的夜晚保持静音，或者如果开启了“仅在有晚间日程时通知”则完全不出现；在有日程的夜晚会播放提示音，并且（如果你启用了语音朗读）会自动朗读。</string>
+    <string name="settings_tonight_enabled">显示夜间 ClothesCast</string>
+    <string name="settings_tonight_time_label">时间</string>
+    <string name="settings_tonight_days_label">星期</string>
+    <string name="settings_tonight_notify_only_on_events">仅在有晚间日程时通知</string>
+
+    <string name="settings_delivery_label">推送方式</string>
+    <string name="settings_delivery_notification_only">仅通知</string>
+    <string name="settings_delivery_tts_only">仅语音朗读</string>
+    <string name="settings_delivery_notification_and_tts">通知和语音朗读</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Casual register: 你 (informal "you") rather than 您 (formal),
