@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
@@ -50,6 +51,7 @@ class SettingsViewModel(
                         deliveryMode = prefs.deliveryMode,
                         tonightDeliveryMode = prefs.tonightDeliveryMode,
                         dailyMentionEveningEvents = prefs.dailyMentionEveningEvents,
+                        castLength = prefs.castLength,
                         region = prefs.region,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
@@ -221,6 +223,10 @@ class SettingsViewModel(
 
     fun setDailyMentionEveningEvents(enabled: Boolean) {
         viewModelScope.launch { settingsRepository.setDailyMentionEveningEvents(enabled) }
+    }
+
+    fun setCastLength(length: CastLength) {
+        viewModelScope.launch { settingsRepository.setCastLength(length) }
     }
 
     fun setTonightEnabled(enabled: Boolean) {

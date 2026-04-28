@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.DeliveryMode
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -55,6 +56,7 @@ internal fun ScheduleContent(
     tonightEnabled: Boolean,
     tonightNotifyOnlyOnEvents: Boolean,
     dailyMentionEveningEvents: Boolean,
+    castLength: CastLength,
     deliveryMode: DeliveryMode,
     tonightDeliveryMode: DeliveryMode,
     padding: PaddingValues,
@@ -63,6 +65,7 @@ internal fun ScheduleContent(
     onSetTonightEnabled: (Boolean) -> Unit,
     onSetTonightNotifyOnlyOnEvents: (Boolean) -> Unit,
     onSetDailyMentionEveningEvents: (Boolean) -> Unit,
+    onSetCastLength: (CastLength) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
     onSetTonightDeliveryMode: (DeliveryMode) -> Unit,
     onDone: (() -> Unit)? = null,
@@ -95,6 +98,11 @@ internal fun ScheduleContent(
             onChange = onSetTonightSchedule,
             onSetDeliveryMode = onSetTonightDeliveryMode,
         )
+        // CastLength applies to both Day and Night cards, so it sits below
+        // them in its own card rather than inside either — putting it in
+        // DayCard would suggest it only affects the morning, and duplicating
+        // it across both would just confuse the user.
+        CastLengthCard(selected = castLength, onSelect = onSetCastLength)
         if (onDone != null) {
             Button(
                 onClick = onDone,
@@ -345,10 +353,36 @@ private fun DeliveryModeSection(
     }
 }
 
+@Composable
+private fun CastLengthCard(
+    selected: CastLength,
+    onSelect: (CastLength) -> Unit,
+) {
+    SectionCard(title = stringResource(R.string.settings_cast_length_label)) {
+        Text(
+            text = stringResource(R.string.settings_cast_length_description),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        CastLength.entries.forEach { length ->
+            RadioRow(
+                label = stringResource(castLengthLabel(length)),
+                selected = length == selected,
+                onSelect = { onSelect(length) },
+            )
+        }
+    }
+}
+
 private fun deliveryModeLabel(mode: DeliveryMode): Int = when (mode) {
     DeliveryMode.NOTIFICATION_ONLY -> R.string.settings_delivery_notification_only
     DeliveryMode.TTS_ONLY -> R.string.settings_delivery_tts_only
     DeliveryMode.NOTIFICATION_AND_TTS -> R.string.settings_delivery_notification_and_tts
+}
+
+private fun castLengthLabel(length: CastLength): Int = when (length) {
+    CastLength.SHORTER -> R.string.settings_cast_length_shorter
+    CastLength.LONGER -> R.string.settings_cast_length_longer
 }
 
 private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")

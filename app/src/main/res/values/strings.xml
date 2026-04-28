@@ -113,6 +113,11 @@
     <string name="settings_tonight_days_label">Days of the week</string>
     <string name="settings_tonight_notify_only_on_events">Only notify when there are evening events</string>
 
+    <string name="settings_cast_length_label">ClothesCast length</string>
+    <string name="settings_cast_length_description">Trade brevity against context. Longer adds the comparison anchor on clauses that have one (e.g. \"Today will be 5° cooler than yesterday\" instead of \"It will be 5° cooler today\"). Applies to both the daily and nightly ClothesCast.</string>
+    <string name="settings_cast_length_shorter">Shorter</string>
+    <string name="settings_cast_length_longer">Longer</string>
+
     <string name="settings_delivery_label">Delivery</string>
     <string name="settings_delivery_notification_only">Notification only</string>
     <string name="settings_delivery_tts_only">Spoken aloud only</string>
@@ -332,9 +337,14 @@
     <string name="insight_band_warm">warm</string>
     <string name="insight_band_hot">hot</string>
 
-    <!-- Day-on-day temperature delta. %1$d is the rounded degree difference. -->
+    <!-- Day-on-day temperature delta. %1$d is the rounded degree difference.
+         The default (shorter) ClothesCast length elides the comparison anchor
+         since the listener already knows it's a yesterday-vs-today read; the
+         "_long" variants spell it out for the longer ClothesCast length. -->
     <string name="insight_delta_warmer">It will be %1$d° warmer today.</string>
     <string name="insight_delta_cooler">It will be %1$d° cooler today.</string>
+    <string name="insight_delta_warmer_long">Today will be %1$d° warmer than yesterday.</string>
+    <string name="insight_delta_cooler_long">Today will be %1$d° cooler than yesterday.</string>
 
     <!-- Severe-weather alert prefix. %1$s = event name (e.g. "Tornado Warning"). -->
     <string name="insight_alert">Alert: %1$s.</string>

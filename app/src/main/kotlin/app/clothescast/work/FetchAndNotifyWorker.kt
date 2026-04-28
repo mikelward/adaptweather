@@ -235,7 +235,7 @@ class FetchAndNotifyWorker(
     // TODO(brand-intro): consider prepending "Today's ClothesCast: " / "Tonight's ClothesCast: "
     // here once the voice preview's phrasing settles — see settings_tts_test_sample.
     private fun formatProse(insight: Insight, prefs: UserPreferences): String =
-        InsightFormatter.forRegion(applicationContext, prefs.region).format(insight.summary)
+        InsightFormatter.forRegion(applicationContext, prefs.region, prefs.castLength).format(insight.summary)
 
     private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences, prose: String) {
         val mode = prefs.tonightDeliveryMode

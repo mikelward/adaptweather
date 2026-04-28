@@ -101,6 +101,7 @@ fun SettingsScreen(
                 tonightEnabled = state.tonightEnabled,
                 tonightNotifyOnlyOnEvents = state.tonightNotifyOnlyOnEvents,
                 dailyMentionEveningEvents = state.dailyMentionEveningEvents,
+                castLength = state.castLength,
                 deliveryMode = state.deliveryMode,
                 tonightDeliveryMode = state.tonightDeliveryMode,
                 padding = padding,
@@ -109,6 +110,7 @@ fun SettingsScreen(
                 onSetTonightEnabled = viewModel::setTonightEnabled,
                 onSetTonightNotifyOnlyOnEvents = viewModel::setTonightNotifyOnlyOnEvents,
                 onSetDailyMentionEveningEvents = viewModel::setDailyMentionEveningEvents,
+                onSetCastLength = viewModel::setCastLength,
                 onSetDeliveryMode = viewModel::setDeliveryMode,
                 onSetTonightDeliveryMode = viewModel::setTonightDeliveryMode,
                 // Show a Done button only when this page is the deep-link

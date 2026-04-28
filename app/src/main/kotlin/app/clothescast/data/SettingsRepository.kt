@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
@@ -76,6 +77,10 @@ class SettingsRepository(
 
     suspend fun setDailyMentionEveningEvents(enabled: Boolean) {
         dataStore.edit { it[DAILY_MENTION_EVENING_EVENTS] = enabled }
+    }
+
+    suspend fun setCastLength(length: CastLength) {
+        dataStore.edit { it[CAST_LENGTH] = length.name }
     }
 
     suspend fun setDeliveryMode(mode: DeliveryMode) {
@@ -198,6 +203,8 @@ class SettingsRepository(
         val tonightEnabled = this[TONIGHT_ENABLED] != false
         val tonightNotifyOnlyOnEvents = this[TONIGHT_NOTIFY_ONLY_ON_EVENTS] == true
         val dailyMentionEveningEvents = this[DAILY_MENTION_EVENING_EVENTS] == true
+        val castLength = this[CAST_LENGTH]?.let { runCatching { CastLength.valueOf(it) }.getOrNull() }
+            ?: CastLength.SHORTER
         val zone = zoneIdProvider()
 
         return UserPreferences(
@@ -220,6 +227,7 @@ class SettingsRepository(
             tonightDeliveryMode = tonightDeliveryMode,
             tonightNotifyOnlyOnEvents = tonightNotifyOnlyOnEvents,
             dailyMentionEveningEvents = dailyMentionEveningEvents,
+            castLength = castLength,
         )
     }
 
@@ -272,6 +280,7 @@ class SettingsRepository(
         private val TONIGHT_DELIVERY_MODE = stringPreferencesKey("tonight_delivery_mode")
         private val TONIGHT_NOTIFY_ONLY_ON_EVENTS = booleanPreferencesKey("tonight_notify_only_on_events")
         private val DAILY_MENTION_EVENING_EVENTS = booleanPreferencesKey("daily_mention_evening_events")
+        private val CAST_LENGTH = stringPreferencesKey("cast_length")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

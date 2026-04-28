@@ -6,6 +6,7 @@ import android.content.res.Resources
 import app.clothescast.R
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.EveningEventTieInClause
@@ -41,6 +42,7 @@ import java.util.Locale
 class InsightFormatter(
     private val resources: Resources,
     private val locale: Locale = Locale.getDefault(),
+    private val castLength: CastLength = CastLength.SHORTER,
 ) {
     private val phraser: ClothesPhraser = ClothesPhraser.forLocale(resources, locale)
 
@@ -77,8 +79,14 @@ class InsightFormatter(
 
     private fun formatDelta(delta: DeltaClause): String {
         val template = when (delta.direction) {
-            DeltaClause.Direction.WARMER -> R.string.insight_delta_warmer
-            DeltaClause.Direction.COOLER -> R.string.insight_delta_cooler
+            DeltaClause.Direction.WARMER -> when (castLength) {
+                CastLength.SHORTER -> R.string.insight_delta_warmer
+                CastLength.LONGER -> R.string.insight_delta_warmer_long
+            }
+            DeltaClause.Direction.COOLER -> when (castLength) {
+                CastLength.SHORTER -> R.string.insight_delta_cooler
+                CastLength.LONGER -> R.string.insight_delta_cooler_long
+            }
         }
         return resources.getString(template, delta.degrees)
     }
@@ -184,13 +192,21 @@ class InsightFormatter(
         private val OVERNIGHT_HOURS = 0..4
 
         /** Build a formatter that renders prose in [locale] using [context]'s resources. */
-        fun forContext(context: Context, locale: Locale = Locale.getDefault()): InsightFormatter =
-            InsightFormatter(context.localizedResources(locale), locale)
+        fun forContext(
+            context: Context,
+            locale: Locale = Locale.getDefault(),
+            castLength: CastLength = CastLength.SHORTER,
+        ): InsightFormatter =
+            InsightFormatter(context.localizedResources(locale), locale, castLength)
 
         /** Convenience for the common path: render in the user's [Region]-derived locale. */
-        fun forRegion(context: Context, region: Region): InsightFormatter {
+        fun forRegion(
+            context: Context,
+            region: Region,
+            castLength: CastLength = CastLength.SHORTER,
+        ): InsightFormatter {
             val locale = region.toJavaLocale() ?: Locale.getDefault()
-            return forContext(context, locale)
+            return forContext(context, locale, castLength)
         }
     }
 }
