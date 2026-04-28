@@ -238,6 +238,25 @@ the rest of the app stays in English.
     <string name="settings_elevenlabs_key_clear">Gespeicherten ElevenLabs-Schlüssel löschen</string>
 
     <!--
+    Location screen — device-location toggle, manual city search +
+    selection, and the "no location set" empty state.
+    -->
+    <string name="settings_location_title">Standort</string>
+    <string name="settings_location_use_device">Gerätestandort verwenden</string>
+    <string name="settings_location_grant_background">Hintergrundstandort erlauben (System-Einstellungen)</string>
+    <string name="settings_location_unset">Kein Standort festgelegt — Standardwert ist London</string>
+    <string name="settings_location_description">Die Vorhersage wird für diesen Ort geholt. Suche nach einem Städtenamen; die Ergebnisse stammen vom kostenlosen Geocoding-Dienst von Open-Meteo.</string>
+    <string name="settings_location_description_device_on">Wenn aktiviert, liest ClothesCast zur Benachrichtigungszeit den ungefähren Standort deines Geräts (nur Funkzelle / WLAN — keine GPS-Ortung). Der Standort unten dient als Notlösung, falls das Auslesen des Geräts fehlschlägt. Hintergrundstandort muss in den System-Einstellungen erlaubt sein, sonst kann der morgendliche Worker ihn nicht lesen.</string>
+    <string name="settings_location_set">Standort festlegen</string>
+    <string name="settings_location_change">Standort ändern</string>
+    <string name="settings_location_clear">Standort entfernen</string>
+    <string name="settings_location_search_title">Nach Standort suchen</string>
+    <string name="settings_location_query_label">Stadt oder Ort</string>
+    <string name="settings_location_search">Suchen</string>
+    <string name="settings_location_searching">Suche läuft…</string>
+    <string name="settings_location_no_results">Keine Treffer.</string>
+
+    <!--
     Today screen — top-bar, refresh toasts, empty state, generation timestamp,
     outfit card, hourly chart, confidence chip, work-status banner. Tone is
     Du-form imperative (intimate / spousal register), matching the app's
