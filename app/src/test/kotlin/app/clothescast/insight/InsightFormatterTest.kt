@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.EveningEventTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
@@ -38,7 +39,8 @@ class InsightFormatterTest {
         clothes: ClothesClause? = null,
         precip: PrecipClause? = null,
         calendarTieIn: CalendarTieInClause? = null,
-    ) = InsightSummary(period, band, alert, delta, clothes, precip, calendarTieIn)
+        eveningEventTieIn: EveningEventTieInClause? = null,
+    ) = InsightSummary(period, band, alert, delta, clothes, precip, calendarTieIn, eveningEventTieIn)
 
     @Test
     fun `band-only insight emits the lead-in and label`() {
@@ -183,6 +185,27 @@ class InsightFormatterTest {
             ),
         )
         out shouldBe "Today will be mild. Wear an umbrella. Rain at 3pm. Bring an umbrella for your 3pm park run."
+    }
+
+    @Test
+    fun `evening event tie-in renders bring + article + title + tonight (no time)`() {
+        val out = subject.format(
+            summary(
+                eveningEventTieIn = EveningEventTieInClause("jacket", "dinner"),
+            ),
+        )
+        out shouldBe "Today will be mild. Bring a jacket for your dinner tonight."
+    }
+
+    @Test
+    fun `evening event tie-in coexists with morning band and clothes`() {
+        val out = subject.format(
+            summary(
+                clothes = ClothesClause(listOf("shorts")),
+                eveningEventTieIn = EveningEventTieInClause("jacket", "dinner"),
+            ),
+        )
+        out shouldBe "Today will be mild. Wear shorts. Bring a jacket for your dinner tonight."
     }
 
     @Test

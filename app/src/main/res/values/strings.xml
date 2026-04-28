@@ -382,4 +382,12 @@
     %2$s = HH:mm event time, %3$s = event title.
     -->
     <string name="insight_calendar_tie_in">Bring %1$s for your %2$s %3$s.</string>
+    <!--
+    Evening-event tie-in attached to the morning insight when "Mention evening
+    events" is on. %1$s = item phrase (with article, via the same phraser as
+    clothes), %2$s = event title. No time deliberately — the user already knows
+    when their event is, and the conversational "tonight" reads better than a
+    redundant clock reference.
+    -->
+    <string name="insight_evening_event_tie_in">Bring %1$s for your %2$s tonight.</string>
 </resources>

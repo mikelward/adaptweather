@@ -196,7 +196,6 @@ class RenderInsightSummaryTest {
         val tie = out.eveningEventTieIn
         tie.shouldNotBeNull()
         tie!!.item shouldBe "jacket"
-        tie.time shouldBe LocalTime.of(21, 0)
         tie.title shouldBe "dinner"
     }
 
@@ -255,6 +254,23 @@ class RenderInsightSummaryTest {
     }
 
     @Test
+    fun `calendar tie-in is suppressed on the today period`() {
+        // The morning insight no longer chains a "Bring an umbrella for your 3pm
+        // standup" sentence after "Rain at 3pm." — the listener already knows
+        // about their morning event and the bare precip clause is enough.
+        // Tonight events get a separate evening-event tie-in via
+        // [eveningEventTieIn] when the user has the "Mention evening events"
+        // setting on.
+        val today = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
+        )
+        val event = CalendarEvent("standup", LocalTime.of(14, 30), LocalTime.of(16, 0))
+        subject(today, yesterday, listOf(umbrellaRule), events = listOf(event)).calendarTieIn.shouldBeNull()
+    }
+
+    @Test
     fun `calendar tie-in is omitted when the peak condition is non-precipitation`() {
         // Even with the umbrella rule firing on day-level probability and an event
         // overlapping the peak hour, a cloudy peak shouldn't motivate a tie-in —
@@ -265,7 +281,11 @@ class RenderInsightSummaryTest {
             hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.CLOUDY)),
         )
         val event = CalendarEvent("park run", LocalTime.of(14, 30), LocalTime.of(16, 0))
-        subject(today, yesterday, listOf(umbrellaRule), events = listOf(event)).calendarTieIn.shouldBeNull()
+        subject(
+            today, yesterday, listOf(umbrellaRule),
+            events = listOf(event),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn.shouldBeNull()
     }
 
     @Test
@@ -349,7 +369,11 @@ class RenderInsightSummaryTest {
             start = LocalTime.of(14, 30),
             end = LocalTime.of(16, 0),
         )
-        val out = subject(today, yesterday, listOf(umbrellaRule), events = listOf(event)).calendarTieIn
+        val out = subject(
+            today, yesterday, listOf(umbrellaRule),
+            events = listOf(event),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn
         out.shouldNotBeNull()
         out!!.item shouldBe "umbrella"
         out.time shouldBe LocalTime.of(15, 0)
@@ -364,7 +388,11 @@ class RenderInsightSummaryTest {
             hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
         )
         val event = CalendarEvent("standup", LocalTime.of(14, 0), LocalTime.of(16, 0))
-        val out = subject(today, yesterday, listOf(sweaterRule, umbrellaRule), events = listOf(event)).calendarTieIn
+        val out = subject(
+            today, yesterday, listOf(sweaterRule, umbrellaRule),
+            events = listOf(event),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn
         out.shouldNotBeNull()
         out!!.item shouldBe "umbrella"
     }
@@ -377,7 +405,11 @@ class RenderInsightSummaryTest {
             hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
         )
         val event = CalendarEvent("park run", LocalTime.of(14, 0), LocalTime.of(16, 0))
-        val out = subject(today, yesterday, listOf(sweaterRule, jacketRule), events = listOf(event)).calendarTieIn
+        val out = subject(
+            today, yesterday, listOf(sweaterRule, jacketRule),
+            events = listOf(event),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn
         out.shouldNotBeNull()
         out!!.item shouldBe "sweater"
     }
@@ -390,7 +422,11 @@ class RenderInsightSummaryTest {
             hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
         )
         val event = CalendarEvent("breakfast", LocalTime.of(8, 0), LocalTime.of(9, 0))
-        subject(today, yesterday, listOf(umbrellaRule), events = listOf(event)).calendarTieIn.shouldBeNull()
+        subject(
+            today, yesterday, listOf(umbrellaRule),
+            events = listOf(event),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn.shouldBeNull()
     }
 
     @Test
@@ -401,13 +437,21 @@ class RenderInsightSummaryTest {
             hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
         )
         val event = CalendarEvent("park run", LocalTime.of(14, 30), LocalTime.of(16, 0))
-        subject(today, yesterday, emptyList(), events = listOf(event)).calendarTieIn.shouldBeNull()
+        subject(
+            today, yesterday, emptyList(),
+            events = listOf(event),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn.shouldBeNull()
     }
 
     @Test
     fun `calendar tie-in is omitted on a dry day even when an event exists`() {
         val event = CalendarEvent("park run", LocalTime.of(11, 0), LocalTime.of(13, 0))
-        subject(mildToday, yesterday, listOf(umbrellaRule), events = listOf(event)).calendarTieIn.shouldBeNull()
+        subject(
+            mildToday, yesterday, listOf(umbrellaRule),
+            events = listOf(event),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn.shouldBeNull()
     }
 
     @Test
@@ -418,7 +462,11 @@ class RenderInsightSummaryTest {
             hourly = listOf(HourlyForecast(LocalTime.of(15, 0), 22.0, 22.0, 60.0, WeatherCondition.RAIN)),
         )
         val holiday = CalendarEvent("public holiday", LocalTime.MIDNIGHT, LocalTime.MIDNIGHT, allDay = true)
-        subject(today, yesterday, listOf(umbrellaRule), events = listOf(holiday)).calendarTieIn.shouldBeNull()
+        subject(
+            today, yesterday, listOf(umbrellaRule),
+            events = listOf(holiday),
+            period = ForecastPeriod.TONIGHT,
+        ).calendarTieIn.shouldBeNull()
     }
 
     @Test
