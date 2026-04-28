@@ -15,90 +15,56 @@ import kotlin.coroutines.resumeWithException
 /**
  * Production [TtsSpeaker] that wraps Android's [TextToSpeech] engine.
  *
- * Each call creates a fresh engine connection, picks the best available voice for the
- * requested locale, speaks one utterance, and shuts down. The Worker fires once a day,
- * so per-call init cost (~50–200ms) is negligible.
+ * Each call creates a fresh engine connection (via [initAndroidTtsEngine]),
+ * picks a voice for the requested locale, speaks one utterance, and shuts
+ * down. The Worker fires once a day, so per-call init cost (~50–200ms) is
+ * negligible.
  *
- * Voice quality:
- * 1. We force-select Google's "Speech Services by Google" engine ([GOOGLE_TTS_PACKAGE])
- *    when it's installed, since most vendor-default TTS engines on Android sound
- *    significantly worse. If Google's engine isn't installed we fall back to the
- *    system default.
- * 2. From the chosen engine's voice list, we pick the highest-quality voice that
- *    matches the requested [Locale] — preferring exact-locale matches, then same-
- *    language matches. Voice quality runs from VERY_LOW (100) through VERY_HIGH (500).
+ * Voice selection:
+ * 1. If [voiceId] is set and matches a voice the engine reports for the
+ *    requested locale's *language*, use it. This is the user's pin from
+ *    Settings → Voice → Device → voice picker.
+ * 2. Otherwise, fall back to [pickBestVoice] — the highest-quality voice
+ *    matching the requested locale, with same-language as a relaxation.
+ *    This is the default behaviour for installs that haven't opened the
+ *    picker.
  *
- * TODO: evaluate higher-quality alternatives. Two candidates:
- *   - Gemini's audio-output model (`gemini-2.5-flash-preview-tts`). Uses the existing
- *     BYOK key. Network round-trip per speak; produces near-human voices.
- *   - ElevenLabs / OpenAI TTS. Highest fidelity but adds another vendor + key.
+ * The language match (rather than exact-locale) for the pinned path is
+ * deliberate: a user who picked "Wavenet F" on en-US shouldn't be silently
+ * downgraded to a different voice just because [voiceLocale] is set to
+ * SYSTEM and the phone is on en-GB this morning. Only when the requested
+ * locale's *language* is different from the pin's do we abandon it.
  */
-class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
+class AndroidTtsSpeaker(
+    private val context: Context,
+    private val voiceId: String? = null,
+) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
-        val tts = initEngine()
+        val tts = initAndroidTtsEngine(context)
         try {
             tts.setAudioAttributes(SPEECH_AUDIO_ATTRS)
-            applyBestVoice(tts, locale)
+            applyVoice(tts, locale)
             speakAndAwait(tts, prepareForTts(text))
         } finally {
             tts.shutdown()
         }
     }
 
-    private suspend fun initEngine(): TextToSpeech {
-        // Try Google's engine first; if it isn't installed (or fails to bind), Android
-        // returns ERROR from the init callback and we fall back to the system default.
-        return runCatching { initEngine(GOOGLE_TTS_PACKAGE) }
-            .getOrElse {
-                DiagLog.w(TAG, "Google TTS unavailable; falling back to system default.", it)
-                initEngine(null)
-            }
-    }
-
-    private suspend fun initEngine(enginePackage: String?): TextToSpeech =
-        suspendCancellableCoroutine { cont ->
-            var engineRef: TextToSpeech? = null
-            val listener = TextToSpeech.OnInitListener { status ->
-                if (status == TextToSpeech.SUCCESS) {
-                    cont.resume(engineRef!!)
-                } else {
-                    cont.resumeWithException(
-                        IllegalStateException("TTS engine init failed (status=$status)"),
-                    )
-                }
-            }
-            val engine = if (enginePackage != null) {
-                TextToSpeech(context, listener, enginePackage)
-            } else {
-                TextToSpeech(context, listener)
-            }
-            engineRef = engine
-            cont.invokeOnCancellation { runCatching { engine.shutdown() } }
-        }
-
-    private fun applyBestVoice(tts: TextToSpeech, locale: Locale) {
+    private fun applyVoice(tts: TextToSpeech, locale: Locale) {
         tts.setLanguage(locale)
         val voices: Set<Voice> = runCatching { tts.voices }.getOrNull() ?: emptySet()
         if (voices.isEmpty()) return
 
-        val exactMatch = voices.filter { it.locale == locale }
-        val sameLanguage = voices.filter { it.locale.language == locale.language }
-        val candidates = when {
-            exactMatch.isNotEmpty() -> exactMatch
-            sameLanguage.isNotEmpty() -> sameLanguage
-            else -> voices.toList()
-        }
-
-        // Quality runs VERY_LOW (100) → VERY_HIGH (500). Prefer non-network voices on
-        // ties so a flaky connection at speak-time doesn't break playback.
-        val best = candidates.maxWithOrNull(
-            compareBy<Voice> { it.quality }.thenBy { !it.isNetworkConnectionRequired },
-        )
-        if (best != null) {
-            runCatching { tts.voice = best }
+        val pinned = voiceId
+            ?.let { id -> voices.firstOrNull { it.name == id } }
+            ?.takeIf { it.locale.language == locale.language }
+        val chosen = pinned ?: pickBestVoice(voices, locale)
+        if (chosen != null) {
+            runCatching { tts.voice = chosen }
                 .onSuccess {
-                    DiagLog.i(TAG, "TTS voice: ${best.name} (quality=${best.quality}, locale=${best.locale})")
+                    val source = if (pinned != null) "pinned" else "auto"
+                    DiagLog.i(TAG, "TTS voice ($source): ${chosen.name} (quality=${chosen.quality}, locale=${chosen.locale})")
                 }
                 .onFailure { DiagLog.w(TAG, "Setting TTS voice failed; using engine default.", it) }
         }
@@ -141,7 +107,6 @@ class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
 
     companion object {
         private const val TAG = "AndroidTtsSpeaker"
-        private const val GOOGLE_TTS_PACKAGE = "com.google.android.tts"
 
         // Match the cloud-TTS path (PcmAudioPlayer): tag the stream as assistant
         // speech so audio focus / ducking works the same way regardless of engine.

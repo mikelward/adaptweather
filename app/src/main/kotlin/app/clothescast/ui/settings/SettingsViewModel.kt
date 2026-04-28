@@ -16,12 +16,17 @@ import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
+import app.clothescast.tts.TtsVoiceEnumerator
+import app.clothescast.tts.resolve
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -31,10 +36,20 @@ class SettingsViewModel(
     private val rearmAlarm: (Schedule, ForecastPeriod) -> Unit,
     private val cancelAlarm: (ForecastPeriod) -> Unit,
     private val geocodingClient: OpenMeteoGeocodingClient,
+    private val voiceEnumerator: TtsVoiceEnumerator,
+    private val isGoogleTtsInstalled: () -> Boolean,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
     val state: StateFlow<SettingsState> = _state.asStateFlow()
+
+    /**
+     * Tracks the most recent device-voice enumeration so we can cancel it
+     * when the locale changes mid-load — avoids a stale en-US list landing
+     * after the user has already switched to en-GB.
+     */
+    private var deviceVoiceLoadJob: Job? = null
+    private var lastEnumeratedLocale: VoiceLocale? = null
 
     init {
         viewModelScope.launch {
@@ -60,13 +75,39 @@ class SettingsViewModel(
                         geminiVoice = prefs.geminiVoice,
                         openAiVoice = prefs.openAiVoice,
                         elevenLabsVoice = prefs.elevenLabsVoice,
+                        deviceVoice = prefs.deviceVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
                     )
                 }
+                // Re-enumerate on first observation and any locale flip; the
+                // engine reports a different "exact match" set per locale.
+                if (lastEnumeratedLocale != prefs.voiceLocale) {
+                    lastEnumeratedLocale = prefs.voiceLocale
+                    refreshDeviceVoices(prefs.voiceLocale)
+                }
             }
         }
         viewModelScope.launch { refreshApiKeyStatus() }
+        _state.update { it.copy(isGoogleTtsInstalled = isGoogleTtsInstalled()) }
+    }
+
+    private fun refreshDeviceVoices(locale: VoiceLocale) {
+        deviceVoiceLoadJob?.cancel()
+        deviceVoiceLoadJob = viewModelScope.launch {
+            // Both enumeration calls bind the engine, which is JNI work — keep
+            // it off the main dispatcher.
+            val resolvedLocale = locale.resolve()
+            val voices = withContext(Dispatchers.IO) {
+                runCatching { voiceEnumerator.listVoices(resolvedLocale) }.getOrDefault(emptyList())
+            }
+            val pinnedId = _state.value.deviceVoice
+            val effective = voices.firstOrNull { it.id == pinnedId }
+                ?: withContext(Dispatchers.IO) {
+                    runCatching { voiceEnumerator.resolveAutoPick(resolvedLocale) }.getOrNull()
+                }
+            _state.update { it.copy(deviceVoices = voices, effectiveDeviceVoice = effective) }
+        }
     }
 
     fun setApiKey(key: String) {
@@ -121,6 +162,17 @@ class SettingsViewModel(
 
     fun setElevenLabsVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setElevenLabsVoice(voice) }
+    }
+
+    fun setDeviceVoice(voice: String?) {
+        viewModelScope.launch {
+            settingsRepository.setDeviceVoice(voice)
+            // Refresh the "currently using" indicator immediately — without
+            // this, the line lags the picker by one preferences-flow tick
+            // and the user sees their just-picked voice show as "loading"
+            // for ~50ms.
+            _state.value.voiceLocale.let { refreshDeviceVoices(it) }
+        }
     }
 
     fun setDeliveryMode(mode: DeliveryMode) {
@@ -254,13 +306,23 @@ class SettingsViewModel(
         private val rearmAlarm: (Schedule, ForecastPeriod) -> Unit,
         private val cancelAlarm: (ForecastPeriod) -> Unit,
         private val geocodingClient: OpenMeteoGeocodingClient,
+        private val voiceEnumerator: TtsVoiceEnumerator,
+        private val isGoogleTtsInstalled: () -> Boolean,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
                 "Unknown ViewModel: ${modelClass.name}"
             }
-            return SettingsViewModel(settingsRepository, keyStore, rearmAlarm, cancelAlarm, geocodingClient) as T
+            return SettingsViewModel(
+                settingsRepository,
+                keyStore,
+                rearmAlarm,
+                cancelAlarm,
+                geocodingClient,
+                voiceEnumerator,
+                isGoogleTtsInstalled,
+            ) as T
         }
     }
 }

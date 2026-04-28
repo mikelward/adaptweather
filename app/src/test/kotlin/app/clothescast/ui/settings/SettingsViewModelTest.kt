@@ -9,6 +9,9 @@ import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
+import app.clothescast.tts.DeviceVoice
+import app.clothescast.tts.TtsVoiceEnumerator
+import java.util.Locale
 import com.google.crypto.tink.Aead
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -91,7 +94,19 @@ class SettingsViewModelTest {
             rearmAlarm = { _, _ -> },
             cancelAlarm = { _ -> },
             geocodingClient = OpenMeteoGeocodingClient(emptyGeocoding),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            isGoogleTtsInstalled = { true },
         )
+    }
+
+    /**
+     * The ViewModel calls this from its preferences flow on every locale
+     * change; the existing tests don't care about device-voice enumeration
+     * so we hand back empty results without any Android plumbing.
+     */
+    private object EmptyVoiceEnumerator : TtsVoiceEnumerator {
+        override suspend fun listVoices(locale: Locale): List<DeviceVoice> = emptyList()
+        override suspend fun resolveAutoPick(locale: Locale): DeviceVoice? = null
     }
 
     @AfterEach

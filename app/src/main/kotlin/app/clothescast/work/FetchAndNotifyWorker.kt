@@ -308,7 +308,7 @@ class FetchAndNotifyWorker(
                 TtsEngine.DEVICE -> Unit
             }
             try {
-                app.deviceTtsSpeaker.speak(text, locale)
+                app.deviceTtsSpeaker(prefs.deviceVoice).speak(text, locale)
             } catch (t: Throwable) {
                 DiagLog.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
             }

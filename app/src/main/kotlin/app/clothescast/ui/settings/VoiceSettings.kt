@@ -38,9 +38,11 @@ import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
+import app.clothescast.tts.DeviceVoice
 import app.clothescast.tts.ELEVENLABS_VOICES
 import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GEMINI_VOICES
+import app.clothescast.tts.GOOGLE_TTS_PACKAGE
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OPENAI_VOICES
 import app.clothescast.tts.OpenAITtsSpeaker
@@ -61,6 +63,10 @@ internal fun VoiceContent(
     geminiVoice: String,
     openAiVoice: String,
     elevenLabsVoice: String,
+    deviceVoice: String?,
+    deviceVoices: List<DeviceVoice>,
+    effectiveDeviceVoice: DeviceVoice?,
+    isGoogleTtsInstalled: Boolean,
     geminiKeyConfigured: Boolean,
     openAiKeyConfigured: Boolean,
     elevenLabsKeyConfigured: Boolean,
@@ -70,6 +76,7 @@ internal fun VoiceContent(
     onSetGeminiVoice: (String) -> Unit,
     onSetOpenAiVoice: (String) -> Unit,
     onSetElevenLabsVoice: (String) -> Unit,
+    onSetDeviceVoice: (String?) -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
     onSetGeminiKey: (String) -> Unit,
     onSetOpenAiKey: (String) -> Unit,
@@ -86,12 +93,12 @@ internal fun VoiceContent(
     // atomic with respect to other UI events.
     var isPreviewing by remember { mutableStateOf(false) }
 
-    fun preview(engine: TtsEngine, gVoice: String, oVoice: String, eVoice: String, locale: VoiceLocale) {
+    fun preview(engine: TtsEngine, gVoice: String, oVoice: String, eVoice: String, dVoice: String?, locale: VoiceLocale) {
         if (isPreviewing) return
         isPreviewing = true
         coroutineScope.launch {
             try {
-                runTtsPreview(context, engine, gVoice, oVoice, eVoice, locale)
+                runTtsPreview(context, engine, gVoice, oVoice, eVoice, dVoice, locale)
             } finally {
                 isPreviewing = false
             }
@@ -120,7 +127,7 @@ internal fun VoiceContent(
                 enabled = !isPreviewing,
                 onSelect = {
                     onSetVoiceLocale(it)
-                    preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, it)
+                    preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, it)
                 },
             )
         }
@@ -138,7 +145,7 @@ internal fun VoiceContent(
                     enabled = !isPreviewing,
                     onSelect = {
                         onSetTtsEngine(engine)
-                        preview(engine, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
+                        preview(engine, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     },
                 )
             }
@@ -158,11 +165,11 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = {
                             onSetGeminiVoice(it)
-                            preview(TtsEngine.GEMINI, it, openAiVoice, elevenLabsVoice, voiceLocale)
+                            preview(TtsEngine.GEMINI, it, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
+                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }
                 }
                 TtsEngine.OPENAI -> {
@@ -180,11 +187,11 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = {
                             onSetOpenAiVoice(it)
-                            preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice, voiceLocale)
+                            preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
+                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }
                 }
                 TtsEngine.ELEVENLABS -> {
@@ -202,16 +209,29 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = {
                             onSetElevenLabsVoice(it)
-                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, voiceLocale)
+                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, deviceVoice, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
+                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }
                 }
                 TtsEngine.DEVICE -> {
+                    if (!isGoogleTtsInstalled) {
+                        InstallGoogleTtsHint()
+                    }
+                    DeviceVoicePicker(
+                        voices = deviceVoices,
+                        selectedId = deviceVoice,
+                        effectiveDeviceVoice = effectiveDeviceVoice,
+                        enabled = !isPreviewing,
+                        onSelect = { picked ->
+                            onSetDeviceVoice(picked)
+                            preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, picked, voiceLocale)
+                        },
+                    )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, voiceLocale)
+                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }
                 }
             }
@@ -434,6 +454,89 @@ private fun VoicePicker(
     }
 }
 
+/**
+ * Voice picker for the on-device TTS engine. Wraps the generic [VoicePicker]
+ * with two extras specific to the device path:
+ *
+ *  - An "Auto" entry at the top that maps to a `null` voice ID — meaning
+ *    "let [app.clothescast.tts.AndroidTtsSpeaker] auto-pick the highest-
+ *    quality voice for the locale." This is the default for installs that
+ *    haven't opened the picker.
+ *  - A "Currently:" line below the picker showing what would actually be
+ *    spoken right now — the user's pin if set, else the auto-pick. Lets
+ *    users see their selection without first hitting Test.
+ *
+ * Voices come from [app.clothescast.tts.AndroidTtsVoiceEnumerator] via the
+ * Settings ViewModel; an empty list means we're still enumerating (or the
+ * device has no voices at all).
+ */
+@Composable
+private fun DeviceVoicePicker(
+    voices: List<DeviceVoice>,
+    selectedId: String?,
+    effectiveDeviceVoice: DeviceVoice?,
+    onSelect: (String?) -> Unit,
+    enabled: Boolean = true,
+) {
+    val autoLabel = stringResource(R.string.settings_tts_device_voice_auto)
+    val networkTag = stringResource(R.string.settings_tts_device_voice_network)
+    val offlineTag = stringResource(R.string.settings_tts_device_voice_offline)
+    val tagFor: (DeviceVoice) -> String = { if (it.isNetworkRequired) networkTag else offlineTag }
+    val labelFor: (DeviceVoice) -> String = { "${it.id} · ${tagFor(it)} · q${it.quality}" }
+    val voiceOptions = listOf(TtsVoiceOption(DEVICE_VOICE_AUTO_ID, autoLabel)) +
+        voices.map { TtsVoiceOption(it.id, labelFor(it)) }
+    VoicePicker(
+        title = stringResource(R.string.settings_tts_device_voice_label),
+        voices = voiceOptions,
+        selectedId = selectedId ?: DEVICE_VOICE_AUTO_ID,
+        enabled = enabled,
+        onSelect = { id -> onSelect(id.takeIf { it != DEVICE_VOICE_AUTO_ID }) },
+    )
+    val currently = effectiveDeviceVoice?.let(labelFor)
+        ?: stringResource(R.string.settings_tts_device_voice_currently_loading)
+    Text(
+        text = stringResource(R.string.settings_tts_device_voice_currently, currently),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+private const val DEVICE_VOICE_AUTO_ID = "__auto__"
+
+/**
+ * Banner shown when "Speech Services by Google" isn't installed. The vendor
+ * default TTS engine on most non-Pixel devices sounds notably worse than
+ * Google's, and the install fixes that with one tap. Hidden once Google's
+ * engine is detected (re-checked when DEVICE is selected).
+ */
+@Composable
+private fun InstallGoogleTtsHint() {
+    val context = LocalContext.current
+    Text(
+        text = stringResource(R.string.settings_tts_install_google_hint),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    OutlinedButton(
+        onClick = {
+            // ACTION_VIEW with market:// goes to Play Store if installed,
+            // falls back gracefully on Aurora/Sideload installs that handle
+            // the scheme. We don't add a https-fallback here because users
+            // without any market app installed are extremely unlikely to be
+            // installing TTS engines anyway.
+            val intent = android.content.Intent(
+                android.content.Intent.ACTION_VIEW,
+                android.net.Uri.parse("market://details?id=$GOOGLE_TTS_PACKAGE"),
+            )
+            runCatching { context.startActivity(intent) }
+                .onFailure { DiagLog.w("VoiceSettings", "Couldn't open Play Store for Google TTS install", it) }
+        },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(stringResource(R.string.settings_tts_install_google_button))
+    }
+}
+
 @Composable
 private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
     // Disabled while previewing — billed cloud TTS calls can't be reliably
@@ -475,6 +578,7 @@ private suspend fun runTtsPreview(
     geminiVoice: String,
     openAiVoice: String,
     elevenLabsVoice: String,
+    deviceVoice: String?,
     voiceLocale: VoiceLocale,
 ) {
     val app = context.applicationContext as app.clothescast.ClothesCastApplication
@@ -501,7 +605,7 @@ private suspend fun runTtsPreview(
                     TtsEngine.ELEVENLABS ->
                         ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = elevenLabsVoice).speak(text, locale)
                     TtsEngine.DEVICE ->
-                        app.deviceTtsSpeaker.speak(text, locale)
+                        app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
                 }
             } catch (_: CancellationException) {
                 // Composable scope cancelled (user navigated away mid-preview); not an error.
@@ -519,7 +623,7 @@ private suspend fun runTtsPreview(
                 // and can confirm audio output is working — mirrors FetchAndNotifyWorker.
                 if (engine != TtsEngine.DEVICE) {
                     try {
-                        app.deviceTtsSpeaker.speak(text, locale)
+                        app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
                     } catch (_: CancellationException) {
                         // user moved on; fine
                     } catch (fallback: Throwable) {

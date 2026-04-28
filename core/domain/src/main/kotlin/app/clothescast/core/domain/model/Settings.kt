@@ -165,6 +165,15 @@ data class UserPreferences(
      * == [TtsEngine.ELEVENLABS].
      */
     val elevenLabsVoice: String = DEFAULT_ELEVENLABS_VOICE,
+    /**
+     * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
+     * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)
+     * means "auto-pick the highest-quality voice for [voiceLocale]" — the
+     * existing behaviour for installs that predate the device-voice picker.
+     * Stored as a free-form string so the device's installed-voice catalogue
+     * doesn't have to round-trip through a domain enum.
+     */
+    val deviceVoice: String? = null,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     /**
      * When true, the worker reads today's calendar events (via `READ_CALENDAR`)

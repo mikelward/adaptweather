@@ -22,6 +22,7 @@ import app.clothescast.notification.NotificationChannelRegistrar
 import app.clothescast.notification.TonightInsightNotifier
 import app.clothescast.notification.WeatherAlertNotifier
 import app.clothescast.tts.AndroidTtsSpeaker
+import app.clothescast.tts.AndroidTtsVoiceEnumerator
 import app.clothescast.tts.TtsSpeaker
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -53,7 +54,20 @@ class ClothesCastApplication : Application() {
     val tonightInsightNotifier: TonightInsightNotifier by lazy { TonightInsightNotifier(this) }
     val weatherAlertNotifier: WeatherAlertNotifier by lazy { WeatherAlertNotifier(this) }
     val dailyAlarmScheduler: DailyAlarmScheduler by lazy { DailyAlarmScheduler(this) }
-    val deviceTtsSpeaker: TtsSpeaker by lazy { AndroidTtsSpeaker(this) }
+    /**
+     * Build an on-device TTS speaker pinned to [voiceId], or to the auto-pick
+     * when [voiceId] is null. Constructed per call (matching the cloud
+     * speakers) because the chosen voice is part of the speaker's
+     * identity — there's no shared engine state to reuse across calls.
+     */
+    fun deviceTtsSpeaker(voiceId: String? = null): TtsSpeaker = AndroidTtsSpeaker(this, voiceId)
+
+    /**
+     * Voice enumeration is stateless and Android-cheap (one engine init per
+     * `listVoices` call), but the wrapper itself is harmless to share — used
+     * by the Settings voice picker and the "currently using" line.
+     */
+    val androidTtsVoiceEnumerator: AndroidTtsVoiceEnumerator by lazy { AndroidTtsVoiceEnumerator(this) }
     val calendarEventReader: CalendarEventReader by lazy { CalendarContractEventReader(this) }
     val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }
     val openAiTtsClient: OpenAITtsClient by lazy {
