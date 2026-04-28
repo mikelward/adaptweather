@@ -54,6 +54,29 @@ earlier passes accidentally mixed in.
     <string name="settings_clothes_cond_precip_above">когда вероятность дождя превышает %.0f%%</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "Упоминать вечерние события" toggle, and the nightly-only
+    "notify only on events" toggle. Description uses Russian guillemet
+    «…» quotes around the nested toggle label — locale-native style.
+    -->
+    <string name="settings_schedule_title">Ежедневный ClothesCast</string>
+    <string name="settings_schedule_time_label">Время</string>
+    <string name="settings_schedule_days_label">Дни недели</string>
+    <string name="settings_daily_mention_evening_events">Упоминать вечерние события</string>
+
+    <string name="settings_tonight_title">Вечерний ClothesCast</string>
+    <string name="settings_tonight_description">Второй ClothesCast вечером, охватывающий погоду на сегодня вечером. В тихие вечера остаётся беззвучным или вообще не появляется, если включено «Уведомлять только при вечерних событиях»; в вечера с событиями издаёт звук и (если включено озвучивание) читает себя вслух.</string>
+    <string name="settings_tonight_enabled">Показывать вечерний ClothesCast</string>
+    <string name="settings_tonight_time_label">Время</string>
+    <string name="settings_tonight_days_label">Дни недели</string>
+    <string name="settings_tonight_notify_only_on_events">Уведомлять только при вечерних событиях</string>
+
+    <string name="settings_delivery_label">Доставка</string>
+    <string name="settings_delivery_notification_only">Только уведомление</string>
+    <string name="settings_delivery_tts_only">Только озвучивание</string>
+    <string name="settings_delivery_notification_and_tts">Уведомление и озвучивание</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ты-form imperatives: "нажми", "установи", "твой".
