@@ -61,6 +61,7 @@ import app.clothescast.core.domain.model.toUnit
 import app.clothescast.diag.BugReport
 import app.clothescast.diag.findActivity
 import app.clothescast.insight.InsightFormatter
+import app.clothescast.ui.settings.resourcesLocale
 import app.clothescast.work.FetchAndNotifyWorker
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -395,13 +396,22 @@ private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom)
 internal fun InsightCard(insight: Insight, region: Region) {
     val context = LocalContext.current
     val formatter = remember(context, region) { InsightFormatter.forRegion(context, region) }
+    val locale = remember(context, region) {
+        region.bcp47?.let { Locale.forLanguageTag(it) } ?: context.resourcesLocale()
+    }
+    val dateFormat = remember(locale) {
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale)
+    }
+    val timeFormat = remember(locale) {
+        DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = DATE_FORMAT.format(insight.forDate),
+                text = dateFormat.format(insight.forDate),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -413,7 +423,7 @@ internal fun InsightCard(insight: Insight, region: Region) {
             Text(
                 text = stringResource(
                     R.string.today_generated_at,
-                    GENERATED_AT_FORMAT.format(insight.generatedAt.atZone(ZoneId.systemDefault())),
+                    timeFormat.format(insight.generatedAt.atZone(ZoneId.systemDefault())),
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -575,7 +585,3 @@ private fun java.time.LocalTime.isInTonightWindow(
     this >= tonightTime && this < morningTime
 }
 
-private val DATE_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.getDefault())
-private val GENERATED_AT_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale.getDefault())
