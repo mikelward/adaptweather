@@ -83,6 +83,31 @@ agreement; garment names are listed without articles and read naturally in conte
     <string name="settings_delivery_notification_and_tts">Notification et lecture à voix haute</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "Ajouter une clé API" dialog.
+    -->
+    <string name="settings_tts_engine_title">Moteur vocal</string>
+    <string name="settings_tts_engine_description">Les moteurs en ligne (Gemini, OpenAI, ElevenLabs) sonnent beaucoup plus naturels, mais nécessitent un appel réseau au moment de parler et utilisent ta clé API pour la synthèse (un court appel par ClothesCast lu). Bascule sur la voix de l\'appareil si le moteur choisi échoue.</string>
+    <string name="settings_tts_engine_device">Appareil (hors ligne, gratuit)</string>
+    <string name="settings_tts_engine_gemini">Gemini (haute qualité, en ligne)</string>
+    <string name="settings_tts_engine_openai">OpenAI (haute qualité, en ligne)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (qualité maximale, en ligne)</string>
+
+    <string name="settings_tts_voice_label">Voix</string>
+    <string name="settings_tts_voice_dismiss">Terminé</string>
+    <string name="settings_tts_voice_locale_description">Définit l\'accent de la voix parlée. Ne change pas le texte affiché.</string>
+    <string name="settings_tts_voice_locale_system">Suivre la langue du téléphone</string>
+
+    <string name="settings_tts_test">Tester la voix</string>
+    <string name="settings_tts_test_in_flight">Test en cours — patiente…</string>
+    <string name="settings_tts_no_key_hint">Aucune clé %1$s configurée — ajoutes-en une pour activer ce moteur.</string>
+    <string name="settings_tts_add_api_key">Ajouter une clé API</string>
+    <string name="settings_tts_add_api_key_title">Ajouter une clé API %1$s</string>
+    <string name="settings_tts_add_api_key_save">Enregistrer</string>
+    <string name="settings_tts_add_api_key_cancel">Annuler</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. tu-form throughout: "appuie", "ton", "définis".
