@@ -25,6 +25,7 @@ data class SettingsState(
     val tonightDays: Set<DayOfWeek> = Schedule.EVERY_DAY,
     val tonightEnabled: Boolean = true,
     val deliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
+    val tonightDeliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
     val region: Region = Region.SYSTEM,
     // Match SettingsRepository's locale-aware defaults so en-US devices don't
     // briefly render °C / km before the first DataStore emission overrides it.

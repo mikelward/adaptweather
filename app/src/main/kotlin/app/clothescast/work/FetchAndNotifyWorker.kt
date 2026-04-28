@@ -211,8 +211,9 @@ class FetchAndNotifyWorker(
     }
 
     /**
-     * Tonight delivery honours the user's [DeliveryMode] (consistent with
-     * [deliverToday]) and is also event-gated:
+     * Tonight delivery honours the user's tonight-specific [DeliveryMode]
+     * (the night card has its own delivery selector, separate from the day
+     * card's) and is also event-gated:
      *  - Notification posts only when the delivery mode includes notifications,
      *    matching today's behaviour. The notifier still picks the silent channel
      *    vs the default-priority channel based on whether there are calendar
@@ -225,7 +226,7 @@ class FetchAndNotifyWorker(
         InsightFormatter.forRegion(applicationContext, prefs.region).format(insight.summary)
 
     private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences, prose: String) {
-        val mode = prefs.deliveryMode
+        val mode = prefs.tonightDeliveryMode
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
             app.tonightInsightNotifier.notify(insight, prose)
         }

@@ -52,11 +52,13 @@ internal fun ScheduleContent(
     tonightDays: Set<DayOfWeek>,
     tonightEnabled: Boolean,
     deliveryMode: DeliveryMode,
+    tonightDeliveryMode: DeliveryMode,
     padding: PaddingValues,
     onSetSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetTonightSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetTonightEnabled: (Boolean) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
+    onSetTonightDeliveryMode: (DeliveryMode) -> Unit,
     onDone: (() -> Unit)? = null,
 ) {
     Column(
@@ -67,15 +69,16 @@ internal fun ScheduleContent(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        ScheduleCard(time, days, onSetSchedule)
-        TonightCard(
+        DayCard(time, days, deliveryMode, onSetSchedule, onSetDeliveryMode)
+        NightCard(
             time = tonightTime,
             days = tonightDays,
             enabled = tonightEnabled,
+            deliveryMode = tonightDeliveryMode,
             onSetEnabled = onSetTonightEnabled,
             onChange = onSetTonightSchedule,
+            onSetDeliveryMode = onSetTonightDeliveryMode,
         )
-        DeliveryModeCard(deliveryMode, onSetDeliveryMode)
         if (onDone != null) {
             Button(
                 onClick = onDone,
@@ -91,63 +94,27 @@ internal fun ScheduleContent(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun ScheduleCard(
+private fun DayCard(
     time: LocalTime,
     days: Set<DayOfWeek>,
+    deliveryMode: DeliveryMode,
     onChange: (LocalTime, Set<DayOfWeek>) -> Unit,
+    onSetDeliveryMode: (DeliveryMode) -> Unit,
 ) {
     var pickerOpen by remember { mutableStateOf(false) }
 
     SectionCard(title = stringResource(R.string.settings_schedule_title)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.settings_schedule_time_label),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(end = 12.dp),
-            )
-            OutlinedButton(onClick = { pickerOpen = true }) {
-                Text(text = TIME_FORMAT.format(time))
-            }
-        }
-
-        Text(
-            text = stringResource(R.string.settings_schedule_days_label),
-            style = MaterialTheme.typography.bodyMedium,
+        TimeRow(
+            label = stringResource(R.string.settings_schedule_time_label),
+            time = time,
+            onClick = { pickerOpen = true },
         )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            DayOfWeek.entries.forEach { dow ->
-                val selected = dow in days
-                FilterChip(
-                    selected = selected,
-                    onClick = {
-                        val next = if (selected) days - dow else days + dow
-                        if (next.isNotEmpty()) onChange(time, next)
-                    },
-                    label = {
-                        Text(text = dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
-                    },
-                    leadingIcon = if (selected) {
-                        {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(FilterChipDefaults.IconSize),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    colors = FilterChipDefaults.filterChipColors(),
-                )
-            }
-        }
+        DaysSelector(
+            label = stringResource(R.string.settings_schedule_days_label),
+            days = days,
+            onChange = { next -> onChange(time, next) },
+        )
+        DeliveryModeSection(deliveryMode, onSetDeliveryMode)
     }
 
     if (pickerOpen) {
@@ -192,12 +159,14 @@ private fun TimePickerDialog(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun TonightCard(
+private fun NightCard(
     time: LocalTime,
     days: Set<DayOfWeek>,
     enabled: Boolean,
+    deliveryMode: DeliveryMode,
     onSetEnabled: (Boolean) -> Unit,
     onChange: (LocalTime, Set<DayOfWeek>) -> Unit,
+    onSetDeliveryMode: (DeliveryMode) -> Unit,
 ) {
     var pickerOpen by remember { mutableStateOf(false) }
 
@@ -219,54 +188,17 @@ private fun TonightCard(
             Switch(checked = enabled, onCheckedChange = onSetEnabled)
         }
         if (enabled) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(R.string.settings_tonight_time_label),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(end = 12.dp),
-                )
-                OutlinedButton(onClick = { pickerOpen = true }) {
-                    Text(text = TIME_FORMAT.format(time))
-                }
-            }
-            Text(
-                text = stringResource(R.string.settings_tonight_days_label),
-                style = MaterialTheme.typography.bodyMedium,
+            TimeRow(
+                label = stringResource(R.string.settings_tonight_time_label),
+                time = time,
+                onClick = { pickerOpen = true },
             )
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                DayOfWeek.entries.forEach { dow ->
-                    val selected = dow in days
-                    FilterChip(
-                        selected = selected,
-                        onClick = {
-                            val next = if (selected) days - dow else days + dow
-                            if (next.isNotEmpty()) onChange(time, next)
-                        },
-                        label = {
-                            Text(text = dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
-                        },
-                        leadingIcon = if (selected) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                        colors = FilterChipDefaults.filterChipColors(),
-                    )
-                }
-            }
+            DaysSelector(
+                label = stringResource(R.string.settings_tonight_days_label),
+                days = days,
+                onChange = { next -> onChange(time, next) },
+            )
+            DeliveryModeSection(deliveryMode, onSetDeliveryMode)
         }
     }
 
@@ -283,18 +215,81 @@ private fun TonightCard(
 }
 
 @Composable
-private fun DeliveryModeCard(
+private fun TimeRow(label: String, time: LocalTime, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(end = 12.dp),
+        )
+        OutlinedButton(onClick = onClick) {
+            Text(text = TIME_FORMAT.format(time))
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DaysSelector(
+    label: String,
+    days: Set<DayOfWeek>,
+    onChange: (Set<DayOfWeek>) -> Unit,
+) {
+    Text(
+        text = label,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        DayOfWeek.entries.forEach { dow ->
+            val selected = dow in days
+            FilterChip(
+                selected = selected,
+                onClick = {
+                    val next = if (selected) days - dow else days + dow
+                    if (next.isNotEmpty()) onChange(next)
+                },
+                label = {
+                    Text(text = dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
+                },
+                leadingIcon = if (selected) {
+                    {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        )
+                    }
+                } else {
+                    null
+                },
+                colors = FilterChipDefaults.filterChipColors(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun DeliveryModeSection(
     selected: DeliveryMode,
     onSelect: (DeliveryMode) -> Unit,
 ) {
-    SectionCard(title = stringResource(R.string.settings_delivery_title)) {
-        DeliveryMode.entries.forEach { mode ->
-            RadioRow(
-                label = stringResource(deliveryModeLabel(mode)),
-                selected = mode == selected,
-                onSelect = { onSelect(mode) },
-            )
-        }
+    Text(
+        text = stringResource(R.string.settings_delivery_label),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+    DeliveryMode.entries.forEach { mode ->
+        RadioRow(
+            label = stringResource(deliveryModeLabel(mode)),
+            selected = mode == selected,
+            onSelect = { onSelect(mode) },
+        )
     }
 }
 

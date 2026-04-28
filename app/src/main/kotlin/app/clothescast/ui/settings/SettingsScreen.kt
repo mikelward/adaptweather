@@ -100,11 +100,13 @@ fun SettingsScreen(
                 tonightDays = state.tonightDays,
                 tonightEnabled = state.tonightEnabled,
                 deliveryMode = state.deliveryMode,
+                tonightDeliveryMode = state.tonightDeliveryMode,
                 padding = padding,
                 onSetSchedule = viewModel::setSchedule,
                 onSetTonightSchedule = viewModel::setTonightSchedule,
                 onSetTonightEnabled = viewModel::setTonightEnabled,
                 onSetDeliveryMode = viewModel::setDeliveryMode,
+                onSetTonightDeliveryMode = viewModel::setTonightDeliveryMode,
                 // Show a Done button only when this page is the deep-link
                 // landing from onboarding's "Continue" — gives the user an
                 // obvious way to finish setup and reach Today. In the regular

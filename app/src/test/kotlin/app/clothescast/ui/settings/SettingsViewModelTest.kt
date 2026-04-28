@@ -141,6 +141,19 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `setTonightDeliveryMode persists independently of deliveryMode`() = runTest {
+        subject.setDeliveryMode(DeliveryMode.NOTIFICATION_ONLY)
+        subject.setTonightDeliveryMode(DeliveryMode.TTS_ONLY)
+        subject.state.first {
+            it.deliveryMode == DeliveryMode.NOTIFICATION_ONLY &&
+                it.tonightDeliveryMode == DeliveryMode.TTS_ONLY
+        }
+        val prefs = settingsRepository.preferences.first()
+        prefs.deliveryMode shouldBe DeliveryMode.NOTIFICATION_ONLY
+        prefs.tonightDeliveryMode shouldBe DeliveryMode.TTS_ONLY
+    }
+
+    @Test
     fun `setUseCalendarEvents persists and surfaces in state`() = runTest {
         subject.setUseCalendarEvents(true)
         subject.state.first { it.useCalendarEvents }

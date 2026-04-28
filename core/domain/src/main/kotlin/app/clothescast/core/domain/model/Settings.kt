@@ -163,6 +163,15 @@ data class UserPreferences(
      * the schedule settings page.
      */
     val tonightEnabled: Boolean = true,
+    /**
+     * Delivery mode for the evening / "tonight" insight. Distinct from
+     * [deliveryMode] (the morning slot) so the user can keep the morning as a
+     * silent notification and have the evening read itself out, or vice versa.
+     * The repository falls the stored tonight value back to [deliveryMode] when
+     * absent so existing installs keep their old "shared mode" behaviour until
+     * the user explicitly diverges them.
+     */
+    val tonightDeliveryMode: DeliveryMode = deliveryMode,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"
