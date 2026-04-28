@@ -7,6 +7,23 @@ enum class DistanceUnit { KILOMETERS, MILES }
 enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
 
 /**
+ * How verbose the rendered ClothesCast prose should be. Toggles between the
+ * historical terse phrasing and a more conversational form that adds context
+ * the listener may already infer.
+ *
+ * - [SHORTER] is the historical default. Each clause uses the existing
+ *   spoken templates ("It will be 5° cooler today.").
+ * - [LONGER] swaps in expanded prose variants where a natural one exists —
+ *   e.g. delta becomes "Today will be 5° cooler than yesterday." Same set
+ *   of clauses fires; only the per-clause wording differs. Clauses without
+ *   a longer variant fall through to the [SHORTER] template.
+ *
+ * Applies to both the morning and evening passes — there's no reason a user
+ * would want a chatty morning and a terse evening.
+ */
+enum class CastLength { SHORTER, LONGER }
+
+/**
  * Where the spoken-aloud audio comes from.
  *
  * - [DEVICE] uses Android's on-device TextToSpeech engine. Free, fully offline once
@@ -213,6 +230,12 @@ data class UserPreferences(
      * one clothes rule triggers against the evening hourly slice. Off by default.
      */
     val dailyMentionEveningEvents: Boolean = false,
+    /**
+     * How verbose the rendered insight prose should be. Default [CastLength.SHORTER]
+     * preserves the historical per-clause templates; [CastLength.LONGER] swaps
+     * in expanded variants where a natural one exists (see [CastLength]).
+     */
+    val castLength: CastLength = CastLength.SHORTER,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

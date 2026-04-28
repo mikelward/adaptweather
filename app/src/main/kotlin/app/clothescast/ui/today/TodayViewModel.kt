@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -22,6 +23,7 @@ data class TodayState(
     val workStatus: WorkStatus = WorkStatus.Idle,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     val region: Region = Region.SYSTEM,
+    val castLength: CastLength = CastLength.SHORTER,
     // Window boundaries used by manual Refresh to decide TODAY vs TONIGHT.
     // Default to the same 7am / 7pm boundaries Schedule uses out of the box;
     // the ViewModel overwrites these with the user's actual schedule times.
@@ -54,6 +56,7 @@ class TodayViewModel(
             workStatus = mergeStatus(todayInfos.toStatus(), tonightInfos.toStatus()),
             temperatureUnit = prefs.temperatureUnit,
             region = prefs.region,
+            castLength = prefs.castLength,
             morningTime = prefs.schedule.time,
             tonightTime = prefs.tonightSchedule.time,
         )

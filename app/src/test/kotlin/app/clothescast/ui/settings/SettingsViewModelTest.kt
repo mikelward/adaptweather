@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -162,6 +163,17 @@ class SettingsViewModelTest {
         subject.setUseCalendarEvents(false)
         subject.state.first { !it.useCalendarEvents }
         settingsRepository.preferences.first().useCalendarEvents shouldBe false
+    }
+
+    @Test
+    fun `setCastLength persists and surfaces in state`() = runTest {
+        subject.setCastLength(CastLength.LONGER)
+        subject.state.first { it.castLength == CastLength.LONGER }
+        settingsRepository.preferences.first().castLength shouldBe CastLength.LONGER
+
+        subject.setCastLength(CastLength.SHORTER)
+        subject.state.first { it.castLength == CastLength.SHORTER }
+        settingsRepository.preferences.first().castLength shouldBe CastLength.SHORTER
     }
 
     @Test

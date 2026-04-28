@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
@@ -134,6 +135,17 @@ class SettingsRepositoryTest {
 
         subject.setDailyMentionEveningEvents(false)
         subject.preferences.first().dailyMentionEveningEvents shouldBe false
+    }
+
+    @Test
+    fun `castLength defaults to SHORTER and round-trips`() = runTest {
+        subject.preferences.first().castLength shouldBe CastLength.SHORTER
+
+        subject.setCastLength(CastLength.LONGER)
+        subject.preferences.first().castLength shouldBe CastLength.LONGER
+
+        subject.setCastLength(CastLength.SHORTER)
+        subject.preferences.first().castLength shouldBe CastLength.SHORTER
     }
 
     @Test

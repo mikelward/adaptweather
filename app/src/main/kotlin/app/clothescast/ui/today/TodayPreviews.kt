@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.clothescast.core.domain.model.BandClause
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.DeltaClause
@@ -175,13 +176,13 @@ internal fun EmptyStatePreview() {
 @Preview(name = "Today · insight loaded", widthDp = 360)
 @Composable
 internal fun InsightCardPreview() {
-    Frame { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
+    Frame { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM, CastLength.SHORTER) }
 }
 
 @Preview(name = "Today · insight (dark)", widthDp = 360)
 @Composable
 internal fun InsightCardDarkPreview() {
-    Frame(darkTheme = true) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
+    Frame(darkTheme = true) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM, CastLength.SHORTER) }
 }
 
 @Preview(name = "Confidence · high", widthDp = 360)

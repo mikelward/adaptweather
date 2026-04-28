@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.R
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.ForecastConfidence
 import app.clothescast.core.domain.model.ForecastPeriod
@@ -135,7 +136,7 @@ private fun TodayContent(
             EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
             OutfitPreviewRow(state.insight)
-            InsightCard(state.insight, state.region)
+            InsightCard(state.insight, state.region, state.castLength)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
             }
@@ -360,9 +361,11 @@ private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom)
 }
 
 @Composable
-internal fun InsightCard(insight: Insight, region: Region) {
+internal fun InsightCard(insight: Insight, region: Region, castLength: CastLength) {
     val context = LocalContext.current
-    val formatter = remember(context, region) { InsightFormatter.forRegion(context, region) }
+    val formatter = remember(context, region, castLength) {
+        InsightFormatter.forRegion(context, region, castLength)
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),

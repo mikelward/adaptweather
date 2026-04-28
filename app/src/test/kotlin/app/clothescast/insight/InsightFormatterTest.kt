@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.EveningEventTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
@@ -68,6 +69,15 @@ class InsightFormatterTest {
     fun `delta clause emits cooler`() {
         val out = subject.format(summary(delta = DeltaClause(6, DeltaClause.Direction.COOLER)))
         out shouldBe "Today will be mild. It will be 6° cooler today."
+    }
+
+    @Test
+    fun `delta clause uses the longer 'than yesterday' form when castLength is LONGER`() {
+        val longer = InsightFormatter.forContext(context, Locale.ENGLISH, CastLength.LONGER)
+        longer.format(summary(delta = DeltaClause(5, DeltaClause.Direction.WARMER))) shouldBe
+            "Today will be mild. Today will be 5° warmer than yesterday."
+        longer.format(summary(delta = DeltaClause(6, DeltaClause.Direction.COOLER))) shouldBe
+            "Today will be mild. Today will be 6° cooler than yesterday."
     }
 
     @Test

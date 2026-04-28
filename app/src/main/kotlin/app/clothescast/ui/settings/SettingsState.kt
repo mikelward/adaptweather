@@ -1,5 +1,6 @@
 package app.clothescast.ui.settings
 
+import app.clothescast.core.domain.model.CastLength
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
@@ -28,6 +29,7 @@ data class SettingsState(
     val deliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
     val tonightDeliveryMode: DeliveryMode = DeliveryMode.NOTIFICATION_ONLY,
     val dailyMentionEveningEvents: Boolean = false,
+    val castLength: CastLength = CastLength.SHORTER,
     val region: Region = Region.SYSTEM,
     // Match SettingsRepository's locale-aware defaults so en-US devices don't
     // briefly render °C / km before the first DataStore emission overrides it.
