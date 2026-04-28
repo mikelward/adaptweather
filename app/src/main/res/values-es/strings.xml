@@ -79,6 +79,31 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="settings_delivery_notification_and_tts">Notificación y lectura en voz alta</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "Añadir clave API" dialog.
+    -->
+    <string name="settings_tts_engine_title">Motor de voz</string>
+    <string name="settings_tts_engine_description">Los motores online (Gemini, OpenAI, ElevenLabs) suenan mucho más naturales, pero requieren una llamada de red en el momento de hablar y usan tu clave API para la síntesis (una llamada corta por cada ClothesCast hablado). Vuelve a la voz del dispositivo si el motor elegido falla.</string>
+    <string name="settings_tts_engine_device">Dispositivo (offline, gratis)</string>
+    <string name="settings_tts_engine_gemini">Gemini (alta calidad, online)</string>
+    <string name="settings_tts_engine_openai">OpenAI (alta calidad, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (máxima calidad, online)</string>
+
+    <string name="settings_tts_voice_label">Voz</string>
+    <string name="settings_tts_voice_dismiss">Hecho</string>
+    <string name="settings_tts_voice_locale_description">Establece el acento de la voz hablada. No cambia el texto mostrado.</string>
+    <string name="settings_tts_voice_locale_system">Seguir el idioma del teléfono</string>
+
+    <string name="settings_tts_test">Probar voz</string>
+    <string name="settings_tts_test_in_flight">Probando — espera…</string>
+    <string name="settings_tts_no_key_hint">No hay clave de %1$s configurada — añade una para habilitar este motor.</string>
+    <string name="settings_tts_add_api_key">Añadir clave API</string>
+    <string name="settings_tts_add_api_key_title">Añadir clave API de %1$s</string>
+    <string name="settings_tts_add_api_key_save">Guardar</string>
+    <string name="settings_tts_add_api_key_cancel">Cancelar</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tú-form throughout: "toca", "tu", "configura".
