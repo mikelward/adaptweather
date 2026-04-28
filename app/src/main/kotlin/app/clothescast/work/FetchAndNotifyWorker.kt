@@ -245,7 +245,10 @@ class FetchAndNotifyWorker(
      *    for, even on a TTS-enabled mode.
      */
     // TODO(brand-intro): consider prepending "Today's ClothesCast: " / "Tonight's ClothesCast: "
-    // here once the voice preview's phrasing settles — see settings_tts_test_sample.
+    // here (and mirror it in VoiceSettings.runTtsPreview's SAMPLE_SUMMARY render)
+    // once the voice preview's phrasing settles — the brand-name pronunciation
+    // check that the per-locale settings_tts_test_sample used to give us is
+    // currently absent from both the preview and the real briefing.
     private fun formatProse(insight: Insight, prefs: UserPreferences): String =
         InsightFormatter.forRegion(applicationContext, prefs.region).format(insight.summary)
 

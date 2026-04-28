@@ -429,5 +429,4 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d e %2$d</string>
 
-    <string name="settings_tts_test_sample">Il tuo ClothesCast di oggi: mite, con pioggia alle 15. Indossa una giacca.</string>
 </resources>

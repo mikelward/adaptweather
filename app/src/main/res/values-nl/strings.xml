@@ -80,5 +80,4 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_time_hour">%1$d uur</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
 
-    <string name="settings_tts_test_sample">Je ClothesCast van vandaag: mild, met regen om 15.00 uur. Trek een jas aan.</string>
 </resources>
