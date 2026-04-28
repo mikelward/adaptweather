@@ -270,6 +270,24 @@ earlier passes accidentally mixed in.
     <string name="settings_calendar_grant_permission">Разрешить доступ к календарю</string>
     <string name="settings_calendar_open_settings">Доступ к календарю запрещён. Разреши в системных настройках.</string>
 
+    <!-- Debug screen — visible only on debug builds. -->
+    <string name="settings_debug_title">Отладка (только в отладочных сборках)</string>
+    <string name="settings_debug_description">Запустить ежедневный пайплайн ClothesCast немедленно. Полезно для проверки без ожидания запланированного времени.</string>
+    <string name="settings_debug_fire_now">Запустить ClothesCast сейчас</string>
+    <string name="settings_debug_fire_toast">Worker ClothesCast добавлен в очередь</string>
+
+    <!-- About screen — version line, build-type suffix, privacy summary,
+         outbound links / actions. -->
+    <string name="settings_about_title">О приложении</string>
+    <string name="settings_about_version">Версия %1$s (%2$d)</string>
+    <string name="settings_about_build_type_suffix"> · сборка %1$s</string>
+    <string name="settings_about_privacy">Твой ключ API Gemini (используемый для озвучивания TTS) зашифрован с помощью ключа, привязанного к Android Keystore. Прогнозы поступают от Open-Meteo (без ключа, без аккаунта); текст ежедневной сводки генерируется локально на устройстве. У ClothesCast нет бэкенда — ничего не отправляется ни на один сервер, который мы контролируем.</string>
+    <string name="settings_about_privacy_policy">Политика конфиденциальности</string>
+    <string name="settings_about_source">Исходный код на GitHub</string>
+    <string name="settings_about_dontkillmyapp">Ограничения в фоне (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">Поделиться отчётом об ошибке</string>
+    <string name="settings_about_version_copied">Версия скопирована в буфер обмена</string>
+
     <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
