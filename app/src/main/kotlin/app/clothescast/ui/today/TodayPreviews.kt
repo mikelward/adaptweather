@@ -247,3 +247,17 @@ internal fun WorkStatusFailedPreview() {
         )
     }
 }
+
+@Preview(name = "Banner · failed (unhandled, long detail)", widthDp = 360)
+@Composable
+internal fun WorkStatusFailedUnhandledPreview() {
+    Frame {
+        WorkStatusBanner(
+            WorkStatus.Failed(
+                reason = FetchAndNotifyWorker.REASON_UNHANDLED,
+                detail = "NoTransformationFoundException: Expected response body of " +
+                    "the type 'class app.clothescast.core.data.weather.OpenMeteoResponse'",
+            ),
+        )
+    }
+}

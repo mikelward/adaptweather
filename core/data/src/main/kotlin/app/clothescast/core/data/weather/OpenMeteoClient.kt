@@ -6,6 +6,7 @@ import app.clothescast.core.domain.repository.ForecastBundle
 import app.clothescast.core.domain.repository.WeatherRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.URLProtocol
@@ -64,6 +65,11 @@ class OpenMeteoClient(private val httpClient: HttpClient) : WeatherRepository {
 
     private suspend fun fetchPrimary(location: Location): OpenMeteoResponse =
         httpClient.get {
+            // Without this, a 5xx that returns an HTML error page (Open-Meteo's
+            // upstream gateway occasionally serves text/html on 502s) hits the
+            // JSON deserializer first and surfaces as NoTransformationFoundException
+            // — bypassing the worker's ResponseException → retry path.
+            expectSuccess = true
             url {
                 protocol = URLProtocol.HTTPS
                 host = OPEN_METEO_HOST
