@@ -10,6 +10,18 @@ earlier passes accidentally mixed in.
     <string name="settings_tts_voice_locale_ru_ru">Русский (Россия)</string>
     <string name="settings_tts_voice_locale_label">Язык</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_back">Назад</string>
+
+    <string name="settings_root_voice">Голос</string>
+    <string name="settings_root_schedule">Расписание</string>
+    <string name="settings_root_region">Регион</string>
+    <string name="settings_root_clothes">Одежда</string>
+    <string name="settings_root_api_keys">Ключи API</string>
+    <string name="settings_root_data_sources">Источники данных</string>
+    <string name="settings_root_about">О приложении</string>
+
     <string name="garment_sweater">Свитер</string>
     <string name="garment_hoodie">Худи</string>
     <string name="garment_jacket">Куртка</string>
@@ -19,6 +31,10 @@ earlier passes accidentally mixed in.
     <string name="garment_shorts">Шорты</string>
     <string name="garment_pants">Брюки</string>
     <string name="garment_jeans">Джинсы</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">Правила одежды</string>
+    <string name="settings_clothes_description">Если прогноз пересечёт один из этих порогов, эта вещь появится в твоём ежедневном ClothesCast.</string>
 
     <string name="settings_clothes_empty">Нет правил. Нажми «Добавить», чтобы создать.</string>
     <string name="settings_clothes_add">Добавить</string>
