@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Vietnamese translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+-->
+<resources>
+    <string name="settings_region_language_vi_vn">Tiếng Việt (Việt Nam)</string>
+    <string name="settings_tts_voice_locale_vi_vn">Tiếng Việt (Việt Nam)</string>
+    <string name="settings_tts_voice_locale_label">Ngôn ngữ</string>
+
+    <string name="garment_sweater">Áo len</string>
+    <string name="garment_hoodie">Áo hoodie</string>
+    <string name="garment_jacket">Áo khoác</string>
+    <string name="garment_coat">Áo măng tô</string>
+    <string name="garment_tshirt">Áo phông</string>
+    <string name="garment_shirt">Áo sơ mi</string>
+    <string name="garment_shorts">Quần short</string>
+    <string name="garment_pants">Quần dài</string>
+    <string name="garment_jeans">Quần jean</string>
+
+    <string name="settings_clothes_empty">Chưa có quy tắc. Nhấn Thêm để tạo mới.</string>
+    <string name="settings_clothes_add">Thêm</string>
+    <string name="settings_clothes_edit">Sửa</string>
+    <string name="settings_clothes_delete">Xóa</string>
+    <string name="settings_clothes_dialog_add_title">Thêm quy tắc quần áo</string>
+    <string name="settings_clothes_dialog_edit_title">Sửa quy tắc quần áo</string>
+    <string name="settings_clothes_item_label">Trang phục</string>
+    <string name="settings_clothes_condition_label">Điều kiện</string>
+    <string name="settings_clothes_value_label_temp_c">Ngưỡng (°C)</string>
+    <string name="settings_clothes_value_label_precip">Ngưỡng (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Khi cảm giác lạnh hơn</string>
+    <string name="settings_clothes_cond_type_temp_above">Khi cảm giác nóng hơn</string>
+    <string name="settings_clothes_cond_type_precip_above">Khi khả năng mưa vượt</string>
+    <string name="settings_clothes_cond_temp_below">khi nhiệt độ cảm nhận thấp nhất dưới %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">khi nhiệt độ cảm nhận cao nhất trên %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">khi khả năng mưa vượt %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Áo phông</string>
+    <string name="today_outfit_top_sweater">Áo len</string>
+    <string name="today_outfit_top_thick_jacket">Áo khoác dày</string>
+    <string name="today_outfit_bottom_shorts">Quần short</string>
+    <string name="today_outfit_bottom_long_pants">Quần dài</string>
+
+    <string name="insight_lead_today">Hôm nay</string>
+    <string name="insight_lead_tonight">Tối nay</string>
+    <!-- Vietnamese: "Hôm nay trời mát." (time + topic + predicate) -->
+    <string name="insight_band_single">%1$s trời %2$s.</string>
+    <string name="insight_band_range">%1$s trời từ %2$s đến %3$s.</string>
+    <string name="insight_band_freezing">đóng băng</string>
+    <string name="insight_band_cold">lạnh</string>
+    <string name="insight_band_cool">mát</string>
+    <string name="insight_band_mild">dễ chịu</string>
+    <string name="insight_band_warm">ấm</string>
+    <string name="insight_band_hot">nóng</string>
+    <string name="insight_delta_warmer">Hôm nay ấm hơn %1$d°.</string>
+    <string name="insight_delta_cooler">Hôm nay lạnh hơn %1$d°.</string>
+    <string name="insight_alert">Cảnh báo: %1$s.</string>
+    <string name="insight_clothes_wear">Mặc %1$s.</string>
+    <!-- Vietnamese has no grammatical articles. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s và %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s và %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">lúc %1$s</string>
+    <string name="insight_precip_overnight">suốt đêm</string>
+    <string name="insight_condition_clear">Trời quang</string>
+    <string name="insight_condition_partly_cloudy">Có mây</string>
+    <string name="insight_condition_cloudy">Nhiều mây</string>
+    <string name="insight_condition_fog">Sương mù</string>
+    <string name="insight_condition_drizzle">Mưa phùn</string>
+    <string name="insight_condition_rain">Mưa</string>
+    <string name="insight_condition_snow">Tuyết</string>
+    <string name="insight_condition_thunderstorm">Giông bão</string>
+    <string name="insight_condition_unknown">Không xác định</string>
+    <string name="insight_calendar_tie_in">Mang %1$s cho %3$s lúc %2$s.</string>
+</resources>

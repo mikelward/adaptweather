@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+English (South Africa) overrides. Scope: vocabulary differences from en-US.
+Insight prose templates are identical to English so they fall through to
+values/strings.xml. Only garment names and outfit labels with local vocabulary
+are overridden here.
+-->
+<resources>
+    <string name="settings_region_language_en_za">English (South Africa)</string>
+    <string name="settings_tts_voice_locale_en_za">English (South Africa)</string>
+
+    <!-- South African English uses "jersey" for sweater and "trousers" for
+         long pants (both lower and upper clothing pieces follow local usage). -->
+    <string name="garment_sweater">Jersey</string>
+    <string name="garment_pants">Trousers</string>
+
+    <string name="today_outfit_top_sweater">Jersey</string>
+    <string name="today_outfit_bottom_long_pants">Trousers</string>
+</resources>

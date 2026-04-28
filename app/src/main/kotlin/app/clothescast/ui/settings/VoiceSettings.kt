@@ -351,6 +351,10 @@ private fun voiceLocaleLabel(locale: VoiceLocale): Int = when (locale) {
     VoiceLocale.NL_NL -> R.string.settings_tts_voice_locale_nl_nl
     VoiceLocale.SV_SE -> R.string.settings_tts_voice_locale_sv_se
     VoiceLocale.TR_TR -> R.string.settings_tts_voice_locale_tr_tr
+    VoiceLocale.EN_ZA -> R.string.settings_tts_voice_locale_en_za
+    VoiceLocale.ID_ID -> R.string.settings_tts_voice_locale_id_id
+    VoiceLocale.FIL_PH -> R.string.settings_tts_voice_locale_fil_ph
+    VoiceLocale.VI_VN -> R.string.settings_tts_voice_locale_vi_vn
 }
 
 @Composable
