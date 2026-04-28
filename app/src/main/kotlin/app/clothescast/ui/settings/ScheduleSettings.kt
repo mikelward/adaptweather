@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.DeliveryMode
@@ -182,17 +184,11 @@ private fun NightCard(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.settings_tonight_enabled),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f),
-            )
-            Switch(checked = enabled, onCheckedChange = onSetEnabled)
-        }
+        ToggleRow(
+            label = stringResource(R.string.settings_tonight_enabled),
+            checked = enabled,
+            onCheckedChange = onSetEnabled,
+        )
         if (enabled) {
             TimeRow(
                 label = stringResource(R.string.settings_tonight_time_label),
@@ -205,17 +201,11 @@ private fun NightCard(
                 onChange = { next -> onChange(time, next) },
             )
             DeliveryModeSection(deliveryMode, onSetDeliveryMode)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(R.string.settings_tonight_notify_only_on_events),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                Switch(checked = notifyOnlyOnEvents, onCheckedChange = onSetNotifyOnlyOnEvents)
-            }
+            ToggleRow(
+                label = stringResource(R.string.settings_tonight_notify_only_on_events),
+                checked = notifyOnlyOnEvents,
+                onCheckedChange = onSetNotifyOnlyOnEvents,
+            )
         }
     }
 
@@ -228,6 +218,34 @@ private fun NightCard(
                 onChange(newTime, days)
             },
         )
+    }
+}
+
+@Composable
+private fun ToggleRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    // Modifier.toggleable + onCheckedChange = null on the Switch itself merges
+    // semantics so TalkBack announces the label together with the switch state,
+    // and makes the whole row a tap target instead of just the thumb.
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .toggleable(
+                value = checked,
+                role = Role.Switch,
+                onValueChange = onCheckedChange,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(checked = checked, onCheckedChange = null)
     }
 }
 

@@ -227,13 +227,15 @@ class FetchAndNotifyWorker(
 
     private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences, prose: String) {
         val mode = prefs.tonightDeliveryMode
+        val canNotify = mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS
         // The notify-only-on-events toggle skips the notification entirely on
         // empty evenings — the cache is still written and the widget updated
-        // upstream, so the user sees fresh state when they open the app.
-        val skipEmptyEveningNotification = prefs.tonightNotifyOnlyOnEvents && !insight.hasEvents
+        // upstream, so the user sees fresh state when they open the app. Only
+        // log "skipping" when a notification would otherwise have posted.
+        val skipEmptyEveningNotification = canNotify && prefs.tonightNotifyOnlyOnEvents && !insight.hasEvents
         if (skipEmptyEveningNotification) {
             Log.i(TAG, "Tonight insight has no events and notify-only-on-events is on; skipping notification.")
-        } else if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
+        } else if (canNotify) {
             app.tonightInsightNotifier.notify(insight, prose)
         }
         if (!insight.hasEvents) {
