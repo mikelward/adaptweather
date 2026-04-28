@@ -222,6 +222,8 @@ class FetchAndNotifyWorker(
      *    events tonight. If the evening is empty there's nothing to interrupt
      *    for, even on a TTS-enabled mode.
      */
+    // TODO(brand-intro): consider prepending "Today's ClothesCast: " / "Tonight's ClothesCast: "
+    // here once the voice preview's phrasing settles — see settings_tts_test_sample.
     private fun formatProse(insight: Insight, prefs: UserPreferences): String =
         InsightFormatter.forRegion(applicationContext, prefs.region).format(insight.summary)
 
