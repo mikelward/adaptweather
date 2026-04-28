@@ -32,10 +32,11 @@ import java.util.Locale
  *
  * Times are rendered as natural language ("midnight", "2am", "noon", "3pm") —
  * better for TTS than "02:00" and identical text feeds both UI and speech.
- * Early-morning peaks (00:00–04:59) collapse to "overnight" when no calendar
- * event pins the hour. The spoken-time logic itself is English-specific; the
- * default impl falls back to 24h ASCII for non-English locales until a
- * dedicated formatter is added.
+ * Early-morning precip peaks (00:00–04:59) always collapse to "overnight" —
+ * the previous "only when no tie-in pins this hour" carve-out is gone now
+ * that tie-in clauses no longer name a specific time. The spoken-time logic
+ * itself is English-specific; the default impl falls back to 24h ASCII for
+ * non-English locales until a dedicated formatter is added.
  */
 class InsightFormatter(
     private val resources: Resources,
