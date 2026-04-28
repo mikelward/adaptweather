@@ -22,12 +22,13 @@ import kotlinx.serialization.json.JsonPrimitive
 // `eleven_multilingual_v2` is ElevenLabs' "1 character = 1 credit" model
 // (their Flash/Turbo variants run at 0.5 credits/char but trade quality
 // for latency, which we don't need for an asynchronous morning brief).
-// Pricing is plan-based rather than purely metered: the free tier covers
-// 10k credits/month (no commercial use), Starter is $5/mo for 30k credits,
-// Creator $22/mo for 100k. ClothesCast's two ~100-char clips/day works out
-// to ~6k credits/month — comfortably inside the free tier and ~5% of
-// Starter, so on a BYOK key the per-clip marginal cost is effectively zero
-// until the user overruns their plan's allotment.
+// Pricing as of April 2026 is plan-based rather than purely metered: the
+// free tier covers 10k credits/month (no commercial use), Starter is
+// $5/mo for 30k credits, Creator $22/mo for 100k. ClothesCast's two
+// ~100-char clips/day works out to ~6k credits/month — comfortably inside
+// the free tier and ~5% of Starter, so on a BYOK key the per-clip
+// marginal cost is effectively zero until the user overruns their plan's
+// allotment.
 const val DEFAULT_ELEVENLABS_TTS_MODEL: String = "eleven_multilingual_v2"
 const val DEFAULT_ELEVENLABS_TTS_VOICE: String = "EXAVITQu4vr4xnSDxMaL" // Sarah
 
