@@ -79,6 +79,6 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="insight_tie_in_with_rain">Mang %1$s tối nay, mưa lúc %2$s.</string>
     <!-- "15 giờ" / "15 giờ 30 phút" — preposition "lúc" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d giờ</string>
-    <string name="insight_time_hour_minutes">%1$d giờ %2$d phút</string>
+    <string name="insight_time_hour_minutes">%1$d giờ %2$02d phút</string>
 
 </resources>
