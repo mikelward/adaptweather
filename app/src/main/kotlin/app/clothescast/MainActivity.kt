@@ -96,6 +96,10 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
                     settingsInitialRoute = null
                     screen = Screen.Settings
                 },
+                onNavigateToAbout = {
+                    settingsInitialRoute = SettingsRoute.About.name
+                    screen = Screen.Settings
+                },
             )
         }
         Screen.Settings -> {
