@@ -38,11 +38,61 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="settings_clothes_cond_temp_above">최고 체감 온도가 %.0f°C 초과일 때</string>
     <string name="settings_clothes_cond_precip_above">강수 확률이 %.0f%% 초과일 때</string>
 
+    <!--
+    Today screen — top bar, refresh toasts, empty state, generated-at
+    timestamp, outfit card, hourly chart, confidence chip, work-status
+    banner. 해요체 (polite-formal) throughout — that's the standard
+    Korean app register, including for intimate / spousal addressing.
+    Korean doesn't drop politeness for closeness in app UI; the
+    spousal-tone equivalent is "warm polite" (해요체), not casual 반말.
+    -->
+    <string name="today_title">오늘</string>
+    <string name="today_open_settings">설정 열기</string>
+    <string name="today_more_options">더 보기</string>
+    <string name="today_report_a_bug">버그 신고</string>
+    <string name="today_refresh">새로고침</string>
+    <string name="today_refresh_toast_daily">매일 ClothesCast를 새로고침하고 있어요 — 곧 표시됩니다.</string>
+    <string name="today_refresh_toast_nightly">야간 ClothesCast를 새로고침하고 있어요 — 곧 표시됩니다.</string>
+    <string name="today_empty_title">아직 ClothesCast가 없어요</string>
+    <string name="today_empty_subtitle">아침 ClothesCast가 생성되면 여기에 표시됩니다. 설정에서 위치를 지정한 다음 「지금 가져오기」를 탭하세요.</string>
+    <string name="today_fetch_now">지금 가져오기</string>
+    <string name="today_generated_at">생성 시각: %1$s</string>
+
+    <string name="today_outfit_title">무엇을 입을까</string>
+    <string name="today_outfit_label_today">오늘</string>
+    <string name="today_outfit_label_tonight">오늘 밤</string>
+    <string name="today_outfit_label_tomorrow">내일</string>
+
     <string name="today_outfit_top_tshirt">티셔츠</string>
     <string name="today_outfit_top_sweater">스웨터</string>
     <string name="today_outfit_top_thick_jacket">두꺼운 재킷</string>
     <string name="today_outfit_bottom_shorts">반바지</string>
     <string name="today_outfit_bottom_long_pants">긴바지</string>
+
+    <string name="today_forecast_title">시간별 예보</string>
+    <string name="today_forecast_min_max">체감 %1$d – %2$d%3$s · 기온 %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">시간별 체감 온도 (%1$s) · 탭하여 기온으로 전환</string>
+    <string name="today_forecast_legend_air">시간별 기온 (%1$s) · 탭하여 체감 온도로 전환</string>
+
+    <string name="today_confidence_high">높은 신뢰도 — 주요 모델이 일치</string>
+    <string name="today_confidence_medium">중간 신뢰도</string>
+    <string name="today_confidence_low">낮은 신뢰도 — 예보가 일치하지 않음</string>
+    <string name="today_confidence_spread">편차: %1$.1f°C, %2$.0fpp 강수, %3$d개 모델</string>
+
+    <string name="today_working">ClothesCast를 가져오는 중…</string>
+    <string name="today_failed_title">마지막 시도가 실패했어요</string>
+    <string name="today_failed_unexpected_http">예보 서비스에서 예상치 못한 HTTP 오류가 발생했어요.</string>
+    <string name="today_failed_unhandled">예상치 못한 오류가 발생했어요.</string>
+    <string name="today_failed_show_details">자세히 보기</string>
+    <string name="today_failed_hide_details">자세히 숨기기</string>
+
+    <!-- Home-screen App Widget. "코디" (short for 코디네이션) is the
+         standard Korean fashion-vocab word for an outfit / day's
+         clothing combination, more native than the loanword "Outfit". -->
+    <string name="widget_label">코디</string>
+    <string name="widget_description">현재 시간대의 코디를 한눈에.</string>
+    <string name="widget_empty_title">아직 코디가 없어요</string>
+    <string name="widget_empty_subtitle">탭하여 ClothesCast 열기</string>
 
     <string name="insight_lead_today">오늘</string>
     <string name="insight_lead_tonight">오늘 밤</string>
