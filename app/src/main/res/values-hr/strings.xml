@@ -96,11 +96,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
 
     <string name="settings_tts_test">Testiraj glas</string>
     <string name="settings_tts_test_in_flight">Testiranje — pričekaj…</string>
-    <string name="settings_tts_no_key_hint">Nije postavljen %1$s ključ — dodaj ga za korištenje ovog mehanizma.</string>
-    <string name="settings_tts_add_api_key">Dodaj API ključ</string>
-    <string name="settings_tts_add_api_key_title">Dodaj %1$s API ključ</string>
-    <string name="settings_tts_add_api_key_save">Spremi</string>
-    <string name="settings_tts_add_api_key_cancel">Odustani</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -198,8 +193,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
     elevenlabs.io) stay verbatim.
     -->
-    <string name="settings_api_keys_title">API ključevi</string>
-    <string name="settings_api_keys_description">Postavi API ključeve za online glasovne mehanizme koje želiš koristiti. Ključevi su šifrirani u Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>

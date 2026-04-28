@@ -129,11 +129,6 @@ displayed label localizes.
 
     <string name="settings_tts_test">음성 테스트</string>
     <string name="settings_tts_test_in_flight">테스트 중 — 잠시만요…</string>
-    <string name="settings_tts_no_key_hint">%1$s 키가 설정되지 않았어요 — 이 엔진을 사용하려면 추가하세요.</string>
-    <string name="settings_tts_add_api_key">API 키 추가</string>
-    <string name="settings_tts_add_api_key_title">%1$s API 키 추가</string>
-    <string name="settings_tts_add_api_key_save">저장</string>
-    <string name="settings_tts_add_api_key_cancel">취소</string>
 
     <!--
     Voice screen — device-voice picker (Android system TTS voices) and
@@ -239,8 +234,6 @@ displayed label localizes.
     ElevenLabs), each with status copy, paste-key placeholder, and
     save / clear buttons. URLs stay verbatim.
     -->
-    <string name="settings_api_keys_title">API 키</string>
-    <string name="settings_api_keys_description">사용하려는 온라인 음성 엔진의 API 키를 설정하세요. 키는 Android Keystore로 암호화되어 저장됩니다.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>

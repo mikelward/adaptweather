@@ -121,11 +121,6 @@ zh-CN) is unchanged; only the displayed label localizes.
 
     <string name="settings_tts_test">Stimme testen</string>
     <string name="settings_tts_test_in_flight">Teste — bitte warten…</string>
-    <string name="settings_tts_no_key_hint">Kein %1$s-Schlüssel konfiguriert — füg einen hinzu, um diese Engine zu nutzen.</string>
-    <string name="settings_tts_add_api_key">API-Schlüssel hinzufügen</string>
-    <string name="settings_tts_add_api_key_title">%1$s-API-Schlüssel hinzufügen</string>
-    <string name="settings_tts_add_api_key_save">Speichern</string>
-    <string name="settings_tts_add_api_key_cancel">Abbrechen</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -223,8 +218,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
     elevenlabs.io) stay verbatim.
     -->
-    <string name="settings_api_keys_title">API-Schlüssel</string>
-    <string name="settings_api_keys_description">Richte die API-Schlüssel für die Online-Sprach-Engines ein, die du nutzen möchtest. Schlüssel werden im Android Keystore verschlüsselt gespeichert.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
