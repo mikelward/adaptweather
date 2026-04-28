@@ -486,11 +486,16 @@ class GenerateDailyInsightTest {
             period = ForecastPeriod.TONIGHT,
         )
 
-        // Morning event must be filtered out for the tonight pass; the gig must drive the tie-in.
+        // Morning event must be filtered out for the tonight pass; the gig
+        // must drive the tie-in. The tie-in's data class only carries the
+        // clothes item now (event title + time were dropped to keep calendar
+        // event metadata off-device); the precip clause still names the
+        // 8pm rain. With temperature-only defaults firing on the 14°C feels-like
+        // and no umbrella rule, the picked item is the first triggered: sweater.
         val tieIn = result.insight.summary.calendarTieIn
         tieIn.shouldNotBeNull()
-        tieIn!!.title shouldBe "gig"
-        tieIn.time shouldBe LocalTime.of(20, 0)
+        tieIn!!.item shouldBe "sweater"
+        result.insight.summary.precip!!.time shouldBe LocalTime.of(20, 0)
         result.insight.hasEvents shouldBe true
     }
 

@@ -89,26 +89,32 @@ data class ClothesClause(val items: List<String>)
 data class PrecipClause(val condition: WeatherCondition, val time: LocalTime)
 
 /**
- * Calendar tie-in: a clothes [item] paired with a calendar event that overlaps
- * the precipitation peak. The formatter renders this as "Bring <item> for your
- * <time> <title>." with article picking on [item].
+ * Calendar tie-in: a clothes [item] keyed off the precipitation peak overlapping
+ * a calendar event. The formatter renders this as "Bring <item> tonight." — no
+ * event title, because we never want a calendar event name in the rendered prose
+ * (the prose is fed to off-device TTS engines), and no time, because the matched
+ * event is already pinned to the precip clause's hour. Only emitted on
+ * [ForecastPeriod.TONIGHT]; on [ForecastPeriod.TODAY] the bare precip clause
+ * carries the message.
  */
-data class CalendarTieInClause(
-    val item: String,
-    val time: LocalTime,
-    val title: String,
-)
+data class CalendarTieInClause(val item: String)
 
 /**
- * Evening-event tie-in for the morning insight: a clothes [item] paired with a
- * calendar event [title] happening tonight. The formatter renders this as
- * "Bring <item> for your <title> tonight." — no time, because the user already
- * knows when their evening event is and the conversational wording reads better
- * than a redundant clock reference.
+ * Evening-event tie-in for the morning insight: a clothes [item] hinted at by
+ * an evening calendar event. The formatter renders this as "Bring <item>
+ * tonight." — no event title, for the same off-device-prose reason as
+ * [CalendarTieInClause]. Only emitted on [ForecastPeriod.TODAY] when the user
+ * has the "Mention evening events" setting on.
+ *
+ * When the evening forecast slice has rain ≥ 30%, [rainTime] carries the peak
+ * hour and the formatter folds it into the same sentence ("Bring an umbrella
+ * tonight, rain at 9pm.") — keeps the morning insight's mention of evening rain
+ * tied to the evening event, rather than emitting a second precip clause that
+ * would compete with the morning slice's own precip clause.
  */
 data class EveningEventTieInClause(
     val item: String,
-    val title: String,
+    val rainTime: LocalTime? = null,
 )
 
 /**

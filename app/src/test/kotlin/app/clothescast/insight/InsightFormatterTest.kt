@@ -120,41 +120,15 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `precip clause says 'overnight' for early-morning peak when no calendar tie-in`() {
+    fun `precip clause says 'overnight' for early-morning peak`() {
         subject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(2, 0)))) shouldBe
             "Today will be mild. Rain overnight."
     }
 
     @Test
-    fun `precip clause says 'overnight' for midnight peak when no calendar tie-in`() {
+    fun `precip clause says 'overnight' for midnight peak`() {
         subject.format(summary(precip = PrecipClause(WeatherCondition.SNOW, LocalTime.MIDNIGHT))) shouldBe
             "Today will be mild. Snow overnight."
-    }
-
-    @Test
-    fun `precip clause names the hour even overnight when a calendar tie-in pins the same time`() {
-        // The tie-in clause spells out "your 2am yoga class" — the precip clause
-        // should agree on the time rather than collapse to "overnight".
-        val out = subject.format(
-            summary(
-                clothes = ClothesClause(listOf("umbrella")),
-                precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(2, 0)),
-                calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(2, 0), "yoga class"),
-            ),
-        )
-        out shouldBe "Today will be mild. Wear an umbrella. Rain at 2am. Bring an umbrella for your 2am yoga class."
-    }
-
-    @Test
-    fun `precip clause uses 'midnight' when calendar tie-in pins 00-00`() {
-        val out = subject.format(
-            summary(
-                clothes = ClothesClause(listOf("umbrella")),
-                precip = PrecipClause(WeatherCondition.RAIN, LocalTime.MIDNIGHT),
-                calendarTieIn = CalendarTieInClause("umbrella", LocalTime.MIDNIGHT, "stargazing"),
-            ),
-        )
-        out shouldBe "Today will be mild. Wear an umbrella. Rain at midnight. Bring an umbrella for your midnight stargazing."
     }
 
     @Test
@@ -176,25 +150,36 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `calendar tie-in renders bring + article + spoken time + title`() {
+    fun `calendar tie-in renders 'Bring a item tonight' with no event title`() {
         val out = subject.format(
             summary(
+                period = ForecastPeriod.TONIGHT,
                 clothes = ClothesClause(listOf("umbrella")),
-                precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
-                calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
+                precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(21, 0)),
+                calendarTieIn = CalendarTieInClause("umbrella"),
             ),
         )
-        out shouldBe "Today will be mild. Wear an umbrella. Rain at 3pm. Bring an umbrella for your 3pm park run."
+        out shouldBe "Tonight will be mild. Wear an umbrella. Rain at 9pm. Bring an umbrella tonight."
     }
 
     @Test
-    fun `evening event tie-in renders bring + article + title + tonight (no time)`() {
+    fun `evening event tie-in renders 'Bring a item tonight' when no evening rain`() {
         val out = subject.format(
             summary(
-                eveningEventTieIn = EveningEventTieInClause("jacket", "dinner"),
+                eveningEventTieIn = EveningEventTieInClause("jacket"),
             ),
         )
-        out shouldBe "Today will be mild. Bring a jacket for your dinner tonight."
+        out shouldBe "Today will be mild. Bring a jacket tonight."
+    }
+
+    @Test
+    fun `evening event tie-in folds rain time into the same sentence when present`() {
+        val out = subject.format(
+            summary(
+                eveningEventTieIn = EveningEventTieInClause("umbrella", rainTime = LocalTime.of(21, 0)),
+            ),
+        )
+        out shouldBe "Today will be mild. Bring an umbrella tonight, rain at 9pm."
     }
 
     @Test
@@ -202,10 +187,10 @@ class InsightFormatterTest {
         val out = subject.format(
             summary(
                 clothes = ClothesClause(listOf("shorts")),
-                eveningEventTieIn = EveningEventTieInClause("jacket", "dinner"),
+                eveningEventTieIn = EveningEventTieInClause("jacket"),
             ),
         )
-        out shouldBe "Today will be mild. Wear shorts. Bring a jacket for your dinner tonight."
+        out shouldBe "Today will be mild. Wear shorts. Bring a jacket tonight."
     }
 
     @Test
@@ -275,14 +260,25 @@ class InsightFormatterTest {
     }
 
     @Test
-    fun `de — calendar tie-in reorders args via positional placeholders`() {
+    fun `de — tie-in renders the German template with item only`() {
         val out = germanSubject.format(
             summary(
+                period = ForecastPeriod.TONIGHT,
                 clothes = ClothesClause(listOf("Regenschirm")),
-                calendarTieIn = CalendarTieInClause("Regenschirm", LocalTime.of(15, 0), "Park-Lauf"),
+                calendarTieIn = CalendarTieInClause("Regenschirm"),
             ),
         )
-        out shouldBe "Heute wird es mild. Trag Regenschirm. " +
-            "Denk an Regenschirm für Park-Lauf um 15:00."
+        out shouldBe "Heute Abend wird es mild. Trag Regenschirm. " +
+            "Denk an Regenschirm für heute Abend."
+    }
+
+    @Test
+    fun `de — evening event tie-in folds rain time via German positional placeholders`() {
+        val out = germanSubject.format(
+            summary(
+                eveningEventTieIn = EveningEventTieInClause("Regenschirm", rainTime = LocalTime.of(21, 0)),
+            ),
+        )
+        out shouldBe "Heute wird es mild. Denk an Regenschirm für heute Abend, Regen um 21:00."
     }
 }

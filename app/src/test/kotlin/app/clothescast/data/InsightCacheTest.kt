@@ -177,8 +177,8 @@ class InsightCacheTest {
                 delta = DeltaClause(8, DeltaClause.Direction.WARMER),
                 clothes = ClothesClause(listOf("sweater", "jacket", "shorts", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
-                calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
-                eveningEventTieIn = EveningEventTieInClause("jacket", "dinner"),
+                calendarTieIn = CalendarTieInClause("umbrella"),
+                eveningEventTieIn = EveningEventTieInClause("jacket", rainTime = LocalTime.of(21, 0)),
             ),
         )
 

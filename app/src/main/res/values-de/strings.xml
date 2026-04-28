@@ -118,6 +118,6 @@ the rest of the app stays in English.
     <string name="insight_condition_thunderstorm">Gewitter</string>
     <string name="insight_condition_unknown">Unbekannt</string>
 
-    <!-- "Denk an Regenschirm für park run um 15:00." -->
-    <string name="insight_calendar_tie_in">Denk an %1$s für %3$s um %2$s.</string>
+    <string name="insight_tie_in">Denk an %1$s für heute Abend.</string>
+    <string name="insight_tie_in_with_rain">Denk an %1$s für heute Abend, Regen um %2$s.</string>
 </resources>
