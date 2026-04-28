@@ -37,7 +37,24 @@ class LocationResolver(
     private val maxAgeMillis: Long = 60 * 60 * 1000L,
     private val timeoutMillis: Long = 10_000L,
 ) {
-    suspend fun resolve(): Location? {
+    /**
+     * Returns the device's current location or null on any failure path.
+     *
+     * This is called from the daily WorkManager job — which has no surrounding
+     * try/catch — so it must be the firewall: any exception thrown by a
+     * `LocationManager` API (`SecurityException` from a missing background
+     * grant, `IllegalArgumentException` from a non-existent provider on
+     * unusual devices, etc.) is caught and logged here rather than crashing
+     * the worker. Callers can rely on `resolve()` never throwing.
+     */
+    suspend fun resolve(): Location? = try {
+        resolveInner()
+    } catch (t: Throwable) {
+        DiagLog.w(TAG, "Unexpected ${t.javaClass.simpleName} from resolve(); returning null.", t)
+        null
+    }
+
+    private suspend fun resolveInner(): Location? {
         if (!hasCoarsePermission()) {
             DiagLog.i(TAG, "Coarse location not granted; not resolving.")
             return null
@@ -107,7 +124,18 @@ class LocationResolver(
     private suspend fun requestSingle(manager: LocationManager): AndroidLocation? =
         suspendCancellableCoroutine { cont ->
             val provider = LocationManager.NETWORK_PROVIDER
-            if (!manager.isProviderEnabled(provider)) {
+            // isProviderEnabled is documented to throw IllegalArgumentException
+            // on devices that don't know the provider name. resolve() catches
+            // the resulting throw at the outer level, but resuming with null
+            // here keeps the contract local and avoids cancelling the
+            // coroutine via exception.
+            val providerEnabled = try {
+                manager.isProviderEnabled(provider)
+            } catch (t: Throwable) {
+                DiagLog.w(TAG, "isProviderEnabled threw ${t.javaClass.simpleName}; treating as disabled.", t)
+                false
+            }
+            if (!providerEnabled) {
                 DiagLog.i(TAG, "NETWORK provider disabled; skipping single-update request.")
                 cont.resume(null)
                 return@suspendCancellableCoroutine
@@ -147,7 +175,7 @@ class LocationResolver(
         try {
             manager.removeUpdates(listener)
         } catch (t: Throwable) {
-            DiagLog.v(TAG, "removeUpdates threw ${t.javaClass.simpleName}; ignoring.")
+            DiagLog.v(TAG, "removeUpdates threw ${t.javaClass.simpleName}; ignoring.", t)
         }
     }
 
