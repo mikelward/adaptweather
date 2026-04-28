@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,6 +58,8 @@ import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.symbol
 import app.clothescast.core.domain.model.toUnit
+import app.clothescast.diag.BugReport
+import app.clothescast.diag.findActivity
 import app.clothescast.insight.InsightFormatter
 import app.clothescast.work.FetchAndNotifyWorker
 import java.time.ZoneId
@@ -61,13 +67,17 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activity = context.findActivity()
+    val coroutineScope = rememberCoroutineScope()
     val isWorking = state.workStatus is WorkStatus.Running
+    var overflowExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -100,6 +110,28 @@ fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = stringResource(R.string.today_open_settings),
+                        )
+                    }
+                    IconButton(onClick = { overflowExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(R.string.today_more_options),
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = overflowExpanded,
+                        onDismissRequest = { overflowExpanded = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.today_report_a_bug)) },
+                            onClick = {
+                                overflowExpanded = false
+                                if (activity != null) {
+                                    coroutineScope.launch {
+                                        BugReport.share(activity, includeScreenshot = true)
+                                    }
+                                }
+                            },
                         )
                     }
                 },

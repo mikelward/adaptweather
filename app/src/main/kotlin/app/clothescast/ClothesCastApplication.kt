@@ -1,7 +1,6 @@
 package app.clothescast
 
 import android.app.Application
-import android.util.Log
 import app.clothescast.alarm.DailyAlarmScheduler
 import app.clothescast.calendar.CalendarContractEventReader
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
@@ -16,6 +15,7 @@ import app.clothescast.core.domain.usecase.GenerateDailyInsight
 import app.clothescast.data.InsightCache
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
+import app.clothescast.diag.DiagLog
 import app.clothescast.location.LocationResolver
 import app.clothescast.notification.InsightNotifier
 import app.clothescast.notification.NotificationChannelRegistrar
@@ -85,6 +85,7 @@ class ClothesCastApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        DiagLog.install(this)
         NotificationChannelRegistrar.register(this)
         applicationScope.launch {
             try {
@@ -96,7 +97,7 @@ class ClothesCastApplication : Application() {
                     dailyAlarmScheduler.cancel(ForecastPeriod.TONIGHT)
                 }
             } catch (t: Throwable) {
-                Log.e(TAG, "Initial alarm scheduling failed", t)
+                DiagLog.e(TAG, "Initial alarm scheduling failed", t)
             }
         }
     }

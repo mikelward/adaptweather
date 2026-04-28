@@ -3,8 +3,8 @@ package app.clothescast.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import app.clothescast.ClothesCastApplication
+import app.clothescast.diag.DiagLog
 import app.clothescast.core.domain.model.ForecastPeriod
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
  */
 class ScheduleRefreshReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "ScheduleRefreshReceiver action=${intent.action}")
+        DiagLog.i(TAG, "ScheduleRefreshReceiver action=${intent.action}")
 
         val pending = goAsync()
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -41,7 +41,7 @@ class ScheduleRefreshReceiver : BroadcastReceiver() {
                     scheduler.cancel(ForecastPeriod.TONIGHT)
                 }
             } catch (t: Throwable) {
-                Log.e(TAG, "Re-arm failed", t)
+                DiagLog.e(TAG, "Re-arm failed", t)
             } finally {
                 pending.finish()
             }

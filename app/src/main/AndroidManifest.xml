@@ -77,6 +77,20 @@
             </intent-filter>
         </receiver>
 
+        <!-- Bug-report screenshot sharing. The PNG is written to cacheDir/bug-reports/
+             and exposed read-only to the app the user picks in the share sheet.
+             Authority follows the ${applicationId}.fileprovider convention so the
+             debug build's `.debug` suffix doesn't collide with the release build. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <!-- Home-screen App Widget showing the current period's outfit.
              exported=true is required for the OS launcher to bind. -->
         <receiver

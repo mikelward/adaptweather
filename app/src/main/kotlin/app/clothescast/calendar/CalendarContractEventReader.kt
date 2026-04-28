@@ -5,7 +5,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.provider.CalendarContract
-import android.util.Log
+import app.clothescast.diag.DiagLog
 import app.clothescast.core.domain.model.CalendarEvent
 import app.clothescast.core.domain.repository.CalendarEventReader
 import kotlinx.coroutines.Dispatchers
@@ -31,12 +31,12 @@ class CalendarContractEventReader(private val context: Context) : CalendarEventR
 
     override suspend fun eventsForDay(date: LocalDate, zoneId: ZoneId): List<CalendarEvent> {
         if (!CalendarPermission.isGranted(context)) {
-            Log.i(TAG, "READ_CALENDAR not granted; skipping calendar read.")
+            DiagLog.i(TAG, "READ_CALENDAR not granted; skipping calendar read.")
             return emptyList()
         }
         return withContext(Dispatchers.IO) {
             runCatching { query(date, zoneId) }
-                .onFailure { Log.w(TAG, "Calendar query failed; degrading to no events.", it) }
+                .onFailure { DiagLog.w(TAG, "Calendar query failed; degrading to no events.", it) }
                 .getOrDefault(emptyList())
         }
     }

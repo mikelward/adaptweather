@@ -3,7 +3,7 @@ package app.clothescast.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import app.clothescast.diag.DiagLog
 import app.clothescast.ClothesCastApplication
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.work.FetchAndNotifyWorker
@@ -33,7 +33,7 @@ class AlarmReceiver : BroadcastReceiver() {
             ACTION_FIRE_TONIGHT -> ForecastPeriod.TONIGHT
             else -> return
         }
-        Log.i(TAG, "AlarmReceiver fired (action=${intent.action}, period=$period)")
+        DiagLog.i(TAG, "AlarmReceiver fired (action=${intent.action}, period=$period)")
 
         val pending = goAsync()
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -49,7 +49,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     // already cancels on toggle-off, but a stale OS-scheduled alarm or a
                     // failed cancel would otherwise keep us re-arming forever) and skip
                     // the worker enqueue so we don't pay alarm + work overhead daily.
-                    Log.i(TAG, "Tonight alarm fired but tonight is disabled; cancelling and not re-arming.")
+                    DiagLog.i(TAG, "Tonight alarm fired but tonight is disabled; cancelling and not re-arming.")
                     scheduler.cancel(ForecastPeriod.TONIGHT)
                     return@launch
                 }
@@ -60,7 +60,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
                 scheduler.schedule(schedule, period)
             } catch (t: Throwable) {
-                Log.e(TAG, "Re-arm failed for $period", t)
+                DiagLog.e(TAG, "Re-arm failed for $period", t)
                 // Best-effort: still enqueue the worker even if pref read failed,
                 // so the user gets *something* if it's the morning slot.
                 if (period == ForecastPeriod.TODAY) {

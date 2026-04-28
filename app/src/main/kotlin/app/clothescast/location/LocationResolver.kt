@@ -8,7 +8,7 @@ import android.location.Location as AndroidLocation
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Looper
-import android.util.Log
+import app.clothescast.diag.DiagLog
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import app.clothescast.core.domain.model.Location
@@ -38,7 +38,7 @@ class LocationResolver(
 ) {
     suspend fun resolve(): Location? {
         if (!hasPermission()) {
-            Log.i(TAG, "Coarse location not granted; not resolving.")
+            DiagLog.i(TAG, "Coarse location not granted; not resolving.")
             return null
         }
         val manager = context.getSystemService<LocationManager>() ?: return null

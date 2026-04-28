@@ -4,7 +4,7 @@ import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
-import android.util.Log
+import app.clothescast.diag.DiagLog
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
 import java.util.UUID
@@ -49,7 +49,7 @@ class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
         // returns ERROR from the init callback and we fall back to the system default.
         return runCatching { initEngine(GOOGLE_TTS_PACKAGE) }
             .getOrElse {
-                Log.w(TAG, "Google TTS unavailable; falling back to system default.", it)
+                DiagLog.w(TAG, "Google TTS unavailable; falling back to system default.", it)
                 initEngine(null)
             }
     }
@@ -96,9 +96,9 @@ class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
         if (best != null) {
             runCatching { tts.voice = best }
                 .onSuccess {
-                    Log.i(TAG, "TTS voice: ${best.name} (quality=${best.quality}, locale=${best.locale})")
+                    DiagLog.i(TAG, "TTS voice: ${best.name} (quality=${best.quality}, locale=${best.locale})")
                 }
-                .onFailure { Log.w(TAG, "Setting TTS voice failed; using engine default.", it) }
+                .onFailure { DiagLog.w(TAG, "Setting TTS voice failed; using engine default.", it) }
         }
     }
 
@@ -134,7 +134,7 @@ class AndroidTtsSpeaker(private val context: Context) : TtsSpeaker {
             }
             cont.invokeOnCancellation { runCatching { tts.stop() } }
         }
-        Log.i(TAG, "Spoke utterance ${utteranceId.take(8)}…")
+        DiagLog.i(TAG, "Spoke utterance ${utteranceId.take(8)}…")
     }
 
     companion object {
