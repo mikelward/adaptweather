@@ -272,6 +272,24 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="settings_calendar_grant_permission">カレンダーへのアクセスを許可</string>
     <string name="settings_calendar_open_settings">カレンダーへのアクセスが拒否されました。システム設定で許可してください。</string>
 
+    <!-- Debug screen — visible only on debug builds. -->
+    <string name="settings_debug_title">デバッグ（デバッグビルドのみ）</string>
+    <string name="settings_debug_description">毎日の ClothesCast パイプラインを直ちに実行します。スケジュールされた時刻を待たずに動作確認するのに便利です。</string>
+    <string name="settings_debug_fire_now">ClothesCast を今すぐ実行</string>
+    <string name="settings_debug_fire_toast">ClothesCast Worker をキューに追加しました</string>
+
+    <!-- About screen — version line, build-type suffix, privacy summary,
+         outbound links / actions. -->
+    <string name="settings_about_title">アプリについて</string>
+    <string name="settings_about_version">バージョン %1$s（%2$d）</string>
+    <string name="settings_about_build_type_suffix"> · %1$s ビルド</string>
+    <string name="settings_about_privacy">あなたの Gemini API キー（音声読み上げ TTS で使用）は、Android Keystore に紐付いたキーで暗号化して保存されます。予報は Open-Meteo から取得しています（キー不要、アカウント不要）。毎日の要約テキストは端末でローカルに生成されます。ClothesCast にはバックエンドはなく、私たちが管理するサーバーには何も送信されません。</string>
+    <string name="settings_about_privacy_policy">プライバシーポリシー</string>
+    <string name="settings_about_source">GitHub のソースコード</string>
+    <string name="settings_about_dontkillmyapp">バックグラウンド制限（dontkillmyapp.com）</string>
+    <string name="settings_about_share_bug_report">バグレポートを共有</string>
+    <string name="settings_about_version_copied">バージョンをクリップボードにコピーしました</string>
+
     <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
