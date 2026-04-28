@@ -94,6 +94,30 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="widget_empty_title">아직 코디가 없어요</string>
     <string name="widget_empty_subtitle">탭하여 ClothesCast 열기</string>
 
+    <!--
+    Onboarding flow — first-run welcome, two permission steps, Gemini
+    API-key step. Korean doesn't mark gender on most addresses, so no
+    Bienvenido/a-style workaround is needed; "오신 것을 환영합니다" is the
+    standard Korean app welcome.
+    -->
+    <string name="onboarding_title">ClothesCast에 오신 것을 환영합니다</string>
+    <string name="onboarding_subtitle">두 가지 빠른 선택만으로 준비 완료. 나머지는 모두 합리적인 기본값이 있고, 나중에 설정에서 조정할 수 있어요.</string>
+    <string name="onboarding_notifications_title">알림</string>
+    <string name="onboarding_notifications_description">매일 ClothesCast를 전달하는 데 필요해요. 한 번 허용하면 ClothesCast가 내일 아침에 표시됩니다.</string>
+    <string name="onboarding_notifications_grant">알림 허용</string>
+    <string name="onboarding_location_title">위치</string>
+    <string name="onboarding_location_description">정확한 예보를 가져오는 데 사용해요. 위치를 허용하면 ClothesCast가 매일 아침 기기의 대략적인 위치를 읽을 수 있어요. 그렇지 않으면 도시를 직접 선택하세요.</string>
+    <string name="onboarding_location_grant">위치 액세스 허용</string>
+    <string name="onboarding_location_denied_hint">위치 액세스가 거부되었어요. 대신 도시를 직접 선택할 수 있어요.</string>
+    <string name="onboarding_location_enter_manual">위치 직접 입력</string>
+    <string name="onboarding_location_using_device">매일 아침 기기의 위치를 사용해요.</string>
+
+    <string name="onboarding_gemini_title">Gemini API 키</string>
+    <string name="onboarding_gemini_description">ClothesCast가 음성 읽기와 예보 생성에 사용해요. aistudio.google.com에서 무료로 받을 수 있어요. 키는 Android Keystore로 암호화되어 저장됩니다.</string>
+    <string name="onboarding_step_done">완료</string>
+    <string name="onboarding_skip">나중에</string>
+    <string name="onboarding_continue">계속</string>
+
     <string name="insight_lead_today">오늘</string>
     <string name="insight_lead_tonight">오늘 밤</string>
     <!-- "오늘 포근한 날씨입니다." -->
