@@ -210,6 +210,9 @@ label localizes.
     <string name="settings_tts_voice_locale_ja_jp">日语（日本）</string>
     <string name="settings_tts_voice_locale_ko_kr">韩语（韩国）</string>
     <string name="settings_tts_voice_locale_ar_sa">阿拉伯语（沙特阿拉伯）</string>
+    <string name="settings_tts_voice_locale_ar_eg">阿拉伯语（埃及）</string>
+    <string name="settings_tts_voice_locale_ar_ae">阿拉伯语（阿联酋）</string>
+    <string name="settings_tts_voice_locale_ar_ma">阿拉伯语（摩洛哥）</string>
     <string name="settings_tts_voice_locale_he_il">希伯来语（以色列）</string>
     <string name="settings_tts_voice_locale_fa_ir">波斯语（伊朗）</string>
 

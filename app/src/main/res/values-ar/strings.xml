@@ -10,6 +10,9 @@ they work correctly in both the single-band and range templates.
 <resources>
     <string name="settings_region_language_ar_sa">العربية (المملكة العربية السعودية)</string>
     <string name="settings_tts_voice_locale_ar_sa">العربية (المملكة العربية السعودية)</string>
+    <string name="settings_tts_voice_locale_ar_eg">العربية (مصر)</string>
+    <string name="settings_tts_voice_locale_ar_ae">العربية (الإمارات العربية المتحدة)</string>
+    <string name="settings_tts_voice_locale_ar_ma">العربية (المغرب)</string>
     <string name="settings_tts_voice_locale_label">اللغة</string>
 
     <string name="garment_sweater">سترة صوفية</string>

@@ -232,6 +232,9 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_bn_bd">벵골어 (방글라데시)</string>
     <string name="settings_tts_voice_locale_ja_jp">일본어 (일본)</string>
     <string name="settings_tts_voice_locale_ar_sa">아랍어 (사우디아라비아)</string>
+    <string name="settings_tts_voice_locale_ar_eg">아랍어 (이집트)</string>
+    <string name="settings_tts_voice_locale_ar_ae">아랍어 (아랍에미리트)</string>
+    <string name="settings_tts_voice_locale_ar_ma">아랍어 (모로코)</string>
     <string name="settings_tts_voice_locale_he_il">히브리어 (이스라엘)</string>
     <string name="settings_tts_voice_locale_fa_ir">페르시아어 (이란)</string>
 

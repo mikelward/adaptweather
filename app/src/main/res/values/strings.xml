@@ -179,6 +179,9 @@
     <string name="settings_tts_voice_locale_ja_jp">Japanese (Japan)</string>
     <string name="settings_tts_voice_locale_ko_kr">Korean (South Korea)</string>
     <string name="settings_tts_voice_locale_ar_sa">Arabic (Saudi Arabia)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Arabic (Egypt)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Arabic (United Arab Emirates)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Arabic (Morocco)</string>
     <string name="settings_tts_voice_locale_he_il">Hebrew (Israel)</string>
     <string name="settings_tts_voice_locale_fa_ir">Persian (Iran)</string>
     <string name="settings_tts_test">Test voice</string>

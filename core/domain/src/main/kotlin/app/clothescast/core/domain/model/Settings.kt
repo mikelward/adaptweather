@@ -76,6 +76,9 @@ enum class VoiceLocale(val bcp47: String?) {
     JA_JP("ja-JP"),
     KO_KR("ko-KR"),
     AR_SA("ar-SA"),
+    AR_EG("ar-EG"),
+    AR_AE("ar-AE"),
+    AR_MA("ar-MA"),
     HE_IL("he-IL"),
     FA_IR("fa-IR"),
 }
