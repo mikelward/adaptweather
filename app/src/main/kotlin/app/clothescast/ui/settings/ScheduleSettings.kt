@@ -354,10 +354,3 @@ private fun deliveryModeLabel(mode: DeliveryMode): Int = when (mode) {
 }
 
 private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-
-private fun android.content.Context.resourcesLocale(): Locale {
-    val locales = resources.configuration.locales
-    if (!locales.isEmpty) return locales[0]
-    @Suppress("DEPRECATION")
-    return resources.configuration.locale
-}

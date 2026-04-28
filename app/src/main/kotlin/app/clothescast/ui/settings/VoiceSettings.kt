@@ -697,10 +697,3 @@ private val SAMPLE_SUMMARY = InsightSummary(
     delta = DeltaClause(degrees = 7, direction = DeltaClause.Direction.COOLER),
     clothes = ClothesClause(items = listOf("sweater", "jacket")),
 )
-
-private fun android.content.Context.resourcesLocale(): Locale {
-    val locales = resources.configuration.locales
-    if (!locales.isEmpty) return locales[0]
-    @Suppress("DEPRECATION")
-    return resources.configuration.locale
-}

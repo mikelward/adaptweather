@@ -135,10 +135,3 @@ private fun distanceUnitLabel(unit: DistanceUnit): Int = when (unit) {
     DistanceUnit.KILOMETERS -> R.string.settings_distance_unit_kilometers
     DistanceUnit.MILES -> R.string.settings_distance_unit_miles
 }
-
-private fun android.content.Context.resourcesLocale(): Locale {
-    val locales = resources.configuration.locales
-    if (!locales.isEmpty) return locales[0]
-    @Suppress("DEPRECATION")
-    return resources.configuration.locale
-}
