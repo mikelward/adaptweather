@@ -79,6 +79,31 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_delivery_notification_and_tts">Obavijest i izgovor</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "Add API key" dialog.
+    -->
+    <string name="settings_tts_engine_title">Glasovni mehanizam</string>
+    <string name="settings_tts_engine_description">Online mehanizmi (Gemini, OpenAI, ElevenLabs) zvuče puno prirodnije, ali zahtijevaju mrežni poziv prilikom govora i koriste tvoj API ključ za sintezu (jedan kratki poziv po izgovorenom ClothesCastu). Vraća se na glas uređaja ako odabrani mehanizam zakaže.</string>
+    <string name="settings_tts_engine_device">Uređaj (offline, besplatno)</string>
+    <string name="settings_tts_engine_gemini">Gemini (visoka kvaliteta, online)</string>
+    <string name="settings_tts_engine_openai">OpenAI (visoka kvaliteta, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (najviša kvaliteta, online)</string>
+
+    <string name="settings_tts_voice_label">Glas</string>
+    <string name="settings_tts_voice_dismiss">Gotovo</string>
+    <string name="settings_tts_voice_locale_description">Postavlja naglasak izgovorenog glasa. Ne mijenja prikazani tekst.</string>
+    <string name="settings_tts_voice_locale_system">Koristi jezik telefona</string>
+
+    <string name="settings_tts_test">Testiraj glas</string>
+    <string name="settings_tts_test_in_flight">Testiranje — pričekaj…</string>
+    <string name="settings_tts_no_key_hint">Nije postavljen %1$s ključ — dodaj ga za korištenje ovog mehanizma.</string>
+    <string name="settings_tts_add_api_key">Dodaj API ključ</string>
+    <string name="settings_tts_add_api_key_title">Dodaj %1$s API ključ</string>
+    <string name="settings_tts_add_api_key_save">Spremi</string>
+    <string name="settings_tts_add_api_key_cancel">Odustani</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ti-form imperatives: "dodirni", "postavi", "tvoj".
