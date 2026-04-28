@@ -8,6 +8,18 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_tts_voice_locale_pt_br">Português (Brasil)</string>
     <string name="settings_tts_voice_locale_label">Idioma</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Configurações</string>
+    <string name="settings_back">Voltar</string>
+
+    <string name="settings_root_voice">Voz</string>
+    <string name="settings_root_schedule">Agendamento</string>
+    <string name="settings_root_region">Região</string>
+    <string name="settings_root_clothes">Roupas</string>
+    <string name="settings_root_api_keys">Chaves API</string>
+    <string name="settings_root_data_sources">Fontes de dados</string>
+    <string name="settings_root_about">Sobre</string>
+
     <string name="garment_sweater">Suéter</string>
     <string name="garment_hoodie">Moletom com capuz</string>
     <string name="garment_jacket">Jaqueta</string>
@@ -17,6 +29,10 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <string name="garment_shorts">Shorts</string>
     <string name="garment_pants">Calças</string>
     <string name="garment_jeans">Jeans</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">Regras de roupa</string>
+    <string name="settings_clothes_description">Se uma previsão cruzar um destes limites, a peça aparece no seu ClothesCast diário.</string>
 
     <string name="settings_clothes_empty">Nenhuma regra. Toque em Adicionar para criar uma.</string>
     <string name="settings_clothes_add">Adicionar</string>
