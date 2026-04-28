@@ -38,6 +38,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.R
 import app.clothescast.core.domain.model.Location
+import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.notification.NotificationPermission
 import app.clothescast.ui.settings.KeyEntryFields
 import app.clothescast.ui.settings.LinkifiedText
@@ -275,12 +276,6 @@ private fun LocationStep(
         )
     }
 }
-
-private fun hasCoarseLocationPermission(context: android.content.Context): Boolean =
-    androidx.core.content.ContextCompat.checkSelfPermission(
-        context,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
 @Composable
 private fun GeminiKeyStep(

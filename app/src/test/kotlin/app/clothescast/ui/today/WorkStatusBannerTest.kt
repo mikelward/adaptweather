@@ -72,4 +72,23 @@ class WorkStatusBannerTest {
         composeRule.onNodeWithText("An unexpected error occurred.").assertIsDisplayed()
         composeRule.onNodeWithText("Show details").assertDoesNotExist()
     }
+
+    @Test
+    fun no_location_failure_shows_actionable_copy() {
+        composeRule.setContent {
+            Frame {
+                WorkStatusBanner(
+                    WorkStatus.Failed(
+                        reason = FetchAndNotifyWorker.REASON_NO_LOCATION,
+                        detail = null,
+                    ),
+                )
+            }
+        }
+
+        composeRule.onNodeWithText(
+            "We couldn't get your location",
+            substring = true,
+        ).assertIsDisplayed()
+    }
 }

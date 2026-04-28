@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,10 +43,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.R
 import app.clothescast.core.domain.model.ConfidenceInfo
@@ -61,6 +65,8 @@ import app.clothescast.core.domain.model.toUnit
 import app.clothescast.diag.BugReport
 import app.clothescast.diag.findActivity
 import app.clothescast.insight.InsightFormatter
+import app.clothescast.location.hasBackgroundLocationPermission
+import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.work.FetchAndNotifyWorker
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -75,6 +81,7 @@ fun TodayScreen(
     viewModel: TodayViewModel,
     onNavigateToSettings: () -> Unit,
     onNavigateToAbout: () -> Unit,
+    onNavigateToDataSources: () -> Unit = onNavigateToSettings,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -154,6 +161,7 @@ fun TodayScreen(
             padding = padding,
             isWorking = isWorking,
             onRefresh = { triggerRefresh(context, state.morningTime, state.tonightTime) },
+            onSetUpLocation = onNavigateToDataSources,
         )
     }
 }
@@ -164,7 +172,34 @@ private fun TodayContent(
     padding: PaddingValues,
     isWorking: Boolean,
     onRefresh: () -> Unit,
+    onSetUpLocation: () -> Unit,
 ) {
+    val context = LocalContext.current
+    // Permission state is observed live, not snapshotted, so granting from system
+    // Settings and returning to Today flips the banner off without a tap. The
+    // worker re-checks at notify time anyway; this just keeps the home screen
+    // honest while the user is looking at it.
+    var coarseGranted by remember { mutableStateOf(hasCoarseLocationPermission(context)) }
+    var backgroundGranted by remember { mutableStateOf(hasBackgroundLocationPermission(context)) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                coarseGranted = hasCoarseLocationPermission(context)
+                backgroundGranted = hasBackgroundLocationPermission(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+    // The worker can produce a forecast iff it has a resolvable location at
+    // notify time: either the device-location toggle is on AND background
+    // permission is granted, OR a fallback city is saved. Anything else is
+    // the "stuck" state — surface it as a banner so existing users who were
+    // previously falling back to London (now: failing) understand why and
+    // know what to tap.
+    val locationActionRequired = !state.hasFallbackLocation &&
+        !(state.useDeviceLocation && coarseGranted && backgroundGranted)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -173,7 +208,18 @@ private fun TodayContent(
             .padding(horizontal = 16.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        WorkStatusBanner(status = state.workStatus)
+        if (locationActionRequired) {
+            LocationActionRequiredBanner(onSetUpLocation = onSetUpLocation)
+        }
+        // Suppress the redundant generic failure card when the action banner
+        // already explains the no-location case; other failure reasons still
+        // show through.
+        val workStatusToShow = if (
+            locationActionRequired &&
+            state.workStatus is WorkStatus.Failed &&
+            (state.workStatus as WorkStatus.Failed).reason == FetchAndNotifyWorker.REASON_NO_LOCATION
+        ) WorkStatus.Idle else state.workStatus
+        WorkStatusBanner(status = workStatusToShow)
         if (state.insight == null) {
             EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
@@ -182,6 +228,32 @@ private fun TodayContent(
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
             }
+        }
+    }
+}
+
+@Composable
+internal fun LocationActionRequiredBanner(onSetUpLocation: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = stringResource(R.string.today_location_required_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(R.string.today_location_required_body),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Button(
+                onClick = onSetUpLocation,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.today_location_required_action)) }
         }
     }
 }
@@ -256,6 +328,8 @@ private fun describeFailure(failed: WorkStatus.Failed): String =
     when (failed.reason) {
         FetchAndNotifyWorker.REASON_UNEXPECTED_HTTP ->
             stringResource(R.string.today_failed_unexpected_http)
+        FetchAndNotifyWorker.REASON_NO_LOCATION ->
+            stringResource(R.string.today_failed_no_location)
         FetchAndNotifyWorker.REASON_UNHANDLED, null ->
             stringResource(R.string.today_failed_unhandled)
         else -> failed.reason

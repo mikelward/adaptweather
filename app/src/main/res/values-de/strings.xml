@@ -255,7 +255,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_title">Standort</string>
     <string name="settings_location_use_device">Gerätestandort verwenden</string>
     <string name="settings_location_grant_background">Hintergrundstandort erlauben (System-Einstellungen)</string>
-    <string name="settings_location_unset">Kein Standort festgelegt — Standardwert ist London</string>
+    <string name="settings_location_unset">Kein Standort festgelegt</string>
     <string name="settings_location_description">Die Vorhersage wird für diesen Ort geholt. Suche nach einem Städtenamen; die Ergebnisse stammen vom kostenlosen Geocoding-Dienst von Open-Meteo.</string>
     <string name="settings_location_description_device_on">Wenn aktiviert, liest ClothesCast zur Benachrichtigungszeit den ungefähren Standort deines Geräts (nur Funkzelle / WLAN — keine GPS-Ortung). Der Standort unten dient als Notlösung, falls das Auslesen des Geräts fehlschlägt. Hintergrundstandort muss in den System-Einstellungen erlaubt sein, sonst kann der morgendliche Worker ihn nicht lesen.</string>
     <string name="settings_location_set">Standort festlegen</string>

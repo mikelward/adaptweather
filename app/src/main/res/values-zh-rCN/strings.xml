@@ -250,7 +250,7 @@ label localizes.
     <string name="settings_location_title">位置</string>
     <string name="settings_location_use_device">使用设备位置</string>
     <string name="settings_location_grant_background">授予后台位置权限（系统设置）</string>
-    <string name="settings_location_unset">未设置位置 — 默认使用伦敦</string>
+    <string name="settings_location_unset">未设置位置</string>
     <string name="settings_location_description">天气预报是针对这个地点获取的。按城市名称搜索；结果来自 Open-Meteo 的免费地理编码服务。</string>
     <string name="settings_location_description_device_on">启用后，ClothesCast 在通知时会读取设备的大致位置（仅基站 / WiFi — 不使用 GPS 硬件定位）。如果设备读取失败，会使用下方的位置作为备用。后台位置权限必须在系统设置里授予，否则早晨的 Worker 无法读取。</string>
     <string name="settings_location_set">设置位置</string>

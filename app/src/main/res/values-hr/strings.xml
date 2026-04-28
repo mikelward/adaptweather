@@ -230,7 +230,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_location_title">Lokacija</string>
     <string name="settings_location_use_device">Koristi lokaciju uređaja</string>
     <string name="settings_location_grant_background">Dopusti pozadinsku lokaciju (postavke sustava)</string>
-    <string name="settings_location_unset">Lokacija nije postavljena — koristi se London</string>
+    <string name="settings_location_unset">Lokacija nije postavljena</string>
     <string name="settings_location_description">Prognoza se dohvaća za ovu lokaciju. Pretraži po imenu grada; rezultati dolaze iz Open-Meteovog besplatnog servisa za geokodiranje.</string>
     <string name="settings_location_description_device_on">Kada je uključeno, ClothesCast pri vremenu obavijesti čita približnu lokaciju tvog uređaja (samo mobilni odašiljač / WiFi — bez GPS-a). Lokacija ispod služi kao rezerva ako čitanje uređaja zakaže. Pozadinska lokacija mora biti dopuštena u postavkama sustava, inače je jutarnji Worker ne može pročitati.</string>
     <string name="settings_location_set">Postavi lokaciju</string>
