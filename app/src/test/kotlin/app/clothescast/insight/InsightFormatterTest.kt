@@ -256,7 +256,7 @@ class InsightFormatterTest {
     @Test
     fun `de — precip uses 'um' between condition and time`() {
         germanSubject.format(summary(precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)))) shouldBe
-            "Heute wird es mild. Regen um 15:00."
+            "Heute wird es mild. Regen um 15 Uhr."
     }
 
     @Test
@@ -279,6 +279,6 @@ class InsightFormatterTest {
                 eveningEventTieIn = EveningEventTieInClause("Regenschirm", rainTime = LocalTime.of(21, 0)),
             ),
         )
-        out shouldBe "Heute wird es mild. Denk an Regenschirm für heute Abend, Regen um 21:00."
+        out shouldBe "Heute wird es mild. Denk an Regenschirm für heute Abend, Regen um 21 Uhr."
     }
 }

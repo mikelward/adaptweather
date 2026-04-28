@@ -365,8 +365,8 @@
     <!--
     Spoken-time vocabulary used by InsightFormatter.spokenTime to emit forms
     like "midnight", "noon", "3pm", "3:30pm". The 12h/am-pm logic itself is
-    English-specific; non-English locales fall back to a 24h ASCII format
-    until a dedicated formatter is added.
+    English-specific; non-English locales use insight_time_hour /
+    insight_time_hour_minutes below to produce TTS-friendly spoken time.
     -->
     <string name="insight_time_midnight">midnight</string>
     <string name="insight_time_noon">noon</string>
@@ -376,6 +376,15 @@
     <!-- %1$d = 1..12 hour, %2$d = 0..59 minute (zero-padded by the formatter). -->
     <string name="insight_time_am_minutes">%1$d:%2$02dam</string>
     <string name="insight_time_pm_minutes">%1$d:%2$02dpm</string>
+    <!--
+    24h spoken-time templates for non-English locales. Each locale overrides
+    these with its own natural phrasing ("%1$d Uhr", "%1$d時", etc.) so TTS
+    reads the time as words rather than digit-colon-digit pairs.
+    %1$d = 0..23 hour, %2$d = 0..59 minute.
+    Fallback (unknown locales): bare digit strings, no colons.
+    -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
     <!-- Condition labels used inside insight_precip. Mirror WeatherCondition entries. -->
     <string name="insight_condition_clear">Clear</string>
     <string name="insight_condition_partly_cloudy">Partly cloudy</string>

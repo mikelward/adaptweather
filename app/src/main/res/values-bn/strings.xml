@@ -76,6 +76,10 @@ West Bengal vocabulary differences in a future PR.
     <string name="insight_condition_snow">তুষার</string>
     <string name="insight_condition_thunderstorm">বজ্রপাত</string>
     <string name="insight_condition_unknown">অজানা</string>
-    <!-- "মিটিং (15:00)-এর জন্য কোট নিন।" -->
+    <!-- "মিটিং (15)-এর জন্য কোট নিন।" -->
     <string name="insight_calendar_tie_in">%3$s (%2$s)-এর জন্য %1$s নিন।</string>
+    <!-- "15" — suffix "-এ" comes from insight_precip_at_time wrapper. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
 </resources>
+

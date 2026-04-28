@@ -80,4 +80,7 @@ agreement; garment names are listed without articles and read naturally in conte
     <string name="insight_condition_thunderstorm">Orage</string>
     <string name="insight_condition_unknown">Inconnu</string>
     <string name="insight_calendar_tie_in">Prenez %1$s pour votre %3$s de %2$s.</string>
+    <!-- "15h" / "15h30" — French TTS reads as "quinze heures" / "quinze heures trente". -->
+    <string name="insight_time_hour">%1$dh</string>
+    <string name="insight_time_hour_minutes">%1$dh%2$02d</string>
 </resources>

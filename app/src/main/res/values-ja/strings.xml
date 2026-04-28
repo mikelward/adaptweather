@@ -78,6 +78,9 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="insight_condition_snow">雪</string>
     <string name="insight_condition_thunderstorm">雷雨</string>
     <string name="insight_condition_unknown">不明</string>
-    <!-- "会議（15:00）のためにコートを持っていきましょう。" -->
+    <!-- "会議（15時）のためにコートを持っていきましょう。" -->
     <string name="insight_calendar_tie_in">%3$s（%2$s）のために%1$sを持っていきましょう。</string>
+    <!-- "15時" / "15時30分" — Japanese spoken time; postposition "頃" comes from insight_precip_at_time. -->
+    <string name="insight_time_hour">%1$d時</string>
+    <string name="insight_time_hour_minutes">%1$d時%2$d分</string>
 </resources>
