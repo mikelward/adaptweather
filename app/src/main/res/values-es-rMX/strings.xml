@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Mexican Spanish overrides on top of values-es/strings.xml. Only vocabulary
+that a Mexican speaker would notice as wrong is overridden here.
+-->
+<resources>
+    <!-- "Suéter" (Mexico) vs "jersey" (Spain). -->
+    <string name="garment_sweater">Suéter</string>
+    <!-- "Playera" is the standard Mexican word for t-shirt. -->
+    <string name="garment_tshirt">Playera</string>
+    <!-- "Mezclilla" is the common Mexican term for jeans. -->
+    <string name="garment_jeans">Mezclilla</string>
+    <string name="today_outfit_top_tshirt">Playera</string>
+    <string name="today_outfit_top_sweater">Suéter</string>
+    <!-- "Agregar" is more natural than "añadir" in Mexican Spanish. -->
+    <string name="settings_clothes_add">Agregar</string>
+    <string name="settings_clothes_empty">Sin reglas. Toca Agregar para crear una.</string>
+    <string name="settings_clothes_dialog_add_title">Agregar regla de ropa</string>
+</resources>

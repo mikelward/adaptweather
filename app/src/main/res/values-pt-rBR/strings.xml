@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Brazilian Portuguese translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_pt_br">Português (Brasil)</string>
+    <string name="settings_tts_voice_locale_pt_br">Português (Brasil)</string>
+    <string name="settings_tts_voice_locale_label">Idioma</string>
+
+    <string name="garment_sweater">Suéter</string>
+    <string name="garment_hoodie">Moletom com capuz</string>
+    <string name="garment_jacket">Jaqueta</string>
+    <string name="garment_coat">Casaco</string>
+    <string name="garment_tshirt">Camiseta</string>
+    <string name="garment_shirt">Camisa</string>
+    <string name="garment_shorts">Shorts</string>
+    <string name="garment_pants">Calças</string>
+    <string name="garment_jeans">Jeans</string>
+
+    <string name="settings_clothes_empty">Nenhuma regra. Toque em Adicionar para criar uma.</string>
+    <string name="settings_clothes_add">Adicionar</string>
+    <string name="settings_clothes_edit">Editar</string>
+    <string name="settings_clothes_delete">Excluir</string>
+    <string name="settings_clothes_dialog_add_title">Adicionar regra de roupa</string>
+    <string name="settings_clothes_dialog_edit_title">Editar regra de roupa</string>
+    <string name="settings_clothes_item_label">Peça</string>
+    <string name="settings_clothes_condition_label">Condição</string>
+    <string name="settings_clothes_value_label_temp_c">Limite (°C)</string>
+    <string name="settings_clothes_value_label_precip">Limite (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Quando a sensação for menor que</string>
+    <string name="settings_clothes_cond_type_temp_above">Quando a sensação for maior que</string>
+    <string name="settings_clothes_cond_type_precip_above">Quando a chance de chuva superar</string>
+    <string name="settings_clothes_cond_temp_below">quando a temperatura sentida for abaixo de %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">quando a temperatura sentida for acima de %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">quando a chance de chuva superar %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Camiseta</string>
+    <string name="today_outfit_top_sweater">Suéter</string>
+    <string name="today_outfit_top_thick_jacket">Casaco grosso</string>
+    <string name="today_outfit_bottom_shorts">Shorts</string>
+    <string name="today_outfit_bottom_long_pants">Calças</string>
+
+    <string name="insight_lead_today">Hoje</string>
+    <string name="insight_lead_tonight">Esta noite</string>
+    <string name="insight_band_single">%1$s será %2$s.</string>
+    <string name="insight_band_range">%1$s estará entre %2$s e %3$s.</string>
+    <string name="insight_band_freezing">gelado</string>
+    <string name="insight_band_cold">frio</string>
+    <string name="insight_band_cool">fresco</string>
+    <string name="insight_band_mild">ameno</string>
+    <string name="insight_band_warm">quente</string>
+    <string name="insight_band_hot">muito quente</string>
+    <string name="insight_delta_warmer">Hoje estará %1$d° mais quente.</string>
+    <string name="insight_delta_cooler">Hoje estará %1$d° mais frio.</string>
+    <string name="insight_alert">Alerta: %1$s.</string>
+    <string name="insight_clothes_wear">Vista %1$s.</string>
+    <!-- Articles omitted — Portuguese gender agreement requires per-garment metadata. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s e %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s e %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">às %1$s</string>
+    <string name="insight_precip_overnight">de madrugada</string>
+    <string name="insight_condition_clear">Céu limpo</string>
+    <string name="insight_condition_partly_cloudy">Parcialmente nublado</string>
+    <string name="insight_condition_cloudy">Nublado</string>
+    <string name="insight_condition_fog">Névoa</string>
+    <string name="insight_condition_drizzle">Garoa</string>
+    <string name="insight_condition_rain">Chuva</string>
+    <string name="insight_condition_snow">Neve</string>
+    <string name="insight_condition_thunderstorm">Tempestade</string>
+    <string name="insight_condition_unknown">Desconhecido</string>
+    <string name="insight_calendar_tie_in">Leve %1$s para seu %3$s às %2$s.</string>
+</resources>

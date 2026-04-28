@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Swedish translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_sv_se">Svenska (Sverige)</string>
+    <string name="settings_tts_voice_locale_sv_se">Svenska (Sverige)</string>
+    <string name="settings_tts_voice_locale_label">Språk</string>
+
+    <string name="garment_sweater">Tröja</string>
+    <string name="garment_hoodie">Huvtröja</string>
+    <string name="garment_jacket">Jacka</string>
+    <string name="garment_coat">Kappa</string>
+    <string name="garment_tshirt">T-shirt</string>
+    <string name="garment_shirt">Skjorta</string>
+    <string name="garment_shorts">Shorts</string>
+    <string name="garment_pants">Byxor</string>
+    <string name="garment_jeans">Jeans</string>
+
+    <string name="settings_clothes_empty">Inga regler. Tryck på Lägg till för att skapa en.</string>
+    <string name="settings_clothes_add">Lägg till</string>
+    <string name="settings_clothes_edit">Redigera</string>
+    <string name="settings_clothes_delete">Ta bort</string>
+    <string name="settings_clothes_dialog_add_title">Lägg till klädregel</string>
+    <string name="settings_clothes_dialog_edit_title">Redigera klädregel</string>
+    <string name="settings_clothes_item_label">Klädesplagg</string>
+    <string name="settings_clothes_condition_label">Villkor</string>
+    <string name="settings_clothes_value_label_temp_c">Tröskel (°C)</string>
+    <string name="settings_clothes_value_label_precip">Tröskel (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">När det känns kallare än</string>
+    <string name="settings_clothes_cond_type_temp_above">När det känns varmare än</string>
+    <string name="settings_clothes_cond_type_precip_above">När risken för regn överstiger</string>
+    <string name="settings_clothes_cond_temp_below">när upplevd temperatur är under %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">när upplevd temperatur är över %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">när risken för regn överstiger %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_sweater">Tröja</string>
+    <string name="today_outfit_top_thick_jacket">Tjock jacka</string>
+    <string name="today_outfit_bottom_shorts">Shorts</string>
+    <string name="today_outfit_bottom_long_pants">Byxor</string>
+
+    <string name="insight_lead_today">Idag</string>
+    <string name="insight_lead_tonight">I kväll</string>
+    <!-- Swedish V2 word order: "Idag blir det milt." -->
+    <string name="insight_band_single">%1$s blir det %2$s.</string>
+    <string name="insight_band_range">%1$s blir det %2$s till %3$s.</string>
+    <string name="insight_band_freezing">iskallt</string>
+    <string name="insight_band_cold">kallt</string>
+    <string name="insight_band_cool">svalt</string>
+    <string name="insight_band_mild">milt</string>
+    <string name="insight_band_warm">varmt</string>
+    <string name="insight_band_hot">mycket varmt</string>
+    <string name="insight_delta_warmer">Det blir %1$d° varmare idag.</string>
+    <string name="insight_delta_cooler">Det blir %1$d° kallare idag.</string>
+    <string name="insight_alert">Varning: %1$s.</string>
+    <string name="insight_clothes_wear">Ta på %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s och %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s och %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">klockan %1$s</string>
+    <string name="insight_precip_overnight">under natten</string>
+    <string name="insight_condition_clear">Klart</string>
+    <string name="insight_condition_partly_cloudy">Delvis molnigt</string>
+    <string name="insight_condition_cloudy">Molnigt</string>
+    <string name="insight_condition_fog">Dimma</string>
+    <string name="insight_condition_drizzle">Duggregn</string>
+    <string name="insight_condition_rain">Regn</string>
+    <string name="insight_condition_snow">Snö</string>
+    <string name="insight_condition_thunderstorm">Åskväder</string>
+    <string name="insight_condition_unknown">Okänt</string>
+    <string name="insight_calendar_tie_in">Ta med %1$s till din %3$s klockan %2$s.</string>
+</resources>

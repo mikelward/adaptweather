@@ -336,7 +336,21 @@ private fun voiceLocaleLabel(locale: VoiceLocale): Int = when (locale) {
     VoiceLocale.EN_US -> R.string.settings_tts_voice_locale_en_us
     VoiceLocale.EN_GB -> R.string.settings_tts_voice_locale_en_gb
     VoiceLocale.EN_AU -> R.string.settings_tts_voice_locale_en_au
+    VoiceLocale.EN_CA -> R.string.settings_tts_voice_locale_en_ca
     VoiceLocale.DE_DE -> R.string.settings_tts_voice_locale_de_de
+    VoiceLocale.FR_FR -> R.string.settings_tts_voice_locale_fr_fr
+    VoiceLocale.FR_CA -> R.string.settings_tts_voice_locale_fr_ca
+    VoiceLocale.IT_IT -> R.string.settings_tts_voice_locale_it_it
+    VoiceLocale.ES_ES -> R.string.settings_tts_voice_locale_es_es
+    VoiceLocale.ES_MX -> R.string.settings_tts_voice_locale_es_mx
+    VoiceLocale.RU_RU -> R.string.settings_tts_voice_locale_ru_ru
+    VoiceLocale.PL_PL -> R.string.settings_tts_voice_locale_pl_pl
+    VoiceLocale.HR_HR -> R.string.settings_tts_voice_locale_hr_hr
+    VoiceLocale.UK_UA -> R.string.settings_tts_voice_locale_uk_ua
+    VoiceLocale.PT_BR -> R.string.settings_tts_voice_locale_pt_br
+    VoiceLocale.NL_NL -> R.string.settings_tts_voice_locale_nl_nl
+    VoiceLocale.SV_SE -> R.string.settings_tts_voice_locale_sv_se
+    VoiceLocale.TR_TR -> R.string.settings_tts_voice_locale_tr_tr
 }
 
 @Composable

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Dutch translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_nl_nl">Nederlands (Nederland)</string>
+    <string name="settings_tts_voice_locale_nl_nl">Nederlands (Nederland)</string>
+    <string name="settings_tts_voice_locale_label">Taal</string>
+
+    <string name="garment_sweater">Trui</string>
+    <string name="garment_hoodie">Hoodie</string>
+    <string name="garment_jacket">Jas</string>
+    <string name="garment_coat">Winterjas</string>
+    <string name="garment_tshirt">T-shirt</string>
+    <string name="garment_shirt">Overhemd</string>
+    <string name="garment_shorts">Shorts</string>
+    <string name="garment_pants">Broek</string>
+    <string name="garment_jeans">Spijkerbroek</string>
+
+    <string name="settings_clothes_empty">Geen regels. Tik op Toevoegen om er een aan te maken.</string>
+    <string name="settings_clothes_add">Toevoegen</string>
+    <string name="settings_clothes_edit">Bewerken</string>
+    <string name="settings_clothes_delete">Verwijderen</string>
+    <string name="settings_clothes_dialog_add_title">Kledingsregel toevoegen</string>
+    <string name="settings_clothes_dialog_edit_title">Kledingsregel bewerken</string>
+    <string name="settings_clothes_item_label">Kledingstuk</string>
+    <string name="settings_clothes_condition_label">Voorwaarde</string>
+    <string name="settings_clothes_value_label_temp_c">Drempel (°C)</string>
+    <string name="settings_clothes_value_label_precip">Drempel (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Wanneer het kouder voelt dan</string>
+    <string name="settings_clothes_cond_type_temp_above">Wanneer het warmer voelt dan</string>
+    <string name="settings_clothes_cond_type_precip_above">Wanneer de kans op regen groter is dan</string>
+    <string name="settings_clothes_cond_temp_below">wanneer de gevoelstemperatuur onder %.0f°C ligt</string>
+    <string name="settings_clothes_cond_temp_above">wanneer de gevoelstemperatuur boven %.0f°C ligt</string>
+    <string name="settings_clothes_cond_precip_above">wanneer de kans op regen groter is dan %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_sweater">Trui</string>
+    <string name="today_outfit_top_thick_jacket">Dikke jas</string>
+    <string name="today_outfit_bottom_shorts">Shorts</string>
+    <string name="today_outfit_bottom_long_pants">Broek</string>
+
+    <string name="insight_lead_today">Vandaag</string>
+    <string name="insight_lead_tonight">Vanavond</string>
+    <!-- Dutch V2 word order: "Vandaag wordt het mild." -->
+    <string name="insight_band_single">%1$s wordt het %2$s.</string>
+    <string name="insight_band_range">%1$s wordt het %2$s tot %3$s.</string>
+    <string name="insight_band_freezing">vriezend koud</string>
+    <string name="insight_band_cold">koud</string>
+    <string name="insight_band_cool">fris</string>
+    <string name="insight_band_mild">mild</string>
+    <string name="insight_band_warm">warm</string>
+    <string name="insight_band_hot">erg warm</string>
+    <string name="insight_delta_warmer">Het wordt vandaag %1$d° warmer.</string>
+    <string name="insight_delta_cooler">Het wordt vandaag %1$d° kouder.</string>
+    <string name="insight_alert">Waarschuwing: %1$s.</string>
+    <string name="insight_clothes_wear">Draag %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s en %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s en %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">om %1$s</string>
+    <!-- Apostrophe before s-genitive in Dutch: "\'s nachts" = at night. -->
+    <string name="insight_precip_overnight">\'s nachts</string>
+    <string name="insight_condition_clear">Helder</string>
+    <string name="insight_condition_partly_cloudy">Gedeeltelijk bewolkt</string>
+    <string name="insight_condition_cloudy">Bewolkt</string>
+    <string name="insight_condition_fog">Mist</string>
+    <string name="insight_condition_drizzle">Motregen</string>
+    <string name="insight_condition_rain">Regen</string>
+    <string name="insight_condition_snow">Sneeuw</string>
+    <string name="insight_condition_thunderstorm">Onweer</string>
+    <string name="insight_condition_unknown">Onbekend</string>
+    <string name="insight_calendar_tie_in">Neem %1$s mee voor je %3$s om %2$s.</string>
+</resources>

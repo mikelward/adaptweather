@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Croatian translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_hr_hr">Hrvatski (Hrvatska)</string>
+    <string name="settings_tts_voice_locale_hr_hr">Hrvatski (Hrvatska)</string>
+    <string name="settings_tts_voice_locale_label">Jezik</string>
+
+    <string name="garment_sweater">Džemper</string>
+    <string name="garment_hoodie">Hoodie</string>
+    <string name="garment_jacket">Jakna</string>
+    <string name="garment_coat">Kaput</string>
+    <string name="garment_tshirt">Majica</string>
+    <string name="garment_shirt">Košulja</string>
+    <string name="garment_shorts">Kratke hlače</string>
+    <string name="garment_pants">Hlače</string>
+    <string name="garment_jeans">Traperice</string>
+
+    <string name="settings_clothes_empty">Nema pravila. Dodirnite Dodaj za kreiranje.</string>
+    <string name="settings_clothes_add">Dodaj</string>
+    <string name="settings_clothes_edit">Uredi</string>
+    <string name="settings_clothes_delete">Izbriši</string>
+    <string name="settings_clothes_dialog_add_title">Dodaj pravilo odijevanja</string>
+    <string name="settings_clothes_dialog_edit_title">Uredi pravilo odijevanja</string>
+    <string name="settings_clothes_item_label">Odjevni predmet</string>
+    <string name="settings_clothes_condition_label">Uvjet</string>
+    <string name="settings_clothes_value_label_temp_c">Prag (°C)</string>
+    <string name="settings_clothes_value_label_precip">Prag (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Kada se osjeća hladnije od</string>
+    <string name="settings_clothes_cond_type_temp_above">Kada se osjeća toplije od</string>
+    <string name="settings_clothes_cond_type_precip_above">Kada je vjerojatnost kiše veća od</string>
+    <string name="settings_clothes_cond_temp_below">kada je osjećajna temperatura ispod %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">kada je osjećajna temperatura iznad %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">kada je vjerojatnost kiše veća od %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Majica</string>
+    <string name="today_outfit_top_sweater">Džemper</string>
+    <string name="today_outfit_top_thick_jacket">Debela jakna</string>
+    <string name="today_outfit_bottom_shorts">Kratke hlače</string>
+    <string name="today_outfit_bottom_long_pants">Hlače</string>
+
+    <string name="insight_lead_today">Danas</string>
+    <string name="insight_lead_tonight">Večeras</string>
+    <string name="insight_band_single">%1$s će biti %2$s.</string>
+    <string name="insight_band_range">%1$s će biti od %2$s do %3$s.</string>
+    <string name="insight_band_freezing">ledeno</string>
+    <string name="insight_band_cold">hladno</string>
+    <string name="insight_band_cool">svježe</string>
+    <string name="insight_band_mild">blago</string>
+    <string name="insight_band_warm">toplo</string>
+    <string name="insight_band_hot">vruće</string>
+    <string name="insight_delta_warmer">Danas će biti %1$d° toplije.</string>
+    <string name="insight_delta_cooler">Danas će biti %1$d° hladnije.</string>
+    <string name="insight_alert">Upozorenje: %1$s.</string>
+    <string name="insight_clothes_wear">Obucite %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s i %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s i %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">u %1$s</string>
+    <string name="insight_precip_overnight">noću</string>
+    <string name="insight_condition_clear">Vedro</string>
+    <string name="insight_condition_partly_cloudy">Djelomično oblačno</string>
+    <string name="insight_condition_cloudy">Oblačno</string>
+    <string name="insight_condition_fog">Magla</string>
+    <string name="insight_condition_drizzle">Sitna kiša</string>
+    <string name="insight_condition_rain">Kiša</string>
+    <string name="insight_condition_snow">Snijeg</string>
+    <string name="insight_condition_thunderstorm">Grmljavina</string>
+    <string name="insight_condition_unknown">Nepoznato</string>
+    <string name="insight_calendar_tie_in">Ponesite %1$s na %3$s u %2$s.</string>
+</resources>

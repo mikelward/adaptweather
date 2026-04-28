@@ -68,12 +68,26 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "en-GB" to "Speak with a Standard Southern British accent.",
     "en-AU" to "Speak with a General Australian accent.",
     "en-US" to "Speak with a General American accent.",
+    "en-CA" to "Speak with a Canadian English accent.",
     // Language-only entry — Gemini follows the directive *language* even though
     // the prompt itself is English, so the synthesised audio is in German. The
     // German prose comes from the `:app` formatter once the user's Region is
     // set to DE_DE; this directive just nudges the model to read it as German
     // rather than mangling it through an English phoneme pipeline.
     "de" to "Sprich auf Deutsch in einem klaren, hochdeutschen Akzent.",
+    "fr-FR" to "Parle en français de France avec un accent parisien clair.",
+    "fr-CA" to "Parle en français québécois avec un accent canadien-français.",
+    "it" to "Parla in italiano con un accento italiano chiaro e naturale.",
+    "es-ES" to "Habla en español de España con un acento castellano claro.",
+    "es-MX" to "Habla en español mexicano con un acento neutro y claro.",
+    "ru" to "Говори по-русски с чётким литературным произношением.",
+    "pl" to "Mów po polsku z wyraźną i naturalną wymową.",
+    "hr" to "Govori na hrvatskom jeziku s jasnim i prirodnim izgovorom.",
+    "uk" to "Говори українською мовою з чітким літературним вимовленням.",
+    "pt-BR" to "Fale em português brasileiro com sotaque neutro e claro.",
+    "nl" to "Spreek in het Nederlands met een duidelijk en natuurlijk accent.",
+    "sv" to "Tala på svenska med ett tydligt och naturligt uttal.",
+    "tr" to "Türkçe konuş, net ve doğal bir Türkçe aksanıyla.",
 )
 
 /**

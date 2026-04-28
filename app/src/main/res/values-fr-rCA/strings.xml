@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Quebec French overrides on top of values-fr/strings.xml. Only vocabulary that
+a Quebec speaker would notice as wrong is overridden here; everything else
+falls through to the base French translation.
+-->
+<resources>
+    <!-- "Chandail" is the standard Quebec word; "pull" (France) sounds foreign. -->
+    <string name="garment_sweater">Chandail</string>
+    <string name="today_outfit_top_sweater">Chandail</string>
+</resources>

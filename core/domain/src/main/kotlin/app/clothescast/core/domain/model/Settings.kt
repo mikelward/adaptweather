@@ -51,7 +51,21 @@ enum class VoiceLocale(val bcp47: String?) {
     EN_US("en-US"),
     EN_GB("en-GB"),
     EN_AU("en-AU"),
+    EN_CA("en-CA"),
     DE_DE("de-DE"),
+    FR_FR("fr-FR"),
+    FR_CA("fr-CA"),
+    IT_IT("it-IT"),
+    ES_ES("es-ES"),
+    ES_MX("es-MX"),
+    RU_RU("ru-RU"),
+    PL_PL("pl-PL"),
+    HR_HR("hr-HR"),
+    UK_UA("uk-UA"),
+    PT_BR("pt-BR"),
+    NL_NL("nl-NL"),
+    SV_SE("sv-SE"),
+    TR_TR("tr-TR"),
 }
 
 /**
@@ -73,7 +87,21 @@ enum class Region(val bcp47: String?) {
     EN_US("en-US"),
     EN_GB("en-GB"),
     EN_AU("en-AU"),
+    EN_CA("en-CA"),
     DE_DE("de-DE"),
+    FR_FR("fr-FR"),
+    FR_CA("fr-CA"),
+    IT_IT("it-IT"),
+    ES_ES("es-ES"),
+    ES_MX("es-MX"),
+    RU_RU("ru-RU"),
+    PL_PL("pl-PL"),
+    HR_HR("hr-HR"),
+    UK_UA("uk-UA"),
+    PT_BR("pt-BR"),
+    NL_NL("nl-NL"),
+    SV_SE("sv-SE"),
+    TR_TR("tr-TR"),
 }
 
 data class UserPreferences(
