@@ -87,7 +87,7 @@ object BugReport {
             appendLine("--- Device ---")
             appendLine("Model: ${Build.MANUFACTURER} ${Build.MODEL}")
             appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
-            appendLine("Locale: ${Locale.getDefault().toLanguageTag()}")
+            appendLine("Locale: ${Locale.getDefault().stripExtensions().toLanguageTag()}")
             appendLine()
             appendLine("--- Settings ---")
             if (prefs == null) {
