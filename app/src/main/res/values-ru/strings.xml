@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Russian translation. Scope: insight-prose templates, garment labels, clothes-rule
-editor, outfit-card labels, and region/voice-locale picker names.
+Russian translation. Tone is informal "ты"-form throughout (intimate /
+spousal register), matching the spouse-style register the user wants.
+Avoid formal "Вы"-form ("Наденьте", "Возьмите", "Нажмите", "Ваш") that
+earlier passes accidentally mixed in.
 -->
 <resources>
     <string name="settings_region_language_ru_ru">Русский (Россия)</string>
@@ -18,7 +20,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="garment_pants">Брюки</string>
     <string name="garment_jeans">Джинсы</string>
 
-    <string name="settings_clothes_empty">Нет правил. Нажмите «Добавить», чтобы создать.</string>
+    <string name="settings_clothes_empty">Нет правил. Нажми «Добавить», чтобы создать.</string>
     <string name="settings_clothes_add">Добавить</string>
     <string name="settings_clothes_edit">Изменить</string>
     <string name="settings_clothes_delete">Удалить</string>
@@ -54,7 +56,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_delta_warmer">Сегодня на %1$d° теплее.</string>
     <string name="insight_delta_cooler">Сегодня на %1$d° холоднее.</string>
     <string name="insight_alert">Предупреждение: %1$s.</string>
-    <string name="insight_clothes_wear">Наденьте %1$s.</string>
+    <string name="insight_clothes_wear">Надень %1$s.</string>
     <string name="insight_clothes_article_a">%1$s</string>
     <string name="insight_clothes_article_an">%1$s</string>
     <string name="insight_clothes_join_two">%1$s и %2$s</string>
@@ -72,11 +74,11 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_thunderstorm">Гроза</string>
     <string name="insight_condition_unknown">Неизвестно</string>
     <string name="insight_calendar_tie_in">Возьмите %1$s на %3$s в %2$s.</string>
-    <string name="insight_tie_in">Возьмите %1$s сегодня вечером.</string>
-    <string name="insight_tie_in_with_rain">Возьмите %1$s сегодня вечером, дождь в %2$s.</string>
+    <string name="insight_tie_in">Возьми %1$s сегодня вечером.</string>
+    <string name="insight_tie_in_with_rain">Возьми %1$s сегодня вечером, дождь в %2$s.</string>
     <!-- "15" — preposition "в" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
 
-    <string name="settings_tts_test_sample">Ваш сегодняшний ClothesCast: мягкая погода, дождь в 15:00. Наденьте куртку.</string>
+    <string name="settings_tts_test_sample">Твой сегодняшний ClothesCast: мягкая погода, дождь в 15:00. Надень куртку.</string>
 </resources>
