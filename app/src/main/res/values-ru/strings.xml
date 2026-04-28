@@ -243,7 +243,7 @@ only the displayed label localizes.
     <string name="settings_location_title">Местоположение</string>
     <string name="settings_location_use_device">Использовать местоположение устройства</string>
     <string name="settings_location_grant_background">Разрешить фоновое местоположение (системные настройки)</string>
-    <string name="settings_location_unset">Местоположение не задано — по умолчанию используется Лондон</string>
+    <string name="settings_location_unset">Местоположение не задано</string>
     <string name="settings_location_description">Прогноз получается для этого места. Ищи по названию города; результаты приходят из бесплатной службы геокодирования Open-Meteo.</string>
     <string name="settings_location_description_device_on">Когда включено, ClothesCast при отправке уведомления читает примерное местоположение твоего устройства (только сота / WiFi — без GPS-аппаратной фиксации). Указанное ниже местоположение используется как запасное, если чтение с устройства не удаётся. Фоновое местоположение должно быть разрешено в системных настройках, иначе утренний Worker не сможет его прочитать.</string>
     <string name="settings_location_set">Задать местоположение</string>

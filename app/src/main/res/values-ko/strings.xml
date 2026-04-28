@@ -266,7 +266,7 @@ displayed label localizes.
     <string name="settings_location_title">위치</string>
     <string name="settings_location_use_device">기기 위치 사용</string>
     <string name="settings_location_grant_background">백그라운드 위치 허용 (시스템 설정)</string>
-    <string name="settings_location_unset">위치가 설정되지 않음 — 기본값으로 런던 사용</string>
+    <string name="settings_location_unset">위치가 설정되지 않음</string>
     <string name="settings_location_description">이 장소에 대한 예보를 가져옵니다. 도시 이름으로 검색하세요. 결과는 Open-Meteo의 무료 지오코딩 서비스에서 가져옵니다.</string>
     <string name="settings_location_description_device_on">활성화하면 ClothesCast가 알림 시점에 기기의 대략적인 위치를 읽어요(기지국 / WiFi만 사용 — GPS 하드웨어 측위는 사용하지 않음). 기기 위치를 읽지 못하면 아래 위치를 대신 사용해요. 백그라운드 위치는 시스템 설정에서 허용해야 하며, 그렇지 않으면 아침 Worker가 읽을 수 없어요.</string>
     <string name="settings_location_set">위치 설정</string>

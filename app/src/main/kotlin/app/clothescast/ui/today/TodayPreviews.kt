@@ -261,3 +261,22 @@ internal fun WorkStatusFailedUnhandledPreview() {
         )
     }
 }
+
+@Preview(name = "Banner · failed (no location)", widthDp = 360)
+@Composable
+internal fun WorkStatusFailedNoLocationPreview() {
+    Frame {
+        WorkStatusBanner(
+            WorkStatus.Failed(
+                reason = FetchAndNotifyWorker.REASON_NO_LOCATION,
+                detail = null,
+            ),
+        )
+    }
+}
+
+@Preview(name = "Banner · location action required", widthDp = 360)
+@Composable
+internal fun LocationActionRequiredBannerPreview() {
+    Frame { LocationActionRequiredBanner(onSetUpLocation = {}) }
+}

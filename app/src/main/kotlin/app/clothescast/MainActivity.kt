@@ -100,6 +100,10 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
                     settingsInitialRoute = SettingsRoute.About.name
                     screen = Screen.Settings
                 },
+                onNavigateToDataSources = {
+                    settingsInitialRoute = SettingsRoute.DataSources.name
+                    screen = Screen.Settings
+                },
             )
         }
         Screen.Settings -> {

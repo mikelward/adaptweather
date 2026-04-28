@@ -32,6 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.Location
+import app.clothescast.location.hasBackgroundLocationPermission
+import app.clothescast.location.hasCoarseLocationPermission
 import kotlinx.coroutines.launch
 
 @Composable
@@ -268,20 +270,6 @@ private fun DeviceLocationToggleRow(
             },
         )
     }
-}
-
-private fun hasCoarseLocationPermission(context: android.content.Context): Boolean =
-    androidx.core.content.ContextCompat.checkSelfPermission(
-        context,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
-private fun hasBackgroundLocationPermission(context: android.content.Context): Boolean {
-    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) return true
-    return androidx.core.content.ContextCompat.checkSelfPermission(
-        context,
-        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 }
 
 /**

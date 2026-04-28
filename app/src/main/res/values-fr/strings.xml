@@ -253,7 +253,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_title">Position</string>
     <string name="settings_location_use_device">Utiliser la position de l\'appareil</string>
     <string name="settings_location_grant_background">Autoriser la position en arrière-plan (paramètres du système)</string>
-    <string name="settings_location_unset">Aucune position définie — Londres par défaut</string>
+    <string name="settings_location_unset">Aucune position définie</string>
     <string name="settings_location_description">Les prévisions sont récupérées pour ce lieu. Recherche par nom de ville ; les résultats proviennent du service de géocodage gratuit d\'Open-Meteo.</string>
     <string name="settings_location_description_device_on">Quand activé, ClothesCast lit la position approximative de ton appareil au moment de la notification (antenne mobile / WiFi uniquement — pas de localisation GPS matérielle). La position ci-dessous sert de secours si la lecture sur l\'appareil échoue. La position en arrière-plan doit être autorisée dans les paramètres du système, sinon le Worker matinal ne peut pas la lire.</string>
     <string name="settings_location_set">Définir la position</string>

@@ -97,6 +97,8 @@ class PreviewSnapshots {
     @Test fun work_status_running() = capture { WorkStatusRunningPreview() }
     @Test fun work_status_failed() = capture { WorkStatusFailedPreview() }
     @Test fun work_status_failed_unhandled() = capture { WorkStatusFailedUnhandledPreview() }
+    @Test fun work_status_failed_no_location() = capture { WorkStatusFailedNoLocationPreview() }
+    @Test fun location_action_required_banner() = capture { LocationActionRequiredBannerPreview() }
 
     @Test fun notification_icon_tshirt() = capture { NotificationIconTShirtPreview() }
     @Test fun notification_icon_sweater() = capture { NotificationIconSweaterPreview() }

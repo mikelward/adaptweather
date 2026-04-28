@@ -27,6 +27,12 @@ data class TodayState(
     // the ViewModel overwrites these with the user's actual schedule times.
     val morningTime: LocalTime = LocalTime.of(7, 0),
     val tonightTime: LocalTime = LocalTime.of(19, 0),
+    // Inputs the Today screen needs to compute whether a "set up location"
+    // prompt should appear. Permission state is checked in the Composable
+    // (it depends on Context and needs an on-resume re-check); the ViewModel
+    // just exposes the prefs side of the equation.
+    val useDeviceLocation: Boolean = false,
+    val hasFallbackLocation: Boolean = false,
 )
 
 sealed class WorkStatus {
@@ -56,6 +62,8 @@ class TodayViewModel(
             region = prefs.region,
             morningTime = prefs.schedule.time,
             tonightTime = prefs.tonightSchedule.time,
+            useDeviceLocation = prefs.useDeviceLocation,
+            hasFallbackLocation = prefs.location != null,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 

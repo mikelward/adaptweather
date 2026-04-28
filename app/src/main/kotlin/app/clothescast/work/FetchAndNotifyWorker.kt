@@ -75,6 +75,16 @@ class FetchAndNotifyWorker(
         }
 
         val location = resolveLocation(prefs)
+            ?: run {
+                // Either useDeviceLocation is on but the worker can't read it
+                // (background grant missing / providers disabled / timeout) and
+                // there's no saved fallback, or both inputs are blank. Fail
+                // loudly via the failure-reason channel so the Today banner can
+                // prompt the user to act, instead of silently posting a
+                // London-default insight that erodes trust in the outfit advice.
+                DiagLog.w(TAG, "No location available; failing run.")
+                return Result.failure(reason(REASON_NO_LOCATION))
+            }
         val today = LocalDate.now()
 
         // Honour force-refresh only when it's still the day the user tapped on. If
@@ -203,7 +213,7 @@ class FetchAndNotifyWorker(
         return if (joined.length <= MAX_DETAIL_LEN) joined else joined.take(MAX_DETAIL_LEN - 1) + "…"
     }
 
-    private suspend fun resolveLocation(prefs: UserPreferences): Location {
+    private suspend fun resolveLocation(prefs: UserPreferences): Location? {
         if (prefs.useDeviceLocation) {
             // resolve() catches and DiagLog-warns about the actual failures
             // (SecurityException from a missing background grant, disabled
@@ -215,7 +225,7 @@ class FetchAndNotifyWorker(
             }
             DiagLog.i(TAG, "Device location unavailable; falling back to settings location.")
         }
-        return prefs.location ?: DEFAULT_LOCATION
+        return prefs.location
     }
 
     private suspend fun deliver(insight: Insight, prefs: UserPreferences, prose: String) {
@@ -333,6 +343,7 @@ class FetchAndNotifyWorker(
 
         const val REASON_UNEXPECTED_HTTP = "unexpected_http"
         const val REASON_UNHANDLED = "unhandled"
+        const val REASON_NO_LOCATION = "no_location"
 
         // Cap unhandled-error detail so the "Show details" pane stays readable.
         private const val MAX_DETAIL_LEN = 240
@@ -349,15 +360,6 @@ class FetchAndNotifyWorker(
 
         /** Which slice of the day this run is for; defaults to TODAY when absent. */
         private const val KEY_PERIOD = "period"
-
-        // Fallback when the user hasn't set a location yet — the pipeline still runs and
-        // posts a (London) insight rather than silently failing. The Settings screen
-        // surfaces an empty-location card so the user can change it.
-        private val DEFAULT_LOCATION = Location(
-            latitude = 51.5074,
-            longitude = -0.1278,
-            displayName = "London (default)",
-        )
 
         fun enqueueOneShot(
             context: Context,

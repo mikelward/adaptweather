@@ -254,7 +254,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_title">Localização</string>
     <string name="settings_location_use_device">Usar localização do aparelho</string>
     <string name="settings_location_grant_background">Conceder localização em segundo plano (configurações do sistema)</string>
-    <string name="settings_location_unset">Localização não definida — usando Londres por padrão</string>
+    <string name="settings_location_unset">Localização não definida</string>
     <string name="settings_location_description">A previsão é buscada para este local. Pesquise pelo nome da cidade; os resultados vêm do serviço de geocodificação gratuito da Open-Meteo.</string>
     <string name="settings_location_description_device_on">Quando ativada, ClothesCast lê a localização aproximada do seu aparelho no momento da notificação (apenas torre celular / WiFi — sem GPS por hardware). A localização abaixo é usada como reserva se a leitura do aparelho falhar. A localização em segundo plano precisa estar concedida nas configurações do sistema, senão o Worker matinal não consegue lê-la.</string>
     <string name="settings_location_set">Definir localização</string>

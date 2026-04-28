@@ -250,7 +250,7 @@ the displayed label localizes.
     <string name="settings_location_title">位置情報</string>
     <string name="settings_location_use_device">端末の位置情報を使用</string>
     <string name="settings_location_grant_background">バックグラウンド位置情報を許可（システム設定）</string>
-    <string name="settings_location_unset">位置情報が未設定 — ロンドンを既定として使用</string>
+    <string name="settings_location_unset">位置情報が未設定</string>
     <string name="settings_location_description">予報はこの場所について取得されます。都市名で検索してください。結果は Open-Meteo の無料ジオコーディングサービスから取得されます。</string>
     <string name="settings_location_description_device_on">有効にすると、ClothesCast は通知時に端末のおおよその位置を読み取ります（基地局 / WiFi のみ — GPS ハードウェア測位は使用しません）。端末からの読み取りに失敗した場合、下の位置がフォールバックとして使用されます。バックグラウンド位置情報はシステム設定で許可する必要があり、許可がないと朝の Worker が読み取れません。</string>
     <string name="settings_location_set">位置を設定</string>
