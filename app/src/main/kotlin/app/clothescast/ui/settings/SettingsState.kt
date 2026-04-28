@@ -12,6 +12,7 @@ import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.defaultDistanceUnitFor
 import app.clothescast.data.defaultTemperatureUnitFor
+import app.clothescast.tts.DeviceVoice
 import app.clothescast.tts.defaultOpenAiVoiceFor
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -45,6 +46,33 @@ data class SettingsState(
     // current locale → fable on en-GB, nova everywhere else.
     val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
     val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,
+    /**
+     * On-device voice ID the user has pinned, or `null` for "auto-pick the
+     * highest-quality voice for [voiceLocale]" (the default for installs
+     * that haven't opened the device-voice picker).
+     */
+    val deviceVoice: String? = null,
+    /**
+     * Voices the device's TTS engine reports for the current [voiceLocale],
+     * loaded by [SettingsViewModel] when the Voice screen first observes
+     * DEVICE selected (and refreshed when the locale changes). Empty until
+     * enumeration completes — the picker shows the pinned ID alone in that
+     * window, so users still see what they previously selected.
+     */
+    val deviceVoices: List<DeviceVoice> = emptyList(),
+    /**
+     * What [app.clothescast.tts.AndroidTtsSpeaker] would speak right now —
+     * the user's [deviceVoice] resolved against the engine's catalogue, or
+     * the auto-pick if no pin. `null` while the enumeration is in flight or
+     * if the engine reports no voices at all.
+     */
+    val effectiveDeviceVoice: DeviceVoice? = null,
+    /**
+     * Whether `com.google.android.tts` is installed. Default `true` so we
+     * don't briefly flash the install hint before the package check
+     * resolves; the ViewModel re-checks on Settings open.
+     */
+    val isGoogleTtsInstalled: Boolean = true,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val useCalendarEvents: Boolean = false,
     val apiKeyConfigured: Boolean = false,

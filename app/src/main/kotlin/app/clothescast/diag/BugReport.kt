@@ -134,6 +134,7 @@ object BugReport {
         appendLine("Gemini voice: ${prefs.geminiVoice}")
         appendLine("OpenAI voice: ${prefs.openAiVoice}")
         appendLine("ElevenLabs voice: ${prefs.elevenLabsVoice}")
+        appendLine("Device voice: ${prefs.deviceVoice ?: "(auto)"}")
         appendLine("Use device location: ${prefs.useDeviceLocation}")
         val locDesc = prefs.location?.let { loc ->
             val name = loc.displayName ?: "(unnamed)"

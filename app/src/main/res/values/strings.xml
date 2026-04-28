@@ -128,6 +128,16 @@
     <string name="settings_tts_engine_elevenlabs">ElevenLabs (highest quality, online)</string>
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
+    <!-- Device-voice picker (TtsEngine.DEVICE only). %1$s is a voice id like
+         "en-us-x-tpc-network · Network · q400". -->
+    <string name="settings_tts_device_voice_label">Device voice</string>
+    <string name="settings_tts_device_voice_auto">Auto (best for accent)</string>
+    <string name="settings_tts_device_voice_currently">Currently: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">Loading…</string>
+    <string name="settings_tts_device_voice_network">Network</string>
+    <string name="settings_tts_device_voice_offline">Offline</string>
+    <string name="settings_tts_install_google_hint">Install Google\'s text-to-speech engine for higher-quality voices.</string>
+    <string name="settings_tts_install_google_button">Install Google TTS</string>
     <string name="settings_tts_voice_locale_label">Language</string>
     <!-- Caption under Voice > Language: only the spoken accent, not the on-screen
          text. Pairs with settings_region_language_description. -->

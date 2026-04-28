@@ -264,6 +264,26 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `device voice defaults to null and round-trips`() = runTest {
+        subject.preferences.first().deviceVoice shouldBe null
+
+        subject.setDeviceVoice("en-us-x-tpc-network")
+        subject.preferences.first().deviceVoice shouldBe "en-us-x-tpc-network"
+
+        // Null clears the pin; preferences flow stops emitting the stored value
+        // and the speaker reverts to auto-pick.
+        subject.setDeviceVoice(null)
+        subject.preferences.first().deviceVoice shouldBe null
+    }
+
+    @Test
+    fun `device voice setter treats blank as clear`() = runTest {
+        subject.setDeviceVoice("en-us-x-tpc-network")
+        subject.setDeviceVoice("")
+        subject.preferences.first().deviceVoice shouldBe null
+    }
+
+    @Test
     fun `elevenLabs voice defaults to Sarah when nothing stored`() = runTest {
         subject.preferences.first().elevenLabsVoice shouldBe "EXAVITQu4vr4xnSDxMaL"
     }

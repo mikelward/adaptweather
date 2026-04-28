@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.WorkManager
 import app.clothescast.notification.NotificationPermission
+import app.clothescast.tts.GOOGLE_TTS_PACKAGE
 import app.clothescast.ui.onboarding.OnboardingScreen
 import app.clothescast.ui.onboarding.OnboardingViewModel
 import app.clothescast.ui.settings.SettingsRoute
@@ -106,6 +107,15 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
                     rearmAlarm = app.dailyAlarmScheduler::schedule,
                     cancelAlarm = app.dailyAlarmScheduler::cancel,
                     geocodingClient = app.geocodingClient,
+                    voiceEnumerator = app.androidTtsVoiceEnumerator,
+                    // Re-checked each time the Settings ViewModel is built — covers
+                    // "user installs Google TTS, comes back to Settings" without a
+                    // BroadcastReceiver for PACKAGE_ADDED.
+                    isGoogleTtsInstalled = {
+                        runCatching {
+                            app.packageManager.getPackageInfo(GOOGLE_TTS_PACKAGE, 0)
+                        }.isSuccess
+                    },
                 ),
             )
             SettingsScreen(
