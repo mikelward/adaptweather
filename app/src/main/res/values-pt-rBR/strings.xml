@@ -35,11 +35,62 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_cond_temp_above">quando a temperatura sentida for acima de %.0f°C</string>
     <string name="settings_clothes_cond_precip_above">quando a chance de chuva superar %.0f%%</string>
 
+    <!--
+    Today screen — top bar, refresh toasts, empty state, generated-at
+    timestamp, outfit card, hourly chart, confidence chip, work-status
+    banner. Brazilian Portuguese você-form (3rd-person singular
+    imperatives "Toque", "Defina", "Use") — that's the casual / intimate
+    register in BR; the formal Lei-style register isn't a thing in
+    modern Brazilian.
+    -->
+    <string name="today_title">Hoje</string>
+    <string name="today_open_settings">Abrir configurações</string>
+    <string name="today_more_options">Mais opções</string>
+    <string name="today_report_a_bug">Reportar um bug</string>
+    <string name="today_refresh">Atualizar</string>
+    <string name="today_refresh_toast_daily">Atualizando seu ClothesCast diário — ele aparecerá em breve.</string>
+    <string name="today_refresh_toast_nightly">Atualizando seu ClothesCast noturno — ele aparecerá em breve.</string>
+    <string name="today_empty_title">Nenhum ClothesCast ainda</string>
+    <string name="today_empty_subtitle">Seu ClothesCast matinal aparecerá aqui assim que for gerado. Defina sua localização nas configurações e toque em Buscar agora.</string>
+    <string name="today_fetch_now">Buscar agora</string>
+    <string name="today_generated_at">Gerado às %1$s</string>
+
+    <string name="today_outfit_title">O que vestir</string>
+    <string name="today_outfit_label_today">Hoje</string>
+    <string name="today_outfit_label_tonight">Esta noite</string>
+    <string name="today_outfit_label_tomorrow">Amanhã</string>
+
     <string name="today_outfit_top_tshirt">Camiseta</string>
     <string name="today_outfit_top_sweater">Suéter</string>
     <string name="today_outfit_top_thick_jacket">Casaco grosso</string>
     <string name="today_outfit_bottom_shorts">Shorts</string>
     <string name="today_outfit_bottom_long_pants">Calças</string>
+
+    <string name="today_forecast_title">Previsão por hora</string>
+    <string name="today_forecast_min_max">Sensação %1$d – %2$d%3$s · Ar %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Sensação térmica (%1$s) por hora · toque para ver a temperatura do ar</string>
+    <string name="today_forecast_legend_air">Temperatura do ar (%1$s) por hora · toque para ver a sensação térmica</string>
+
+    <string name="today_confidence_high">Confiança alta — os principais modelos concordam</string>
+    <string name="today_confidence_medium">Confiança média</string>
+    <string name="today_confidence_low">Confiança baixa — as previsões discordam</string>
+    <string name="today_confidence_spread">Dispersão: %1$.1f°C, %2$.0fpp de precipitação em %3$d modelos</string>
+
+    <string name="today_working">Buscando seu ClothesCast…</string>
+    <string name="today_failed_title">A última tentativa falhou</string>
+    <string name="today_failed_unexpected_http">Erro HTTP inesperado do serviço de previsão.</string>
+    <string name="today_failed_unhandled">Ocorreu um erro inesperado.</string>
+    <string name="today_failed_show_details">Mostrar detalhes</string>
+    <string name="today_failed_hide_details">Ocultar detalhes</string>
+
+    <!-- Home-screen App Widget. "Look" is the standard Brazilian
+         Portuguese word for an outfit / day's clothing combination —
+         common in fashion vocab and reads casual, fitting the brand
+         register. -->
+    <string name="widget_label">Look</string>
+    <string name="widget_description">O look do momento, num relance.</string>
+    <string name="widget_empty_title">Nenhum look ainda</string>
+    <string name="widget_empty_subtitle">Toque para abrir ClothesCast</string>
 
     <string name="insight_lead_today">Hoje</string>
     <string name="insight_lead_tonight">Esta noite</string>
