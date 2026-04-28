@@ -102,6 +102,92 @@ earlier passes accidentally mixed in.
     <string name="settings_tts_add_api_key_cancel">Отмена</string>
 
     <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale
+    labels in Russian style ("Английский (США)", "Французский (Канада)",
+    "Китайский (упрощённый)", …). The locale tag stored on disk
+    (en-US / fr-CA / zh-CN) is unchanged; only the displayed label
+    localizes.
+    -->
+    <string name="settings_region_language_title">Язык</string>
+    <string name="settings_region_language_description">Задаёт язык отображаемого текста и уведомлений.</string>
+    <string name="settings_region_language_system">По языку системы</string>
+    <string name="settings_region_language_en_us">Английский (США)</string>
+    <string name="settings_region_language_en_gb">Английский (Великобритания)</string>
+    <string name="settings_region_language_en_au">Английский (Австралия)</string>
+    <string name="settings_region_language_en_ca">Английский (Канада)</string>
+    <string name="settings_region_language_en_za">Английский (Южная Африка)</string>
+    <string name="settings_region_language_de_de">Немецкий (Германия)</string>
+    <string name="settings_region_language_fr_fr">Французский (Франция)</string>
+    <string name="settings_region_language_fr_ca">Французский (Канада)</string>
+    <string name="settings_region_language_it_it">Итальянский (Италия)</string>
+    <string name="settings_region_language_es_es">Испанский (Испания)</string>
+    <string name="settings_region_language_es_mx">Испанский (Мексика)</string>
+    <string name="settings_region_language_pl_pl">Польский (Польша)</string>
+    <string name="settings_region_language_hr_hr">Хорватский (Хорватия)</string>
+    <string name="settings_region_language_uk_ua">Украинский (Украина)</string>
+    <string name="settings_region_language_pt_br">Португальский (Бразилия)</string>
+    <string name="settings_region_language_nl_nl">Нидерландский (Нидерланды)</string>
+    <string name="settings_region_language_sv_se">Шведский (Швеция)</string>
+    <string name="settings_region_language_tr_tr">Турецкий (Турция)</string>
+    <string name="settings_region_language_id_id">Индонезийский (Индонезия)</string>
+    <string name="settings_region_language_fil_ph">Филиппинский (Филиппины)</string>
+    <string name="settings_region_language_vi_vn">Вьетнамский (Вьетнам)</string>
+    <string name="settings_region_language_zh_cn">Китайский (упрощённый)</string>
+    <string name="settings_region_language_hi_in">Хинди (Индия)</string>
+    <string name="settings_region_language_bn_bd">Бенгальский (Бангладеш)</string>
+    <string name="settings_region_language_ja_jp">Японский (Япония)</string>
+    <string name="settings_region_language_ko_kr">Корейский (Южная Корея)</string>
+    <string name="settings_region_language_ar_sa">Арабский (Саудовская Аравия)</string>
+    <string name="settings_region_language_he_il">Иврит (Израиль)</string>
+    <string name="settings_region_language_fa_ir">Персидский (Иран)</string>
+
+    <!-- Region screen — units pickers. -->
+    <string name="settings_temperature_unit_title">Единицы температуры</string>
+    <string name="settings_temperature_unit_celsius">Цельсий (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">Фаренгейт (°F)</string>
+    <string name="settings_distance_unit_title">Единицы расстояния</string>
+    <string name="settings_distance_unit_kilometers">Километры</string>
+    <string name="settings_distance_unit_miles">Мили</string>
+
+    <!--
+    Voice locale picker labels — same Russian language-name translations
+    as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface.
+    -->
+    <string name="settings_tts_voice_locale_en_us">Английский (США)</string>
+    <string name="settings_tts_voice_locale_en_gb">Английский (Великобритания)</string>
+    <string name="settings_tts_voice_locale_en_au">Английский (Австралия)</string>
+    <string name="settings_tts_voice_locale_en_ca">Английский (Канада)</string>
+    <string name="settings_tts_voice_locale_en_za">Английский (Южная Африка)</string>
+    <string name="settings_tts_voice_locale_de_de">Немецкий (Германия)</string>
+    <string name="settings_tts_voice_locale_fr_fr">Французский (Франция)</string>
+    <string name="settings_tts_voice_locale_fr_ca">Французский (Канада)</string>
+    <string name="settings_tts_voice_locale_it_it">Итальянский (Италия)</string>
+    <string name="settings_tts_voice_locale_es_es">Испанский (Испания)</string>
+    <string name="settings_tts_voice_locale_es_mx">Испанский (Мексика)</string>
+    <string name="settings_tts_voice_locale_pl_pl">Польский (Польша)</string>
+    <string name="settings_tts_voice_locale_hr_hr">Хорватский (Хорватия)</string>
+    <string name="settings_tts_voice_locale_uk_ua">Украинский (Украина)</string>
+    <string name="settings_tts_voice_locale_pt_br">Португальский (Бразилия)</string>
+    <string name="settings_tts_voice_locale_nl_nl">Нидерландский (Нидерланды)</string>
+    <string name="settings_tts_voice_locale_sv_se">Шведский (Швеция)</string>
+    <string name="settings_tts_voice_locale_tr_tr">Турецкий (Турция)</string>
+    <string name="settings_tts_voice_locale_id_id">Индонезийский (Индонезия)</string>
+    <string name="settings_tts_voice_locale_fil_ph">Филиппинский (Филиппины)</string>
+    <string name="settings_tts_voice_locale_vi_vn">Вьетнамский (Вьетнам)</string>
+    <string name="settings_tts_voice_locale_zh_cn">Китайский (упрощённый)</string>
+    <string name="settings_tts_voice_locale_hi_in">Хинди (Индия)</string>
+    <string name="settings_tts_voice_locale_bn_bd">Бенгальский (Бангладеш)</string>
+    <string name="settings_tts_voice_locale_ja_jp">Японский (Япония)</string>
+    <string name="settings_tts_voice_locale_ko_kr">Корейский (Южная Корея)</string>
+    <string name="settings_tts_voice_locale_ar_sa">Арабский (Саудовская Аравия)</string>
+    <string name="settings_tts_voice_locale_he_il">Иврит (Израиль)</string>
+    <string name="settings_tts_voice_locale_fa_ir">Персидский (Иран)</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ты-form imperatives: "нажми", "установи", "твой".
