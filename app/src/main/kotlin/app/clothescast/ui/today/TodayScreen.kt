@@ -71,7 +71,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
+fun TodayScreen(
+    viewModel: TodayViewModel,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToAbout: () -> Unit,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -131,6 +135,13 @@ fun TodayScreen(viewModel: TodayViewModel, onNavigateToSettings: () -> Unit) {
                                         BugReport.share(activity, includeScreenshot = true)
                                     }
                                 }
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.settings_root_about)) },
+                            onClick = {
+                                overflowExpanded = false
+                                onNavigateToAbout()
                             },
                         )
                     }

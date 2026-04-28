@@ -31,11 +31,13 @@ import app.clothescast.R
 /**
  * One sub-page per concern. Order in the enum matches the order shown in the
  * root list: the most-frequently-tweaked rules at the top, set-once
- * configuration in the middle, and API keys / data sources / about at the
- * bottom.
+ * configuration in the middle, and API keys / data sources at the bottom.
  *
- * Public so callers (e.g. the onboarding flow) can deep-link into a specific
- * sub-page via [SettingsScreen]'s `initialRoute` param.
+ * About is reachable as a deep-link target only — it's surfaced from Today's
+ * overflow menu, not from the settings root list.
+ *
+ * Public so callers (e.g. the onboarding flow, Today's overflow) can deep-link
+ * into a specific sub-page via [SettingsScreen]'s `initialRoute` param.
  */
 enum class SettingsRoute(@StringRes val titleRes: Int) {
     Root(R.string.settings_title),
@@ -199,7 +201,7 @@ internal fun SettingsRoot(
     ) {
         NotificationPermissionBanner()
         SettingsRoute.entries
-            .filter { it != SettingsRoute.Root }
+            .filter { it != SettingsRoute.Root && it != SettingsRoute.About }
             .forEach { destination ->
                 SettingsNavRow(
                     title = stringResource(destination.titleRes),
