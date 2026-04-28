@@ -21,6 +21,15 @@ import kotlinx.serialization.json.JsonPrimitive
 import java.util.Base64
 import java.util.Locale
 
+// `gemini-2.5-flash-preview-tts` is the audio-output variant of Flash 2.5
+// (text-only Flash 2.5 is much cheaper but doesn't speak). Standard-tier
+// pricing is $1.00/M text input tokens + $20.00/M audio output tokens; a
+// typical ~100-char insight ≈ 25 input tokens + ~160 audio output tokens
+// for a ~5 s clip, which works out to ~$0.003 per call (~$0.20/month at
+// two clips/day). The Gemini free tier covers low-volume BYOK use without
+// billing at all. Note this model is still on the `-preview-` track — see
+// CLAUDE.md's "Don't rename Gemini models from web-search guesses" before
+// swapping it for a GA-sounding name.
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
 const val DEFAULT_GEMINI_TTS_VOICE: String = "Kore"
 
