@@ -79,6 +79,31 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="settings_delivery_notification_and_tts">알림과 음성 읽기</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "API 키 추가" dialog.
+    -->
+    <string name="settings_tts_engine_title">음성 엔진</string>
+    <string name="settings_tts_engine_description">온라인 엔진(Gemini, OpenAI, ElevenLabs)은 훨씬 더 자연스럽게 들리지만, 읽기 시점에 네트워크 호출이 필요하고 합성에 API 키를 사용해요(읽어주는 ClothesCast당 짧은 호출 1회). 선택한 엔진이 실패하면 기기 음성으로 대체됩니다.</string>
+    <string name="settings_tts_engine_device">기기 (오프라인, 무료)</string>
+    <string name="settings_tts_engine_gemini">Gemini (고품질, 온라인)</string>
+    <string name="settings_tts_engine_openai">OpenAI (고품질, 온라인)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (최고 품질, 온라인)</string>
+
+    <string name="settings_tts_voice_label">음성</string>
+    <string name="settings_tts_voice_dismiss">완료</string>
+    <string name="settings_tts_voice_locale_description">음성의 억양을 설정해요. 표시되는 텍스트는 변경하지 않습니다.</string>
+    <string name="settings_tts_voice_locale_system">휴대폰 언어 따라가기</string>
+
+    <string name="settings_tts_test">음성 테스트</string>
+    <string name="settings_tts_test_in_flight">테스트 중 — 잠시만요…</string>
+    <string name="settings_tts_no_key_hint">%1$s 키가 설정되지 않았어요 — 이 엔진을 사용하려면 추가하세요.</string>
+    <string name="settings_tts_add_api_key">API 키 추가</string>
+    <string name="settings_tts_add_api_key_title">%1$s API 키 추가</string>
+    <string name="settings_tts_add_api_key_save">저장</string>
+    <string name="settings_tts_add_api_key_cancel">취소</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. 해요체 (polite-formal) throughout — that's the standard
