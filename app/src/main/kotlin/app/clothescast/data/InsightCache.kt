@@ -11,6 +11,7 @@ import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
+import app.clothescast.core.domain.model.EveningEventTieInClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
@@ -128,6 +129,7 @@ class InsightCache(
         val clothes: ClothesDto? = null,
         val precip: PrecipDto? = null,
         val calendarTieIn: CalendarTieInDto? = null,
+        val eveningEventTieIn: EveningEventTieInDto? = null,
     ) {
         fun toDomain(): InsightSummary = InsightSummary(
             period = runCatching { ForecastPeriod.valueOf(period) }.getOrDefault(ForecastPeriod.TODAY),
@@ -137,6 +139,7 @@ class InsightCache(
             clothes = clothes?.toDomain(),
             precip = precip?.toDomain(),
             calendarTieIn = calendarTieIn?.toDomain(),
+            eveningEventTieIn = eveningEventTieIn?.toDomain(),
         )
     }
 
@@ -190,6 +193,17 @@ class InsightCache(
     }
 
     @Serializable
+    private data class EveningEventTieInDto(
+        val item: String,
+        val title: String,
+    ) {
+        fun toDomain(): EveningEventTieInClause = EveningEventTieInClause(
+            item = item,
+            title = title,
+        )
+    }
+
+    @Serializable
     private data class OutfitDto(val top: String, val bottom: String) {
         fun toDomain(): OutfitSuggestion? {
             val t = runCatching { OutfitSuggestion.Top.valueOf(top) }.getOrNull() ?: return null
@@ -237,6 +251,9 @@ class InsightCache(
         precip = precip?.let { PrecipDto(it.condition.name, it.time.toSecondOfDay()) },
         calendarTieIn = calendarTieIn?.let {
             CalendarTieInDto(it.item, it.time.toSecondOfDay(), it.title)
+        },
+        eveningEventTieIn = eveningEventTieIn?.let {
+            EveningEventTieInDto(it.item, it.title)
         },
     )
 

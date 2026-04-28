@@ -10,6 +10,7 @@ import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
+import app.clothescast.core.domain.model.EveningEventTieInClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
@@ -177,6 +178,7 @@ class InsightCacheTest {
                 clothes = ClothesClause(listOf("sweater", "jacket", "shorts", "umbrella")),
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
                 calendarTieIn = CalendarTieInClause("umbrella", LocalTime.of(15, 0), "park run"),
+                eveningEventTieIn = EveningEventTieInClause("jacket", "dinner"),
             ),
         )
 
