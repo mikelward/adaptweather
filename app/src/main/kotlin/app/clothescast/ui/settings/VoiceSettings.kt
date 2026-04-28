@@ -422,6 +422,9 @@ private fun voiceLocaleLabel(locale: VoiceLocale): Int = when (locale) {
     VoiceLocale.JA_JP -> R.string.settings_tts_voice_locale_ja_jp
     VoiceLocale.KO_KR -> R.string.settings_tts_voice_locale_ko_kr
     VoiceLocale.AR_SA -> R.string.settings_tts_voice_locale_ar_sa
+    VoiceLocale.AR_EG -> R.string.settings_tts_voice_locale_ar_eg
+    VoiceLocale.AR_AE -> R.string.settings_tts_voice_locale_ar_ae
+    VoiceLocale.AR_MA -> R.string.settings_tts_voice_locale_ar_ma
     VoiceLocale.HE_IL -> R.string.settings_tts_voice_locale_he_il
     VoiceLocale.FA_IR -> R.string.settings_tts_voice_locale_fa_ir
 }

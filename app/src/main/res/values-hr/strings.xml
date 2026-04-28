@@ -190,6 +190,9 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_ja_jp">Japanski (Japan)</string>
     <string name="settings_tts_voice_locale_ko_kr">Korejski (Južna Koreja)</string>
     <string name="settings_tts_voice_locale_ar_sa">Arapski (Saudijska Arabija)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Arapski (Egipat)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Arapski (Ujedinjeni Arapski Emirati)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Arapski (Maroko)</string>
     <string name="settings_tts_voice_locale_he_il">Hebrejski (Izrael)</string>
     <string name="settings_tts_voice_locale_fa_ir">Perzijski (Iran)</string>
 

@@ -209,6 +209,9 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_ja_jp">Giapponese (Giappone)</string>
     <string name="settings_tts_voice_locale_ko_kr">Coreano (Corea del Sud)</string>
     <string name="settings_tts_voice_locale_ar_sa">Arabo (Arabia Saudita)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Arabo (Egitto)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Arabo (Emirati Arabi Uniti)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Arabo (Marocco)</string>
     <string name="settings_tts_voice_locale_he_il">Ebraico (Israele)</string>
     <string name="settings_tts_voice_locale_fa_ir">Persiano (Iran)</string>
 

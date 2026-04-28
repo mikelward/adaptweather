@@ -215,6 +215,9 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_bn_bd">ベンガル語（バングラデシュ）</string>
     <string name="settings_tts_voice_locale_ko_kr">韓国語（韓国）</string>
     <string name="settings_tts_voice_locale_ar_sa">アラビア語（サウジアラビア）</string>
+    <string name="settings_tts_voice_locale_ar_eg">アラビア語（エジプト）</string>
+    <string name="settings_tts_voice_locale_ar_ae">アラビア語（アラブ首長国連邦）</string>
+    <string name="settings_tts_voice_locale_ar_ma">アラビア語（モロッコ）</string>
     <string name="settings_tts_voice_locale_he_il">ヘブライ語（イスラエル）</string>
     <string name="settings_tts_voice_locale_fa_ir">ペルシャ語（イラン）</string>
 

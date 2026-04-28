@@ -209,6 +209,9 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_ja_jp">Японский (Япония)</string>
     <string name="settings_tts_voice_locale_ko_kr">Корейский (Южная Корея)</string>
     <string name="settings_tts_voice_locale_ar_sa">Арабский (Саудовская Аравия)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Арабский (Египет)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Арабский (Объединённые Арабские Эмираты)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Арабский (Марокко)</string>
     <string name="settings_tts_voice_locale_he_il">Иврит (Израиль)</string>
     <string name="settings_tts_voice_locale_fa_ir">Персидский (Иран)</string>
 
