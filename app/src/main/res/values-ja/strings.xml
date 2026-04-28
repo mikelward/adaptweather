@@ -1,9 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Japanese translation. Scope: insight-prose templates, garment labels,
-clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
-The rest of the UI falls through to values/strings.xml (English).
-Japanese uses the ideographic period (。) for sentence endings.
+Japanese translation — full UI coverage. ます-form (friendly-polite)
+throughout — that's the standard Japanese app register, including for
+intimate / spousal addressing. Japanese doesn't drop politeness for
+closeness the way Romance languages do; the spousal-tone equivalent
+is "warm polite", not "casual plain". 〜してください for instructions,
+〜ましょう for invitations, 〜です/ます for statements.
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. ja uses
+  `insight_time_hour` / `_hour_minutes` ("15時" / "15時30分") which are
+  translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a
+  ja runtime.
+
+Typography conventions:
+- Sentence-final period 。 (ideographic full stop)
+- List enumeration uses 、 (読点) between items
+- Quotes around nested labels use Japanese corner-bracket 「…」 (not the
+  German „…" form used in the Romance / Germanic locales)
+- Parentheses use full-width （）around Japanese content; Latin ( )
+  only when the parenthetical is itself Latin script (e.g. URLs)
+- Latin brand names ("ClothesCast", "Open-Meteo") and Latin URLs keep
+  the conventional space-around-Latin spacing Japanese typography uses
+
+"コーデ" (short for コーディネート) for the widget label rather than the
+English loanword "Outfit" — standard Japanese fashion-vocab.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the Japanese names for every
+offered locale (英語（米国）, フランス語（カナダ）, 中国語（簡体字）, …). The
+locale tag stored on disk (en-US / fr-CA / zh-CN) is unchanged; only
+the displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_ja_jp">日本語（日本）</string>
