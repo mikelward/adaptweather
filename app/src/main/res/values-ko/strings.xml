@@ -1,10 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Korean translation. Scope: insight-prose templates, garment labels,
-clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
-The rest of the UI falls through to values/strings.xml (English).
-"챙기세요" (bring/take with you) is used for insight_clothes_wear as it avoids
-the 을/를 object particle which depends on the noun's final consonant.
+Korean translation — full UI coverage. 해요체 (polite-formal) throughout
+— that's the standard Korean app register, including for intimate /
+spousal addressing. Korean doesn't drop politeness for closeness in
+app UI; the spousal-tone equivalent is "warm polite" (해요체), not
+casual 반말.
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. ko uses
+  `insight_time_hour` / `_hour_minutes` ("15시" / "15시 30분") which
+  are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a
+  ko runtime.
+
+Korean has no grammatical articles or gender, so the workarounds the
+Romance / Slavic locales need (gender-neutral greetings, passive
+voice to avoid past-tense agreement) aren't required here.
+
+"챙기세요" (bring/take with you) is used for insight_clothes_wear as it
+avoids the 을/를 object particle which depends on the noun's final
+consonant — same reason 그리고 (geurigo) is used for the list-and join
+rather than the 와/과 particle.
+
+"코디" (short for 코디네이션) for the widget label rather than the
+English loanword "Outfit" — standard Korean fashion-vocab.
+
+Quotes around nested labels use Korean corner-bracket 「…」 — common
+for nested-button-label references.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the Korean names for every offered
+locale (영어 (미국), 프랑스어 (캐나다), 중국어 (간체), …). The locale tag
+stored on disk (en-US / fr-CA / zh-CN) is unchanged; only the
+displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_ko_kr">한국어 (대한민국)</string>
