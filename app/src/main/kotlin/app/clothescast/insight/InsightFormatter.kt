@@ -107,16 +107,17 @@ class InsightFormatter(
     private fun formatTieIn(item: String): String =
         resources.getString(R.string.insight_tie_in, phraser.withArticle(item))
 
-    private fun formatEveningEventTieIn(tieIn: EveningEventTieInClause): String =
-        if (tieIn.rainTime != null) {
-            resources.getString(
-                R.string.insight_tie_in_with_rain,
-                phraser.withArticle(tieIn.item),
-                spokenTime(tieIn.rainTime),
-            )
-        } else {
-            formatTieIn(tieIn.item)
-        }
+    private fun formatEveningEventTieIn(tieIn: EveningEventTieInClause): String {
+        // Local capture so the null check enables smart cast — the property
+        // lives on a :core:domain data class and Kotlin won't smart-cast a
+        // public API property across modules.
+        val rainTime = tieIn.rainTime ?: return formatTieIn(tieIn.item)
+        return resources.getString(
+            R.string.insight_tie_in_with_rain,
+            phraser.withArticle(tieIn.item),
+            spokenTime(rainTime),
+        )
+    }
 
     private fun leadRes(period: ForecastPeriod): Int = when (period) {
         ForecastPeriod.TODAY -> R.string.insight_lead_today
