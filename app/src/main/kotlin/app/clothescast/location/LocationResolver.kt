@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location as AndroidLocation
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Looper
 import app.clothescast.diag.DiagLog
 import androidx.core.content.ContextCompat
@@ -37,11 +38,25 @@ class LocationResolver(
     private val timeoutMillis: Long = 10_000L,
 ) {
     suspend fun resolve(): Location? {
-        if (!hasPermission()) {
+        if (!hasCoarsePermission()) {
             DiagLog.i(TAG, "Coarse location not granted; not resolving.")
             return null
         }
-        val manager = context.getSystemService<LocationManager>() ?: return null
+        // The Worker runs in the background, so a missing ACCESS_BACKGROUND_LOCATION
+        // grant on Android 10+ will make the OS throw SecurityException from any
+        // location call — log it up front so the cause is obvious in DiagLog
+        // instead of looking like a generic "location returned null".
+        if (!hasBackgroundPermission()) {
+            DiagLog.w(
+                TAG,
+                "Background location not granted (Android 10+); calls from the worker will fail.",
+            )
+        }
+        val manager = context.getSystemService<LocationManager>()
+        if (manager == null) {
+            DiagLog.w(TAG, "LocationManager unavailable on this device.")
+            return null
+        }
 
         val cached = lastKnown(manager)
         if (cached != null && cached.isFresh()) {
@@ -49,44 +64,65 @@ class LocationResolver(
         }
 
         val live = withTimeoutOrNull(timeoutMillis) { requestSingle(manager) }
+        if (live == null && cached == null) {
+            DiagLog.w(TAG, "No live or cached location available within ${timeoutMillis}ms.")
+        }
         return live?.toDomain() ?: cached?.toDomain()
     }
 
-    private fun hasPermission(): Boolean = ContextCompat.checkSelfPermission(
+    private fun hasCoarsePermission(): Boolean = ContextCompat.checkSelfPermission(
         context,
         Manifest.permission.ACCESS_COARSE_LOCATION,
     ) == PackageManager.PERMISSION_GRANTED
 
+    private fun hasBackgroundPermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return true
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     @SuppressLint("MissingPermission")
-    private fun lastKnown(manager: LocationManager): AndroidLocation? = runCatching {
+    private fun lastKnown(manager: LocationManager): AndroidLocation? = try {
         val provider = if (manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             LocationManager.NETWORK_PROVIDER
         } else if (manager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+            DiagLog.i(TAG, "NETWORK provider disabled; falling back to PASSIVE for last-known.")
             LocationManager.PASSIVE_PROVIDER
         } else {
-            return null
+            DiagLog.i(TAG, "Neither NETWORK nor PASSIVE provider enabled; no cached location.")
+            null
         }
-        manager.getLastKnownLocation(provider)
-    }.getOrNull()
+        if (provider == null) null else manager.getLastKnownLocation(provider)
+    } catch (t: SecurityException) {
+        DiagLog.w(TAG, "SecurityException reading last-known location (background grant?).", t)
+        null
+    } catch (t: Throwable) {
+        DiagLog.w(TAG, "Failed to read last-known location: ${t.javaClass.simpleName}", t)
+        null
+    }
 
     @SuppressLint("MissingPermission")
     private suspend fun requestSingle(manager: LocationManager): AndroidLocation? =
         suspendCancellableCoroutine { cont ->
             val provider = LocationManager.NETWORK_PROVIDER
             if (!manager.isProviderEnabled(provider)) {
+                DiagLog.i(TAG, "NETWORK provider disabled; skipping single-update request.")
                 cont.resume(null)
                 return@suspendCancellableCoroutine
             }
             val listener = object : LocationListener {
                 override fun onLocationChanged(location: AndroidLocation) {
                     if (cont.isActive) {
-                        runCatching { manager.removeUpdates(this) }
+                        safeRemoveUpdates(manager, this)
                         cont.resume(location)
                     }
                 }
                 override fun onProviderDisabled(p: String) {
                     if (cont.isActive) {
-                        runCatching { manager.removeUpdates(this) }
+                        DiagLog.i(TAG, "NETWORK provider disabled mid-request.")
+                        safeRemoveUpdates(manager, this)
                         cont.resume(null)
                     }
                 }
@@ -97,11 +133,23 @@ class LocationResolver(
             try {
                 @Suppress("DEPRECATION")
                 manager.requestSingleUpdate(provider, listener, Looper.getMainLooper())
+            } catch (t: SecurityException) {
+                DiagLog.w(TAG, "SecurityException requesting location update (background grant?).", t)
+                cont.resume(null)
             } catch (t: Throwable) {
+                DiagLog.w(TAG, "Failed to request location update: ${t.javaClass.simpleName}", t)
                 cont.resume(null)
             }
-            cont.invokeOnCancellation { runCatching { manager.removeUpdates(listener) } }
+            cont.invokeOnCancellation { safeRemoveUpdates(manager, listener) }
         }
+
+    private fun safeRemoveUpdates(manager: LocationManager, listener: LocationListener) {
+        try {
+            manager.removeUpdates(listener)
+        } catch (t: Throwable) {
+            DiagLog.v(TAG, "removeUpdates threw ${t.javaClass.simpleName}; ignoring.")
+        }
+    }
 
     private fun AndroidLocation.isFresh(): Boolean =
         System.currentTimeMillis() - time < maxAgeMillis
