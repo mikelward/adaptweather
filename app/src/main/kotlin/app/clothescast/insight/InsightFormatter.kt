@@ -16,6 +16,7 @@ import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherCondition
 import java.time.LocalTime
+import java.util.IllformedLocaleException
 import java.util.Locale
 
 /**
@@ -198,6 +199,32 @@ class InsightFormatter(
 private fun Region.toJavaLocale(): Locale? = bcp47?.let { Locale.forLanguageTag(it) }
 
 private fun Context.localizedResources(locale: Locale): Resources {
-    val config = Configuration(resources.configuration).apply { setLocale(locale) }
+    // Android resource qualifiers still use legacy language codes for a couple
+    // of locales (`values-in`, `values-iw`). Locale.forLanguageTag() returns
+    // modern tags (`id`, `he`), and forcing those through setLocale can miss
+    // our translated string buckets and fall back to English.
+    val resourcesLocale = locale.toAndroidResourceLocale()
+    val config = Configuration(resources.configuration).apply { setLocale(resourcesLocale) }
     return createConfigurationContext(config).resources
+}
+
+private fun Locale.toAndroidResourceLocale(): Locale {
+    val normalizedLanguage = when (language.lowercase(Locale.ROOT)) {
+        "id" -> "in"
+        "he" -> "iw"
+        else -> language
+    }
+    if (normalizedLanguage == language) return this
+    return try {
+        // Keep script/variant/extensions from the original locale when present
+        // (e.g. zh-Hant-*), and only swap the language subtag.
+        Locale.Builder()
+            .setLocale(this)
+            .setLanguage(normalizedLanguage)
+            .build()
+    } catch (_: IllformedLocaleException) {
+        // Defensive fallback for malformed/partial tags coming from outside
+        // our enums — preserve the old behaviour of keeping language+country.
+        if (country.isNotBlank()) Locale(normalizedLanguage, country) else Locale(normalizedLanguage)
+    }
 }
