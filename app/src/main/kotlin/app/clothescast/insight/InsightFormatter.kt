@@ -30,13 +30,13 @@ import java.util.Locale
  * locale-specific and dispatched via [ClothesPhraser.forLocale]. Languages
  * without an explicit phraser fall back to a no-article join.
  *
- * Times are rendered as natural language ("midnight", "2am", "noon", "3pm") —
- * better for TTS than "02:00" and identical text feeds both UI and speech.
+ * Times are rendered as natural language: English uses 12h named forms
+ * ("midnight", "2am", "noon", "3pm"); all other locales use 24h templates
+ * from `insight_time_hour` / `insight_time_hour_minutes` resources (e.g.
+ * "15 Uhr", "15時") so TTS reads them as words rather than digit-colon-digit.
  * Early-morning precip peaks (00:00–04:59) always collapse to "overnight" —
  * the previous "only when no tie-in pins this hour" carve-out is gone now
- * that tie-in clauses no longer name a specific time. The spoken-time logic
- * itself is English-specific; the default impl falls back to 24h ASCII for
- * non-English locales until a dedicated formatter is added.
+ * that tie-in clauses no longer name a specific time.
  */
 class InsightFormatter(
     private val resources: Resources,
@@ -147,29 +147,35 @@ class InsightFormatter(
     }
 
     /**
-     * 24h LocalTime → spoken English ("midnight", "2am", "noon", "3:30pm") for
-     * `en-*` locales; falls back to 24h ASCII ("15:00") elsewhere until a
-     * dedicated formatter is added. Locale.ROOT-formatted digits keep the
-     * output ASCII regardless of device locale (Arabic locales would otherwise
-     * shape any numeric minutes into Eastern Arabic numerals).
+     * 24h LocalTime → spoken form for TTS and display.
+     *
+     * English (`en-*`): 12h named forms ("midnight", "2am", "noon", "3:30pm").
+     * All other locales: 24h templates driven by `insight_time_hour` /
+     * `insight_time_hour_minutes` resource strings so each locale can express
+     * its natural spoken form ("%1$d Uhr", "%1$d時", etc.) rather than
+     * digit-colon-digit pairs that TTS engines mispronounce.
      */
     private fun spokenTime(time: LocalTime): String {
-        if (locale.language != "en") {
-            return "%02d:%02d".format(Locale.ROOT, time.hour, time.minute)
-        }
         val hour = time.hour
         val minute = time.minute
-        if (hour == 0 && minute == 0) return resources.getString(R.string.insight_time_midnight)
-        if (hour == 12 && minute == 0) return resources.getString(R.string.insight_time_noon)
-        val h12 = ((hour + 11) % 12) + 1
-        val template = when {
-            hour < 12 && minute == 0 -> R.string.insight_time_am
-            hour < 12 -> R.string.insight_time_am_minutes
-            minute == 0 -> R.string.insight_time_pm
-            else -> R.string.insight_time_pm_minutes
+        if (locale.language == "en") {
+            if (hour == 0 && minute == 0) return resources.getString(R.string.insight_time_midnight)
+            if (hour == 12 && minute == 0) return resources.getString(R.string.insight_time_noon)
+            val h12 = ((hour + 11) % 12) + 1
+            val template = when {
+                hour < 12 && minute == 0 -> R.string.insight_time_am
+                hour < 12 -> R.string.insight_time_am_minutes
+                minute == 0 -> R.string.insight_time_pm
+                else -> R.string.insight_time_pm_minutes
+            }
+            return if (minute == 0) resources.getString(template, h12)
+            else resources.getString(template, h12, minute)
         }
-        return if (minute == 0) resources.getString(template, h12)
-        else resources.getString(template, h12, minute)
+        return if (minute == 0) {
+            resources.getString(R.string.insight_time_hour, hour)
+        } else {
+            resources.getString(R.string.insight_time_hour_minutes, hour, minute)
+        }
     }
 
     companion object {
