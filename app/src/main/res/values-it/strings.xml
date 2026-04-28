@@ -240,6 +240,41 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_location_no_results">Nessun risultato.</string>
 
     <!--
+    Notification channels (system Settings → App → Notifications) and
+    the per-channel notification titles. Three channels: daily, nightly
+    (default + silent variants), weather alerts.
+    -->
+    <string name="notification_channel_daily_insight_name">ClothesCast quotidiano</string>
+    <string name="notification_channel_daily_insight_description">Il riepilogo meteo mattutino che hai attivato.</string>
+    <string name="notification_daily_insight_title">Meteo di oggi</string>
+
+    <string name="notification_channel_tonight_insight_default_name">ClothesCast serale (con eventi)</string>
+    <string name="notification_channel_tonight_insight_default_description">Il riepilogo meteo serale quando stasera hai eventi in calendario. Riproduce il tuo suono di notifica predefinito.</string>
+    <string name="notification_channel_tonight_insight_silent_name">ClothesCast serale (silenzioso)</string>
+    <string name="notification_channel_tonight_insight_silent_description">Il riepilogo meteo serale quando la serata è libera. Inviato in silenzio — puoi dargli un\'occhiata sulla schermata di blocco, ma non emette suoni.</string>
+    <string name="notification_tonight_insight_title">Meteo di stasera</string>
+
+    <string name="notification_channel_weather_alerts_name">Allerte meteo</string>
+    <string name="notification_channel_weather_alerts_description">Allerte ad alta priorità per eventi meteo gravi o estremi nella tua zona. Recapitate non appena il recupero quotidiano le rileva.</string>
+    <string name="notification_weather_alert_title">Allerta meteo: %1$s</string>
+
+    <!-- Notification-permission card. -->
+    <string name="settings_notification_permission_title">Le notifiche sono bloccate</string>
+    <string name="settings_notification_permission_description">Senza il permesso per le notifiche, il tuo ClothesCast quotidiano non ha dove andare. Concedilo, così ClothesCast può comparire domattina.</string>
+    <string name="settings_notification_permission_grant">Concedi le notifiche</string>
+
+    <!-- Calendar opt-in card. Description preserves the privacy
+         disclosure ("descrizioni, partecipanti e luoghi vengono letti
+         ma non lasciano mai il dispositivo"). Quotes around the nested
+         example follow the same „…" house style. -->
+    <string name="settings_calendar_title">Calendario</string>
+    <string name="settings_calendar_use_events">Usa gli eventi del calendario di oggi</string>
+    <string name="settings_calendar_description_off">Quando attivo, ClothesCast legge gli eventi di oggi dal calendario del tuo dispositivo, così il tuo ClothesCast mattutino può suggerire capi legati a eventi specifici — per esempio „porta un ombrello per la corsa al parco delle 15“. Vengono usati solo titolo e orario degli eventi; descrizioni, partecipanti e luoghi vengono letti ma non lasciano mai il dispositivo.</string>
+    <string name="settings_calendar_description_on">Sto leggendo gli eventi di oggi dal calendario del tuo dispositivo per arricchire il tuo ClothesCast mattutino. Nel riepilogo si usano solo titoli e orari; descrizioni e partecipanti no. Tutto resta sul dispositivo.</string>
+    <string name="settings_calendar_grant_permission">Concedi l\'accesso al calendario</string>
+    <string name="settings_calendar_open_settings">Accesso al calendario negato. Concedilo dalle impostazioni di sistema.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tu-form throughout: "tocca", "il tuo", "imposta".
