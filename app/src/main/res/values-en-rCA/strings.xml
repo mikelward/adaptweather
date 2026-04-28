@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Canadian English overrides. The natural en-CA choice for this app's
+vocabulary tracks en-US: "Sweater" (cold-weather top) + "Pants" (long-
+pants garment). Canadians don't say "jumper" or "trousers" the way en-GB
+speakers do; an en-CA user picking Region: English (Canada) and seeing
+"Jumper" would read as the British vocabulary leaking through.
+
+Why this file restates the en-US choices even though they match the
+baseline: Android's API 24+ resource resolver ranks candidate
+values-en-rXX folders by CLDR locale-similarity, and en-CA and en-GB both
+descend from en-001 (English-World) while en-US doesn't — so without an
+explicit en-rCA override the resolver picks values-en-rGB ("Jumper",
+"Trousers") as a closer match than the en-US-flavoured default. We
+re-state the en-US choice here to block that en-rGB inheritance, the
+same trick values-en-rAU and values-en-rZA already use.
+
+Future en-rGB additions silently leak to en-CA the same way; mirror them
+here whenever en-CA should diverge.
+-->
+<resources>
+    <string name="today_outfit_top_sweater">Sweater</string>
+    <string name="today_outfit_bottom_long_pants">Long pants</string>
+    <!-- "Shorts" matches en-US and en-rGB doesn't currently override it,
+         so this isn't blocking a leak today — it's pinning the natural
+         en-CA choice in case a future en-rGB override (or a CLDR change)
+         starts pulling something else in. -->
+    <string name="today_outfit_bottom_shorts">Shorts</string>
+
+    <!-- Clothes-rule garment dropdown — same vocabulary swap as the
+         outfit-card labels above. en-CA agrees with en-US on "Sweater"
+         and "Pants" (no underwear collision in Canadian English). -->
+    <string name="garment_sweater">Sweater</string>
+    <string name="garment_pants">Pants</string>
+    <string name="garment_shorts">Shorts</string>
+</resources>
