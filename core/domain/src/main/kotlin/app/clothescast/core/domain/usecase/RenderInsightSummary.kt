@@ -62,9 +62,23 @@ class RenderInsightSummary {
         period: ForecastPeriod = ForecastPeriod.TODAY,
         eveningEvents: List<CalendarEvent> = emptyList(),
         eveningTriggeredRules: List<ClothesRule> = emptyList(),
+        eveningForecast: DailyForecast? = null,
     ): InsightSummary {
         val items = todayTriggeredRules.map { it.item }
         val peak = peakPrecip(today)
+        // Compute the evening peak only when the evening tie-in is going to
+        // emit (i.e. caller passed events + triggered rules + an evening
+        // forecast). Avoids spending the search on every TODAY pass, and
+        // keeps the result strictly scoped to the tie-in clause.
+        val eveningPeak = if (
+            period == ForecastPeriod.TODAY &&
+            eveningEvents.isNotEmpty() &&
+            eveningTriggeredRules.isNotEmpty()
+        ) {
+            eveningForecast?.let { peakPrecip(it) }
+        } else {
+            null
+        }
         return InsightSummary(
             period = period,
             alert = alertClause(alerts),
@@ -80,7 +94,7 @@ class RenderInsightSummary {
             // enough; chaining "Bring an umbrella for your 3pm standup." after
             // it just repeats what the user already heard.
             calendarTieIn = if (period == ForecastPeriod.TONIGHT) calendarTieInClause(items, peak, events) else null,
-            eveningEventTieIn = eveningEventTieInClause(period, eveningEvents, eveningTriggeredRules),
+            eveningEventTieIn = eveningEventTieInClause(period, eveningEvents, eveningTriggeredRules, eveningPeak),
         )
     }
 
@@ -157,12 +171,16 @@ class RenderInsightSummary {
         events: List<CalendarEvent>,
     ): CalendarTieInClause? {
         if (items.isEmpty() || peak == null || events.isEmpty()) return null
-        val event = events.firstOrNull { it.overlaps(peak.time) } ?: return null
+        // Need an overlapping event to motivate the clause, but we don't capture
+        // the event's title or time — neither is in the rendered prose, and we
+        // never want a calendar event title flowing through to off-device TTS
+        // (the prose is fed to Gemini / OpenAI / ElevenLabs over BYOK keys).
+        events.firstOrNull { it.overlaps(peak.time) } ?: return null
         // Prefer "umbrella" when the user has it on their list — that's the clothes
         // item the precip-peak overlap was actually motivated by. Otherwise just
         // take the first triggered item, mirroring rule 4's ordering.
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
-        return CalendarTieInClause(item = item, time = peak.time, title = event.title)
+        return CalendarTieInClause(item = item)
     }
 
     /**
@@ -177,13 +195,17 @@ class RenderInsightSummary {
         period: ForecastPeriod,
         eveningEvents: List<CalendarEvent>,
         eveningTriggeredRules: List<ClothesRule>,
+        eveningPeak: PeakPrecip?,
     ): EveningEventTieInClause? {
         if (period != ForecastPeriod.TODAY) return null
         if (eveningEvents.isEmpty() || eveningTriggeredRules.isEmpty()) return null
-        val event = eveningEvents.firstOrNull { !it.allDay } ?: return null
+        // Gate on at least one non-all-day evening event existing, but don't
+        // capture its title — the rendered prose only says "Bring a jacket
+        // tonight." Calendar event titles never flow to off-device TTS.
+        eveningEvents.firstOrNull { !it.allDay } ?: return null
         val items = eveningTriggeredRules.map { it.item }
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
-        return EveningEventTieInClause(item = item, title = event.title)
+        return EveningEventTieInClause(item = item, rainTime = eveningPeak?.time)
     }
 
     private data class PeakPrecip(val time: LocalTime, val condition: WeatherCondition)

@@ -124,6 +124,19 @@ new rule the first time something bites you, not the third.
   If you see "no tests found" after adding a `@Test`-annotated JUnit 4
   class, check that `vintage-engine` is on the test classpath.
 
+## Privacy
+
+- **Surface any change to what we send off device.** When a change touches
+  data that crosses the device boundary — anything in the rendered insight
+  prose (it's fed to Gemini / OpenAI / ElevenLabs TTS over BYOK keys),
+  weather / geocoding requests, or future analytics / error reporting —
+  call it out explicitly in the PR description and commit message. Calendar
+  event titles, locations, contacts, identifiers: default is "less, not
+  more" — if you're broadening what leaves the device, flag it for review
+  even if it seems harmless. The TTS endpoints log requests; "the user's
+  3pm standup" landing in someone's logs is exactly the surprise the user
+  doesn't want.
+
 ## Domain conventions
 
 - Clothes rules and outfit suggestions both look at *feels-like*

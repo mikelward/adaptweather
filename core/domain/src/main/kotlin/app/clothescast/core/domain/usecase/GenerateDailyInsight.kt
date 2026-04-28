@@ -111,6 +111,7 @@ class GenerateDailyInsight(
             period = period,
             eveningEvents = eveningEvents,
             eveningTriggeredRules = eveningTriggered,
+            eveningForecast = if (period == ForecastPeriod.TODAY) tonightForecast else null,
         )
         val insight = Insight(
             summary = summary,

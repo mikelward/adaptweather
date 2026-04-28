@@ -6,7 +6,6 @@ import android.content.res.Resources
 import app.clothescast.R
 import app.clothescast.core.domain.model.AlertClause
 import app.clothescast.core.domain.model.BandClause
-import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.EveningEventTieInClause
@@ -49,8 +48,15 @@ class InsightFormatter(
         add(formatBand(summary.period, summary.band))
         summary.delta?.let { add(formatDelta(it)) }
         summary.clothes?.let { add(formatClothes(it)) }
-        summary.precip?.let { add(formatPrecip(it, hasCalendarTieIn = summary.calendarTieIn != null)) }
-        summary.calendarTieIn?.let { add(formatCalendarTieIn(it)) }
+        summary.precip?.let { add(formatPrecip(it)) }
+        // Both tie-in clauses share the item-only "Bring a X tonight." form;
+        // the evening one additionally folds in the evening forecast's rain
+        // time when it's ≥ 30%, since the morning's own precip clause only
+        // covers the morning slice and otherwise wouldn't surface evening
+        // rain. The clauses are separate fields because they're gated
+        // differently (TONIGHT precip-peak overlap vs. TODAY evening-event
+        // opt-in).
+        summary.calendarTieIn?.let { add(formatTieIn(it.item)) }
         summary.eveningEventTieIn?.let { add(formatEveningEventTieIn(it)) }
     }.joinToString(" ")
 
@@ -86,13 +92,11 @@ class InsightFormatter(
     private fun formatClothes(clothes: ClothesClause): String =
         resources.getString(R.string.insight_clothes_wear, phraser.joinItems(clothes.items))
 
-    private fun formatPrecip(precip: PrecipClause, hasCalendarTieIn: Boolean): String {
+    private fun formatPrecip(precip: PrecipClause): String {
         val type = resources.getString(conditionRes(precip.condition))
-        // "Rain at 02:00" sounds robotic and a precise hour adds little value when
-        // the user is asleep. Collapse early-morning peaks to "overnight" — but only
-        // when there's no calendar tie-in pinning the time, since that clause names
-        // the same hour and the two should agree.
-        val timePhrase = if (precip.time.hour in OVERNIGHT_HOURS && !hasCalendarTieIn) {
+        // "Rain at 02:00" sounds robotic and a precise hour adds little value
+        // when the user is asleep — collapse early-morning peaks to "overnight".
+        val timePhrase = if (precip.time.hour in OVERNIGHT_HOURS) {
             resources.getString(R.string.insight_precip_overnight)
         } else {
             resources.getString(R.string.insight_precip_at_time, spokenTime(precip.time))
@@ -100,20 +104,19 @@ class InsightFormatter(
         return resources.getString(R.string.insight_precip, type, timePhrase)
     }
 
-    private fun formatCalendarTieIn(tieIn: CalendarTieInClause): String =
-        resources.getString(
-            R.string.insight_calendar_tie_in,
-            phraser.withArticle(tieIn.item),
-            spokenTime(tieIn.time),
-            tieIn.title,
-        )
+    private fun formatTieIn(item: String): String =
+        resources.getString(R.string.insight_tie_in, phraser.withArticle(item))
 
     private fun formatEveningEventTieIn(tieIn: EveningEventTieInClause): String =
-        resources.getString(
-            R.string.insight_evening_event_tie_in,
-            phraser.withArticle(tieIn.item),
-            tieIn.title,
-        )
+        if (tieIn.rainTime != null) {
+            resources.getString(
+                R.string.insight_tie_in_with_rain,
+                phraser.withArticle(tieIn.item),
+                spokenTime(tieIn.rainTime),
+            )
+        } else {
+            formatTieIn(tieIn.item)
+        }
 
     private fun leadRes(period: ForecastPeriod): Int = when (period) {
         ForecastPeriod.TODAY -> R.string.insight_lead_today

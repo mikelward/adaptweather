@@ -180,26 +180,18 @@ class InsightCache(
     }
 
     @Serializable
-    private data class CalendarTieInDto(
-        val item: String,
-        val secondOfDay: Int,
-        val title: String,
-    ) {
-        fun toDomain(): CalendarTieInClause = CalendarTieInClause(
-            item = item,
-            time = LocalTime.ofSecondOfDay(secondOfDay.toLong()),
-            title = title,
-        )
+    private data class CalendarTieInDto(val item: String) {
+        fun toDomain(): CalendarTieInClause = CalendarTieInClause(item = item)
     }
 
     @Serializable
     private data class EveningEventTieInDto(
         val item: String,
-        val title: String,
+        val rainSecondOfDay: Int? = null,
     ) {
         fun toDomain(): EveningEventTieInClause = EveningEventTieInClause(
             item = item,
-            title = title,
+            rainTime = rainSecondOfDay?.let { LocalTime.ofSecondOfDay(it.toLong()) },
         )
     }
 
@@ -249,11 +241,9 @@ class InsightCache(
         delta = delta?.let { DeltaDto(it.degrees, it.direction.name) },
         clothes = clothes?.let { ClothesDto(it.items) },
         precip = precip?.let { PrecipDto(it.condition.name, it.time.toSecondOfDay()) },
-        calendarTieIn = calendarTieIn?.let {
-            CalendarTieInDto(it.item, it.time.toSecondOfDay(), it.title)
-        },
+        calendarTieIn = calendarTieIn?.let { CalendarTieInDto(it.item) },
         eveningEventTieIn = eveningEventTieIn?.let {
-            EveningEventTieInDto(it.item, it.title)
+            EveningEventTieInDto(it.item, it.rainTime?.toSecondOfDay())
         },
     )
 

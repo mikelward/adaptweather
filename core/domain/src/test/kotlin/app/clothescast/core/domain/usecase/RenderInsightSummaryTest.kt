@@ -196,7 +196,53 @@ class RenderInsightSummaryTest {
         val tie = out.eveningEventTieIn
         tie.shouldNotBeNull()
         tie!!.item shouldBe "jacket"
-        tie.title shouldBe "dinner"
+        // No title or rainTime — caller didn't pass an evening forecast and
+        // we never carry the event title in the rendered prose.
+        tie.rainTime.shouldBeNull()
+    }
+
+    @Test
+    fun `evening event tie-in carries rain time when evening forecast peaks above 30 percent`() {
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val rainyEvening = mildToday.copy(
+            precipitationProbabilityMaxPct = 60.0,
+            condition = WeatherCondition.RAIN,
+            hourly = listOf(HourlyForecast(LocalTime.of(21, 0), 12.0, 10.0, 60.0, WeatherCondition.RAIN)),
+        )
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = listOf(umbrellaRule),
+            eveningForecast = rainyEvening,
+        )
+        val tie = out.eveningEventTieIn
+        tie.shouldNotBeNull()
+        tie!!.item shouldBe "umbrella"
+        tie.rainTime shouldBe LocalTime.of(21, 0)
+    }
+
+    @Test
+    fun `evening event tie-in omits rain time when evening peak is below threshold`() {
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val dryEvening = mildToday.copy(
+            precipitationProbabilityMaxPct = 5.0,
+            condition = WeatherCondition.PARTLY_CLOUDY,
+            hourly = listOf(HourlyForecast(LocalTime.of(21, 0), 8.0, 6.0, 5.0, WeatherCondition.PARTLY_CLOUDY)),
+        )
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = listOf(jacketRule),
+            eveningForecast = dryEvening,
+        )
+        val tie = out.eveningEventTieIn
+        tie.shouldNotBeNull()
+        tie!!.item shouldBe "jacket"
+        tie.rainTime.shouldBeNull()
     }
 
     @Test
@@ -376,8 +422,10 @@ class RenderInsightSummaryTest {
         ).calendarTieIn
         out.shouldNotBeNull()
         out!!.item shouldBe "umbrella"
-        out.time shouldBe LocalTime.of(15, 0)
-        out.title shouldBe "park run"
+        // No time or title in the clause — the clause only carries the
+        // clothes item now; the precip clause's own time covers "Rain at
+        // 3pm.", and event titles never flow off-device via the rendered
+        // prose.
     }
 
     @Test
