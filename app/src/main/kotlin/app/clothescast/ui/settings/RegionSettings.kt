@@ -18,6 +18,7 @@ import app.clothescast.R
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
+import java.text.Collator
 import java.util.Locale
 
 @Composable
@@ -50,10 +51,20 @@ internal fun RegionContent(
             // back to when Region.SYSTEM is selected, so this is the same
             // locale that drives the rendered prose.
             val systemTag = remember { Locale.getDefault().toLanguageTag() }
-            Region.entries.forEach { option ->
+            // Sort by the resolved display label using a locale-aware collator
+            // so the order reads naturally in the user's UI language. SYSTEM
+            // stays pinned at the top — it's a "follow device" option, not a
+            // language to sort with the rest.
+            val collator = remember { Collator.getInstance(Locale.getDefault()) }
+            val labelled = Region.entries.map { option ->
                 val base = stringResource(regionLabel(option))
+                option to if (option == Region.SYSTEM) "$base ($systemTag)" else base
+            }
+            val (system, rest) = labelled.partition { it.first == Region.SYSTEM }
+            val sorted = system + rest.sortedWith(compareBy(collator) { it.second })
+            sorted.forEach { (option, label) ->
                 RadioRow(
-                    label = if (option == Region.SYSTEM) "$base ($systemTag)" else base,
+                    label = label,
                     selected = option == region,
                     onSelect = { onSetRegion(option) },
                 )
