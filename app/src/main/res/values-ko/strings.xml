@@ -237,6 +237,41 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="settings_location_no_results">결과가 없어요.</string>
 
     <!--
+    Notification channels (system Settings → App → Notifications) and
+    the per-channel notification titles. Three channels: daily, nightly
+    (default + silent variants), weather alerts.
+    -->
+    <string name="notification_channel_daily_insight_name">매일 ClothesCast</string>
+    <string name="notification_channel_daily_insight_description">활성화한 아침 날씨 요약입니다.</string>
+    <string name="notification_daily_insight_title">오늘 날씨</string>
+
+    <string name="notification_channel_tonight_insight_default_name">야간 ClothesCast (일정 있음)</string>
+    <string name="notification_channel_tonight_insight_default_description">오늘 밤 캘린더에 일정이 있을 때의 저녁 날씨 요약입니다. 기본 알림음을 재생합니다.</string>
+    <string name="notification_channel_tonight_insight_silent_name">야간 ClothesCast (무음)</string>
+    <string name="notification_channel_tonight_insight_silent_description">일정이 없는 저녁의 날씨 요약입니다. 무음으로 전송되며 잠금 화면에서 확인할 수 있지만 소리는 나지 않아요.</string>
+    <string name="notification_tonight_insight_title">오늘 밤 날씨</string>
+
+    <string name="notification_channel_weather_alerts_name">악천후 경보</string>
+    <string name="notification_channel_weather_alerts_description">지역의 심각하거나 극심한 기상 현상에 대한 높은 우선순위의 경보입니다. 일일 가져오기에서 감지되는 즉시 전달됩니다.</string>
+    <string name="notification_weather_alert_title">기상 경보: %1$s</string>
+
+    <!-- Notification-permission card. -->
+    <string name="settings_notification_permission_title">알림이 차단되었어요</string>
+    <string name="settings_notification_permission_description">알림 권한이 없으면 매일 ClothesCast가 갈 곳이 없어요. 허용하면 ClothesCast가 내일 아침에 표시될 수 있어요.</string>
+    <string name="settings_notification_permission_grant">알림 허용</string>
+
+    <!-- Calendar opt-in card. Description preserves the privacy
+         disclosure ("설명, 참석자, 장소는 읽지만 기기 밖으로 나가지 않습니다").
+         Quotes around the nested example use Korean corner-bracket
+         「…」 — common for nested-button-label references. -->
+    <string name="settings_calendar_title">캘린더</string>
+    <string name="settings_calendar_use_events">오늘의 캘린더 일정 사용</string>
+    <string name="settings_calendar_description_off">활성화하면 ClothesCast가 기기 캘린더에서 오늘의 일정을 읽어, 아침 ClothesCast가 특정 일정에 맞춰 옷을 제안할 수 있어요 — 예: 「오후 3시 공원 달리기에 우산을 챙기세요」. 일정의 제목과 시간만 사용되며, 설명, 참석자, 장소는 읽지만 기기 밖으로 나가지 않습니다.</string>
+    <string name="settings_calendar_description_on">아침 ClothesCast를 풍부하게 만들기 위해 기기 캘린더에서 오늘의 일정을 읽고 있어요. 요약에는 제목과 시간만 사용하며 설명과 참석자는 사용하지 않습니다. 모든 것이 기기 안에 머물러요.</string>
+    <string name="settings_calendar_grant_permission">캘린더 액세스 허용</string>
+    <string name="settings_calendar_open_settings">캘린더 액세스가 거부되었어요. 시스템 설정에서 허용하세요.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. 해요체 (polite-formal) throughout — that's the standard
