@@ -104,6 +104,96 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_tts_add_api_key_cancel">Odustani</string>
 
     <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale labels
+    in Croatian style ("Engleski (Sjedinjene Države)", "Francuski
+    (Kanada)", "Kineski (pojednostavljeni)", …). The locale tag stored
+    on disk (en-US / fr-CA / zh-CN) is unchanged; only the displayed
+    label localizes.
+    -->
+    <string name="settings_region_language_title">Jezik</string>
+    <string name="settings_region_language_description">Postavlja jezik prikazanog teksta i obavijesti.</string>
+    <string name="settings_region_language_system">Prati lokalne postavke sustava</string>
+    <string name="settings_region_language_en_us">Engleski (Sjedinjene Države)</string>
+    <string name="settings_region_language_en_gb">Engleski (Ujedinjeno Kraljevstvo)</string>
+    <string name="settings_region_language_en_au">Engleski (Australija)</string>
+    <string name="settings_region_language_en_ca">Engleski (Kanada)</string>
+    <string name="settings_region_language_en_za">Engleski (Južna Afrika)</string>
+    <string name="settings_region_language_de_de">Njemački (Njemačka)</string>
+    <string name="settings_region_language_fr_fr">Francuski (Francuska)</string>
+    <string name="settings_region_language_fr_ca">Francuski (Kanada)</string>
+    <string name="settings_region_language_it_it">Talijanski (Italija)</string>
+    <string name="settings_region_language_es_es">Španjolski (Španjolska)</string>
+    <string name="settings_region_language_es_mx">Španjolski (Meksiko)</string>
+    <string name="settings_region_language_ru_ru">Ruski (Rusija)</string>
+    <string name="settings_region_language_pl_pl">Poljski (Poljska)</string>
+    <string name="settings_region_language_uk_ua">Ukrajinski (Ukrajina)</string>
+    <string name="settings_region_language_pt_br">Portugalski (Brazil)</string>
+    <string name="settings_region_language_nl_nl">Nizozemski (Nizozemska)</string>
+    <string name="settings_region_language_sv_se">Švedski (Švedska)</string>
+    <string name="settings_region_language_tr_tr">Turski (Turska)</string>
+    <string name="settings_region_language_id_id">Indonezijski (Indonezija)</string>
+    <string name="settings_region_language_fil_ph">Filipinski (Filipini)</string>
+    <string name="settings_region_language_vi_vn">Vijetnamski (Vijetnam)</string>
+    <string name="settings_region_language_zh_cn">Kineski (pojednostavljeni)</string>
+    <string name="settings_region_language_hi_in">Hindski (Indija)</string>
+    <string name="settings_region_language_bn_bd">Bengalski (Bangladeš)</string>
+    <string name="settings_region_language_ja_jp">Japanski (Japan)</string>
+    <string name="settings_region_language_ko_kr">Korejski (Južna Koreja)</string>
+    <string name="settings_region_language_ar_sa">Arapski (Saudijska Arabija)</string>
+    <string name="settings_region_language_he_il">Hebrejski (Izrael)</string>
+    <string name="settings_region_language_fa_ir">Perzijski (Iran)</string>
+
+    <!-- Region screen — units pickers (Temperature: Celzij / Fahrenheit;
+         Distance: Kilometri / Milje). The unit symbols (°C, °F) stay
+         unchanged. -->
+    <string name="settings_temperature_unit_title">Jedinica temperature</string>
+    <string name="settings_temperature_unit_celsius">Celzij (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">Fahrenheit (°F)</string>
+    <string name="settings_distance_unit_title">Jedinica udaljenosti</string>
+    <string name="settings_distance_unit_kilometers">Kilometri</string>
+    <string name="settings_distance_unit_miles">Milje</string>
+
+    <!--
+    Voice locale picker labels — same Croatian language-name translations
+    as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface. The two pickers steer different
+    things: Region is the *displayed text*, Voice locale is the *spoken
+    accent*.
+    -->
+    <string name="settings_tts_voice_locale_en_us">Engleski (Sjedinjene Države)</string>
+    <string name="settings_tts_voice_locale_en_gb">Engleski (Ujedinjeno Kraljevstvo)</string>
+    <string name="settings_tts_voice_locale_en_au">Engleski (Australija)</string>
+    <string name="settings_tts_voice_locale_en_ca">Engleski (Kanada)</string>
+    <string name="settings_tts_voice_locale_en_za">Engleski (Južna Afrika)</string>
+    <string name="settings_tts_voice_locale_de_de">Njemački (Njemačka)</string>
+    <string name="settings_tts_voice_locale_fr_fr">Francuski (Francuska)</string>
+    <string name="settings_tts_voice_locale_fr_ca">Francuski (Kanada)</string>
+    <string name="settings_tts_voice_locale_it_it">Talijanski (Italija)</string>
+    <string name="settings_tts_voice_locale_es_es">Španjolski (Španjolska)</string>
+    <string name="settings_tts_voice_locale_es_mx">Španjolski (Meksiko)</string>
+    <string name="settings_tts_voice_locale_ru_ru">Ruski (Rusija)</string>
+    <string name="settings_tts_voice_locale_pl_pl">Poljski (Poljska)</string>
+    <string name="settings_tts_voice_locale_uk_ua">Ukrajinski (Ukrajina)</string>
+    <string name="settings_tts_voice_locale_pt_br">Portugalski (Brazil)</string>
+    <string name="settings_tts_voice_locale_nl_nl">Nizozemski (Nizozemska)</string>
+    <string name="settings_tts_voice_locale_sv_se">Švedski (Švedska)</string>
+    <string name="settings_tts_voice_locale_tr_tr">Turski (Turska)</string>
+    <string name="settings_tts_voice_locale_id_id">Indonezijski (Indonezija)</string>
+    <string name="settings_tts_voice_locale_fil_ph">Filipinski (Filipini)</string>
+    <string name="settings_tts_voice_locale_vi_vn">Vijetnamski (Vijetnam)</string>
+    <string name="settings_tts_voice_locale_zh_cn">Kineski (pojednostavljeni)</string>
+    <string name="settings_tts_voice_locale_hi_in">Hindski (Indija)</string>
+    <string name="settings_tts_voice_locale_bn_bd">Bengalski (Bangladeš)</string>
+    <string name="settings_tts_voice_locale_ja_jp">Japanski (Japan)</string>
+    <string name="settings_tts_voice_locale_ko_kr">Korejski (Južna Koreja)</string>
+    <string name="settings_tts_voice_locale_ar_sa">Arapski (Saudijska Arabija)</string>
+    <string name="settings_tts_voice_locale_he_il">Hebrejski (Izrael)</string>
+    <string name="settings_tts_voice_locale_fa_ir">Perzijski (Iran)</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ti-form imperatives: "dodirni", "postavi", "tvoj".
