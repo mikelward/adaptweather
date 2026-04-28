@@ -90,6 +90,31 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="widget_empty_title">Još nema outfita</string>
     <string name="widget_empty_subtitle">Dodirni za otvaranje ClothesCasta</string>
 
+    <!--
+    Onboarding flow — first-run welcome, two permission steps, Gemini
+    API-key step. Welcome uses the conventional Croatian greeting
+    "Dobrodošli" (formally plural, idiomatic as a fixed greeting) to
+    sidestep the masc/fem agreement Croatian otherwise forces on ti-form
+    addresses; everything else uses true ti-form.
+    -->
+    <string name="onboarding_title">Dobrodošli u ClothesCast</string>
+    <string name="onboarding_subtitle">Dva brza odabira i to je sve. Sve ostalo ima razuman zadani izbor koji kasnije možeš podesiti u postavkama.</string>
+    <string name="onboarding_notifications_title">Obavijesti</string>
+    <string name="onboarding_notifications_description">Potrebno za isporuku tvog dnevnog ClothesCasta. Dopusti jednom, i ClothesCast će se pojaviti sutra ujutro.</string>
+    <string name="onboarding_notifications_grant">Dopusti obavijesti</string>
+    <string name="onboarding_location_title">Lokacija</string>
+    <string name="onboarding_location_description">Koristi se za dohvaćanje točne prognoze. Ako dopustiš lokaciju, ClothesCast svako jutro može pročitati približnu lokaciju tvog uređaja; inače ručno odaberi grad.</string>
+    <string name="onboarding_location_grant">Dopusti pristup lokaciji</string>
+    <string name="onboarding_location_denied_hint">Pristup lokaciji odbijen. Umjesto toga možeš ručno odabrati grad.</string>
+    <string name="onboarding_location_enter_manual">Unesi lokaciju ručno</string>
+    <string name="onboarding_location_using_device">Svako jutro koristimo lokaciju tvog uređaja.</string>
+
+    <string name="onboarding_gemini_title">Gemini API ključ</string>
+    <string name="onboarding_gemini_description">ClothesCast ga koristi za izgovorene glasove i generiranje prognoza. Nabavi besplatno na aistudio.google.com. Ključ je šifriran u Android Keystore.</string>
+    <string name="onboarding_step_done">Gotovo</string>
+    <string name="onboarding_skip">Preskoči zasad</string>
+    <string name="onboarding_continue">Nastavi</string>
+
     <string name="insight_lead_today">Danas</string>
     <string name="insight_lead_tonight">Večeras</string>
     <string name="insight_band_single">%1$s će biti %2$s.</string>
