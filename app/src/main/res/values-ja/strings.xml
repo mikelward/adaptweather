@@ -54,6 +54,30 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="settings_clothes_cond_precip_above">降水確率が %.0f%% を超えるとき</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "夜の予定に言及する" toggle, and the nightly-only "notify only
+    on events" toggle. Description uses Japanese corner-bracket quotes
+    「…」 around the nested toggle label (the locale-native quote form;
+    the German „…" form isn't Japanese typography).
+    -->
+    <string name="settings_schedule_title">毎日の ClothesCast</string>
+    <string name="settings_schedule_time_label">時刻</string>
+    <string name="settings_schedule_days_label">曜日</string>
+    <string name="settings_daily_mention_evening_events">夜の予定に言及する</string>
+
+    <string name="settings_tonight_title">夜間の ClothesCast</string>
+    <string name="settings_tonight_description">今夜の天気を伝える、夜のもう1つの ClothesCast です。予定のない夜は無音のまま、または「夜に予定があるときのみ通知」がオンの場合は表示されません。予定のある夜は音を鳴らし、（音声読み上げを有効にしている場合は）自動で読み上げます。</string>
+    <string name="settings_tonight_enabled">夜間の ClothesCast を表示</string>
+    <string name="settings_tonight_time_label">時刻</string>
+    <string name="settings_tonight_days_label">曜日</string>
+    <string name="settings_tonight_notify_only_on_events">夜に予定があるときのみ通知</string>
+
+    <string name="settings_delivery_label">配信方法</string>
+    <string name="settings_delivery_notification_only">通知のみ</string>
+    <string name="settings_delivery_tts_only">音声読み上げのみ</string>
+    <string name="settings_delivery_notification_and_tts">通知と音声読み上げ</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ます-form (friendly-polite) throughout — that's the standard
