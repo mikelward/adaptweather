@@ -118,6 +118,96 @@ the rest of the app stays in English.
     <string name="settings_tts_add_api_key_cancel">Abbrechen</string>
 
     <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale labels
+    in German style ("Englisch (Vereinigte Staaten)", "Französisch
+    (Kanada)", "Chinesisch (vereinfacht)", …). The locale-tag suffix
+    (en-US / fr-CA / …) stays unchanged on disk; only the displayed
+    label localizes.
+    -->
+    <string name="settings_region_language_title">Sprache</string>
+    <string name="settings_region_language_description">Legt die Sprache von angezeigtem Text und Benachrichtigungen fest.</string>
+    <string name="settings_region_language_system">Systemsprache verwenden</string>
+    <string name="settings_region_language_en_us">Englisch (Vereinigte Staaten)</string>
+    <string name="settings_region_language_en_gb">Englisch (Vereinigtes Königreich)</string>
+    <string name="settings_region_language_en_au">Englisch (Australien)</string>
+    <string name="settings_region_language_en_ca">Englisch (Kanada)</string>
+    <string name="settings_region_language_en_za">Englisch (Südafrika)</string>
+    <string name="settings_region_language_fr_fr">Französisch (Frankreich)</string>
+    <string name="settings_region_language_fr_ca">Französisch (Kanada)</string>
+    <string name="settings_region_language_it_it">Italienisch (Italien)</string>
+    <string name="settings_region_language_es_es">Spanisch (Spanien)</string>
+    <string name="settings_region_language_es_mx">Spanisch (Mexiko)</string>
+    <string name="settings_region_language_ru_ru">Russisch (Russland)</string>
+    <string name="settings_region_language_pl_pl">Polnisch (Polen)</string>
+    <string name="settings_region_language_hr_hr">Kroatisch (Kroatien)</string>
+    <string name="settings_region_language_uk_ua">Ukrainisch (Ukraine)</string>
+    <string name="settings_region_language_pt_br">Portugiesisch (Brasilien)</string>
+    <string name="settings_region_language_nl_nl">Niederländisch (Niederlande)</string>
+    <string name="settings_region_language_sv_se">Schwedisch (Schweden)</string>
+    <string name="settings_region_language_tr_tr">Türkisch (Türkei)</string>
+    <string name="settings_region_language_id_id">Indonesisch (Indonesien)</string>
+    <string name="settings_region_language_fil_ph">Filipino (Philippinen)</string>
+    <string name="settings_region_language_vi_vn">Vietnamesisch (Vietnam)</string>
+    <string name="settings_region_language_zh_cn">Chinesisch (vereinfacht)</string>
+    <string name="settings_region_language_hi_in">Hindi (Indien)</string>
+    <string name="settings_region_language_bn_bd">Bengalisch (Bangladesch)</string>
+    <string name="settings_region_language_ja_jp">Japanisch (Japan)</string>
+    <string name="settings_region_language_ko_kr">Koreanisch (Südkorea)</string>
+    <string name="settings_region_language_ar_sa">Arabisch (Saudi-Arabien)</string>
+    <string name="settings_region_language_he_il">Hebräisch (Israel)</string>
+    <string name="settings_region_language_fa_ir">Persisch (Iran)</string>
+
+    <!-- Region screen — units pickers (Temperature: Celsius / Fahrenheit;
+         Distance: Kilometer / Meilen). The unit symbols (°C, °F) stay
+         unchanged; only the German word forms differ from the en-US
+         baseline. -->
+    <string name="settings_temperature_unit_title">Temperatureinheit</string>
+    <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">Fahrenheit (°F)</string>
+    <string name="settings_distance_unit_title">Entfernungseinheit</string>
+    <string name="settings_distance_unit_kilometers">Kilometer</string>
+    <string name="settings_distance_unit_miles">Meilen</string>
+
+    <!--
+    Voice locale picker labels — same German language-name translations as
+    the Region picker above, just keyed under the `settings_tts_voice_locale_*`
+    namespace because the Voice screen's language sub-picker is a separate
+    UI surface. The two pickers steer different things: Region is the
+    *displayed text*, Voice locale is the *spoken accent*.
+    -->
+    <string name="settings_tts_voice_locale_en_us">Englisch (Vereinigte Staaten)</string>
+    <string name="settings_tts_voice_locale_en_gb">Englisch (Vereinigtes Königreich)</string>
+    <string name="settings_tts_voice_locale_en_au">Englisch (Australien)</string>
+    <string name="settings_tts_voice_locale_en_ca">Englisch (Kanada)</string>
+    <string name="settings_tts_voice_locale_en_za">Englisch (Südafrika)</string>
+    <string name="settings_tts_voice_locale_fr_fr">Französisch (Frankreich)</string>
+    <string name="settings_tts_voice_locale_fr_ca">Französisch (Kanada)</string>
+    <string name="settings_tts_voice_locale_it_it">Italienisch (Italien)</string>
+    <string name="settings_tts_voice_locale_es_es">Spanisch (Spanien)</string>
+    <string name="settings_tts_voice_locale_es_mx">Spanisch (Mexiko)</string>
+    <string name="settings_tts_voice_locale_ru_ru">Russisch (Russland)</string>
+    <string name="settings_tts_voice_locale_pl_pl">Polnisch (Polen)</string>
+    <string name="settings_tts_voice_locale_hr_hr">Kroatisch (Kroatien)</string>
+    <string name="settings_tts_voice_locale_uk_ua">Ukrainisch (Ukraine)</string>
+    <string name="settings_tts_voice_locale_pt_br">Portugiesisch (Brasilien)</string>
+    <string name="settings_tts_voice_locale_nl_nl">Niederländisch (Niederlande)</string>
+    <string name="settings_tts_voice_locale_sv_se">Schwedisch (Schweden)</string>
+    <string name="settings_tts_voice_locale_tr_tr">Türkisch (Türkei)</string>
+    <string name="settings_tts_voice_locale_id_id">Indonesisch (Indonesien)</string>
+    <string name="settings_tts_voice_locale_fil_ph">Filipino (Philippinen)</string>
+    <string name="settings_tts_voice_locale_vi_vn">Vietnamesisch (Vietnam)</string>
+    <string name="settings_tts_voice_locale_zh_cn">Chinesisch (vereinfacht)</string>
+    <string name="settings_tts_voice_locale_hi_in">Hindi (Indien)</string>
+    <string name="settings_tts_voice_locale_bn_bd">Bengalisch (Bangladesch)</string>
+    <string name="settings_tts_voice_locale_ja_jp">Japanisch (Japan)</string>
+    <string name="settings_tts_voice_locale_ko_kr">Koreanisch (Südkorea)</string>
+    <string name="settings_tts_voice_locale_ar_sa">Arabisch (Saudi-Arabien)</string>
+    <string name="settings_tts_voice_locale_he_il">Hebräisch (Israel)</string>
+    <string name="settings_tts_voice_locale_fa_ir">Persisch (Iran)</string>
+
+    <!--
     Today screen — top-bar, refresh toasts, empty state, generation timestamp,
     outfit card, hourly chart, confidence chip, work-status banner. Tone is
     Du-form imperative (intimate / spousal register), matching the app's
