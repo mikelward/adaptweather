@@ -20,7 +20,7 @@ class ElevenLabsTtsSpeaker(
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
-        val audio = client.synthesize(text = text, voiceId = voiceId)
+        val audio = client.synthesize(text = prepareForTts(text), voiceId = voiceId)
         PcmAudioPlayer.play(audio)
     }
 }
