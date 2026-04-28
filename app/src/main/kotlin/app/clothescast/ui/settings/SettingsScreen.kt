@@ -141,7 +141,6 @@ fun SettingsScreen(
                 deviceVoice = state.deviceVoice,
                 deviceVoices = state.deviceVoices,
                 effectiveDeviceVoice = state.effectiveDeviceVoice,
-                isGoogleTtsInstalled = state.isGoogleTtsInstalled,
                 geminiKeyConfigured = state.apiKeyConfigured,
                 openAiKeyConfigured = state.openAiKeyConfigured,
                 elevenLabsKeyConfigured = state.elevenLabsKeyConfigured,

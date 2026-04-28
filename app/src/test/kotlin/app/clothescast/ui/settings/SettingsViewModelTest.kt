@@ -95,7 +95,6 @@ class SettingsViewModelTest {
             cancelAlarm = { _ -> },
             geocodingClient = OpenMeteoGeocodingClient(emptyGeocoding),
             voiceEnumerator = EmptyVoiceEnumerator,
-            isGoogleTtsInstalled = { true },
         )
     }
 
@@ -107,6 +106,7 @@ class SettingsViewModelTest {
     private object EmptyVoiceEnumerator : TtsVoiceEnumerator {
         override suspend fun listVoices(locale: Locale): List<DeviceVoice> = emptyList()
         override suspend fun resolveAutoPick(locale: Locale): DeviceVoice? = null
+        override suspend fun findVoice(id: String): DeviceVoice? = null
     }
 
     @AfterEach

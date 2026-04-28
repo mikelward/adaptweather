@@ -22,11 +22,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -66,7 +70,6 @@ internal fun VoiceContent(
     deviceVoice: String?,
     deviceVoices: List<DeviceVoice>,
     effectiveDeviceVoice: DeviceVoice?,
-    isGoogleTtsInstalled: Boolean,
     geminiKeyConfigured: Boolean,
     openAiKeyConfigured: Boolean,
     elevenLabsKeyConfigured: Boolean,
@@ -217,7 +220,7 @@ internal fun VoiceContent(
                     }
                 }
                 TtsEngine.DEVICE -> {
-                    if (!isGoogleTtsInstalled) {
+                    if (!rememberIsGoogleTtsInstalled()) {
                         InstallGoogleTtsHint()
                     }
                     DeviceVoicePicker(
@@ -504,10 +507,40 @@ private fun DeviceVoicePicker(
 private const val DEVICE_VOICE_AUTO_ID = "__auto__"
 
 /**
+ * Tracks whether `com.google.android.tts` is currently installed, refreshing
+ * on every `ON_RESUME`. Lives in the composable layer (rather than the
+ * SettingsViewModel) because the ViewModel instance is reused across
+ * Settings entries — a one-shot package check at construction time would
+ * never refresh after the user installs Google TTS via the CTA below and
+ * returns to the app. The check itself is a cheap sync PackageManager
+ * call (~1ms) so there's no need to push it off the main thread.
+ */
+@Composable
+private fun rememberIsGoogleTtsInstalled(): Boolean {
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var installed by remember { mutableStateOf(checkGoogleTtsInstalled(context)) }
+    DisposableEffect(lifecycle, context) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                installed = checkGoogleTtsInstalled(context)
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose { lifecycle.removeObserver(observer) }
+    }
+    return installed
+}
+
+private fun checkGoogleTtsInstalled(context: android.content.Context): Boolean = runCatching {
+    context.packageManager.getPackageInfo(GOOGLE_TTS_PACKAGE, 0)
+}.isSuccess
+
+/**
  * Banner shown when "Speech Services by Google" isn't installed. The vendor
  * default TTS engine on most non-Pixel devices sounds notably worse than
  * Google's, and the install fixes that with one tap. Hidden once Google's
- * engine is detected (re-checked when DEVICE is selected).
+ * engine is detected.
  */
 @Composable
 private fun InstallGoogleTtsHint() {

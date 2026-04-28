@@ -54,10 +54,13 @@ data class SettingsState(
     val deviceVoice: String? = null,
     /**
      * Voices the device's TTS engine reports for the current [voiceLocale],
-     * loaded by [SettingsViewModel] when the Voice screen first observes
-     * DEVICE selected (and refreshed when the locale changes). Empty until
-     * enumeration completes — the picker shows the pinned ID alone in that
-     * window, so users still see what they previously selected.
+     * loaded eagerly by [SettingsViewModel] on first preferences emission
+     * and refreshed on every locale change — *not* gated on DEVICE being
+     * the currently-selected engine. Pre-loading means switching to DEVICE
+     * doesn't briefly show "loading…", and the cost is one engine bind per
+     * locale change, which is rare. Empty until enumeration completes —
+     * the picker shows the pinned ID alone in that window, so users still
+     * see what they previously selected.
      */
     val deviceVoices: List<DeviceVoice> = emptyList(),
     /**
@@ -67,12 +70,6 @@ data class SettingsState(
      * if the engine reports no voices at all.
      */
     val effectiveDeviceVoice: DeviceVoice? = null,
-    /**
-     * Whether `com.google.android.tts` is installed. Default `true` so we
-     * don't briefly flash the install hint before the package check
-     * resolves; the ViewModel re-checks on Settings open.
-     */
-    val isGoogleTtsInstalled: Boolean = true,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val useCalendarEvents: Boolean = false,
     val apiKeyConfigured: Boolean = false,
