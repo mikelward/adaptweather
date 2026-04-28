@@ -52,6 +52,30 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_cond_precip_above">quando la probabilità di pioggia supera %.0f%%</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "Mention evening events" toggle, and the nightly-only
+    "notify only on events" toggle. Description uses German-style
+    „…" quotes around the nested toggle label, matching the locale
+    house style.
+    -->
+    <string name="settings_schedule_title">ClothesCast quotidiano</string>
+    <string name="settings_schedule_time_label">Ora</string>
+    <string name="settings_schedule_days_label">Giorni della settimana</string>
+    <string name="settings_daily_mention_evening_events">Cita gli eventi serali</string>
+
+    <string name="settings_tonight_title">ClothesCast serale</string>
+    <string name="settings_tonight_description">Un secondo ClothesCast la sera che copre il tempo di stasera. Nelle serate tranquille resta silenzioso, o non appare affatto se „Avvisa solo quando ci sono eventi serali“ è attivo; nelle serate con eventi riproduce un suono e (se hai attivato la lettura vocale) si legge da solo.</string>
+    <string name="settings_tonight_enabled">Mostra un ClothesCast serale</string>
+    <string name="settings_tonight_time_label">Ora</string>
+    <string name="settings_tonight_days_label">Giorni della settimana</string>
+    <string name="settings_tonight_notify_only_on_events">Avvisa solo quando ci sono eventi serali</string>
+
+    <string name="settings_delivery_label">Recapito</string>
+    <string name="settings_delivery_notification_only">Solo notifica</string>
+    <string name="settings_delivery_tts_only">Solo lettura vocale</string>
+    <string name="settings_delivery_notification_and_tts">Notifica e lettura vocale</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tu-form throughout: "tocca", "il tuo", "imposta".
