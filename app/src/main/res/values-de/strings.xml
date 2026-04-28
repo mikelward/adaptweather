@@ -52,6 +52,29 @@ the rest of the app stays in English.
     <string name="settings_clothes_cond_precip_above">wenn die Regenwahrscheinlichkeit über %.0f%% liegt</string>
 
     <!--
+    Today screen — top-bar, refresh toasts, empty state, generation timestamp,
+    outfit card, hourly chart, confidence chip, work-status banner. Tone is
+    Du-form imperative (intimate / spousal register), matching the app's
+    casual style — "tipp", "dein", "leg fest".
+    -->
+    <string name="today_title">Heute</string>
+    <string name="today_open_settings">Einstellungen öffnen</string>
+    <string name="today_more_options">Mehr Optionen</string>
+    <string name="today_report_a_bug">Fehler melden</string>
+    <string name="today_refresh">Aktualisieren</string>
+    <string name="today_refresh_toast_daily">Dein täglicher ClothesCast wird aktualisiert — er erscheint gleich.</string>
+    <string name="today_refresh_toast_nightly">Dein nächtlicher ClothesCast wird aktualisiert — er erscheint gleich.</string>
+    <string name="today_empty_title">Noch kein ClothesCast</string>
+    <string name="today_empty_subtitle">Dein morgendlicher ClothesCast erscheint hier, sobald er erstellt wurde. Leg deinen Standort in den Einstellungen fest und tipp dann auf Jetzt abrufen.</string>
+    <string name="today_fetch_now">Jetzt abrufen</string>
+    <string name="today_generated_at">Erstellt um %1$s</string>
+
+    <string name="today_outfit_title">Was anziehen</string>
+    <string name="today_outfit_label_today">Heute</string>
+    <string name="today_outfit_label_tonight">Heute Abend</string>
+    <string name="today_outfit_label_tomorrow">Morgen</string>
+
+    <!--
     Outfit-card category labels — shown in OutfitPreviewCard on the Today
     screen. These are app-provided category names (the user's typed clothes
     rules are separate and stay as the user wrote them).
@@ -61,6 +84,29 @@ the rest of the app stays in English.
     <string name="today_outfit_top_thick_jacket">Dicke Jacke</string>
     <string name="today_outfit_bottom_shorts">Kurze Hose</string>
     <string name="today_outfit_bottom_long_pants">Lange Hose</string>
+
+    <string name="today_forecast_title">Stündliche Vorhersage</string>
+    <string name="today_forecast_min_max">Gefühlt %1$d – %2$d%3$s · Luft %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Gefühlte Temperatur (%1$s) pro Stunde · tippen für Lufttemperatur</string>
+    <string name="today_forecast_legend_air">Lufttemperatur (%1$s) pro Stunde · tippen für gefühlte Temperatur</string>
+
+    <string name="today_confidence_high">Hohe Sicherheit — die wichtigsten Modelle stimmen überein</string>
+    <string name="today_confidence_medium">Mittlere Sicherheit</string>
+    <string name="today_confidence_low">Geringe Sicherheit — Vorhersagen weichen voneinander ab</string>
+    <string name="today_confidence_spread">Streuung: %1$.1f°C, %2$.0fpp Niederschlag über %3$d Modelle</string>
+
+    <string name="today_working">Hole deinen ClothesCast…</string>
+    <string name="today_failed_title">Letzter Versuch fehlgeschlagen</string>
+    <string name="today_failed_unexpected_http">Unerwarteter HTTP-Fehler vom Wetterdienst.</string>
+    <string name="today_failed_unhandled">Ein unerwarteter Fehler ist aufgetreten.</string>
+    <string name="today_failed_show_details">Details anzeigen</string>
+    <string name="today_failed_hide_details">Details ausblenden</string>
+
+    <!-- Home-screen App Widget. -->
+    <string name="widget_label">Outfit</string>
+    <string name="widget_description">Das Outfit für den aktuellen Tagesabschnitt auf einen Blick.</string>
+    <string name="widget_empty_title">Noch kein Outfit</string>
+    <string name="widget_empty_subtitle">Tippe, um ClothesCast zu öffnen</string>
 
     <!-- Insight prose templates — German equivalents of the keys in values/strings.xml. -->
     <string name="insight_lead_today">Heute</string>
