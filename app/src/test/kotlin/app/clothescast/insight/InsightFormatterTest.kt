@@ -61,13 +61,13 @@ class InsightFormatterTest {
     @Test
     fun `delta clause emits warmer with rounded degrees`() {
         val out = subject.format(summary(delta = DeltaClause(5, DeltaClause.Direction.WARMER)))
-        out shouldBe "Today will be mild. It will be 5° warmer today."
+        out shouldBe "Today will be mild. It will be 5° warmer."
     }
 
     @Test
     fun `delta clause emits cooler`() {
         val out = subject.format(summary(delta = DeltaClause(6, DeltaClause.Direction.COOLER)))
-        out shouldBe "Today will be mild. It will be 6° cooler today."
+        out shouldBe "Today will be mild. It will be 6° cooler."
     }
 
     @Test
@@ -204,7 +204,7 @@ class InsightFormatterTest {
                 precip = PrecipClause(WeatherCondition.RAIN, LocalTime.of(15, 0)),
             ),
         )
-        out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer today. " +
+        out shouldBe "Alert: Flood Warning. Today will be cool to mild. It will be 6° warmer. " +
             "Wear a sweater and umbrella. Rain at 3pm."
     }
 
