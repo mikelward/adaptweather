@@ -32,6 +32,15 @@ import kotlinx.serialization.json.JsonPrimitive
 const val DEFAULT_ELEVENLABS_TTS_MODEL: String = "eleven_multilingual_v2"
 const val DEFAULT_ELEVENLABS_TTS_VOICE: String = "EXAVITQu4vr4xnSDxMaL" // Sarah
 
+// Below ElevenLabs' stock 1.0 because field reports flagged the default pace
+// as "too fast" — 0.9 is a noticeable but not draggy slowdown. Stays inside
+// the documented 0.7–1.2 range.
+private const val DEFAULT_SPEED = 0.9
+
+// Above the stock 0.5 to favour pronunciation consistency over expression
+// for short weather briefings — drops fewer consonants.
+private const val DEFAULT_STABILITY = 0.65
+
 /**
  * ElevenLabs TTS via `POST https://api.elevenlabs.io/v1/text-to-speech/{voice_id}`.
  *
@@ -70,7 +79,16 @@ class ElevenLabsTtsClient(
             header("xi-api-key", key)
             contentType(ContentType.Application.Json)
             parameter("output_format", PCM_OUTPUT_FORMAT)
-            setBody(ElevenLabsSpeechRequest(text = text, modelId = model))
+            setBody(
+                ElevenLabsSpeechRequest(
+                    text = text,
+                    modelId = model,
+                    voiceSettings = ElevenLabsVoiceSettings(
+                        speed = DEFAULT_SPEED,
+                        stability = DEFAULT_STABILITY,
+                    ),
+                ),
+            )
         }
 
         if (!response.status.isSuccess()) {
