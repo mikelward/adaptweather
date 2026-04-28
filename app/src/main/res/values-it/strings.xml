@@ -8,6 +8,18 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_tts_voice_locale_it_it">Italiano (Italia)</string>
     <string name="settings_tts_voice_locale_label">Lingua</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_back">Indietro</string>
+
+    <string name="settings_root_voice">Voce</string>
+    <string name="settings_root_schedule">Programmazione</string>
+    <string name="settings_root_region">Regione</string>
+    <string name="settings_root_clothes">Abbigliamento</string>
+    <string name="settings_root_api_keys">Chiavi API</string>
+    <string name="settings_root_data_sources">Fonti dati</string>
+    <string name="settings_root_about">Informazioni</string>
+
     <string name="garment_sweater">Maglione</string>
     <string name="garment_hoodie">Felpa con cappuccio</string>
     <string name="garment_jacket">Giacca</string>
@@ -17,6 +29,10 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="garment_shorts">Pantaloncini</string>
     <string name="garment_pants">Pantaloni</string>
     <string name="garment_jeans">Jeans</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">Regole abbigliamento</string>
+    <string name="settings_clothes_description">Se una previsione supera una di queste soglie, il capo appare nel tuo ClothesCast quotidiano.</string>
 
     <string name="settings_clothes_empty">Nessuna regola. Tocca Aggiungi per crearne una.</string>
     <string name="settings_clothes_add">Aggiungi</string>
