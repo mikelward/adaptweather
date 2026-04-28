@@ -173,13 +173,23 @@ class FetchAndNotifyWorker(
             Log.w(TAG, "Network IO failure; retrying.", e); Result.retry()
         } catch (t: Throwable) {
             Log.e(TAG, "Unhandled error; failing.", t)
-            Result.failure(reason(REASON_UNHANDLED, t.javaClass.simpleName + ": " + (t.message ?: "")))
+            Result.failure(reason(REASON_UNHANDLED, summarize(t)))
         }
     }
 
     private fun reason(code: String, detail: String? = null) =
         if (detail.isNullOrBlank()) workDataOf(KEY_REASON to code)
         else workDataOf(KEY_REASON to code, KEY_REASON_DETAIL to detail)
+
+    // First line of the exception message only — Ktor's NoTransformationFoundException
+    // packs the URL, body excerpt, and a FAQ link into a multi-line wall of text.
+    // Full stack trace stays in logcat (Log.e above).
+    private fun summarize(t: Throwable): String {
+        val firstLine = t.message?.lineSequence()?.firstOrNull { it.isNotBlank() }?.trim()
+        val joined = if (firstLine.isNullOrEmpty()) t.javaClass.simpleName
+        else "${t.javaClass.simpleName}: $firstLine"
+        return if (joined.length <= MAX_DETAIL_LEN) joined else joined.take(MAX_DETAIL_LEN - 1) + "…"
+    }
 
     private suspend fun resolveLocation(prefs: UserPreferences): Location {
         if (prefs.useDeviceLocation) {
@@ -302,6 +312,9 @@ class FetchAndNotifyWorker(
 
         const val REASON_UNEXPECTED_HTTP = "unexpected_http"
         const val REASON_UNHANDLED = "unhandled"
+
+        // Cap unhandled-error detail so the "Show details" pane stays readable.
+        private const val MAX_DETAIL_LEN = 240
 
         /** Set true via [enqueueOneShot] when the user explicitly taps Refresh. */
         private const val KEY_FORCE_REFRESH = "force_refresh"

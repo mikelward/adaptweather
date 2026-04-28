@@ -2,6 +2,7 @@ package app.clothescast.core.data.weather
 
 import app.clothescast.core.domain.model.AlertSeverity
 import app.clothescast.core.domain.model.Location
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
@@ -9,6 +10,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondError
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpHeaders
@@ -147,5 +149,33 @@ class OpenMeteoClientTest {
 
         bundle.today.temperatureMaxC shouldBe 24.0
         bundle.alerts shouldBe emptyList()
+    }
+
+    @Test
+    fun `5xx with html body surfaces as ResponseException, not a deserialization error`() = runTest {
+        // Open-Meteo's gateway occasionally returns 502 with text/html on
+        // upstream blips. Without expectSuccess=true the JSON deserializer
+        // bites first and throws NoTransformationFoundException, which the
+        // worker wouldn't recognise as 5xx and so wouldn't retry.
+        val engine = MockEngine { request ->
+            when (request.url.encodedPath) {
+                "/v1/forecast" -> respond(
+                    content = "<html><body>502 Bad Gateway</body></html>",
+                    status = HttpStatusCode.BadGateway,
+                    headers = headersOf(HttpHeaders.ContentType, "text/html"),
+                )
+                "/v1/warnings" -> respondError(HttpStatusCode.InternalServerError)
+                else -> error("unexpected path ${request.url.encodedPath}")
+            }
+        }
+        val client = OpenMeteoClient(
+            HttpClient(engine) {
+                install(ContentNegotiation) {
+                    json(Json { ignoreUnknownKeys = true })
+                }
+            },
+        )
+
+        shouldThrow<ServerResponseException> { client.fetchForecast(london) }
     }
 }

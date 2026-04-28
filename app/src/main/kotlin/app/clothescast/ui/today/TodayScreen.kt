@@ -182,6 +182,26 @@ internal fun WorkStatusBanner(status: WorkStatus) {
                         text = describeFailure(status),
                         style = MaterialTheme.typography.bodyMedium,
                     )
+                    if (!status.detail.isNullOrBlank()) {
+                        var showDetails by rememberSaveable(status.detail) { mutableStateOf(false) }
+                        Text(
+                            text = stringResource(
+                                if (showDetails) R.string.today_failed_hide_details
+                                else R.string.today_failed_show_details,
+                            ),
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                                .clickable { showDetails = !showDetails },
+                        )
+                        if (showDetails) {
+                            Text(
+                                text = status.detail,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp),
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -189,16 +209,14 @@ internal fun WorkStatusBanner(status: WorkStatus) {
 }
 
 @Composable
-private fun describeFailure(failed: WorkStatus.Failed): String {
-    val message = when (failed.reason) {
+private fun describeFailure(failed: WorkStatus.Failed): String =
+    when (failed.reason) {
         FetchAndNotifyWorker.REASON_UNEXPECTED_HTTP ->
             stringResource(R.string.today_failed_unexpected_http)
         FetchAndNotifyWorker.REASON_UNHANDLED, null ->
             stringResource(R.string.today_failed_unhandled)
         else -> failed.reason
     }
-    return if (failed.detail.isNullOrBlank()) message else "$message (${failed.detail})"
-}
 
 @Composable
 internal fun EmptyState(onRefresh: () -> Unit, isWorking: Boolean = false) {
