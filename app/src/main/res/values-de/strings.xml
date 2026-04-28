@@ -71,6 +71,28 @@ the rest of the app stays in English.
     <string name="settings_clothes_cond_precip_above">wenn die Regenwahrscheinlichkeit über %.0f%% liegt</string>
 
     <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery picker,
+    "Mention evening events" toggle, and the nightly-only "notify only on
+    events" toggle. German typographic quotes („…") in the description.
+    -->
+    <string name="settings_schedule_title">Täglicher ClothesCast</string>
+    <string name="settings_schedule_time_label">Uhrzeit</string>
+    <string name="settings_schedule_days_label">Wochentage</string>
+    <string name="settings_daily_mention_evening_events">Abendtermine erwähnen</string>
+
+    <string name="settings_tonight_title">Nächtlicher ClothesCast</string>
+    <string name="settings_tonight_description">Ein zweiter ClothesCast am Abend für das Wetter heute Nacht. An ruhigen Abenden bleibt er stumm oder erscheint gar nicht, wenn „Nur benachrichtigen, wenn Abendtermine anstehen“ aktiv ist; an Abenden mit Terminen spielt er einen Ton ab und (wenn du gesprochene Ausgabe aktiviert hast) liest sich selbst vor.</string>
+    <string name="settings_tonight_enabled">Nächtlichen ClothesCast anzeigen</string>
+    <string name="settings_tonight_time_label">Uhrzeit</string>
+    <string name="settings_tonight_days_label">Wochentage</string>
+    <string name="settings_tonight_notify_only_on_events">Nur benachrichtigen, wenn Abendtermine anstehen</string>
+
+    <string name="settings_delivery_label">Zustellung</string>
+    <string name="settings_delivery_notification_only">Nur Benachrichtigung</string>
+    <string name="settings_delivery_tts_only">Nur gesprochen</string>
+    <string name="settings_delivery_notification_and_tts">Benachrichtigung und gesprochen</string>
+
+    <!--
     Today screen — top-bar, refresh toasts, empty state, generation timestamp,
     outfit card, hourly chart, confidence chip, work-status banner. Tone is
     Du-form imperative (intimate / spousal register), matching the app's
