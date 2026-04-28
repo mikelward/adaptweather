@@ -51,12 +51,14 @@ internal fun ScheduleContent(
     tonightTime: LocalTime,
     tonightDays: Set<DayOfWeek>,
     tonightEnabled: Boolean,
+    tonightNotifyOnlyOnEvents: Boolean,
     deliveryMode: DeliveryMode,
     tonightDeliveryMode: DeliveryMode,
     padding: PaddingValues,
     onSetSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetTonightSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetTonightEnabled: (Boolean) -> Unit,
+    onSetTonightNotifyOnlyOnEvents: (Boolean) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
     onSetTonightDeliveryMode: (DeliveryMode) -> Unit,
     onDone: (() -> Unit)? = null,
@@ -74,8 +76,10 @@ internal fun ScheduleContent(
             time = tonightTime,
             days = tonightDays,
             enabled = tonightEnabled,
+            notifyOnlyOnEvents = tonightNotifyOnlyOnEvents,
             deliveryMode = tonightDeliveryMode,
             onSetEnabled = onSetTonightEnabled,
+            onSetNotifyOnlyOnEvents = onSetTonightNotifyOnlyOnEvents,
             onChange = onSetTonightSchedule,
             onSetDeliveryMode = onSetTonightDeliveryMode,
         )
@@ -163,8 +167,10 @@ private fun NightCard(
     time: LocalTime,
     days: Set<DayOfWeek>,
     enabled: Boolean,
+    notifyOnlyOnEvents: Boolean,
     deliveryMode: DeliveryMode,
     onSetEnabled: (Boolean) -> Unit,
+    onSetNotifyOnlyOnEvents: (Boolean) -> Unit,
     onChange: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
 ) {
@@ -199,6 +205,17 @@ private fun NightCard(
                 onChange = { next -> onChange(time, next) },
             )
             DeliveryModeSection(deliveryMode, onSetDeliveryMode)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_tonight_notify_only_on_events),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Switch(checked = notifyOnlyOnEvents, onCheckedChange = onSetNotifyOnlyOnEvents)
+            }
         }
     }
 

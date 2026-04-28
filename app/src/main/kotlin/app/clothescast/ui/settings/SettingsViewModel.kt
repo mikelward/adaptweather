@@ -46,6 +46,7 @@ class SettingsViewModel(
                         tonightTime = prefs.tonightSchedule.time,
                         tonightDays = prefs.tonightSchedule.days,
                         tonightEnabled = prefs.tonightEnabled,
+                        tonightNotifyOnlyOnEvents = prefs.tonightNotifyOnlyOnEvents,
                         deliveryMode = prefs.deliveryMode,
                         tonightDeliveryMode = prefs.tonightDeliveryMode,
                         region = prefs.region,
@@ -211,6 +212,10 @@ class SettingsViewModel(
             // ignored worker run.
             if (prefs.tonightEnabled) rearmAlarm(prefs.tonightSchedule, ForecastPeriod.TONIGHT)
         }
+    }
+
+    fun setTonightNotifyOnlyOnEvents(enabled: Boolean) {
+        viewModelScope.launch { settingsRepository.setTonightNotifyOnlyOnEvents(enabled) }
     }
 
     fun setTonightEnabled(enabled: Boolean) {
