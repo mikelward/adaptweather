@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -31,15 +30,9 @@ import app.clothescast.R
 @Composable
 internal fun ApiKeysContent(
     geminiConfigured: Boolean,
-    openAiConfigured: Boolean,
-    elevenLabsConfigured: Boolean,
     padding: PaddingValues,
     onSetGeminiKey: (String) -> Unit,
     onClearGeminiKey: () -> Unit,
-    onSetOpenAiKey: (String) -> Unit,
-    onClearOpenAiKey: () -> Unit,
-    onSetElevenLabsKey: (String) -> Unit,
-    onClearElevenLabsKey: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -72,52 +65,13 @@ internal fun ApiKeysContent(
                 onSave = onSetGeminiKey,
                 onClear = onClearGeminiKey,
             )
-
-            HorizontalDivider()
-
-            Text(
-                text = stringResource(R.string.settings_api_key_openai_label),
-                style = MaterialTheme.typography.titleSmall,
-            )
-            KeyEntryFields(
-                configured = openAiConfigured,
-                statusText = stringResource(
-                    if (openAiConfigured) R.string.settings_openai_key_status_set
-                    else R.string.settings_openai_key_status_unset,
-                ),
-                placeholder = stringResource(R.string.settings_openai_key_placeholder),
-                saveLabel = stringResource(R.string.settings_openai_key_save),
-                clearLabel = stringResource(R.string.settings_openai_key_clear),
-                onSave = onSetOpenAiKey,
-                onClear = onClearOpenAiKey,
-            )
-
-            HorizontalDivider()
-
-            Text(
-                text = stringResource(R.string.settings_api_key_elevenlabs_label),
-                style = MaterialTheme.typography.titleSmall,
-            )
-            KeyEntryFields(
-                configured = elevenLabsConfigured,
-                statusText = stringResource(
-                    if (elevenLabsConfigured) R.string.settings_elevenlabs_key_status_set
-                    else R.string.settings_elevenlabs_key_status_unset,
-                ),
-                placeholder = stringResource(R.string.settings_elevenlabs_key_placeholder),
-                saveLabel = stringResource(R.string.settings_elevenlabs_key_save),
-                clearLabel = stringResource(R.string.settings_elevenlabs_key_clear),
-                onSave = onSetElevenLabsKey,
-                onClear = onClearElevenLabsKey,
-            )
         }
     }
 }
 
 /**
- * Status text + password-style input + save/clear buttons for one BYOK API key.
- * Reused by the API-keys settings page (once per provider) and the onboarding
- * screen (Gemini only).
+ * Status text + password-style input + save/clear buttons for the Gemini BYOK
+ * API key. Reused by the API-keys settings page and the onboarding screen.
  */
 @Composable
 internal fun KeyEntryFields(

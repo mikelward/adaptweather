@@ -12,7 +12,6 @@ import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
-import app.clothescast.core.domain.model.VoiceLocale
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -247,15 +246,9 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `voice setters round-trip and are independent across providers`() = runTest {
+    fun `gemini voice round-trips`() = runTest {
         subject.setGeminiVoice("Puck")
-        subject.setOpenAiVoice("nova")
-        subject.setElevenLabsVoice("21m00Tcm4TlvDq8ikWAM")
-
-        val prefs = subject.preferences.first()
-        prefs.geminiVoice shouldBe "Puck"
-        prefs.openAiVoice shouldBe "nova"
-        prefs.elevenLabsVoice shouldBe "21m00Tcm4TlvDq8ikWAM"
+        subject.preferences.first().geminiVoice shouldBe "Puck"
     }
 
     @Test
@@ -281,34 +274,6 @@ class SettingsRepositoryTest {
         subject.setDeviceVoice("en-us-x-tpc-network")
         subject.setDeviceVoice("")
         subject.preferences.first().deviceVoice shouldBe null
-    }
-
-    @Test
-    fun `elevenLabs voice defaults to Sarah when nothing stored`() = runTest {
-        subject.preferences.first().elevenLabsVoice shouldBe "EXAVITQu4vr4xnSDxMaL"
-    }
-
-    @Test
-    fun `openAiVoice defaults to nova for non-British locale preferences`() = runTest {
-        subject.setVoiceLocale(VoiceLocale.EN_US)
-        subject.preferences.first().openAiVoice shouldBe "nova"
-
-        subject.setVoiceLocale(VoiceLocale.EN_AU)
-        subject.preferences.first().openAiVoice shouldBe "nova"
-    }
-
-    @Test
-    fun `openAiVoice defaults to fable for the en-GB locale preference`() = runTest {
-        subject.setVoiceLocale(VoiceLocale.EN_GB)
-        subject.preferences.first().openAiVoice shouldBe "fable"
-    }
-
-    @Test
-    fun `explicitly chosen openAiVoice overrides the locale-derived default`() = runTest {
-        subject.setVoiceLocale(VoiceLocale.EN_GB)
-        subject.setOpenAiVoice("alloy")
-
-        subject.preferences.first().openAiVoice shouldBe "alloy"
     }
 
     @Test

@@ -136,7 +136,7 @@ new rule the first time something bites you, not the third.
 
 - **Surface any change to what we send off device.** When a change touches
   data that crosses the device boundary — anything in the rendered insight
-  prose (it's fed to Gemini / OpenAI / ElevenLabs TTS over BYOK keys),
+  prose (it's fed to Gemini's TTS endpoint over the BYOK key),
   weather / geocoding requests, or future analytics / error reporting —
   call it out explicitly in the PR description and commit message. Calendar
   event titles, locations, contacts, identifiers: default is "less, not

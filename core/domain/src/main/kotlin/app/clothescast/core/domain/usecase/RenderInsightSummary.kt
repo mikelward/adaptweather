@@ -174,7 +174,7 @@ class RenderInsightSummary {
         // Need an overlapping event to motivate the clause, but we don't capture
         // the event's title or time — neither is in the rendered prose, and we
         // never want a calendar event title flowing through to off-device TTS
-        // (the prose is fed to Gemini / OpenAI / ElevenLabs over BYOK keys).
+        // (the prose is fed to Gemini's audio endpoint over the BYOK key).
         events.firstOrNull { it.overlaps(peak.time) } ?: return null
         // Prefer "umbrella" when the user has it on their list — that's the clothes
         // item the precip-peak overlap was actually motivated by. Otherwise just

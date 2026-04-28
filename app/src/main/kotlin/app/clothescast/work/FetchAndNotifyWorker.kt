@@ -20,9 +20,7 @@ import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.insight.InsightFormatter
-import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GeminiTtsSpeaker
-import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.resolve
 import app.clothescast.tts.withSpeechAudioFocus
 import app.clothescast.widget.OutfitWidget
@@ -272,9 +270,9 @@ class FetchAndNotifyWorker(
     }
 
     /**
-     * Speaks via the user-preferred engine; on Gemini / OpenAI failure (network,
-     * quota, missing key) falls back to the on-device engine so the user still
-     * hears something. We never let a TTS error fail the worker — the notification
+     * Speaks via the user-preferred engine; on Gemini failure (network, quota,
+     * missing key) falls back to the on-device engine so the user still hears
+     * something. We never let a TTS error fail the worker — the notification
      * path is the primary delivery channel and has already fired by this point.
      */
     private suspend fun speakWithFallback(text: String, prefs: UserPreferences) {
@@ -287,22 +285,6 @@ class FetchAndNotifyWorker(
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
                         DiagLog.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
-                    }
-                }
-                TtsEngine.OPENAI -> {
-                    try {
-                        OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text, locale)
-                        return@withSpeechAudioFocus
-                    } catch (t: Throwable) {
-                        DiagLog.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
-                    }
-                }
-                TtsEngine.ELEVENLABS -> {
-                    try {
-                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = prefs.elevenLabsVoice).speak(text, locale)
-                        return@withSpeechAudioFocus
-                    } catch (t: Throwable) {
-                        DiagLog.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)
                     }
                 }
                 TtsEngine.DEVICE -> Unit

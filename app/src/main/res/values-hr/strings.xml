@@ -79,16 +79,13 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_delivery_notification_and_tts">Obavijest i izgovor</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "Add API key" dialog.
     -->
     <string name="settings_tts_engine_title">Glasovni mehanizam</string>
-    <string name="settings_tts_engine_description">Online mehanizmi (Gemini, OpenAI, ElevenLabs) zvuče puno prirodnije, ali zahtijevaju mrežni poziv prilikom govora i koriste tvoj API ključ za sintezu (jedan kratki poziv po izgovorenom ClothesCastu). Vraća se na glas uređaja ako odabrani mehanizam zakaže.</string>
     <string name="settings_tts_engine_device">Uređaj (offline, besplatno)</string>
     <string name="settings_tts_engine_gemini">Gemini (visoka kvaliteta, online)</string>
-    <string name="settings_tts_engine_openai">OpenAI (visoka kvaliteta, online)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (najviša kvaliteta, online)</string>
 
     <string name="settings_tts_voice_label">Glas</string>
     <string name="settings_tts_voice_dismiss">Gotovo</string>
@@ -194,34 +191,19 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_tts_voice_locale_fa_ir">Perzijski (Iran)</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key field placeholder, and
-    save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
-    elevenlabs.io) stay verbatim.
+    API keys screen — single block (Gemini) with status copy, paste-key
+    field placeholder, and save / clear buttons. URL (aistudio.google.com)
+    stays verbatim.
     -->
     <string name="settings_api_keys_title">API ključevi</string>
     <string name="settings_api_keys_description">Postavi API ključeve za online glasovne mehanizme koje želiš koristiti. Ključevi su šifrirani u Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Gemini ključ je postavljen.</string>
     <string name="settings_api_key_status_unset">Gemini ključ nije postavljen. Nabavi ga na aistudio.google.com za korištenje Gemini glasova.</string>
     <string name="settings_api_key_placeholder">Zalijepi svoj Gemini API ključ</string>
     <string name="settings_api_key_save">Spremi Gemini ključ</string>
     <string name="settings_api_key_clear">Izbriši spremljeni Gemini ključ</string>
-
-    <string name="settings_openai_key_status_set">OpenAI ključ je postavljen.</string>
-    <string name="settings_openai_key_status_unset">OpenAI ključ nije postavljen. Nabavi ga na platform.openai.com za korištenje OpenAI glasova.</string>
-    <string name="settings_openai_key_placeholder">Zalijepi svoj OpenAI API ključ</string>
-    <string name="settings_openai_key_save">Spremi OpenAI ključ</string>
-    <string name="settings_openai_key_clear">Izbriši spremljeni OpenAI ključ</string>
-
-    <string name="settings_elevenlabs_key_status_set">ElevenLabs ključ je postavljen.</string>
-    <string name="settings_elevenlabs_key_status_unset">ElevenLabs ključ nije postavljen. Nabavi ga na elevenlabs.io za korištenje ElevenLabs glasova.</string>
-    <string name="settings_elevenlabs_key_placeholder">Zalijepi svoj ElevenLabs API ključ</string>
-    <string name="settings_elevenlabs_key_save">Spremi ElevenLabs ključ</string>
-    <string name="settings_elevenlabs_key_clear">Izbriši spremljeni ElevenLabs ključ</string>
 
     <!--
     Location screen — device-location toggle, manual city search +

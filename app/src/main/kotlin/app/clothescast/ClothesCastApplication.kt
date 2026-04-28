@@ -4,9 +4,7 @@ import android.app.Application
 import app.clothescast.alarm.DailyAlarmScheduler
 import app.clothescast.calendar.CalendarContractEventReader
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
-import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.data.tts.GeminiTtsClient
-import app.clothescast.core.data.tts.OpenAITtsClient
 import app.clothescast.core.data.weather.OpenMeteoClient
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.repository.CalendarEventReader
@@ -40,10 +38,10 @@ import kotlinx.serialization.json.Json
  * the Worker / UI / receivers all share. Will move to Hilt once we have more than a
  * handful of consumers.
  *
- * The TTS *clients* are exposed (Gemini, OpenAI) but not the speakers — speakers wrap
- * a per-call voice choice, so they're constructed at the call site from current
- * preferences. The clients themselves are heavy (share the OkHttp engine) so they
- * stay singletons.
+ * The Gemini TTS *client* is exposed but not the speaker — the speaker wraps
+ * a per-call voice choice, so it's constructed at the call site from current
+ * preferences. The client itself is heavy (shares the OkHttp engine) so it
+ * stays a singleton.
  */
 class ClothesCastApplication : Application() {
     val secureKeyStore: SecureKeyStore by lazy { SecureKeyStore.create(this) }
@@ -70,12 +68,6 @@ class ClothesCastApplication : Application() {
     val androidTtsVoiceEnumerator: AndroidTtsVoiceEnumerator by lazy { AndroidTtsVoiceEnumerator(this) }
     val calendarEventReader: CalendarEventReader by lazy { CalendarContractEventReader(this) }
     val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }
-    val openAiTtsClient: OpenAITtsClient by lazy {
-        OpenAITtsClient(httpClient, secureKeyStore.openAiKeyProvider)
-    }
-    val elevenLabsTtsClient: ElevenLabsTtsClient by lazy {
-        ElevenLabsTtsClient(httpClient, secureKeyStore.elevenLabsKeyProvider)
-    }
 
     private val httpClient: HttpClient by lazy {
         HttpClient(OkHttp) {

@@ -3,25 +3,20 @@ package app.clothescast.tts
 import app.clothescast.core.domain.model.VoiceLocale
 
 /**
- * Curated voice lists for the user-facing voice picker. Each provider has many more
- * options than this — these are the ones surfaced in Settings to keep the picker
+ * Curated voice list for the user-facing voice picker. Gemini ships many more
+ * voices than this — these are the ones surfaced in Settings to keep the picker
  * scannable.
  *
  * The [id] is what's persisted and sent to the API. The [displayName] is shown in the
  * dropdown and is intentionally English-only for v1; if/when we localize, these move
  * to strings.xml.
  *
- * [locale] is the voice's *baked-in* accent — only meaningful for providers whose
- * voices have a fixed accent that can't be reliably steered by prompt. Both
- * ElevenLabs voice clones and OpenAI's `gpt-4o-mini-tts` voices fall into this
- * bucket: OpenAI's `instructions` field documents accent as steerable but in
- * practice the voice's baked-in timbre dominates (we tried both vague and
- * linguist-standard phrasings — "British English accent" and "Standard
- * Southern British accent" — and neither shifts `nova` off American). Null
- * means the picker does not filter that voice by accent — Gemini's prebuilt
- * voices are language-agnostic personalities and reliably follow accent
- * direction in the prompt. The picker only filters by [locale] when it's
- * non-null.
+ * [locale] would be the voice's *baked-in* accent for engines whose voices have a
+ * fixed accent that can't be reliably steered by prompt. Today every voice we ship
+ * is from Gemini, whose prebuilt voices are language-agnostic personalities that
+ * reliably follow accent direction in the prompt — so [locale] is null for all of
+ * them and the picker does no filtering. The field is kept around so a future
+ * accent-locked engine can plug in without reshaping this type.
  */
 data class TtsVoiceOption(
     val id: String,
@@ -73,43 +68,4 @@ val GEMINI_VOICES: List<TtsVoiceOption> = listOf(
     TtsVoiceOption("Puck", "Puck — Upbeat"),
     TtsVoiceOption("Fenrir", "Fenrir — Excitable"),
     TtsVoiceOption("Sadaltager", "Sadaltager — Knowledgeable"),
-)
-
-// OpenAI's stock voices have *baked-in* accents. The `gpt-4o-mini-tts` model
-// documents `instructions` as accepting an accent direction, but field-testing
-// confirmed it doesn't shift the voice off its native accent — only `fable`
-// (the one British voice in the stock library) actually sounds non-American.
-// So treat them like ElevenLabs voices: tag each with its native accent and
-// filter the picker by the user's selected variant.
-//
-// `fable` is the only British voice. There is no Australian voice — en-AU
-// users see the full list via the empty-filter fallback in [filterByVariant].
-// The other five (alloy / echo / onyx / nova / shimmer) sound American.
-val OPENAI_VOICES: List<TtsVoiceOption> = listOf(
-    TtsVoiceOption("alloy", "alloy — Neutral", VoiceLocale.EN_US),
-    TtsVoiceOption("echo", "echo — Soft, male", VoiceLocale.EN_US),
-    TtsVoiceOption("fable", "fable — Storyteller", VoiceLocale.EN_GB),
-    TtsVoiceOption("onyx", "onyx — Deep, male", VoiceLocale.EN_US),
-    TtsVoiceOption("nova", "nova — Bright, female", VoiceLocale.EN_US),
-    TtsVoiceOption("shimmer", "shimmer — Warm, female", VoiceLocale.EN_US),
-)
-
-// ElevenLabs voice IDs are opaque strings; the human-readable name only shows in
-// the picker. These are the popular pre-made library voices. Users with a paid
-// plan can clone their own voice — they'd need to copy/paste the voice ID by
-// hand, which we don't surface in v1.
-//
-// Each entry is tagged with the voice's native accent — ElevenLabs voices are
-// clones of specific speakers, so the accent is fixed and can't be steered by
-// prompt. The Settings picker filters by the user's selected variant; if the
-// filter empties out we fall back to the full list. The v1 library is entirely
-// en-US, so en-GB and en-AU users see the fallback today.
-val ELEVENLABS_VOICES: List<TtsVoiceOption> = listOf(
-    TtsVoiceOption("EXAVITQu4vr4xnSDxMaL", "Sarah — Warm, female", VoiceLocale.EN_US),
-    TtsVoiceOption("21m00Tcm4TlvDq8ikWAM", "Rachel — Calm, female", VoiceLocale.EN_US),
-    TtsVoiceOption("MF3mGyEYCl7XYWbV9V6O", "Elli — Emotional, female", VoiceLocale.EN_US),
-    TtsVoiceOption("pNInz6obpgDQGcFmaJgB", "Adam — Deep, male", VoiceLocale.EN_US),
-    TtsVoiceOption("ErXwobaYiN019PkySvjV", "Antoni — Well-rounded, male", VoiceLocale.EN_US),
-    TtsVoiceOption("TxGEqnHWrfWFTfGW9XjX", "Josh — Young, male", VoiceLocale.EN_US),
-    TtsVoiceOption("VR6AewLTigWG4xSOukaG", "Arnold — Crisp, male", VoiceLocale.EN_US),
 )

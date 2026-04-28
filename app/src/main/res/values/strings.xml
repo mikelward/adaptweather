@@ -77,10 +77,8 @@
     <string name="settings_root_about">About</string>
 
     <string name="settings_api_keys_title">API keys</string>
-    <string name="settings_api_keys_description">Configure the API keys for the online voice engines you want to use. Keys are encrypted at rest using the Android Keystore.</string>
+    <string name="settings_api_keys_description">Configure your Gemini API key to enable the online voice engine. Keys are encrypted at rest using the Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">A Gemini key is configured.</string>
     <string name="settings_api_key_status_unset">No Gemini key configured. Get one at aistudio.google.com to use Gemini voices.</string>
@@ -121,11 +119,9 @@
     <string name="settings_delivery_notification_and_tts">Notification and spoken aloud</string>
 
     <string name="settings_tts_engine_title">Voice engine</string>
-    <string name="settings_tts_engine_description">Online engines (Gemini, OpenAI, ElevenLabs) sound much more natural but need a network call at speak-time and use your API key for synthesis (one short call per spoken ClothesCast). Falls back to the device voice if the chosen engine fails.</string>
+    <string name="settings_tts_engine_description">The online Gemini engine sounds much more natural but needs a network call at speak-time and uses your API key for synthesis (one short call per spoken ClothesCast). Falls back to the device voice if Gemini fails.</string>
     <string name="settings_tts_engine_device">Device (offline, free)</string>
     <string name="settings_tts_engine_gemini">Gemini (high quality, online)</string>
-    <string name="settings_tts_engine_openai">OpenAI (high quality, online)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (highest quality, online)</string>
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
     <!-- Device-voice picker (TtsEngine.DEVICE only). %1$s is a voice id like
@@ -175,7 +171,7 @@
     <string name="settings_tts_voice_locale_fa_ir">Persian (Iran)</string>
     <string name="settings_tts_test">Test voice</string>
     <!-- Shown next to the engine picker when the chosen engine's API key isn't
-         configured. %1$s is the engine name ("Gemini" / "OpenAI" / "ElevenLabs"). -->
+         configured. %1$s is the engine name ("Gemini"). -->
     <string name="settings_tts_no_key_hint">No %1$s key configured — add one to enable this engine.</string>
     <!-- Button next to the missing-key hint that opens a paste-key dialog. -->
     <string name="settings_tts_add_api_key">Add API key</string>
@@ -185,18 +181,6 @@
     <string name="settings_tts_add_api_key_cancel">Cancel</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
     <string name="settings_tts_test_sample">Today\'s ClothesCast: mild, with rain at 3pm. Wear a jacket.</string>
-
-    <string name="settings_openai_key_status_set">An OpenAI key is configured.</string>
-    <string name="settings_openai_key_status_unset">No OpenAI key configured. Get one at platform.openai.com to use OpenAI voices.</string>
-    <string name="settings_openai_key_placeholder">Paste your OpenAI API key</string>
-    <string name="settings_openai_key_save">Save OpenAI key</string>
-    <string name="settings_openai_key_clear">Clear stored OpenAI key</string>
-
-    <string name="settings_elevenlabs_key_status_set">An ElevenLabs key is configured.</string>
-    <string name="settings_elevenlabs_key_status_unset">No ElevenLabs key configured. Get one at elevenlabs.io to use ElevenLabs voices.</string>
-    <string name="settings_elevenlabs_key_placeholder">Paste your ElevenLabs API key</string>
-    <string name="settings_elevenlabs_key_save">Save ElevenLabs key</string>
-    <string name="settings_elevenlabs_key_clear">Clear stored ElevenLabs key</string>
 
     <string name="settings_region_language_title">Language</string>
     <!-- Caption rendered under the Region > Language title, pairing with

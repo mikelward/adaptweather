@@ -26,11 +26,6 @@ Code TODOs in source files are linked from here when they exist.
 
 - [x] Gemini TTS as opt-in voice engine (PR #27)
 - [x] Diagnostic "Test Gemini voice" button in Settings (PR #28)
-- [ ] **OpenAI TTS** as a third voice engine. BYOK pattern, same as Gemini.
-- [ ] **Voice picker** for both Gemini and OpenAI. Currently Gemini is
-      hardcoded to `Kore`.
-- [ ] ElevenLabs / Azure as further options (only after the abstractions are
-      proven by OpenAI).
 
 ## Calendar integration (next-up after TTS)
 
@@ -107,4 +102,4 @@ Code TODOs in source files are linked from here when they exist.
 | File | Note |
 |---|---|
 | `app/build.gradle.kts:9` | Pin namespace + applicationId before first distribution. |
-| `app/src/main/kotlin/app/clothescast/tts/AndroidTtsSpeaker.kt:30` | Evaluate higher-quality TTS alternatives. (Gemini + OpenAI now landed.) |
+| `app/src/main/kotlin/app/clothescast/tts/AndroidTtsSpeaker.kt:30` | Evaluate higher-quality TTS alternatives. (Gemini now landed.) |

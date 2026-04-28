@@ -43,15 +43,10 @@ import app.clothescast.R
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.tts.DeviceVoice
-import app.clothescast.tts.ELEVENLABS_VOICES
-import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GEMINI_VOICES
 import app.clothescast.tts.GOOGLE_TTS_PACKAGE
 import app.clothescast.tts.GeminiTtsSpeaker
-import app.clothescast.tts.OPENAI_VOICES
-import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.TtsVoiceOption
-import app.clothescast.tts.filterByVariant
 import app.clothescast.tts.resolve
 import app.clothescast.tts.withSpeechAudioFocus
 import java.text.Collator
@@ -65,25 +60,17 @@ import kotlinx.coroutines.withContext
 internal fun VoiceContent(
     selected: TtsEngine,
     geminiVoice: String,
-    openAiVoice: String,
-    elevenLabsVoice: String,
     deviceVoice: String?,
     deviceVoices: List<DeviceVoice>,
     effectiveDeviceVoice: DeviceVoice?,
     geminiKeyConfigured: Boolean,
-    openAiKeyConfigured: Boolean,
-    elevenLabsKeyConfigured: Boolean,
     voiceLocale: VoiceLocale,
     padding: PaddingValues,
     onSetTtsEngine: (TtsEngine) -> Unit,
     onSetGeminiVoice: (String) -> Unit,
-    onSetOpenAiVoice: (String) -> Unit,
-    onSetElevenLabsVoice: (String) -> Unit,
     onSetDeviceVoice: (String?) -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
     onSetGeminiKey: (String) -> Unit,
-    onSetOpenAiKey: (String) -> Unit,
-    onSetElevenLabsKey: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -96,12 +83,12 @@ internal fun VoiceContent(
     // atomic with respect to other UI events.
     var isPreviewing by remember { mutableStateOf(false) }
 
-    fun preview(engine: TtsEngine, gVoice: String, oVoice: String, eVoice: String, dVoice: String?, locale: VoiceLocale) {
+    fun preview(engine: TtsEngine, gVoice: String, dVoice: String?, locale: VoiceLocale) {
         if (isPreviewing) return
         isPreviewing = true
         coroutineScope.launch {
             try {
-                runTtsPreview(context, engine, gVoice, oVoice, eVoice, dVoice, locale)
+                runTtsPreview(context, engine, gVoice, dVoice, locale)
             } finally {
                 isPreviewing = false
             }
@@ -116,9 +103,8 @@ internal fun VoiceContent(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        // Locale lives outside the engine card now: it drives the OpenAI default voice
-        // (en-GB → fable, else nova) as well as the device engine, so users on any
-        // engine can pick it without first switching engine.
+        // Locale lives outside the engine card so users on any engine can pick
+        // it without first switching engine.
         SectionCard(title = stringResource(R.string.settings_tts_voice_locale_label)) {
             Text(
                 text = stringResource(R.string.settings_tts_voice_locale_description),
@@ -130,7 +116,7 @@ internal fun VoiceContent(
                 enabled = !isPreviewing,
                 onSelect = {
                     onSetVoiceLocale(it)
-                    preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, it)
+                    preview(selected, geminiVoice, deviceVoice, it)
                 },
             )
         }
@@ -148,7 +134,7 @@ internal fun VoiceContent(
                     enabled = !isPreviewing,
                     onSelect = {
                         onSetTtsEngine(engine)
-                        preview(engine, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        preview(engine, geminiVoice, deviceVoice, voiceLocale)
                     },
                 )
             }
@@ -168,55 +154,11 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = {
                             onSetGeminiVoice(it)
-                            preview(TtsEngine.GEMINI, it, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                            preview(TtsEngine.GEMINI, it, deviceVoice, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
-                    }
-                }
-                TtsEngine.OPENAI -> {
-                    if (!openAiKeyConfigured) {
-                        MissingKeyHint(
-                            engineName = stringResource(R.string.settings_api_key_openai_label),
-                            placeholder = stringResource(R.string.settings_openai_key_placeholder),
-                            onSaveKey = onSetOpenAiKey,
-                        )
-                    }
-                    VoicePicker(
-                        title = stringResource(R.string.settings_tts_voice_label),
-                        voices = OPENAI_VOICES.filterByVariant(voiceLocale, keepSelected = openAiVoice),
-                        selectedId = openAiVoice,
-                        enabled = !isPreviewing,
-                        onSelect = {
-                            onSetOpenAiVoice(it)
-                            preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice, deviceVoice, voiceLocale)
-                        },
-                    )
-                    TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
-                    }
-                }
-                TtsEngine.ELEVENLABS -> {
-                    if (!elevenLabsKeyConfigured) {
-                        MissingKeyHint(
-                            engineName = stringResource(R.string.settings_api_key_elevenlabs_label),
-                            placeholder = stringResource(R.string.settings_elevenlabs_key_placeholder),
-                            onSaveKey = onSetElevenLabsKey,
-                        )
-                    }
-                    VoicePicker(
-                        title = stringResource(R.string.settings_tts_voice_label),
-                        voices = ELEVENLABS_VOICES.filterByVariant(voiceLocale),
-                        selectedId = elevenLabsVoice,
-                        enabled = !isPreviewing,
-                        onSelect = {
-                            onSetElevenLabsVoice(it)
-                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, deviceVoice, voiceLocale)
-                        },
-                    )
-                    TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        preview(selected, geminiVoice, deviceVoice, voiceLocale)
                     }
                 }
                 TtsEngine.DEVICE -> {
@@ -230,11 +172,11 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = { picked ->
                             onSetDeviceVoice(picked)
-                            preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, picked, voiceLocale)
+                            preview(selected, geminiVoice, picked, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        preview(selected, geminiVoice, deviceVoice, voiceLocale)
                     }
                 }
             }
@@ -597,20 +539,18 @@ private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
 /**
  * Plays a preview through the chosen engine + voice. Uses a fixed weather-y
  * sample (rather than the latest cached prose) so every preview tap exercises
- * the brand name's pronunciation and costs the same number of BYOK tokens —
- * making it easier to compare engines and voices on identical words. The
- * sample is read in the selected *voice locale* so the preview matches the
- * accent and language the user is auditioning, not the app's UI locale.
+ * the brand name's pronunciation and costs the same number of Gemini tokens —
+ * making it easier to compare voices on identical words. The sample is read
+ * in the selected *voice locale* so the preview matches the accent and
+ * language the user is auditioning, not the app's UI locale.
  *
  * Errors are surfaced as a Toast so the user can see *why* the voice failed
- * (most often: missing or wrong API key for the chosen provider).
+ * (most often: missing or wrong API key for Gemini).
  */
 private suspend fun runTtsPreview(
     context: android.content.Context,
     engine: TtsEngine,
     geminiVoice: String,
-    openAiVoice: String,
-    elevenLabsVoice: String,
     deviceVoice: String?,
     voiceLocale: VoiceLocale,
 ) {
@@ -633,10 +573,6 @@ private suspend fun runTtsPreview(
                 when (engine) {
                     TtsEngine.GEMINI ->
                         GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text, locale)
-                    TtsEngine.OPENAI ->
-                        OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text, locale)
-                    TtsEngine.ELEVENLABS ->
-                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = elevenLabsVoice).speak(text, locale)
                     TtsEngine.DEVICE ->
                         app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
                 }
@@ -671,6 +607,4 @@ private suspend fun runTtsPreview(
 private fun ttsEngineLabel(engine: TtsEngine): Int = when (engine) {
     TtsEngine.DEVICE -> R.string.settings_tts_engine_device
     TtsEngine.GEMINI -> R.string.settings_tts_engine_gemini
-    TtsEngine.OPENAI -> R.string.settings_tts_engine_openai
-    TtsEngine.ELEVENLABS -> R.string.settings_tts_engine_elevenlabs
 }
