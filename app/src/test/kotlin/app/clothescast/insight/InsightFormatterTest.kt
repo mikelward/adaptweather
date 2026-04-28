@@ -388,4 +388,24 @@ class InsightFormatterTest {
         )
         out shouldBe "Hoy hará templado. Lleva paraguas esta noche, lluvia a las 21."
     }
+
+    @Test
+    fun `es — catalog keys still translate when source casing and whitespace are messy`() {
+        val out = spanishSubject.format(
+            summary(
+                clothes = ClothesClause(listOf(" Sweater ", "JACKET")),
+            ),
+        )
+        out shouldBe "Hoy hará templado. Lleva jersey y chaqueta."
+    }
+
+    @Test
+    fun `clothes clause ignores blank entries instead of speaking empty nouns`() {
+        val out = subject.format(
+            summary(
+                clothes = ClothesClause(listOf(" ", "sweater", "")),
+            ),
+        )
+        out shouldBe "Today will be mild. Wear a sweater."
+    }
 }
