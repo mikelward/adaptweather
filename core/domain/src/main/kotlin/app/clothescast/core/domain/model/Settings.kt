@@ -181,6 +181,14 @@ data class UserPreferences(
      * empty evenings, which is what the existing tonight notifier did.
      */
     val tonightNotifyOnlyOnEvents: Boolean = false,
+    /**
+     * When true, the morning insight tacks on a brief mention of any evening
+     * calendar events with a clothing tip keyed to the *evening* forecast — e.g.
+     * "Bring a jacket for your 9pm dinner." The tip is gated on
+     * [useCalendarEvents] (no events without that), and only fires when at least
+     * one clothes rule triggers against the evening hourly slice. Off by default.
+     */
+    val dailyMentionEveningEvents: Boolean = false,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

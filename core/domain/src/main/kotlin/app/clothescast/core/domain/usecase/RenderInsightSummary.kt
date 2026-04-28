@@ -50,6 +50,8 @@ class RenderInsightSummary {
         alerts: List<WeatherAlert> = emptyList(),
         events: List<CalendarEvent> = emptyList(),
         period: ForecastPeriod = ForecastPeriod.TODAY,
+        eveningEvents: List<CalendarEvent> = emptyList(),
+        eveningTriggeredRules: List<ClothesRule> = emptyList(),
     ): InsightSummary {
         val items = todayTriggeredRules.map { it.item }
         val peak = peakPrecip(today)
@@ -61,6 +63,7 @@ class RenderInsightSummary {
             clothes = clothesClause(items),
             precip = peak?.let { PrecipClause(it.condition, it.time) },
             calendarTieIn = calendarTieInClause(items, peak, events),
+            eveningEventTieIn = eveningEventTieInClause(period, eveningEvents, eveningTriggeredRules),
         )
     }
 
@@ -143,6 +146,27 @@ class RenderInsightSummary {
         // take the first triggered item, mirroring rule 4's ordering.
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return CalendarTieInClause(item = item, time = peak.time, title = event.title)
+    }
+
+    /**
+     * Evening-event tie-in for the morning insight. Only emits on [ForecastPeriod.TODAY]
+     * — the tonight pass already covers evening events via [calendarTieInClause].
+     * Picks the first evening event with a known start time and pairs it with the
+     * first clothes item triggered by the evening forecast slice (umbrella first if
+     * present). Caller is responsible for filtering [eveningEvents] to actually-evening
+     * events and for evaluating clothes rules against the evening forecast.
+     */
+    private fun eveningEventTieInClause(
+        period: ForecastPeriod,
+        eveningEvents: List<CalendarEvent>,
+        eveningTriggeredRules: List<ClothesRule>,
+    ): CalendarTieInClause? {
+        if (period != ForecastPeriod.TODAY) return null
+        if (eveningEvents.isEmpty() || eveningTriggeredRules.isEmpty()) return null
+        val event = eveningEvents.firstOrNull { !it.allDay } ?: return null
+        val items = eveningTriggeredRules.map { it.item }
+        val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
+        return CalendarTieInClause(item = item, time = event.start, title = event.title)
     }
 
     private data class PeakPrecip(val time: LocalTime, val condition: WeatherCondition)

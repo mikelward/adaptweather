@@ -49,6 +49,7 @@ class SettingsViewModel(
                         tonightNotifyOnlyOnEvents = prefs.tonightNotifyOnlyOnEvents,
                         deliveryMode = prefs.deliveryMode,
                         tonightDeliveryMode = prefs.tonightDeliveryMode,
+                        dailyMentionEveningEvents = prefs.dailyMentionEveningEvents,
                         region = prefs.region,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
@@ -216,6 +217,10 @@ class SettingsViewModel(
 
     fun setTonightNotifyOnlyOnEvents(enabled: Boolean) {
         viewModelScope.launch { settingsRepository.setTonightNotifyOnlyOnEvents(enabled) }
+    }
+
+    fun setDailyMentionEveningEvents(enabled: Boolean) {
+        viewModelScope.launch { settingsRepository.setDailyMentionEveningEvents(enabled) }
     }
 
     fun setTonightEnabled(enabled: Boolean) {

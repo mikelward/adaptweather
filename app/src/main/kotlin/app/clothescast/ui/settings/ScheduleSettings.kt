@@ -54,6 +54,7 @@ internal fun ScheduleContent(
     tonightDays: Set<DayOfWeek>,
     tonightEnabled: Boolean,
     tonightNotifyOnlyOnEvents: Boolean,
+    dailyMentionEveningEvents: Boolean,
     deliveryMode: DeliveryMode,
     tonightDeliveryMode: DeliveryMode,
     padding: PaddingValues,
@@ -61,6 +62,7 @@ internal fun ScheduleContent(
     onSetTonightSchedule: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetTonightEnabled: (Boolean) -> Unit,
     onSetTonightNotifyOnlyOnEvents: (Boolean) -> Unit,
+    onSetDailyMentionEveningEvents: (Boolean) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
     onSetTonightDeliveryMode: (DeliveryMode) -> Unit,
     onDone: (() -> Unit)? = null,
@@ -73,7 +75,15 @@ internal fun ScheduleContent(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        DayCard(time, days, deliveryMode, onSetSchedule, onSetDeliveryMode)
+        DayCard(
+            time = time,
+            days = days,
+            deliveryMode = deliveryMode,
+            mentionEveningEvents = dailyMentionEveningEvents,
+            onChange = onSetSchedule,
+            onSetDeliveryMode = onSetDeliveryMode,
+            onSetMentionEveningEvents = onSetDailyMentionEveningEvents,
+        )
         NightCard(
             time = tonightTime,
             days = tonightDays,
@@ -104,8 +114,10 @@ private fun DayCard(
     time: LocalTime,
     days: Set<DayOfWeek>,
     deliveryMode: DeliveryMode,
+    mentionEveningEvents: Boolean,
     onChange: (LocalTime, Set<DayOfWeek>) -> Unit,
     onSetDeliveryMode: (DeliveryMode) -> Unit,
+    onSetMentionEveningEvents: (Boolean) -> Unit,
 ) {
     var pickerOpen by remember { mutableStateOf(false) }
 
@@ -121,6 +133,11 @@ private fun DayCard(
             onChange = { next -> onChange(time, next) },
         )
         DeliveryModeSection(deliveryMode, onSetDeliveryMode)
+        ToggleRow(
+            label = stringResource(R.string.settings_daily_mention_evening_events),
+            checked = mentionEveningEvents,
+            onCheckedChange = onSetMentionEveningEvents,
+        )
     }
 
     if (pickerOpen) {

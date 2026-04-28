@@ -102,6 +102,7 @@
     <string name="settings_schedule_title">Daily insight</string>
     <string name="settings_schedule_time_label">Time</string>
     <string name="settings_schedule_days_label">Days of the week</string>
+    <string name="settings_daily_mention_evening_events">Mention evening events</string>
 
     <string name="settings_tonight_title">Nightly insight</string>
     <string name="settings_tonight_description">A second insight in the evening that covers tonight\'s weather. On quiet evenings it stays silent, or doesn\'t appear at all if "Only notify when there are evening events" is on; on event evenings it plays a sound and (if you\'ve enabled spoken-aloud delivery) reads itself out.</string>

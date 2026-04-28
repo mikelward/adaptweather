@@ -74,6 +74,10 @@ class SettingsRepository(
         dataStore.edit { it[TONIGHT_NOTIFY_ONLY_ON_EVENTS] = enabled }
     }
 
+    suspend fun setDailyMentionEveningEvents(enabled: Boolean) {
+        dataStore.edit { it[DAILY_MENTION_EVENING_EVENTS] = enabled }
+    }
+
     suspend fun setDeliveryMode(mode: DeliveryMode) {
         dataStore.edit { it[DELIVERY_MODE] = mode.name }
     }
@@ -193,6 +197,7 @@ class SettingsRepository(
         // no calendar events, so it's not noisy out of the box).
         val tonightEnabled = this[TONIGHT_ENABLED] != false
         val tonightNotifyOnlyOnEvents = this[TONIGHT_NOTIFY_ONLY_ON_EVENTS] == true
+        val dailyMentionEveningEvents = this[DAILY_MENTION_EVENING_EVENTS] == true
         val zone = zoneIdProvider()
 
         return UserPreferences(
@@ -214,6 +219,7 @@ class SettingsRepository(
             tonightEnabled = tonightEnabled,
             tonightDeliveryMode = tonightDeliveryMode,
             tonightNotifyOnlyOnEvents = tonightNotifyOnlyOnEvents,
+            dailyMentionEveningEvents = dailyMentionEveningEvents,
         )
     }
 
@@ -265,6 +271,7 @@ class SettingsRepository(
         private val TONIGHT_ENABLED = booleanPreferencesKey("tonight_enabled")
         private val TONIGHT_DELIVERY_MODE = stringPreferencesKey("tonight_delivery_mode")
         private val TONIGHT_NOTIFY_ONLY_ON_EVENTS = booleanPreferencesKey("tonight_notify_only_on_events")
+        private val DAILY_MENTION_EVENING_EVENTS = booleanPreferencesKey("daily_mention_evening_events")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

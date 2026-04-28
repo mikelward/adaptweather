@@ -184,6 +184,77 @@ class RenderInsightSummaryTest {
     }
 
     @Test
+    fun `evening event tie-in pairs first evening event with first triggered evening item`() {
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = listOf(jacketRule),
+        )
+        val tie = out.eveningEventTieIn
+        tie.shouldNotBeNull()
+        tie!!.item shouldBe "jacket"
+        tie.time shouldBe LocalTime.of(21, 0)
+        tie.title shouldBe "dinner"
+    }
+
+    @Test
+    fun `evening event tie-in prefers umbrella when on the triggered list`() {
+        val event = CalendarEvent("show", LocalTime.of(20, 0), LocalTime.of(22, 0))
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = listOf(jacketRule, umbrellaRule),
+        )
+        out.eveningEventTieIn.shouldNotBeNull()
+        out.eveningEventTieIn!!.item shouldBe "umbrella"
+    }
+
+    @Test
+    fun `evening event tie-in is omitted on the tonight period`() {
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            period = ForecastPeriod.TONIGHT,
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = listOf(jacketRule),
+        )
+        out.eveningEventTieIn.shouldBeNull()
+    }
+
+    @Test
+    fun `evening event tie-in is omitted when no clothes rules trigger against the evening`() {
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = emptyList(),
+        )
+        out.eveningEventTieIn.shouldBeNull()
+    }
+
+    @Test
+    fun `evening event tie-in skips all-day events`() {
+        val allDay = CalendarEvent("public holiday", LocalTime.MIDNIGHT, LocalTime.MIDNIGHT, allDay = true)
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(allDay),
+            eveningTriggeredRules = listOf(jacketRule),
+        )
+        out.eveningEventTieIn.shouldBeNull()
+    }
+
+    @Test
     fun `calendar tie-in is omitted when the peak condition is non-precipitation`() {
         // Even with the umbrella rule firing on day-level probability and an event
         // overlapping the peak hour, a cloudy peak shouldn't motivate a tie-in —
