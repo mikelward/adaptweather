@@ -243,6 +243,42 @@ spousal register), matching the existing settings_tts_test_sample's
     <string name="settings_location_no_results">Nema rezultata.</string>
 
     <!--
+    Notification channels (system Settings → App → Notifications) and
+    the per-channel notification titles. Three channels: daily, nightly
+    (default + silent variants), weather alerts.
+    -->
+    <string name="notification_channel_daily_insight_name">Dnevni ClothesCast</string>
+    <string name="notification_channel_daily_insight_description">Jutarnji vremenski sažetak koji je uključen.</string>
+    <string name="notification_daily_insight_title">Današnje vrijeme</string>
+
+    <string name="notification_channel_tonight_insight_default_name">Noćni ClothesCast (s događajima)</string>
+    <string name="notification_channel_tonight_insight_default_description">Večernji vremenski sažetak kada večeras imaš događaje u kalendaru. Reproducira tvoj zadani zvuk obavijesti.</string>
+    <string name="notification_channel_tonight_insight_silent_name">Noćni ClothesCast (tihi)</string>
+    <string name="notification_channel_tonight_insight_silent_description">Večernji vremenski sažetak kad ti je večer slobodna. Šalje se tiho — možeš ga pogledati na zaključanom zaslonu, ali neće proizvesti zvuk.</string>
+    <string name="notification_tonight_insight_title">Vrijeme večeras</string>
+
+    <string name="notification_channel_weather_alerts_name">Upozorenja o nepogodama</string>
+    <string name="notification_channel_weather_alerts_description">Upozorenja visokog prioriteta za teška ili ekstremna vremenska zbivanja u tvom području. Šalju se čim ih dnevno dohvaćanje otkrije.</string>
+    <string name="notification_weather_alert_title">Vremensko upozorenje: %1$s</string>
+
+    <!-- Notification-permission card. -->
+    <string name="settings_notification_permission_title">Obavijesti su blokirane</string>
+    <string name="settings_notification_permission_description">Bez dopuštenja za obavijesti tvoj dnevni ClothesCast nema gdje. Dopusti ih, kako bi se ClothesCast mogao pojaviti sutra ujutro.</string>
+    <string name="settings_notification_permission_grant">Dopusti obavijesti</string>
+
+    <!-- Calendar opt-in card (Settings → Schedule → Calendar). The
+         description preserves the privacy disclosure ("opisi, sudionici
+         i lokacije … nikad ne napuštaju uređaj"). Quotes around the
+         nested example follow the same „…" house style as the German
+         file. -->
+    <string name="settings_calendar_title">Kalendar</string>
+    <string name="settings_calendar_use_events">Koristi današnje događaje iz kalendara</string>
+    <string name="settings_calendar_description_off">Kada je uključeno, ClothesCast čita današnje događaje iz tvog kalendara na uređaju, kako bi tvoj jutarnji ClothesCast mogao predložiti predmete vezane uz konkretne događaje — na primjer „ponesi kišobran za trčanje u parku u 15 sati“. Koriste se samo naslovi i vremena događaja; opisi, sudionici i lokacije se čitaju, ali nikad ne napuštaju uređaj.</string>
+    <string name="settings_calendar_description_on">Čita današnje događaje iz tvog kalendara na uređaju, kako bi obogatio tvoj jutarnji ClothesCast. U sažetku se koriste samo naslovi i vremena; opisi i sudionici ne. Sve ostaje na uređaju.</string>
+    <string name="settings_calendar_grant_permission">Dopusti pristup kalendaru</string>
+    <string name="settings_calendar_open_settings">Pristup kalendaru odbijen. Dopusti ga u postavkama sustava.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ti-form imperatives: "dodirni", "postavi", "tvoj".
