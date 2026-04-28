@@ -1,6 +1,7 @@
 package app.clothescast.ui.settings
 
 import app.clothescast.diag.DiagLog
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -450,7 +451,9 @@ private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
  * Plays a preview through the chosen engine + voice. Uses a fixed weather-y
  * sample (rather than the latest cached prose) so every preview tap exercises
  * the brand name's pronunciation and costs the same number of BYOK tokens —
- * making it easier to compare engines and voices on identical words.
+ * making it easier to compare engines and voices on identical words. The
+ * sample is read in the selected *voice locale* so the preview matches the
+ * accent and language the user is auditioning, not the app's UI locale.
  *
  * Errors are surfaced as a Toast so the user can see *why* the voice failed
  * (most often: missing or wrong API key for the chosen provider).
@@ -469,7 +472,14 @@ private suspend fun runTtsPreview(
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
         val locale = voiceLocale.resolve()
-        val text = context.getString(R.string.settings_tts_test_sample)
+        // Fetch the sample in the *voice* locale, not the app's UI locale —
+        // playing English prose through a Japanese voice is exactly the
+        // mismatch the user picked the locale to avoid. Falls back to the
+        // default values/strings.xml entry for any locale we haven't
+        // translated yet.
+        val voiceConfig = Configuration(context.resources.configuration).apply { setLocale(locale) }
+        val text = context.createConfigurationContext(voiceConfig)
+            .getString(R.string.settings_tts_test_sample)
         try {
             when (engine) {
                 TtsEngine.GEMINI ->

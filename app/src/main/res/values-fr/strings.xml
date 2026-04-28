@@ -85,4 +85,6 @@ agreement; garment names are listed without articles and read naturally in conte
     <!-- "15h" / "15h30" — French TTS reads as "quinze heures" / "quinze heures trente". -->
     <string name="insight_time_hour">%1$dh</string>
     <string name="insight_time_hour_minutes">%1$dh%2$02d</string>
+
+    <string name="settings_tts_test_sample">Votre ClothesCast d\'aujourd\'hui : doux, avec de la pluie à 15 h. Portez une veste.</string>
 </resources>

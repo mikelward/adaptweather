@@ -81,4 +81,6 @@ The rest of the UI falls through to values/strings.xml (English).
     <!-- "15" — postposition "बजे" comes from insight_precip_at_time wrapper. -->
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+    <string name="settings_tts_test_sample">आज का ClothesCast: हल्का, दोपहर 3 बजे बारिश के साथ। एक जैकेट पहनें।</string>
 </resources>
