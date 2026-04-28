@@ -11,6 +11,7 @@ import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.PrecipClause
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherCondition
 import io.kotest.matchers.shouldBe
@@ -363,4 +364,29 @@ class InsightFormatterTest {
         )
         out shouldBe "Hoy hará templado. Lleva paraguas esta noche, lluvia a las 21."
     }
+
+    @Test
+    fun `id-ID locale resolves Indonesian insight strings instead of English fallback`() {
+        val indonesianSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("id-ID"))
+        indonesianSubject.format(summary()) shouldBe "Hari ini cuacanya hangat sedang."
+    }
+
+    @Test
+    fun `he-IL locale resolves Hebrew insight strings instead of English fallback`() {
+        val hebrewSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("he-IL"))
+        hebrewSubject.format(summary()) shouldBe "היום יהיה נעים."
+    }
+
+    @Test
+    fun `Region ID_ID resolves Indonesian insight strings`() {
+        val indonesianSubject = InsightFormatter.forRegion(context, Region.ID_ID)
+        indonesianSubject.format(summary()) shouldBe "Hari ini cuacanya hangat sedang."
+    }
+
+    @Test
+    fun `Region HE_IL resolves Hebrew insight strings`() {
+        val hebrewSubject = InsightFormatter.forRegion(context, Region.HE_IL)
+        hebrewSubject.format(summary()) shouldBe "היום יהיה נעים."
+    }
+
 }
