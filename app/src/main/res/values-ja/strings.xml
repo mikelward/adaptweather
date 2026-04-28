@@ -10,6 +10,18 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="settings_tts_voice_locale_ja_jp">日本語（日本）</string>
     <string name="settings_tts_voice_locale_label">言語</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">設定</string>
+    <string name="settings_back">戻る</string>
+
+    <string name="settings_root_voice">音声</string>
+    <string name="settings_root_schedule">スケジュール</string>
+    <string name="settings_root_region">地域</string>
+    <string name="settings_root_clothes">服装</string>
+    <string name="settings_root_api_keys">API キー</string>
+    <string name="settings_root_data_sources">データソース</string>
+    <string name="settings_root_about">アプリについて</string>
+
     <string name="garment_sweater">セーター</string>
     <string name="garment_hoodie">パーカー</string>
     <string name="garment_jacket">ジャケット</string>
@@ -19,6 +31,10 @@ Japanese uses the ideographic period (。) for sentence endings.
     <string name="garment_shorts">ショートパンツ</string>
     <string name="garment_pants">ズボン</string>
     <string name="garment_jeans">ジーンズ</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">服のルール</string>
+    <string name="settings_clothes_description">予報がこれらのしきい値のいずれかを超えると、その服が毎日の ClothesCast に表示されます。</string>
 
     <string name="settings_clothes_empty">ルールがありません。追加をタップして作成してください。</string>
     <string name="settings_clothes_add">追加</string>
