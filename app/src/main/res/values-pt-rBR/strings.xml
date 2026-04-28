@@ -187,6 +187,35 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_tts_voice_locale_fa_ir">Persa (Irã)</string>
 
     <!--
+    API keys screen — three identical-shape blocks (Gemini, OpenAI,
+    ElevenLabs), each with status copy, paste-key placeholder, and
+    save / clear buttons. URLs stay verbatim.
+    -->
+    <string name="settings_api_keys_title">Chaves API</string>
+    <string name="settings_api_keys_description">Configure as chaves API para os motores de voz online que você quer usar. As chaves são criptografadas em repouso com o Android Keystore.</string>
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
+
+    <string name="settings_api_key_status_set">Uma chave Gemini está configurada.</string>
+    <string name="settings_api_key_status_unset">Nenhuma chave Gemini configurada. Obtenha uma em aistudio.google.com para usar vozes Gemini.</string>
+    <string name="settings_api_key_placeholder">Cole sua chave API Gemini</string>
+    <string name="settings_api_key_save">Salvar chave Gemini</string>
+    <string name="settings_api_key_clear">Apagar chave Gemini salva</string>
+
+    <string name="settings_openai_key_status_set">Uma chave OpenAI está configurada.</string>
+    <string name="settings_openai_key_status_unset">Nenhuma chave OpenAI configurada. Obtenha uma em platform.openai.com para usar vozes OpenAI.</string>
+    <string name="settings_openai_key_placeholder">Cole sua chave API OpenAI</string>
+    <string name="settings_openai_key_save">Salvar chave OpenAI</string>
+    <string name="settings_openai_key_clear">Apagar chave OpenAI salva</string>
+
+    <string name="settings_elevenlabs_key_status_set">Uma chave ElevenLabs está configurada.</string>
+    <string name="settings_elevenlabs_key_status_unset">Nenhuma chave ElevenLabs configurada. Obtenha uma em elevenlabs.io para usar vozes ElevenLabs.</string>
+    <string name="settings_elevenlabs_key_placeholder">Cole sua chave API ElevenLabs</string>
+    <string name="settings_elevenlabs_key_save">Salvar chave ElevenLabs</string>
+    <string name="settings_elevenlabs_key_clear">Apagar chave ElevenLabs salva</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Brazilian Portuguese você-form (3rd-person singular
