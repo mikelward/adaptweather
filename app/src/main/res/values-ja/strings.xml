@@ -125,11 +125,6 @@ the displayed label localizes.
 
     <string name="settings_tts_test">音声をテスト</string>
     <string name="settings_tts_test_in_flight">テスト中 — お待ちください…</string>
-    <string name="settings_tts_no_key_hint">%1$s キーが未設定です — このエンジンを使用するには追加してください。</string>
-    <string name="settings_tts_add_api_key">API キーを追加</string>
-    <string name="settings_tts_add_api_key_title">%1$s API キーを追加</string>
-    <string name="settings_tts_add_api_key_save">保存</string>
-    <string name="settings_tts_add_api_key_cancel">キャンセル</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -226,8 +221,6 @@ the displayed label localizes.
     save / clear buttons. URLs stay verbatim with the conventional
     space-around-Latin spacing.
     -->
-    <string name="settings_api_keys_title">API キー</string>
-    <string name="settings_api_keys_description">使用したいオンライン音声エンジンの API キーを設定します。キーは Android Keystore で暗号化して保存されます。</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>

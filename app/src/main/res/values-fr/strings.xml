@@ -127,11 +127,6 @@ zh-CN) is unchanged; only the displayed label localizes.
 
     <string name="settings_tts_test">Tester la voix</string>
     <string name="settings_tts_test_in_flight">Test en cours — patiente…</string>
-    <string name="settings_tts_no_key_hint">Aucune clé %1$s configurée — ajoute-en une pour activer ce moteur.</string>
-    <string name="settings_tts_add_api_key">Ajouter une clé API</string>
-    <string name="settings_tts_add_api_key_title">Ajouter une clé API %1$s</string>
-    <string name="settings_tts_add_api_key_save">Enregistrer</string>
-    <string name="settings_tts_add_api_key_cancel">Annuler</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -229,8 +224,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     ElevenLabs), each with status copy, paste-key placeholder, and
     save / clear buttons. URLs stay verbatim.
     -->
-    <string name="settings_api_keys_title">Clés API</string>
-    <string name="settings_api_keys_description">Configure les clés API pour les moteurs vocaux en ligne que tu veux utiliser. Les clés sont chiffrées au repos avec l\'Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>

@@ -119,11 +119,6 @@ only the displayed label localizes.
 
     <string name="settings_tts_test">Проверить голос</string>
     <string name="settings_tts_test_in_flight">Проверка — подожди…</string>
-    <string name="settings_tts_no_key_hint">Нет ключа %1$s — добавь, чтобы включить этот движок.</string>
-    <string name="settings_tts_add_api_key">Добавить ключ API</string>
-    <string name="settings_tts_add_api_key_title">Добавить ключ API %1$s</string>
-    <string name="settings_tts_add_api_key_save">Сохранить</string>
-    <string name="settings_tts_add_api_key_cancel">Отмена</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -219,8 +214,6 @@ only the displayed label localizes.
     ElevenLabs), each with status copy, paste-key placeholder, and
     save / clear buttons. URLs stay verbatim.
     -->
-    <string name="settings_api_keys_title">Ключи API</string>
-    <string name="settings_api_keys_description">Настрой ключи API для онлайн-голосовых движков, которые ты хочешь использовать. Ключи зашифрованы с помощью Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
