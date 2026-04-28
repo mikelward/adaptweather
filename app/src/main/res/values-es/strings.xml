@@ -192,6 +192,35 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="settings_tts_voice_locale_fa_ir">Persa (Irán)</string>
 
     <!--
+    API keys screen — three identical-shape blocks (Gemini, OpenAI,
+    ElevenLabs), each with status copy, paste-key placeholder, and
+    save / clear buttons. URLs stay verbatim.
+    -->
+    <string name="settings_api_keys_title">Claves API</string>
+    <string name="settings_api_keys_description">Configura las claves API para los motores de voz online que quieras usar. Las claves se cifran en reposo usando el Android Keystore.</string>
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
+
+    <string name="settings_api_key_status_set">Hay una clave de Gemini configurada.</string>
+    <string name="settings_api_key_status_unset">No hay clave de Gemini configurada. Consigue una en aistudio.google.com para usar las voces de Gemini.</string>
+    <string name="settings_api_key_placeholder">Pega tu clave API de Gemini</string>
+    <string name="settings_api_key_save">Guardar clave de Gemini</string>
+    <string name="settings_api_key_clear">Borrar clave de Gemini guardada</string>
+
+    <string name="settings_openai_key_status_set">Hay una clave de OpenAI configurada.</string>
+    <string name="settings_openai_key_status_unset">No hay clave de OpenAI configurada. Consigue una en platform.openai.com para usar las voces de OpenAI.</string>
+    <string name="settings_openai_key_placeholder">Pega tu clave API de OpenAI</string>
+    <string name="settings_openai_key_save">Guardar clave de OpenAI</string>
+    <string name="settings_openai_key_clear">Borrar clave de OpenAI guardada</string>
+
+    <string name="settings_elevenlabs_key_status_set">Hay una clave de ElevenLabs configurada.</string>
+    <string name="settings_elevenlabs_key_status_unset">No hay clave de ElevenLabs configurada. Consigue una en elevenlabs.io para usar las voces de ElevenLabs.</string>
+    <string name="settings_elevenlabs_key_placeholder">Pega tu clave API de ElevenLabs</string>
+    <string name="settings_elevenlabs_key_save">Guardar clave de ElevenLabs</string>
+    <string name="settings_elevenlabs_key_clear">Borrar clave de ElevenLabs guardada</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tú-form throughout: "toca", "tu", "configura".
