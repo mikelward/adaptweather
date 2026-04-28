@@ -66,6 +66,14 @@ new rule the first time something bites you, not the third.
   links as plain text, so a single link can hide the rest of the stack
   (and may surface an already-merged PR while obscuring the live one).
   Worth the extra two lines.
+- **Report when Copilot finishes reviewing a fresh push.** Copilot's
+  review runs asynchronously after each push; once its review event lands
+  for the latest commit, surface a one-liner naming the SHA and comment
+  count — e.g. `Copilot reviewed 87d9f02 — 0 comments` or `Copilot
+  reviewed 87d9f02 — 3 comments, addressing now`. Tie it to the *latest*
+  pushed SHA so a stale review of a superseded commit isn't conflated with
+  the current state. The user uses this to know when the automated pass
+  is done vs. still pending.
 - **Report Android versionCode after every merge to `main`.** When a PR
   merges, fetch `main` and run `git rev-list --count origin/main` to get
   the versionCode (`app/build.gradle.kts` derives it from this count).
