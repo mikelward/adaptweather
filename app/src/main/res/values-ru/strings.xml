@@ -77,6 +77,31 @@ earlier passes accidentally mixed in.
     <string name="settings_delivery_notification_and_tts">Уведомление и озвучивание</string>
 
     <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button, missing-API-key
+    hint and the in-line "Добавить ключ API" dialog.
+    -->
+    <string name="settings_tts_engine_title">Голосовой движок</string>
+    <string name="settings_tts_engine_description">Онлайн-движки (Gemini, OpenAI, ElevenLabs) звучат намного естественнее, но требуют сетевого вызова при озвучивании и используют твой ключ API для синтеза (один короткий вызов на каждый озвученный ClothesCast). При сбое выбранного движка возвращается к голосу устройства.</string>
+    <string name="settings_tts_engine_device">Устройство (офлайн, бесплатно)</string>
+    <string name="settings_tts_engine_gemini">Gemini (высокое качество, онлайн)</string>
+    <string name="settings_tts_engine_openai">OpenAI (высокое качество, онлайн)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (наивысшее качество, онлайн)</string>
+
+    <string name="settings_tts_voice_label">Голос</string>
+    <string name="settings_tts_voice_dismiss">Готово</string>
+    <string name="settings_tts_voice_locale_description">Задаёт акцент озвучивания. Не меняет отображаемый текст.</string>
+    <string name="settings_tts_voice_locale_system">По языку телефона</string>
+
+    <string name="settings_tts_test">Проверить голос</string>
+    <string name="settings_tts_test_in_flight">Проверка — подожди…</string>
+    <string name="settings_tts_no_key_hint">Нет ключа %1$s — добавь, чтобы включить этот движок.</string>
+    <string name="settings_tts_add_api_key">Добавить ключ API</string>
+    <string name="settings_tts_add_api_key_title">Добавить ключ API %1$s</string>
+    <string name="settings_tts_add_api_key_save">Сохранить</string>
+    <string name="settings_tts_add_api_key_cancel">Отмена</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ты-form imperatives: "нажми", "установи", "твой".
