@@ -217,6 +217,25 @@ earlier passes accidentally mixed in.
     <string name="settings_elevenlabs_key_clear">Удалить сохранённый ключ ElevenLabs</string>
 
     <!--
+    Location screen — device-location toggle, manual city search +
+    selection, and the "no location set" empty state.
+    -->
+    <string name="settings_location_title">Местоположение</string>
+    <string name="settings_location_use_device">Использовать местоположение устройства</string>
+    <string name="settings_location_grant_background">Разрешить фоновое местоположение (системные настройки)</string>
+    <string name="settings_location_unset">Местоположение не задано — по умолчанию используется Лондон</string>
+    <string name="settings_location_description">Прогноз получается для этого места. Ищи по названию города; результаты приходят из бесплатной службы геокодирования Open-Meteo.</string>
+    <string name="settings_location_description_device_on">Когда включено, ClothesCast при отправке уведомления читает примерное местоположение твоего устройства (только сота / WiFi — без GPS-аппаратной фиксации). Указанное ниже местоположение используется как запасное, если чтение с устройства не удаётся. Фоновое местоположение должно быть разрешено в системных настройках, иначе утренний Worker не сможет его прочитать.</string>
+    <string name="settings_location_set">Задать местоположение</string>
+    <string name="settings_location_change">Изменить местоположение</string>
+    <string name="settings_location_clear">Очистить местоположение</string>
+    <string name="settings_location_search_title">Поиск местоположения</string>
+    <string name="settings_location_query_label">Город или место</string>
+    <string name="settings_location_search">Найти</string>
+    <string name="settings_location_searching">Поиск…</string>
+    <string name="settings_location_no_results">Нет результатов.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. ты-form imperatives: "нажми", "установи", "твой".
