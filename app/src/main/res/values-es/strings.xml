@@ -11,6 +11,18 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="settings_tts_voice_locale_es_mx">Español (México)</string>
     <string name="settings_tts_voice_locale_label">Idioma</string>
 
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_back">Atrás</string>
+
+    <string name="settings_root_voice">Voz</string>
+    <string name="settings_root_schedule">Programación</string>
+    <string name="settings_root_region">Región</string>
+    <string name="settings_root_clothes">Ropa</string>
+    <string name="settings_root_api_keys">Claves API</string>
+    <string name="settings_root_data_sources">Fuentes de datos</string>
+    <string name="settings_root_about">Acerca de</string>
+
     <string name="garment_sweater">Jersey</string>
     <string name="garment_hoodie">Sudadera con capucha</string>
     <string name="garment_jacket">Chaqueta</string>
@@ -20,6 +32,10 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="garment_shorts">Pantalones cortos</string>
     <string name="garment_pants">Pantalones</string>
     <string name="garment_jeans">Vaqueros</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">Reglas de ropa</string>
+    <string name="settings_clothes_description">Si un pronóstico supera uno de estos umbrales, la prenda aparece en tu ClothesCast diario.</string>
 
     <string name="settings_clothes_empty">Sin reglas. Toca Añadir para crear una.</string>
     <string name="settings_clothes_add">Añadir</string>
