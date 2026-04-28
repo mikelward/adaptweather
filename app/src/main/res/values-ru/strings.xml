@@ -420,7 +420,7 @@ only the displayed label localizes.
     <string name="insight_condition_snow">Снег</string>
     <string name="insight_condition_thunderstorm">Гроза</string>
     <string name="insight_condition_unknown">Неизвестно</string>
-    <string name="insight_calendar_tie_in">Возьмите %1$s на %3$s в %2$s.</string>
+    <string name="insight_calendar_tie_in">Возьми %1$s на %3$s в %2$s.</string>
     <string name="insight_tie_in">Возьми %1$s сегодня вечером.</string>
     <string name="insight_tie_in_with_rain">Возьми %1$s сегодня вечером, дождь в %2$s.</string>
     <!-- "15" — preposition "в" comes from surrounding templates. -->
