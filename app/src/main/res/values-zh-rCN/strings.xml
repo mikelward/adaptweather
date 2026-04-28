@@ -121,7 +121,7 @@ label localizes.
     <string name="settings_tts_voice_locale_system">跟随手机语言</string>
 
     <string name="settings_tts_test">测试语音</string>
-    <string name="settings_tts_test_in_flight">测试中 — 请稍候…</string>
+    <string name="settings_tts_test_in_flight">测试中 — 稍等…</string>
     <string name="settings_tts_no_key_hint">未配置 %1$s 密钥 — 添加一个以启用此引擎。</string>
     <string name="settings_tts_add_api_key">添加 API 密钥</string>
     <string name="settings_tts_add_api_key_title">添加 %1$s API 密钥</string>
