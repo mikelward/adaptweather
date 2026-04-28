@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-French translation. Tone is informal "tu" form throughout (intimate /
-spousal register), matching the spouse-style register the user wants.
-Avoid formal "vous" form ("Portez", "Prenez", "Appuyez", "Votre")
-that earlier passes accidentally mixed in.
+French translation (France base) — full UI coverage. Informal tu-form
+throughout (intimate / spousal register). No vous-form anywhere.
 
-Note: articles are omitted from insight_clothes_article_* to avoid gender
-agreement; garment names are listed without articles and read naturally in context.
+Quebec-specific vocabulary overrides live in values-fr-rCA (chandail /
+bogue / Milles).
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. French
+  locales use `insight_time_hour` / `_hour_minutes` ("15h" / "15h30")
+  which are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a
+  French runtime.
+
+French forces gender agreement on past-participle adjectives in the
+tu-form; the welcome leans on "Bienvenue" (invariable interjection)
+and the subtitle uses "c'est prêt" (invariable) so a one-time greeting
+doesn't have to pick masc / fem on the user. Beyond those, the rest
+stays in plain tu-form imperative ("Définis", "Accorde", "Choisis").
+
+Buttons follow the Android French convention of action-infinitives
+("Autoriser les notifications", "Continuer", "Enregistrer"); direct-
+address prose stays in tu-form imperative.
+
+Articles are omitted from insight_clothes_article_* to avoid gender
+agreement on garment names; a flat list ("Porte pull, veste") reads
+naturally in context.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the French names for every offered
+locale (Anglais (États-Unis), Espagnol (Mexique), Chinois
+(simplifié), …). The locale tag stored on disk (en-US / fr-CA /
+zh-CN) is unchanged; only the displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_fr_fr">Français (France)</string>
