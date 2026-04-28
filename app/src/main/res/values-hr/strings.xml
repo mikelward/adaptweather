@@ -18,7 +18,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_root_schedule">Raspored</string>
     <string name="settings_root_region">Regija</string>
     <string name="settings_root_clothes">Odjeća</string>
-    <string name="settings_root_api_keys">API ključevi</string>
     <string name="settings_root_data_sources">Izvori podataka</string>
     <string name="settings_root_about">O aplikaciji</string>
 

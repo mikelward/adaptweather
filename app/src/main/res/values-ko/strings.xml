@@ -52,7 +52,6 @@ displayed label localizes.
     <string name="settings_root_schedule">일정</string>
     <string name="settings_root_region">지역</string>
     <string name="settings_root_clothes">옷</string>
-    <string name="settings_root_api_keys">API 키</string>
     <string name="settings_root_data_sources">데이터 소스</string>
     <string name="settings_root_about">정보</string>
 

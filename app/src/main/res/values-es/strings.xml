@@ -48,7 +48,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_root_schedule">Programación</string>
     <string name="settings_root_region">Región</string>
     <string name="settings_root_clothes">Ropa</string>
-    <string name="settings_root_api_keys">Claves API</string>
     <string name="settings_root_data_sources">Fuentes de datos</string>
     <string name="settings_root_about">Acerca de</string>
 
