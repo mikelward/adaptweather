@@ -347,8 +347,9 @@
     <string name="insight_precip">%1$s %2$s.</string>
     <!-- Inserted as %2$s above when the peak hour is named — e.g. "at 3pm". -->
     <string name="insight_precip_at_time">at %1$s</string>
-    <!-- Replaces the time phrase entirely for early-morning peaks (00:00–04:59)
-         when no calendar tie-in pins the hour. -->
+    <!-- Replaces the time phrase entirely for early-morning peaks
+         (00:00–04:59) — "Rain at 2am" sounds robotic and the user is asleep
+         anyway. -->
     <string name="insight_precip_overnight">overnight</string>
 
     <!--

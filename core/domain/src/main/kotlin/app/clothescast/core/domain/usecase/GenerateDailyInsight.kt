@@ -90,8 +90,10 @@ class GenerateDailyInsight(
         // Morning-only: when the user opted in to "Mention evening events", we
         // also evaluate clothes rules against the evening slice and pass any
         // evening events through so the renderer can attach a tie-in clause
-        // ("Bring a jacket for your 9pm dinner."). Cheap to compute — both
-        // inputs already live in this scope.
+        // ("Bring a jacket tonight." — or "Bring an umbrella tonight, rain at
+        // 9pm." when the evening slice has rain). Event titles never appear
+        // in the rendered prose; see the AGENTS.md privacy note. Cheap to
+        // compute — both inputs already live in this scope.
         val eveningEvents = if (period == ForecastPeriod.TODAY && prefs.dailyMentionEveningEvents) {
             allEvents.filter { !it.allDay && !it.start.isBefore(tonightStart) }
         } else {
