@@ -221,6 +221,25 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="settings_elevenlabs_key_clear">Borrar clave de ElevenLabs guardada</string>
 
     <!--
+    Location screen — device-location toggle, manual city search +
+    selection, and the "no location set" empty state.
+    -->
+    <string name="settings_location_title">Ubicación</string>
+    <string name="settings_location_use_device">Usar la ubicación del dispositivo</string>
+    <string name="settings_location_grant_background">Conceder ubicación en segundo plano (ajustes del sistema)</string>
+    <string name="settings_location_unset">Sin ubicación configurada — usando Londres como predeterminada</string>
+    <string name="settings_location_description">El pronóstico se obtiene para este lugar. Busca por nombre de ciudad; los resultados vienen del servicio gratuito de geocodificación de Open-Meteo.</string>
+    <string name="settings_location_description_device_on">Si está activo, ClothesCast lee la ubicación aproximada de tu dispositivo en el momento de la notificación (solo torre de telefonía / WiFi — sin GPS por hardware). La ubicación de abajo se usa como respaldo si la lectura del dispositivo falla. La ubicación en segundo plano debe concederse en los ajustes del sistema, o el Worker matutino no podrá leerla.</string>
+    <string name="settings_location_set">Establecer ubicación</string>
+    <string name="settings_location_change">Cambiar ubicación</string>
+    <string name="settings_location_clear">Borrar ubicación</string>
+    <string name="settings_location_search_title">Buscar una ubicación</string>
+    <string name="settings_location_query_label">Ciudad o lugar</string>
+    <string name="settings_location_search">Buscar</string>
+    <string name="settings_location_searching">Buscando…</string>
+    <string name="settings_location_no_results">Sin resultados.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. Informal tú-form throughout: "toca", "tu", "configura".
