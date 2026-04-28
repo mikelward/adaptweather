@@ -1,7 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Brazilian Portuguese translation. Scope: insight-prose templates, garment labels,
-clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+Brazilian Portuguese translation — full UI coverage. você-form
+throughout (3rd-person singular imperatives "Toque", "Defina", "Use",
+"Vista") — that's the casual / intimate register in modern Brazilian
+Portuguese; the formal Lei-style register isn't really a thing in BR.
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. BR
+  Portuguese uses `insight_time_hour` / `_hour_minutes` ("15h" /
+  "15h30") which are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a
+  pt-BR runtime.
+
+BR Portuguese forces gender agreement on adjectives; the welcome uses
+"Boas-vindas" (gender-neutral plural-noun pattern, common in Brazilian
+app UX) and the subtitle uses "tudo certo" (invariable) so a one-time
+greeting doesn't have to pick masc / fem on the user. Beyond that, the
+rest stays in plain você-form imperative.
+
+Buttons follow the Android Brazilian convention of action-infinitives
+("Conceder notificações", "Continuar", "Salvar"); direct-address prose
+stays in você-form imperative.
+
+"Look" rather than "Outfit" / "Conjunto" for the widget label —
+standard BR Portuguese fashion-vocab word for an outfit / day's
+clothing combination, reads casual and fits the brand register.
+
+European Portuguese (pt-PT) is currently NOT a separate locale folder
+— pt-PT users today fall through to the en baseline. A future
+values-pt or values-pt-rPT addition would handle the tu-form / European
+spelling differences ("Toca" / "configurações" → "Definições" / etc.);
+out of scope for this BR-only file.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the BR-Portuguese names for every
+offered locale (Inglês (Estados Unidos), Francês (Canadá), Chinês
+(simplificado), …). The locale tag stored on disk (en-US / fr-CA /
+zh-CN) is unchanged; only the displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_pt_br">Português (Brasil)</string>
