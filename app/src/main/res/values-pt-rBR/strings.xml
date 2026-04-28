@@ -73,6 +73,8 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_thunderstorm">Tempestade</string>
     <string name="insight_condition_unknown">Desconhecido</string>
     <string name="insight_calendar_tie_in">Leve %1$s para seu %3$s às %2$s.</string>
+    <string name="insight_tie_in">Leve %1$s esta noite.</string>
+    <string name="insight_tie_in_with_rain">Leve %1$s esta noite, chuva às %2$s.</string>
     <!-- "15h" / "15h30" — Brazilian Portuguese hour notation, TTS reads naturally. -->
     <string name="insight_time_hour">%1$dh</string>
     <string name="insight_time_hour_minutes">%1$dh%2$02d</string>

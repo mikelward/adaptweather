@@ -79,6 +79,8 @@ Chinese uses the ideographic period (。) for sentence endings.
     <string name="insight_condition_unknown">未知</string>
     <!-- "为15点的会议带上雨伞。" — time before event name follows Chinese convention. -->
     <string name="insight_calendar_tie_in">为%2$s的%3$s带上%1$s。</string>
+    <string name="insight_tie_in">今晚带上%1$s。</string>
+    <string name="insight_tie_in_with_rain">今晚带上%1$s，%2$s有雨。</string>
     <!-- "15点" / "15点30分" — Chinese spoken time. insight_precip_at_time is a passthrough. -->
     <string name="insight_time_hour">%1$d点</string>
     <string name="insight_time_hour_minutes">%1$d点%2$d分</string>

@@ -74,6 +74,8 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_thunderstorm">Onweer</string>
     <string name="insight_condition_unknown">Onbekend</string>
     <string name="insight_calendar_tie_in">Neem %1$s mee voor je %3$s om %2$s.</string>
+    <string name="insight_tie_in">Neem %1$s mee vanavond.</string>
+    <string name="insight_tie_in_with_rain">Neem %1$s mee vanavond, regen om %2$s.</string>
     <!-- "15 uur" — preposition "om" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d uur</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>

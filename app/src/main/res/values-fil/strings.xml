@@ -75,6 +75,8 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="insight_condition_thunderstorm">Bagyo</string>
     <string name="insight_condition_unknown">Hindi kilala</string>
     <string name="insight_calendar_tie_in">Magdala ng %1$s para sa %3$s ng %2$s.</string>
+    <string name="insight_tie_in">Magdala ng %1$s ngayong gabi.</string>
+    <string name="insight_tie_in_with_rain">Magdala ng %1$s ngayong gabi, ulan ng %2$s.</string>
     <!-- "15" — preposition "ng" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
