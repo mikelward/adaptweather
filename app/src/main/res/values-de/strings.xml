@@ -15,6 +15,21 @@ the rest of the app stays in English.
          German got added; "English variant: Deutsch" was self-contradictory). -->
     <string name="settings_tts_voice_locale_label">Sprache</string>
 
+    <!--
+    Settings — top bar + root navigation list ("Stimme", "Zeitplan", …).
+    Each row links to a sub-screen translated further below.
+    -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_back">Zurück</string>
+
+    <string name="settings_root_voice">Stimme</string>
+    <string name="settings_root_schedule">Zeitplan</string>
+    <string name="settings_root_region">Region</string>
+    <string name="settings_root_clothes">Kleidung</string>
+    <string name="settings_root_api_keys">API-Schlüssel</string>
+    <string name="settings_root_data_sources">Datenquellen</string>
+    <string name="settings_root_about">Über</string>
+
     <!-- Garment dropdown labels — translated names for the picker on the
          Clothes settings page. The stored key on disk is the en-US form
          ("sweater" / "pants" / …); these strings only change the display.
@@ -29,6 +44,10 @@ the rest of the app stays in English.
     <string name="garment_shorts">Kurze Hose</string>
     <string name="garment_pants">Lange Hose</string>
     <string name="garment_jeans">Jeans</string>
+
+    <!-- Clothes settings — top of the screen. -->
+    <string name="settings_clothes_title">Kleidungsregeln</string>
+    <string name="settings_clothes_description">Wenn eine Vorhersage einen dieser Schwellenwerte überschreitet, erscheint das Kleidungsstück in deinem täglichen ClothesCast.</string>
 
     <!-- Editor strings restored from the pre-lockdown UI, German equivalents. -->
     <string name="settings_clothes_empty">Noch keine Regeln. Tippe auf Hinzufügen, um eine zu erstellen.</string>
