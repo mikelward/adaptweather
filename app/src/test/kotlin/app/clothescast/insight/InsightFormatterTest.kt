@@ -209,6 +209,58 @@ class InsightFormatterTest {
     }
 
     // ---------------------------------------------------------------------
+    // British / Australian English — picks up the en-rGB / en-rAU vocabulary
+    // overrides on `garment_*` resources so the rendered prose matches the
+    // dropdown labels (en-GB user reads "Wear a jumper.", not "Wear a sweater.").
+    // ---------------------------------------------------------------------
+
+    private val britishSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("en-GB"))
+    private val australianSubject = InsightFormatter.forContext(context, Locale.forLanguageTag("en-AU"))
+
+    @Test
+    fun `en-GB — sweater key renders as 'a jumper'`() {
+        britishSubject.format(summary(clothes = ClothesClause(listOf("sweater")))) shouldBe
+            "Today will be mild. Wear a jumper."
+    }
+
+    @Test
+    fun `en-GB — pants key renders bare as 'trousers' (plural ending)`() {
+        britishSubject.format(summary(clothes = ClothesClause(listOf("pants")))) shouldBe
+            "Today will be mild. Wear trousers."
+    }
+
+    @Test
+    fun `en-GB — multi-item list translates each item, article only on the first`() {
+        britishSubject.format(
+            summary(clothes = ClothesClause(listOf("sweater", "pants", "umbrella"))),
+        ) shouldBe "Today will be mild. Wear a jumper, trousers, and umbrella."
+    }
+
+    @Test
+    fun `en-GB — calendar tie-in translates the item`() {
+        val out = britishSubject.format(
+            summary(
+                period = ForecastPeriod.TONIGHT,
+                calendarTieIn = CalendarTieInClause("sweater"),
+            ),
+        )
+        out shouldBe "Tonight will be mild. Bring a jumper tonight."
+    }
+
+    @Test
+    fun `en-AU — sweater renders as 'a jumper' and pants stays 'pants'`() {
+        // values-en-rAU/strings.xml explicitly overrides garment_pants to
+        // "Pants" to block the en-rGB inheritance — Android's API 24+
+        // resource resolver would otherwise pick values-en-rGB ("Trousers")
+        // as a closer match for en-AU than the en-US default, since en-AU
+        // and en-GB share the en-001 CLDR ancestor. The override pins the
+        // natural Aussie usage.
+        australianSubject.format(
+            summary(clothes = ClothesClause(listOf("sweater", "pants"))),
+        ) shouldBe "Today will be mild. Wear a jumper and pants."
+    }
+
+    // ---------------------------------------------------------------------
     // German locale — picks up values-de/strings.xml + GermanClothesPhraser.
     // Spot-checks rather than mirroring every English case: the goal is to
     // confirm the localized resources are actually wired through and that
