@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Hebrew translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+Hebrew is RTL; android:supportsRtl="true" is already set in the manifest.
+Android uses the legacy Java code "iw" for Hebrew resource folders (same
+pattern as Indonesian uses "in" for "id"). The BCP-47 tag in the enum is he-IL.
+Gender-neutral imperatives use the slash notation (לבש/י, קח/י) which is
+standard in Israeli digital communication.
+-->
+<resources>
+    <string name="settings_region_language_he_il">עברית (ישראל)</string>
+    <string name="settings_tts_voice_locale_he_il">עברית (ישראל)</string>
+    <string name="settings_tts_voice_locale_label">שפה</string>
+
+    <string name="garment_sweater">סוודר</string>
+    <string name="garment_hoodie">הודי</string>
+    <string name="garment_jacket">ג׳קט</string>
+    <string name="garment_coat">מעיל</string>
+    <string name="garment_tshirt">חולצת טי</string>
+    <string name="garment_shirt">חולצה</string>
+    <string name="garment_shorts">מכנסיים קצרים</string>
+    <string name="garment_pants">מכנסיים ארוכים</string>
+    <string name="garment_jeans">ג׳ינס</string>
+
+    <string name="settings_clothes_empty">אין חוקים. הקש על הוספה כדי ליצור אחד.</string>
+    <string name="settings_clothes_add">הוספה</string>
+    <string name="settings_clothes_edit">עריכה</string>
+    <string name="settings_clothes_delete">מחיקה</string>
+    <string name="settings_clothes_dialog_add_title">הוספת חוק לגדים</string>
+    <string name="settings_clothes_dialog_edit_title">עריכת חוק לגדים</string>
+    <string name="settings_clothes_item_label">פריט לבוש</string>
+    <string name="settings_clothes_condition_label">תנאי</string>
+    <string name="settings_clothes_value_label_temp_c">סף (°C)</string>
+    <string name="settings_clothes_value_label_precip">סף (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">כאשר הטמפרטורה המורגשת נמוכה מ</string>
+    <string name="settings_clothes_cond_type_temp_above">כאשר הטמפרטורה המורגשת גבוהה מ</string>
+    <string name="settings_clothes_cond_type_precip_above">כאשר הסיכוי לגשם גבוה מ</string>
+    <string name="settings_clothes_cond_temp_below">כשהטמפ׳ המורגשת המינימלית מתחת ל-%.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">כשהטמפ׳ המורגשת המקסימלית מעל %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">כשסיכוי הגשם מעל %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">חולצת טי</string>
+    <string name="today_outfit_top_sweater">סוודר</string>
+    <string name="today_outfit_top_thick_jacket">ז׳קט כבד</string>
+    <string name="today_outfit_bottom_shorts">מכנסיים קצרים</string>
+    <string name="today_outfit_bottom_long_pants">מכנסיים ארוכים</string>
+
+    <string name="insight_lead_today">היום</string>
+    <string name="insight_lead_tonight">הלילה</string>
+    <!-- "היום יהיה נעים." -->
+    <string name="insight_band_single">%1$s יהיה %2$s.</string>
+    <string name="insight_band_range">%1$s יהיה %2$s עד %3$s.</string>
+    <string name="insight_band_freezing">קפוא</string>
+    <string name="insight_band_cold">קר</string>
+    <string name="insight_band_cool">קריר</string>
+    <string name="insight_band_mild">נעים</string>
+    <string name="insight_band_warm">חמים</string>
+    <string name="insight_band_hot">חם</string>
+    <string name="insight_delta_warmer">היום יהיה %1$d° יותר חם.</string>
+    <string name="insight_delta_cooler">היום יהיה %1$d° יותר קר.</string>
+    <string name="insight_alert">אזהרה: %1$s.</string>
+    <!-- Slash notation for gender-neutral imperative (standard in Israeli digital text). -->
+    <string name="insight_clothes_wear">לבש/י %1$s.</string>
+    <!-- Hebrew articles function differently from English "a/an" — no direct equivalent. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <!-- "ו" (vav) = and, directly prefixed (no space before next word). -->
+    <string name="insight_clothes_join_two">%1$s ו%2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s ו%3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <!-- "בשעה 15" — "בשעה" = "at hour". -->
+    <string name="insight_precip_at_time">בשעה %1$s</string>
+    <string name="insight_precip_overnight">בלילה</string>
+    <string name="insight_condition_clear">בהיר</string>
+    <string name="insight_condition_partly_cloudy">מעונן חלקית</string>
+    <string name="insight_condition_cloudy">מעונן</string>
+    <string name="insight_condition_fog">ערפל</string>
+    <string name="insight_condition_drizzle">טפטוף</string>
+    <string name="insight_condition_rain">גשם</string>
+    <string name="insight_condition_snow">שלג</string>
+    <string name="insight_condition_thunderstorm">סופת רעמים</string>
+    <string name="insight_condition_unknown">לא ידוע</string>
+    <string name="insight_tie_in">קח/י %1$s הלילה.</string>
+    <!-- %2$s is the spoken time — "בשעה" embedded here since time is a bare number. -->
+    <string name="insight_tie_in_with_rain">קח/י %1$s הלילה, גשם בשעה %2$s.</string>
+    <!-- Bare number; "בשעה" comes from insight_precip_at_time. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+</resources>

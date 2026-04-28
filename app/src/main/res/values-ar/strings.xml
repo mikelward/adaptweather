@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Arabic translation (Modern Standard Arabic). Scope: insight-prose templates,
+garment labels, clothes-rule editor, outfit-card labels, and region/voice-locale
+picker names. The rest of the UI falls through to values/strings.xml (English).
+Arabic is RTL; android:supportsRtl="true" is already set in the manifest.
+Temperature-band adjectives are in the simple predicate form (no tanwin) so
+they work correctly in both the single-band and range templates.
+-->
+<resources>
+    <string name="settings_region_language_ar_sa">العربية (المملكة العربية السعودية)</string>
+    <string name="settings_tts_voice_locale_ar_sa">العربية (المملكة العربية السعودية)</string>
+    <string name="settings_tts_voice_locale_label">اللغة</string>
+
+    <string name="garment_sweater">سترة صوفية</string>
+    <string name="garment_hoodie">هودي</string>
+    <string name="garment_jacket">جاكيت</string>
+    <string name="garment_coat">معطف</string>
+    <string name="garment_tshirt">تي شيرت</string>
+    <string name="garment_shirt">قميص</string>
+    <string name="garment_shorts">شورت</string>
+    <string name="garment_pants">بنطلون</string>
+    <string name="garment_jeans">جينز</string>
+
+    <string name="settings_clothes_empty">لا توجد قواعد. اضغط على إضافة لإنشاء واحدة.</string>
+    <string name="settings_clothes_add">إضافة</string>
+    <string name="settings_clothes_edit">تعديل</string>
+    <string name="settings_clothes_delete">حذف</string>
+    <string name="settings_clothes_dialog_add_title">إضافة قاعدة ملابس</string>
+    <string name="settings_clothes_dialog_edit_title">تعديل قاعدة الملابس</string>
+    <string name="settings_clothes_item_label">الملابس</string>
+    <string name="settings_clothes_condition_label">الشرط</string>
+    <string name="settings_clothes_value_label_temp_c">العتبة (°C)</string>
+    <string name="settings_clothes_value_label_precip">العتبة (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">عندما تكون درجة الحرارة المحسوسة أقل من</string>
+    <string name="settings_clothes_cond_type_temp_above">عندما تكون درجة الحرارة المحسوسة أعلى من</string>
+    <string name="settings_clothes_cond_type_precip_above">عندما تكون احتمالية الأمطار أعلى من</string>
+    <string name="settings_clothes_cond_temp_below">عندما تكون درجة الحرارة المحسوسة الدنيا أقل من %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">عندما تكون درجة الحرارة المحسوسة القصوى أعلى من %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">عندما تكون احتمالية الأمطار أعلى من %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">تي شيرت</string>
+    <string name="today_outfit_top_sweater">سترة صوفية</string>
+    <string name="today_outfit_top_thick_jacket">جاكيت ثقيل</string>
+    <string name="today_outfit_bottom_shorts">شورت</string>
+    <string name="today_outfit_bottom_long_pants">بنطلون طويل</string>
+
+    <string name="insight_lead_today">اليوم</string>
+    <string name="insight_lead_tonight">الليلة</string>
+    <!-- "اليوم سيكون الجو معتدل." -->
+    <string name="insight_band_single">%1$s سيكون الجو %2$s.</string>
+    <string name="insight_band_range">%1$s سيكون الجو بين %2$s و%3$s.</string>
+    <string name="insight_band_freezing">شديد البرودة</string>
+    <string name="insight_band_cold">بارد</string>
+    <string name="insight_band_cool">لطيف</string>
+    <string name="insight_band_mild">معتدل</string>
+    <string name="insight_band_warm">دافئ</string>
+    <string name="insight_band_hot">حار</string>
+    <string name="insight_delta_warmer">سيكون اليوم أدفأ بـ %1$d°.</string>
+    <string name="insight_delta_cooler">سيكون اليوم أبرد بـ %1$d°.</string>
+    <string name="insight_alert">تنبيه: %1$s.</string>
+    <string name="insight_clothes_wear">ارتدِ %1$s.</string>
+    <!-- Arabic has no indefinite article equivalent to English "a/an". -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <!-- "و" (wa) = and; no Oxford comma in Arabic. -->
+    <string name="insight_clothes_join_two">%1$s و%2$s</string>
+    <string name="insight_clothes_join_many">%1$s و%2$s و%3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <!-- "في الساعة 15" — "في الساعة" = "at hour". -->
+    <string name="insight_precip_at_time">في الساعة %1$s</string>
+    <string name="insight_precip_overnight">طوال الليل</string>
+    <string name="insight_condition_clear">صافٍ</string>
+    <string name="insight_condition_partly_cloudy">غائم جزئياً</string>
+    <string name="insight_condition_cloudy">غائم</string>
+    <string name="insight_condition_fog">ضباب</string>
+    <string name="insight_condition_drizzle">رذاذ</string>
+    <string name="insight_condition_rain">مطر</string>
+    <string name="insight_condition_snow">ثلج</string>
+    <string name="insight_condition_thunderstorm">عاصفة رعدية</string>
+    <string name="insight_condition_unknown">غير معروف</string>
+    <string name="insight_tie_in">خذ %1$s الليلة.</string>
+    <!-- %2$s is the spoken time from insight_time_hour — "الساعة" embedded here. -->
+    <string name="insight_tie_in_with_rain">خذ %1$s الليلة، مطر الساعة %2$s.</string>
+    <!-- Bare number; "في الساعة" comes from insight_precip_at_time. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+</resources>

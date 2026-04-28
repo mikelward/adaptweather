@@ -100,6 +100,10 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "bn" to "অনুগ্রহ করে বাংলায় স্পষ্ট ও প্রাকৃতিক উচ্চারণে পড়ুন।",
     "ja" to "はっきりと自然な発音で日本語で読んでください。",
     "ko" to "명확하고 자연스러운 발음으로 한국어로 읽어주세요。",
+    // Language-only entries cover all regional Arabic/Persian variants.
+    "ar" to "اقرأ النص التالي بالعربية بنطق واضح وطبيعي.",
+    "he" to "קרא/י את הטקסט הבא בעברית בהגייה ברורה וטבעית.",
+    "fa" to "متن زیر را به فارسی با تلفظ واضح و طبیعی بخوانید.",
 )
 
 /**
