@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-First-pass German translation. Scope: just the spoken-aloud insight-prose
-templates (insight_* keys) + the German labels for the Region / VoiceLocale
-pickers. The rest of the UI is intentionally not yet translated — settings
-labels, onboarding, notifications etc. fall through to values/strings.xml
-(English) until a follow-up PR fills them in. Picking Region = DE_DE today
-gives the user a German morning summary spoken in German via Gemini, while
-the rest of the app stays in English.
+German translation — full UI coverage. Du-form throughout, intimate /
+spousal register matching the existing insight prose ("Trag …", "Denk
+an …"). No Sie-form anywhere. Brand name "ClothesCast" stays verbatim.
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and the *_minutes
+  variants) — English-only spoken-time formatter helpers. German
+  locales use `insight_time_hour` / `insight_time_hour_minutes`
+  ("15 Uhr" / "15 Uhr 30") which are translated below; the AM/PM keys
+  exist for `Locale.language == "en"` paths only and would never be
+  read in a German runtime.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the German names for every offered
+locale (Englisch (Vereinigte Staaten), Französisch (Kanada), Chinesisch
+(vereinfacht), …). The locale tag stored on disk (en-US / fr-CA /
+zh-CN) is unchanged; only the displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_de_de">Deutsch (Deutschland)</string>
