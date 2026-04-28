@@ -93,6 +93,30 @@ Chinese uses the ideographic period (。) for sentence endings.
     <string name="widget_empty_title">还没有穿搭</string>
     <string name="widget_empty_subtitle">点击打开 ClothesCast</string>
 
+    <!--
+    Onboarding flow — first-run welcome, two permission steps, Gemini
+    API-key step. "欢迎使用" is the standard zh-CN app welcome (gender-
+    neutral by virtue of Chinese not marking gender on most adjectives /
+    addresses). 你-form throughout for the casual register.
+    -->
+    <string name="onboarding_title">欢迎使用 ClothesCast</string>
+    <string name="onboarding_subtitle">两个快速选择即可开始。其他设置都有合理的默认值，你以后可以在设置里调整。</string>
+    <string name="onboarding_notifications_title">通知</string>
+    <string name="onboarding_notifications_description">用于发送你的每日 ClothesCast。授予一次权限后，ClothesCast 明天早上就会出现。</string>
+    <string name="onboarding_notifications_grant">授予通知权限</string>
+    <string name="onboarding_location_title">位置</string>
+    <string name="onboarding_location_description">用于获取准确的天气预报。授予位置权限后，ClothesCast 每天早上可以读取你设备的大致位置；否则手动选择一个城市。</string>
+    <string name="onboarding_location_grant">授予位置权限</string>
+    <string name="onboarding_location_denied_hint">位置权限被拒绝。你可以手动选择一个城市。</string>
+    <string name="onboarding_location_enter_manual">手动输入位置</string>
+    <string name="onboarding_location_using_device">每天早上使用你设备的位置。</string>
+
+    <string name="onboarding_gemini_title">Gemini API 密钥</string>
+    <string name="onboarding_gemini_description">ClothesCast 用于语音朗读和天气预报生成。可在 aistudio.google.com 免费获取。密钥会使用 Android Keystore 加密存储。</string>
+    <string name="onboarding_step_done">完成</string>
+    <string name="onboarding_skip">暂时跳过</string>
+    <string name="onboarding_continue">继续</string>
+
     <string name="insight_lead_today">今天</string>
     <string name="insight_lead_tonight">今晚</string>
     <!-- "今天天气温和。" / "今晚天气寒冷至凉爽。" -->
