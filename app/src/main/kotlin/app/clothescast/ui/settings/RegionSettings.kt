@@ -69,7 +69,21 @@ private fun regionLabel(region: Region): Int = when (region) {
     Region.EN_US -> R.string.settings_region_language_en_us
     Region.EN_GB -> R.string.settings_region_language_en_gb
     Region.EN_AU -> R.string.settings_region_language_en_au
+    Region.EN_CA -> R.string.settings_region_language_en_ca
     Region.DE_DE -> R.string.settings_region_language_de_de
+    Region.FR_FR -> R.string.settings_region_language_fr_fr
+    Region.FR_CA -> R.string.settings_region_language_fr_ca
+    Region.IT_IT -> R.string.settings_region_language_it_it
+    Region.ES_ES -> R.string.settings_region_language_es_es
+    Region.ES_MX -> R.string.settings_region_language_es_mx
+    Region.RU_RU -> R.string.settings_region_language_ru_ru
+    Region.PL_PL -> R.string.settings_region_language_pl_pl
+    Region.HR_HR -> R.string.settings_region_language_hr_hr
+    Region.UK_UA -> R.string.settings_region_language_uk_ua
+    Region.PT_BR -> R.string.settings_region_language_pt_br
+    Region.NL_NL -> R.string.settings_region_language_nl_nl
+    Region.SV_SE -> R.string.settings_region_language_sv_se
+    Region.TR_TR -> R.string.settings_region_language_tr_tr
 }
 
 private fun temperatureUnitLabel(unit: TemperatureUnit): Int = when (unit) {

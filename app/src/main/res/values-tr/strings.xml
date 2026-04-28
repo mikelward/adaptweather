@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Turkish translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_tr_tr">Türkçe (Türkiye)</string>
+    <string name="settings_tts_voice_locale_tr_tr">Türkçe (Türkiye)</string>
+    <string name="settings_tts_voice_locale_label">Dil</string>
+
+    <string name="garment_sweater">Kazak</string>
+    <string name="garment_hoodie">Kapüşonlu sweatshirt</string>
+    <string name="garment_jacket">Ceket</string>
+    <string name="garment_coat">Kaban</string>
+    <string name="garment_tshirt">Tişört</string>
+    <string name="garment_shirt">Gömlek</string>
+    <string name="garment_shorts">Şort</string>
+    <string name="garment_pants">Pantolon</string>
+    <string name="garment_jeans">Kot pantolon</string>
+
+    <string name="settings_clothes_empty">Kural yok. Oluşturmak için Ekle\'ye dokunun.</string>
+    <string name="settings_clothes_add">Ekle</string>
+    <string name="settings_clothes_edit">Düzenle</string>
+    <string name="settings_clothes_delete">Sil</string>
+    <string name="settings_clothes_dialog_add_title">Giysi kuralı ekle</string>
+    <string name="settings_clothes_dialog_edit_title">Giysi kuralını düzenle</string>
+    <string name="settings_clothes_item_label">Giysi</string>
+    <string name="settings_clothes_condition_label">Koşul</string>
+    <string name="settings_clothes_value_label_temp_c">Eşik (°C)</string>
+    <string name="settings_clothes_value_label_precip">Eşik (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Hissedilen sıcaklık şundan düşükse</string>
+    <string name="settings_clothes_cond_type_temp_above">Hissedilen sıcaklık şundan yüksekse</string>
+    <string name="settings_clothes_cond_type_precip_above">Yağmur ihtimali şunu aşarsa</string>
+    <string name="settings_clothes_cond_temp_below">hissedilen sıcaklık %.0f°C\'nin altındaysa</string>
+    <string name="settings_clothes_cond_temp_above">hissedilen sıcaklık %.0f°C\'nin üstündeyse</string>
+    <string name="settings_clothes_cond_precip_above">yağmur ihtimali %.0f%% üzerindeyse</string>
+
+    <string name="today_outfit_top_tshirt">Tişört</string>
+    <string name="today_outfit_top_sweater">Kazak</string>
+    <string name="today_outfit_top_thick_jacket">Kalın kaban</string>
+    <string name="today_outfit_bottom_shorts">Şort</string>
+    <string name="today_outfit_bottom_long_pants">Pantolon</string>
+
+    <string name="insight_lead_today">Bugün</string>
+    <string name="insight_lead_tonight">Bu gece</string>
+    <!-- Turkish SOV word order: subject-object-verb; predicate at the end. -->
+    <string name="insight_band_single">%1$s %2$s olacak.</string>
+    <string name="insight_band_range">%1$s %2$s ile %3$s arasında olacak.</string>
+    <string name="insight_band_freezing">dondurucu soğuk</string>
+    <string name="insight_band_cold">soğuk</string>
+    <string name="insight_band_cool">serin</string>
+    <string name="insight_band_mild">ılıman</string>
+    <string name="insight_band_warm">sıcak</string>
+    <string name="insight_band_hot">çok sıcak</string>
+    <string name="insight_delta_warmer">Bugün %1$d° daha sıcak olacak.</string>
+    <string name="insight_delta_cooler">Bugün %1$d° daha soğuk olacak.</string>
+    <string name="insight_alert">Uyarı: %1$s.</string>
+    <string name="insight_clothes_wear">%1$s giy.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s ve %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s ve %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">saat %1$s\'de</string>
+    <string name="insight_precip_overnight">gece boyunca</string>
+    <string name="insight_condition_clear">Açık</string>
+    <string name="insight_condition_partly_cloudy">Parçalı bulutlu</string>
+    <string name="insight_condition_cloudy">Bulutlu</string>
+    <string name="insight_condition_fog">Sis</string>
+    <string name="insight_condition_drizzle">Çiseleme</string>
+    <string name="insight_condition_rain">Yağmur</string>
+    <string name="insight_condition_snow">Kar</string>
+    <string name="insight_condition_thunderstorm">Fırtına</string>
+    <string name="insight_condition_unknown">Bilinmiyor</string>
+    <string name="insight_calendar_tie_in">%2$s\'deki %3$s için %1$s al.</string>
+</resources>

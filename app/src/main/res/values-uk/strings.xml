@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Ukrainian translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_uk_ua">Українська (Україна)</string>
+    <string name="settings_tts_voice_locale_uk_ua">Українська (Україна)</string>
+    <string name="settings_tts_voice_locale_label">Мова</string>
+
+    <string name="garment_sweater">Светр</string>
+    <string name="garment_hoodie">Худі</string>
+    <string name="garment_jacket">Куртка</string>
+    <string name="garment_coat">Пальто</string>
+    <string name="garment_tshirt">Футболка</string>
+    <string name="garment_shirt">Сорочка</string>
+    <string name="garment_shorts">Шорти</string>
+    <string name="garment_pants">Штани</string>
+    <string name="garment_jeans">Джинси</string>
+
+    <string name="settings_clothes_empty">Немає правил. Натисніть «Додати», щоб створити.</string>
+    <string name="settings_clothes_add">Додати</string>
+    <string name="settings_clothes_edit">Редагувати</string>
+    <string name="settings_clothes_delete">Видалити</string>
+    <string name="settings_clothes_dialog_add_title">Додати правило одягу</string>
+    <string name="settings_clothes_dialog_edit_title">Редагувати правило одягу</string>
+    <string name="settings_clothes_item_label">Одяг</string>
+    <string name="settings_clothes_condition_label">Умова</string>
+    <string name="settings_clothes_value_label_temp_c">Поріг (°C)</string>
+    <string name="settings_clothes_value_label_precip">Поріг (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Коли відчувається холодніше</string>
+    <string name="settings_clothes_cond_type_temp_above">Коли відчувається тепліше</string>
+    <string name="settings_clothes_cond_type_precip_above">Коли ймовірність дощу перевищує</string>
+    <string name="settings_clothes_cond_temp_below">коли відчувана температура нижче %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">коли відчувана температура вище %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">коли ймовірність дощу перевищує %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Футболка</string>
+    <string name="today_outfit_top_sweater">Светр</string>
+    <string name="today_outfit_top_thick_jacket">Тепла куртка</string>
+    <string name="today_outfit_bottom_shorts">Шорти</string>
+    <string name="today_outfit_bottom_long_pants">Штани</string>
+
+    <string name="insight_lead_today">Сьогодні</string>
+    <string name="insight_lead_tonight">Сьогодні ввечері</string>
+    <string name="insight_band_single">%1$s буде %2$s.</string>
+    <string name="insight_band_range">%1$s буде від %2$s до %3$s.</string>
+    <string name="insight_band_freezing">морозно</string>
+    <string name="insight_band_cold">холодно</string>
+    <string name="insight_band_cool">прохолодно</string>
+    <string name="insight_band_mild">тепло</string>
+    <string name="insight_band_warm">жарко</string>
+    <string name="insight_band_hot">дуже спекотно</string>
+    <string name="insight_delta_warmer">Сьогодні на %1$d° тепліше.</string>
+    <string name="insight_delta_cooler">Сьогодні на %1$d° холодніше.</string>
+    <string name="insight_alert">Попередження: %1$s.</string>
+    <string name="insight_clothes_wear">Одягніть %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s та %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s та %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">о %1$s</string>
+    <string name="insight_precip_overnight">вночі</string>
+    <string name="insight_condition_clear">Ясно</string>
+    <string name="insight_condition_partly_cloudy">Мінлива хмарність</string>
+    <string name="insight_condition_cloudy">Хмарно</string>
+    <string name="insight_condition_fog">Туман</string>
+    <string name="insight_condition_drizzle">Мряка</string>
+    <string name="insight_condition_rain">Дощ</string>
+    <string name="insight_condition_snow">Сніг</string>
+    <string name="insight_condition_thunderstorm">Гроза</string>
+    <string name="insight_condition_unknown">Невідомо</string>
+    <string name="insight_calendar_tie_in">Візьміть %1$s на %3$s о %2$s.</string>
+</resources>
