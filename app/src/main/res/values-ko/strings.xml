@@ -218,6 +218,25 @@ the 을/를 object particle which depends on the noun's final consonant.
     <string name="settings_elevenlabs_key_clear">저장된 ElevenLabs 키 삭제</string>
 
     <!--
+    Location screen — device-location toggle, manual city search +
+    selection, and the "no location set" empty state.
+    -->
+    <string name="settings_location_title">위치</string>
+    <string name="settings_location_use_device">기기 위치 사용</string>
+    <string name="settings_location_grant_background">백그라운드 위치 허용 (시스템 설정)</string>
+    <string name="settings_location_unset">위치가 설정되지 않음 — 기본값으로 런던 사용</string>
+    <string name="settings_location_description">이 장소에 대한 예보를 가져옵니다. 도시 이름으로 검색하세요. 결과는 Open-Meteo의 무료 지오코딩 서비스에서 가져옵니다.</string>
+    <string name="settings_location_description_device_on">활성화하면 ClothesCast가 알림 시점에 기기의 대략적인 위치를 읽어요(기지국 / WiFi만 사용 — GPS 하드웨어 측위는 사용하지 않음). 기기 읽기에 실패하면 아래 위치가 대체로 사용됩니다. 백그라운드 위치는 시스템 설정에서 허용해야 하며, 그렇지 않으면 아침 Worker가 읽을 수 없어요.</string>
+    <string name="settings_location_set">위치 설정</string>
+    <string name="settings_location_change">위치 변경</string>
+    <string name="settings_location_clear">위치 지우기</string>
+    <string name="settings_location_search_title">위치 검색</string>
+    <string name="settings_location_query_label">도시 또는 장소</string>
+    <string name="settings_location_search">검색</string>
+    <string name="settings_location_searching">검색 중…</string>
+    <string name="settings_location_no_results">결과가 없어요.</string>
+
+    <!--
     Today screen — top bar, refresh toasts, empty state, generated-at
     timestamp, outfit card, hourly chart, confidence chip, work-status
     banner. 해요체 (polite-formal) throughout — that's the standard
