@@ -1,8 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Spanish translation (Spain base). Scope: insight-prose templates, garment labels,
-clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
-Mexico-specific vocabulary overrides live in values-es-rMX.
+Spanish translation (Spain base) — full UI coverage. Informal tú-form
+throughout (intimate / spousal register), matching the existing insight
+prose ("Lleva …", "Tu ClothesCast de hoy"). No usted-form anywhere.
+
+Mexico-specific vocabulary overrides live in values-es-rMX (suéter /
+playera / mezclilla / agregar / configuración / reportar).
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. Spanish
+  locales use `insight_time_hour` / `_hour_minutes` ("15" / "15:30")
+  which are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a
+  Spanish runtime.
+
+Spanish forces gender agreement on predicate adjectives in the tú-form;
+the welcome uses the gender-neutral "Te damos la bienvenida" (the
+standard Spanish app convention) and the subtitle uses the invariable
+"ya está" so a one-time greeting doesn't have to pick a gender for the
+user. Beyond those exceptions the rest stays in plain tú-form
+imperative ("Toca", "Configura", "Concede").
+
+Buttons follow the Android Spanish convention of action-infinitives
+("Conceder notificaciones", "Continuar", "Guardar"); direct-address
+prose stays in tú-form imperative.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the Spanish names for every offered
+locale (Inglés (Estados Unidos), Francés (Canadá), Chino
+(simplificado), …). The locale tag stored on disk (en-US / fr-CA /
+zh-CN) is unchanged; only the displayed label localizes.
 -->
 <resources>
     <string name="settings_region_language_es_es">Español (España)</string>
