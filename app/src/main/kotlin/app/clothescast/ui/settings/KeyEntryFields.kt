@@ -51,8 +51,12 @@ internal fun KeyEntryFields(
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Button(
             onClick = {
-                if (input.isNotBlank()) {
-                    onSave(input)
+                // Trim before persisting — clipboard / password-manager pastes
+                // routinely include a trailing newline that the cloud TTS
+                // providers reject as an invalid key.
+                val trimmed = input.trim()
+                if (trimmed.isNotEmpty()) {
+                    onSave(trimmed)
                     input = ""
                 }
             },
