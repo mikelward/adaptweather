@@ -38,11 +38,58 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="settings_clothes_cond_temp_above">cuando la temperatura percibida es superior a %.0f°C</string>
     <string name="settings_clothes_cond_precip_above">cuando la probabilidad de lluvia supera %.0f%%</string>
 
+    <!--
+    Today screen — top bar, refresh toasts, empty state, generated-at
+    timestamp, outfit card, hourly chart, confidence chip, work-status
+    banner. Informal tú-form throughout: "toca", "tu", "configura".
+    -->
+    <string name="today_title">Hoy</string>
+    <string name="today_open_settings">Abrir ajustes</string>
+    <string name="today_more_options">Más opciones</string>
+    <string name="today_report_a_bug">Informar de un error</string>
+    <string name="today_refresh">Actualizar</string>
+    <string name="today_refresh_toast_daily">Actualizando tu ClothesCast diario — aparecerá enseguida.</string>
+    <string name="today_refresh_toast_nightly">Actualizando tu ClothesCast nocturno — aparecerá enseguida.</string>
+    <string name="today_empty_title">Aún no hay ClothesCast</string>
+    <string name="today_empty_subtitle">Tu ClothesCast matutino aparecerá aquí cuando se genere. Configura tu ubicación en los ajustes y toca Obtener ahora.</string>
+    <string name="today_fetch_now">Obtener ahora</string>
+    <string name="today_generated_at">Generado a las %1$s</string>
+
+    <string name="today_outfit_title">Qué ponerte</string>
+    <string name="today_outfit_label_today">Hoy</string>
+    <string name="today_outfit_label_tonight">Esta noche</string>
+    <string name="today_outfit_label_tomorrow">Mañana</string>
+
     <string name="today_outfit_top_tshirt">Camiseta</string>
     <string name="today_outfit_top_sweater">Jersey</string>
     <string name="today_outfit_top_thick_jacket">Abrigo grueso</string>
     <string name="today_outfit_bottom_shorts">Pantalones cortos</string>
     <string name="today_outfit_bottom_long_pants">Pantalones</string>
+
+    <string name="today_forecast_title">Pronóstico por horas</string>
+    <string name="today_forecast_min_max">Sensación %1$d – %2$d%3$s · Aire %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Sensación térmica (%1$s) por hora · toca para ver la temperatura del aire</string>
+    <string name="today_forecast_legend_air">Temperatura del aire (%1$s) por hora · toca para ver la sensación térmica</string>
+
+    <string name="today_confidence_high">Alta confianza — los principales modelos coinciden</string>
+    <string name="today_confidence_medium">Confianza media</string>
+    <string name="today_confidence_low">Baja confianza — los pronósticos difieren</string>
+    <string name="today_confidence_spread">Dispersión: %1$.1f°C, %2$.0fpp de precipitación en %3$d modelos</string>
+
+    <string name="today_working">Obteniendo tu ClothesCast…</string>
+    <string name="today_failed_title">El último intento falló</string>
+    <string name="today_failed_unexpected_http">Error HTTP inesperado del servicio del pronóstico.</string>
+    <string name="today_failed_unhandled">Se ha producido un error inesperado.</string>
+    <string name="today_failed_show_details">Mostrar detalles</string>
+    <string name="today_failed_hide_details">Ocultar detalles</string>
+
+    <!-- Home-screen App Widget. "Outfit" stays as the loanword (in
+         common Spanish use, fits the casual register and matches the
+         brand-name register the rest of the file uses). -->
+    <string name="widget_label">Outfit</string>
+    <string name="widget_description">El outfit del periodo actual de un vistazo.</string>
+    <string name="widget_empty_title">Aún no hay outfit</string>
+    <string name="widget_empty_subtitle">Toca para abrir ClothesCast</string>
 
     <string name="insight_lead_today">Hoy</string>
     <string name="insight_lead_tonight">Esta noche</string>
