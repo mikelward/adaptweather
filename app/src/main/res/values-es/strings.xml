@@ -91,6 +91,33 @@ Mexico-specific vocabulary overrides live in values-es-rMX.
     <string name="widget_empty_title">Aún no hay outfit</string>
     <string name="widget_empty_subtitle">Toca para abrir ClothesCast</string>
 
+    <!--
+    Onboarding flow — first-run welcome, two permission steps, Gemini
+    API-key step. Welcome uses the gender-neutral "Te damos la
+    bienvenida" pattern (idiomatic Spanish app convention) so the
+    one-time greeting doesn't have to pick masc / fem on the user.
+    Buttons follow the Android Spanish convention of action-infinitives
+    ("Conceder notificaciones", "Continuar"); direct-address prose
+    stays in tú-form imperative ("Configura", "Concede", "Elige").
+    -->
+    <string name="onboarding_title">Te damos la bienvenida a ClothesCast</string>
+    <string name="onboarding_subtitle">Dos elecciones rápidas y ya está. Todo lo demás tiene un valor predeterminado razonable que podrás ajustar más tarde en los ajustes.</string>
+    <string name="onboarding_notifications_title">Notificaciones</string>
+    <string name="onboarding_notifications_description">Necesarias para entregar tu ClothesCast diario. Concédelas una vez y ClothesCast aparecerá mañana por la mañana.</string>
+    <string name="onboarding_notifications_grant">Conceder notificaciones</string>
+    <string name="onboarding_location_title">Ubicación</string>
+    <string name="onboarding_location_description">Se usa para obtener el pronóstico correcto. Si concedes la ubicación, ClothesCast podrá leer cada mañana la ubicación aproximada de tu dispositivo; si no, elige una ciudad manualmente.</string>
+    <string name="onboarding_location_grant">Conceder acceso a la ubicación</string>
+    <string name="onboarding_location_denied_hint">Acceso a la ubicación denegado. En su lugar puedes elegir una ciudad manualmente.</string>
+    <string name="onboarding_location_enter_manual">Introducir ubicación manualmente</string>
+    <string name="onboarding_location_using_device">Cada mañana usamos la ubicación de tu dispositivo.</string>
+
+    <string name="onboarding_gemini_title">Clave API de Gemini</string>
+    <string name="onboarding_gemini_description">ClothesCast la usa para las voces habladas y la generación del pronóstico. Consigue una gratis en aistudio.google.com. La clave se cifra en reposo usando el Android Keystore.</string>
+    <string name="onboarding_step_done">Hecho</string>
+    <string name="onboarding_skip">Omitir por ahora</string>
+    <string name="onboarding_continue">Continuar</string>
+
     <string name="insight_lead_today">Hoy</string>
     <string name="insight_lead_tonight">Esta noche</string>
     <string name="insight_band_single">%1$s hará %2$s.</string>
