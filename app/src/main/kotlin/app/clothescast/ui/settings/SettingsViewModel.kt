@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
+import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
@@ -16,8 +17,10 @@ import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
+import app.clothescast.diag.DiagLog
 import app.clothescast.tts.TtsVoiceEnumerator
 import app.clothescast.tts.resolve
+import app.clothescast.tts.toVoiceOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +40,13 @@ class SettingsViewModel(
     private val cancelAlarm: (ForecastPeriod) -> Unit,
     private val geocodingClient: OpenMeteoGeocodingClient,
     private val voiceEnumerator: TtsVoiceEnumerator,
+    private val elevenLabsTtsClient: ElevenLabsTtsClient? = null,
+    /**
+     * Surfaces refresh failures to the user. Defaulted to a no-op so existing
+     * tests that don't exercise refresh don't have to wire it up; the
+     * Activity passes a Toast-backed implementation.
+     */
+    private val showError: (String) -> Unit = {},
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -179,6 +189,39 @@ class SettingsViewModel(
 
     fun setElevenLabsVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setElevenLabsVoice(voice) }
+    }
+
+    /**
+     * Hits `GET /v1/voices` with the stored ElevenLabs key and replaces the
+     * picker's voice list with whatever the user's account exposes —
+     * premade library plus their own clones / generated voices. No-ops if
+     * the key isn't configured (the UI also gates the button) or if the
+     * client wasn't injected (test wiring).
+     *
+     * Failures surface through [showError] (the Activity wires a Toast)
+     * and leave the picker on whatever list it was already showing — we
+     * don't wipe a previous successful refresh because the network blipped.
+     */
+    fun refreshElevenLabsVoices() {
+        val client = elevenLabsTtsClient ?: return
+        if (_state.value.elevenLabsRefreshing) return
+        viewModelScope.launch {
+            _state.update { it.copy(elevenLabsRefreshing = true) }
+            try {
+                val voices = withContext(Dispatchers.IO) { client.listVoices() }
+                _state.update {
+                    it.copy(
+                        elevenLabsRefreshedVoices = voices.toVoiceOptions(),
+                        elevenLabsRefreshing = false,
+                    )
+                }
+            } catch (t: Throwable) {
+                DiagLog.w(TAG, "ElevenLabs voice refresh failed", t)
+                _state.update { it.copy(elevenLabsRefreshing = false) }
+                val message = t.message?.takeIf { it.isNotBlank() } ?: t.javaClass.simpleName
+                showError(message)
+            }
+        }
     }
 
     fun setDeviceVoice(voice: String?) {
@@ -326,6 +369,8 @@ class SettingsViewModel(
         private val cancelAlarm: (ForecastPeriod) -> Unit,
         private val geocodingClient: OpenMeteoGeocodingClient,
         private val voiceEnumerator: TtsVoiceEnumerator,
+        private val elevenLabsTtsClient: ElevenLabsTtsClient,
+        private val showError: (String) -> Unit,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -339,7 +384,13 @@ class SettingsViewModel(
                 cancelAlarm,
                 geocodingClient,
                 voiceEnumerator,
+                elevenLabsTtsClient,
+                showError,
             ) as T
         }
+    }
+
+    private companion object {
+        private const val TAG = "SettingsViewModel"
     }
 }

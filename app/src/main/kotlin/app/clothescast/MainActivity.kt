@@ -115,6 +115,12 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
                     cancelAlarm = app.dailyAlarmScheduler::cancel,
                     geocodingClient = app.geocodingClient,
                     voiceEnumerator = app.androidTtsVoiceEnumerator,
+                    elevenLabsTtsClient = app.elevenLabsTtsClient,
+                    showError = { message ->
+                        android.widget.Toast
+                            .makeText(context, message, android.widget.Toast.LENGTH_LONG)
+                            .show()
+                    },
                 ),
             )
             SettingsScreen(

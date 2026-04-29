@@ -13,6 +13,7 @@ import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.defaultDistanceUnitFor
 import app.clothescast.data.defaultTemperatureUnitFor
 import app.clothescast.tts.DeviceVoice
+import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.defaultOpenAiVoiceFor
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -75,4 +76,14 @@ data class SettingsState(
     val apiKeyConfigured: Boolean = false,
     val openAiKeyConfigured: Boolean = false,
     val elevenLabsKeyConfigured: Boolean = false,
+    /**
+     * Voices fetched from `GET /v1/voices` after the user taps Refresh in
+     * Settings. `null` means "no refresh has happened this session" — the
+     * picker falls back to the curated [app.clothescast.tts.ELEVENLABS_VOICES]
+     * list. An empty list means the API returned no voices (exotic
+     * account state) and is rendered the same way as the fallback so the
+     * picker is never empty.
+     */
+    val elevenLabsRefreshedVoices: List<TtsVoiceOption>? = null,
+    val elevenLabsRefreshing: Boolean = false,
 )

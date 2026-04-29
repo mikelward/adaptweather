@@ -3,6 +3,8 @@ package app.clothescast.core.data.tts
 import app.clothescast.core.data.insight.KeyProvider
 import app.clothescast.core.data.insight.MissingApiKeyException
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -111,6 +113,43 @@ class ElevenLabsTtsClient(
         return PcmAudio(bytes = pcm, sampleRate = ELEVENLABS_PCM_SAMPLE_RATE_HZ)
     }
 
+    /**
+     * Lists every voice the caller's API key has access to: ElevenLabs'
+     * premade library plus any voices the user has cloned, generated, or
+     * imported into their account. Used by the Settings refresh button so
+     * users with paid plans don't have to copy-paste voice IDs by hand.
+     *
+     * Returns lightweight [ElevenLabsVoiceSummary] records (id, display
+     * name, optional accent label) — translation to the UI's
+     * `TtsVoiceOption` happens in the app module to keep this data layer
+     * UI-agnostic.
+     */
+    suspend fun listVoices(): List<ElevenLabsVoiceSummary> {
+        val key = keyProvider.get().also {
+            if (it.isBlank()) throw MissingApiKeyException("ElevenLabs")
+        }
+        val response: HttpResponse = httpClient.get {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = ELEVENLABS_HOST
+                path("v1", "voices")
+            }
+            header("xi-api-key", key)
+        }
+        if (!response.status.isSuccess()) {
+            throw ElevenLabsTtsHttpException(response.status, response.bodyAsBytes())
+        }
+        val parsed: ElevenLabsVoicesResponse = response.body()
+        return parsed.voices.map { dto ->
+            ElevenLabsVoiceSummary(
+                id = dto.voiceId,
+                name = dto.name,
+                accent = dto.labels?.get("accent"),
+                description = dto.labels?.get("description"),
+            )
+        }
+    }
+
     companion object {
         // `pcm_24000` is documented as 16-bit signed little-endian mono at 24 kHz —
         // matches the AudioTrack format we already use for Gemini / OpenAI.
@@ -119,6 +158,18 @@ class ElevenLabsTtsClient(
         private const val ELEVENLABS_HOST = "api.elevenlabs.io"
     }
 }
+
+/**
+ * Lightweight projection of an ElevenLabs voice — just what the picker
+ * needs to render a label. Lives in `core:data` so the wire DTO can stay
+ * `internal`; the app module maps these to its UI option type.
+ */
+data class ElevenLabsVoiceSummary(
+    val id: String,
+    val name: String,
+    val accent: String? = null,
+    val description: String? = null,
+)
 
 class ElevenLabsTtsEmptyResponseException :
     IllegalStateException("ElevenLabs TTS returned no audio body")

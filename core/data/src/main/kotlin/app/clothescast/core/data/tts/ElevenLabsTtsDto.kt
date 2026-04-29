@@ -40,3 +40,25 @@ internal data class ElevenLabsVoiceSettings(
     val speed: Double? = null,
     val stability: Double? = null,
 )
+
+/**
+ * Wire type for `GET /v1/voices`. The endpoint returns the full library
+ * available to the caller's API key — premade voices, generated voices and
+ * the user's clones — wrapped in a `voices` array. We only consume the
+ * fields that drive the picker label; everything else (`samples`,
+ * `fine_tuning`, `available_for_tiers`, …) is ignored via Json's
+ * `ignoreUnknownKeys = true`.
+ */
+@Serializable
+internal data class ElevenLabsVoicesResponse(
+    val voices: List<ElevenLabsVoiceDto> = emptyList(),
+)
+
+@Serializable
+internal data class ElevenLabsVoiceDto(
+    @SerialName("voice_id")
+    val voiceId: String,
+    val name: String,
+    val category: String? = null,
+    val labels: Map<String, String>? = null,
+)
