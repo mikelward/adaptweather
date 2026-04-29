@@ -140,6 +140,9 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_region_language_nl_nl">Nizozemski (Nizozemska)</string>
     <string name="settings_region_language_sv_se">Švedski (Švedska)</string>
     <string name="settings_region_language_fi_fi">Finski (Finska)</string>
+    <string name="settings_region_language_et_ee">Estonski (Estonija)</string>
+    <string name="settings_region_language_lv_lv">Latvijski (Latvija)</string>
+    <string name="settings_region_language_lt_lt">Litavski (Litva)</string>
     <string name="settings_region_language_tr_tr">Turski (Turska)</string>
     <string name="settings_region_language_id_id">Indonezijski (Indonezija)</string>
     <string name="settings_region_language_ms_my">Malajski (Malezija)</string>
@@ -202,6 +205,9 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_nl_nl">Nizozemski (Nizozemska)</string>
     <string name="settings_tts_voice_locale_sv_se">Švedski (Švedska)</string>
     <string name="settings_tts_voice_locale_fi_fi">Finski (Finska)</string>
+    <string name="settings_tts_voice_locale_et_ee">Estonski (Estonija)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Latvijski (Latvija)</string>
+    <string name="settings_tts_voice_locale_lt_lt">Litavski (Litva)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turski (Turska)</string>
     <string name="settings_tts_voice_locale_id_id">Indonezijski (Indonezija)</string>
     <string name="settings_tts_voice_locale_ms_my">Malajski (Malezija)</string>

@@ -169,6 +169,9 @@ the displayed label localizes.
     <string name="settings_region_language_nl_nl">オランダ語（オランダ）</string>
     <string name="settings_region_language_sv_se">スウェーデン語（スウェーデン）</string>
     <string name="settings_region_language_fi_fi">フィンランド語（フィンランド）</string>
+    <string name="settings_region_language_et_ee">エストニア語（エストニア）</string>
+    <string name="settings_region_language_lv_lv">ラトビア語（ラトビア）</string>
+    <string name="settings_region_language_lt_lt">リトアニア語（リトアニア）</string>
     <string name="settings_region_language_tr_tr">トルコ語（トルコ）</string>
     <string name="settings_region_language_id_id">インドネシア語（インドネシア）</string>
     <string name="settings_region_language_ms_my">マレー語（マレーシア）</string>
@@ -228,6 +231,9 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_nl_nl">オランダ語（オランダ）</string>
     <string name="settings_tts_voice_locale_sv_se">スウェーデン語（スウェーデン）</string>
     <string name="settings_tts_voice_locale_fi_fi">フィンランド語（フィンランド）</string>
+    <string name="settings_tts_voice_locale_et_ee">エストニア語（エストニア）</string>
+    <string name="settings_tts_voice_locale_lv_lv">ラトビア語（ラトビア）</string>
+    <string name="settings_tts_voice_locale_lt_lt">リトアニア語（リトアニア）</string>
     <string name="settings_tts_voice_locale_tr_tr">トルコ語（トルコ）</string>
     <string name="settings_tts_voice_locale_id_id">インドネシア語（インドネシア）</string>
     <string name="settings_tts_voice_locale_ms_my">マレー語（マレーシア）</string>
