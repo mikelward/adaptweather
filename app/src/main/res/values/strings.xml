@@ -83,6 +83,12 @@
     <string name="settings_root_schedule_subtitle">Notifications and Times</string>
     <string name="settings_root_clothes_subtitle">Temperatures and Outfits</string>
     <string name="settings_root_region_subtitle">Languages and Units</string>
+    <!-- TODO(voice-subtitle): decide final wording and reorder so the
+         per-locale "Accent" picker (now the topmost card on the Voice
+         sub-screen) reads first. Candidates: "Accents and engines",
+         "Accents and APIs", "Accents and providers". Once chosen,
+         update values-*/ translations to match (currently only el is
+         translated: "Πάροχοι και προφορές"). -->
     <string name="settings_root_voice_subtitle">Providers and Accents</string>
     <string name="settings_root_data_sources_subtitle">Location and Calendar</string>
 
