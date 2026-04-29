@@ -158,6 +158,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_sk_sk">Eslovaco (Eslovaquia)</string>
     <string name="settings_region_language_hu_hu">Húngaro (Hungría)</string>
     <string name="settings_region_language_ro_ro">Rumano (Rumanía)</string>
+    <string name="settings_region_language_el_gr">Griego (Grecia)</string>
     <string name="settings_region_language_uk_ua">Ucraniano (Ucrania)</string>
     <string name="settings_region_language_pt_br">Portugués (Brasil)</string>
     <string name="settings_region_language_pt_pt">Portugués (Portugal)</string>
@@ -214,6 +215,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_sk_sk">Eslovaco (Eslovaquia)</string>
     <string name="settings_tts_voice_locale_hu_hu">Húngaro (Hungría)</string>
     <string name="settings_tts_voice_locale_ro_ro">Rumano (Rumanía)</string>
+    <string name="settings_tts_voice_locale_el_gr">Griego (Grecia)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ucraniano (Ucrania)</string>
     <string name="settings_tts_voice_locale_pt_br">Portugués (Brasil)</string>
     <string name="settings_tts_voice_locale_pt_pt">Portugués (Portugal)</string>

@@ -153,6 +153,7 @@ only the displayed label localizes.
     <string name="settings_region_language_sk_sk">Словацкий (Словакия)</string>
     <string name="settings_region_language_hu_hu">Венгерский (Венгрия)</string>
     <string name="settings_region_language_ro_ro">Румынский (Румыния)</string>
+    <string name="settings_region_language_el_gr">Греческий (Греция)</string>
     <string name="settings_region_language_uk_ua">Украинский (Украина)</string>
     <string name="settings_region_language_pt_br">Португальский (Бразилия)</string>
     <string name="settings_region_language_pt_pt">Португальский (Португалия)</string>
@@ -206,6 +207,7 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_sk_sk">Словацкий (Словакия)</string>
     <string name="settings_tts_voice_locale_hu_hu">Венгерский (Венгрия)</string>
     <string name="settings_tts_voice_locale_ro_ro">Румынский (Румыния)</string>
+    <string name="settings_tts_voice_locale_el_gr">Греческий (Греция)</string>
     <string name="settings_tts_voice_locale_uk_ua">Украинский (Украина)</string>
     <string name="settings_tts_voice_locale_pt_br">Португальский (Бразилия)</string>
     <string name="settings_tts_voice_locale_pt_pt">Португальский (Португалия)</string>
