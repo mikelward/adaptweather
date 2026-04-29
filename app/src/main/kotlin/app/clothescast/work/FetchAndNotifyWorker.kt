@@ -364,7 +364,12 @@ class FetchAndNotifyWorker(
                 }
                 TtsEngine.ELEVENLABS -> {
                     try {
-                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = prefs.elevenLabsVoice).speak(text, locale)
+                        ElevenLabsTtsSpeaker(
+                            client = app.elevenLabsTtsClient,
+                            voiceId = prefs.elevenLabsVoice,
+                            model = prefs.elevenLabsModel,
+                            speed = prefs.elevenLabsSpeed,
+                        ).speak(text, locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
                         DiagLog.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)

@@ -85,6 +85,36 @@ class ElevenLabsTtsClientTest {
     }
 
     @Test
+    fun `synthesize forwards a per-call model override into the request body`() = runTest {
+        // The ViewModel passes the user-picked model on every call so the
+        // client constructor's default doesn't shadow Settings.
+        var capturedBody: String? = null
+        val client = ElevenLabsTtsClient(
+            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", model = ELEVENLABS_MODEL_FLASH_V2_5)
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("\"model_id\":\"eleven_flash_v2_5\"")
+    }
+
+    @Test
+    fun `synthesize forwards a per-call speed override into voice_settings`() = runTest {
+        var capturedBody: String? = null
+        val client = ElevenLabsTtsClient(
+            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", speed = 1.05)
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("\"speed\":1.05")
+    }
+
+    @Test
     fun `request body sends voice_settings with speed and stability`() = runTest {
         // We override per-voice library defaults on every clip so the pacing
         // / stability tuning is consistent regardless of which voice the user

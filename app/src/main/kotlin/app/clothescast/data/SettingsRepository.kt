@@ -138,6 +138,20 @@ class SettingsRepository(
         dataStore.edit { it[ELEVENLABS_VOICE] = voice }
     }
 
+    suspend fun setElevenLabsModel(model: String) {
+        dataStore.edit { it[ELEVENLABS_MODEL] = model }
+    }
+
+    suspend fun setElevenLabsSpeed(speed: Double) {
+        // Clamp to ElevenLabs's documented range so a misconfigured caller
+        // can't push an out-of-range value into DataStore.
+        val clamped = speed.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_SPEED,
+            UserPreferences.MAX_ELEVENLABS_SPEED,
+        )
+        dataStore.edit { it[ELEVENLABS_SPEED] = clamped }
+    }
+
     suspend fun setDeviceVoice(voice: String?) {
         dataStore.edit {
             // Null clears the pin → speaker reverts to auto-pick; the worker
@@ -193,6 +207,12 @@ class SettingsRepository(
             ?: defaultOpenAiVoiceFor(voiceLocale)
         val elevenLabsVoice = this[ELEVENLABS_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_ELEVENLABS_VOICE
+        val elevenLabsModel = this[ELEVENLABS_MODEL]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_ELEVENLABS_MODEL
+        val elevenLabsSpeed = this[ELEVENLABS_SPEED]?.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_SPEED,
+            UserPreferences.MAX_ELEVENLABS_SPEED,
+        ) ?: UserPreferences.DEFAULT_ELEVENLABS_SPEED
         val deviceVoice = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
         val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
         val tonightTime = this[TONIGHT_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
@@ -222,6 +242,8 @@ class SettingsRepository(
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
             elevenLabsVoice = elevenLabsVoice,
+            elevenLabsModel = elevenLabsModel,
+            elevenLabsSpeed = elevenLabsSpeed,
             deviceVoice = deviceVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
@@ -274,6 +296,8 @@ class SettingsRepository(
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
         private val ELEVENLABS_VOICE = stringPreferencesKey("elevenlabs_voice")
+        private val ELEVENLABS_MODEL = stringPreferencesKey("elevenlabs_model")
+        private val ELEVENLABS_SPEED = doublePreferencesKey("elevenlabs_speed")
         private val DEVICE_VOICE = stringPreferencesKey("device_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")
