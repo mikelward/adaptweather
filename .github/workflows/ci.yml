@@ -8,6 +8,15 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manual rescue trigger so the release-AAB / Firebase / Play-upload steps
+  # can be re-fired when the natural `push` event was suppressed. Common
+  # case: a PR's bot-authored snapshot-regen commit (`ci: regenerate UI
+  # snapshots [skip ci]`) ends up as the head commit of the rebase-merge to
+  # `main`, and GitHub natively skips workflow runs for any push whose head
+  # commit subject contains `[skip ci]`. Without this trigger, the AAB for
+  # that SHA never builds and the Play internal track never gets it. Run
+  # from Actions tab → CI → "Run workflow", target `main`.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -235,6 +244,17 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+    # workflow_dispatch can be invoked against any ref by any user with
+    # `actions: write`. The job-level env block below populates the runner
+    # with FIREBASE_* / PLAY_* secrets; without this guard, a manual dispatch
+    # against a feature branch that ships a malicious `ci.yml` modification
+    # would have those secrets in scope. The publishing steps' own
+    # `refs/heads/main` gates aren't enough — they only short-circuit the
+    # *publish* steps; the job env vars themselves are still populated for
+    # any other step that runs. push and pull_request events are unaffected
+    # (push is already filtered to main by the `on:` block; pull_request
+    # secrets are blocked by GitHub for fork PRs anyway).
+    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main'
     # Job-level env: the Firebase distribute step's `if:` reads these via
     # env.FIREBASE_APP_ID / env.FIREBASE_SERVICE_ACCOUNT_JSON. The `secrets`
     # context isn't available in `if:` expressions ("Unrecognized named-value:
@@ -331,18 +351,21 @@ jobs:
           retention-days: 14
 
       - name: Distribute via Firebase App Distribution
-        # On push to main only — feature-branch CI runs would otherwise spam
-        # testers with WIP builds. Skipped when secrets aren't set so the build
-        # still finishes on a fresh repo / fork. The env vars referenced here
-        # are populated at the job level (see env: block above) — the secrets
-        # context isn't allowed in step `if:` and step-level env isn't in scope.
+        # On push to main (or manual workflow_dispatch on main) only —
+        # feature-branch CI runs would otherwise spam testers with WIP builds.
+        # workflow_dispatch is the rescue path when the natural push event
+        # was suppressed by `[skip ci]` on the head commit. Skipped when
+        # secrets aren't set so the build still finishes on a fresh repo /
+        # fork. The env vars referenced here are populated at the job level
+        # (see env: block above) — the secrets context isn't allowed in step
+        # `if:` and step-level env isn't in scope.
         #
         # Ordered before the release-AAB steps so a bundleRelease failure on
         # main doesn't skip FAD distribution under the `success()` gate — debug
         # testers get the build either way; only the Play AAB artifact is lost.
         if: |
           success() &&
-          github.event_name == 'push' &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
           github.ref == 'refs/heads/main' &&
           env.FIREBASE_APP_ID != '' &&
           env.FIREBASE_SERVICE_ACCOUNT_JSON != ''
@@ -362,19 +385,22 @@ jobs:
           # Push notification on the tester's phone shows the first ~60 chars
           # of these notes, so put the most useful info first. Commit subject
           # is normally that.
+          # `head_commit.message` is null on workflow_dispatch (no associated
+          # push payload), so fall back to a synthesized subject in that case.
           releaseNotes: |
-            ${{ github.event.head_commit.message }}
+            ${{ github.event.head_commit.message || format('Manual workflow_dispatch run on {0}', github.sha) }}
             ---
             Build: ${{ github.run_number }} · ${{ github.sha }}
 
       - name: Decode upload keystore from secret
-        # Push-to-main only. PR builds (incl. forks) skip — forks don't have the
-        # secret, and even non-fork PRs don't need to burn ~3min signing a release
-        # AAB on every commit. Mirrors the debug-keystore decode step above:
-        # base64-decode, validate with `keytool -list` so wrong-base64 / wrong-
-        # password fails here rather than at signing time, then export the path
-        # to GITHUB_ENV for bundleRelease to pick up.
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # Push-to-main (or manual workflow_dispatch on main) only. PR builds
+        # (incl. forks) skip — forks don't have the secret, and even non-fork
+        # PRs don't need to burn ~3min signing a release AAB on every commit.
+        # Mirrors the debug-keystore decode step above: base64-decode,
+        # validate with `keytool -list` so wrong-base64 / wrong-password
+        # fails here rather than at signing time, then export the path to
+        # GITHUB_ENV for bundleRelease to pick up.
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         env:
           UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
           UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
@@ -401,7 +427,8 @@ jobs:
           echo "UPLOAD_KEYSTORE_FILE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
 
       - name: Bundle release AAB
-        # Push-to-main only — see "Decode upload keystore" rationale. Produces
+        # Push-to-main (or manual workflow_dispatch on main) only — see
+        # "Decode upload keystore" rationale. Produces
         # app/build/outputs/bundle/release/app-release.aab signed with the upload
         # key; Play App Signing re-signs with the real signing key on download.
         #
@@ -411,7 +438,7 @@ jobs:
         # runs and its partial-config guard would fail the build if DEBUG_*
         # were only partially populated. DEBUG_KEYSTORE_FILE comes via
         # $GITHUB_ENV from the earlier decode step.
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         env:
           DEBUG_KEYSTORE_PASSWORD: ${{ secrets.DEBUG_KEYSTORE_PASSWORD }}
           DEBUG_KEY_ALIAS: ${{ secrets.DEBUG_KEY_ALIAS }}
@@ -427,7 +454,7 @@ jobs:
         # Browser-downloadable artifact for manual upload to Play Console — kept
         # even after the auto-upload step below so the AAB is recoverable if the
         # Play upload fails (or for ad-hoc browser uploads to other tracks).
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && success()
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
@@ -442,13 +469,14 @@ jobs:
         # finishes CI without this step.
         if: |
           success() &&
-          github.event_name == 'push' &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
           github.ref == 'refs/heads/main' &&
           env.PLAY_SERVICE_ACCOUNT_JSON != ''
         env:
           # Pass the commit message via env rather than direct GHA expression
           # interpolation so quotes / backticks in the subject can't break the
-          # shell script.
+          # shell script. Empty on workflow_dispatch (no head_commit payload);
+          # the script below falls back to `git log` in that case.
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           RUN_NUMBER: ${{ github.run_number }}
           COMMIT_SHA: ${{ github.sha }}
@@ -456,20 +484,24 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/whatsnew"
           subject=$(printf '%s\n' "$COMMIT_MESSAGE" | head -n1)
+          if [ -z "$subject" ]; then
+            subject=$(git log -1 --pretty=%s "$COMMIT_SHA")
+          fi
           {
             printf '%s\n\n' "$subject"
             printf 'Build %s · %s\n' "$RUN_NUMBER" "${COMMIT_SHA:0:7}"
           } | head -c 500 > "$RUNNER_TEMP/whatsnew/whatsnew-en-US"
 
       - name: Upload AAB to Play Store internal track
-        # Push-to-main only; skipped when PLAY_SERVICE_ACCOUNT_JSON isn't set so
-        # a fresh repo / fork still completes CI. Ordered AFTER the release-AAB
-        # artifact upload so a Play API failure (e.g. listing not yet approved,
-        # versionCode collision) doesn't gate the artifact behind `success()`.
-        # Pinned to the v1.1.5 commit SHA — bump deliberately.
+        # Push-to-main (or manual workflow_dispatch on main) only; skipped
+        # when PLAY_SERVICE_ACCOUNT_JSON isn't set so a fresh repo / fork
+        # still completes CI. Ordered AFTER the release-AAB artifact upload
+        # so a Play API failure (e.g. listing not yet approved, versionCode
+        # collision) doesn't gate the artifact behind `success()`. Pinned to
+        # the v1.1.5 commit SHA — bump deliberately.
         if: |
           success() &&
-          github.event_name == 'push' &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
           github.ref == 'refs/heads/main' &&
           env.PLAY_SERVICE_ACCOUNT_JSON != ''
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
