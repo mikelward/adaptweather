@@ -60,7 +60,15 @@ class SettingsViewModel(
      * after the user has already switched to en-GB.
      */
     private var deviceVoiceLoadJob: Job? = null
-    private var lastEnumeratedLocale: VoiceLocale? = null
+    /**
+     * The most recently enumerated effective locale, used to detect when
+     * re-enumeration is needed. Stored as a resolved [Locale] rather than
+     * the raw [VoiceLocale] enum so that a [VoiceLocale.SYSTEM] user who
+     * changes their [Region] also triggers a fresh enumeration (the
+     * effective locale changes even though the [VoiceLocale] enum value
+     * didn't).
+     */
+    private var lastEnumeratedLocale: Locale? = null
 
     init {
         viewModelScope.launch {
@@ -95,10 +103,14 @@ class SettingsViewModel(
                         useCalendarEvents = prefs.useCalendarEvents,
                     )
                 }
-                // Re-enumerate on first observation and any locale flip; the
-                // engine reports a different "exact match" set per locale.
-                if (lastEnumeratedLocale != prefs.voiceLocale) {
-                    lastEnumeratedLocale = prefs.voiceLocale
+                // Re-enumerate on first observation and whenever the effective
+                // voice locale changes — from a voiceLocale flip *or* (when
+                // voiceLocale is SYSTEM) a region change that shifts the
+                // fallback locale.
+                val regionLocale = prefs.region.toJavaLocale() ?: Locale.getDefault()
+                val effectiveLocale = prefs.voiceLocale.resolve(regionLocale)
+                if (lastEnumeratedLocale != effectiveLocale) {
+                    lastEnumeratedLocale = effectiveLocale
                     refreshDeviceVoices(prefs.voiceLocale)
                 }
             }
