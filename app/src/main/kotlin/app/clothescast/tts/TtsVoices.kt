@@ -31,31 +31,80 @@ data class TtsVoiceOption(
 )
 
 /**
- * Filters [voices] to the user's preferred [variant]. Falls back to the full
- * list when the filter would empty out — handing the user an empty picker is
- * worse than offering whatever voices we have, even if the accent doesn't match.
+ * Filters [voices] to the user's preferred [variant], with a tiered fallback
+ * so the picker is never empty *and* near-matches are preferred over a
+ * language-mismatched dump:
  *
- * Voices with a null [TtsVoiceOption.locale] are accent-agnostic and always
- * pass the filter. [VoiceLocale.SYSTEM] disables filtering — the user has not
- * expressed a preference, so show everything.
+ *  1. **Exact**: voices whose [TtsVoiceOption.locale] matches [variant]
+ *     (plus accent-agnostic voices, which always pass).
+ *  2. **Language**: if (1) is empty, voices whose locale shares the BCP-47
+ *     language subtag with [variant] — e.g. an en-AU user with no AU voice
+ *     in the list still gets the en-US + en-GB voices, not Japanese ones.
+ *  3. **Full list**: if (2) is also empty, return everything so the user has
+ *     *some* picker. The UI surfaces a "try another accent" caption in this
+ *     case via [localeFallbackTier].
+ *
+ * [VoiceLocale.SYSTEM] disables filtering — the user has not expressed a
+ * preference, so show everything.
  *
  * If [keepSelected] is supplied and points to a voice in the receiver list
- * that doesn't match the filter, that voice is appended so the picker still
- * shows the user's current selection. Without this, a user who'd persisted
- * `nova` and then switched the variant to en-GB would see a picker label of
- * "Voice: nova" with no `nova` row in the dialog — confusing UX. Pass `null`
- * (the default) when this preservation isn't needed.
+ * that doesn't match the filter tier, that voice is appended so the picker
+ * still shows the user's current selection. Without this, a user who'd
+ * persisted `nova` and then switched the variant to en-GB would see a
+ * picker label of "Voice: nova" with no `nova` row in the dialog —
+ * confusing UX. Pass `null` (the default) when this preservation isn't
+ * needed.
  */
 fun List<TtsVoiceOption>.filterByVariant(
     variant: VoiceLocale,
     keepSelected: String? = null,
 ): List<TtsVoiceOption> {
     if (variant == VoiceLocale.SYSTEM) return this
-    val matched = filter { it.locale == null || it.locale == variant }
-    if (matched.isEmpty()) return this
-    val selected = keepSelected?.let { id -> firstOrNull { it.id == id } }
+    val exact = filter { it.locale == null || it.locale == variant }
+    if (exact.isNotEmpty()) return appendKeepSelected(exact, keepSelected)
+    val variantLang = variant.languageSubtag()
+    if (variantLang != null) {
+        val sameLanguage = filter { it.locale?.languageSubtag() == variantLang }
+        if (sameLanguage.isNotEmpty()) return appendKeepSelected(sameLanguage, keepSelected)
+    }
+    return this
+}
+
+/**
+ * Which tier [filterByVariant] landed on for [variant]. The picker UI uses
+ * this to caption the picker with the right explanation when we couldn't
+ * give the user their exact accent.
+ */
+enum class LocaleFallbackTier {
+    /** Engine has voices in this exact accent (or accent-agnostic). No caption needed. */
+    Exact,
+
+    /** No exact-accent match, but at least one same-language voice exists. */
+    SameLanguage,
+
+    /** No same-language match either — picker is showing the full list. */
+    FullList,
+}
+
+fun List<TtsVoiceOption>.localeFallbackTier(variant: VoiceLocale): LocaleFallbackTier {
+    if (variant == VoiceLocale.SYSTEM) return LocaleFallbackTier.Exact
+    if (any { it.locale == null || it.locale == variant }) return LocaleFallbackTier.Exact
+    val variantLang = variant.languageSubtag() ?: return LocaleFallbackTier.FullList
+    if (any { it.locale?.languageSubtag() == variantLang }) return LocaleFallbackTier.SameLanguage
+    return LocaleFallbackTier.FullList
+}
+
+private fun List<TtsVoiceOption>.appendKeepSelected(
+    matched: List<TtsVoiceOption>,
+    keepSelectedId: String?,
+): List<TtsVoiceOption> {
+    val selected = keepSelectedId?.let { id -> firstOrNull { it.id == id } }
     return if (selected != null && selected !in matched) matched + selected else matched
 }
+
+// "en-GB" → "en"; "sr-Latn-RS" → "sr"; null → null. ICU/BCP-47 always puts
+// the language tag first.
+private fun VoiceLocale.languageSubtag(): String? = bcp47?.substringBefore('-')
 
 val GEMINI_VOICES: List<TtsVoiceOption> = listOf(
     TtsVoiceOption("Kore", "Kore — Firm"),

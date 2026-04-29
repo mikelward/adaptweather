@@ -58,8 +58,10 @@ import app.clothescast.tts.GOOGLE_TTS_PACKAGE
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OPENAI_VOICES
 import app.clothescast.tts.OpenAITtsSpeaker
+import app.clothescast.tts.LocaleFallbackTier
 import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.filterByVariant
+import app.clothescast.tts.localeFallbackTier
 import app.clothescast.tts.resolve
 import app.clothescast.tts.withSpeechAudioFocus
 import java.text.Collator
@@ -254,6 +256,10 @@ internal fun VoiceContent(
                             preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
+                    LocaleFallbackCaption(
+                        source = OPENAI_VOICES,
+                        voiceLocale = voiceLocale,
+                    )
                     TtsParameterSlider(
                         labelRes = R.string.settings_openai_speed_label,
                         persistedValue = openAiSpeed,
@@ -297,10 +303,11 @@ internal fun VoiceContent(
                     // raw voice ID). Empty refreshed list (exotic account
                     // state) silently falls back to the curated list so the
                     // picker is never empty.
-                    val pickerVoices = elevenLabsRefreshedVoices
+                    val elevenLabsSource = elevenLabsRefreshedVoices
                         ?.takeIf { it.isNotEmpty() }
-                        ?.filterByVariant(voiceLocale, keepSelected = elevenLabsVoice)
-                        ?: ELEVENLABS_VOICES.filterByVariant(voiceLocale, keepSelected = elevenLabsVoice)
+                        ?: ELEVENLABS_VOICES
+                    val pickerVoices = elevenLabsSource
+                        .filterByVariant(voiceLocale, keepSelected = elevenLabsVoice)
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
                         voices = pickerVoices,
@@ -310,6 +317,10 @@ internal fun VoiceContent(
                             onSetElevenLabsVoice(it)
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, deviceVoice, voiceLocale)
                         },
+                    )
+                    LocaleFallbackCaption(
+                        source = elevenLabsSource,
+                        voiceLocale = voiceLocale,
                     )
                     // Caption only when we actually rendered the refreshed
                     // list. An empty refresh result silently falls back to
@@ -793,6 +804,35 @@ private fun InstallGoogleTtsHint() {
     ) {
         Text(stringResource(R.string.settings_tts_install_google_button))
     }
+}
+
+/**
+ * Caption rendered under a cloud-engine voice picker when [filterByVariant]
+ * fell back from an exact-accent match — `filterByVariant` silently falls
+ * back to a same-language list (or the full list) so the picker is never
+ * empty, and without context that looks like the engine ignored the
+ * locale setting. The caption names the locale so the user knows the
+ * fallback was deliberate, and tells them whether the visible voices are
+ * a same-language near-match or just "everything we have, try another
+ * accent".
+ *
+ * Renders nothing when [voiceLocale] is [VoiceLocale.SYSTEM] (no
+ * preference expressed) or when at least one voice in [source] matches it.
+ */
+@Composable
+private fun LocaleFallbackCaption(source: List<TtsVoiceOption>, voiceLocale: VoiceLocale) {
+    val tier = source.localeFallbackTier(voiceLocale)
+    val captionRes = when (tier) {
+        LocaleFallbackTier.Exact -> return
+        LocaleFallbackTier.SameLanguage -> R.string.settings_tts_voice_locale_language_fallback
+        LocaleFallbackTier.FullList -> R.string.settings_tts_voice_locale_no_match
+    }
+    val localeLabel = stringResource(voiceLocaleLabel(voiceLocale))
+    Text(
+        text = stringResource(captionRes, localeLabel),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable
