@@ -82,9 +82,10 @@ class TtsVoicesTest {
         ).toVoiceOptions()
         mapped[0].id shouldBe "v1"
         mapped[0].displayName shouldBe "Sarah — warm (american)"
-        // Refreshed entries are accent-agnostic so the locale filter never
-        // drops them — see the comment on toVoiceOptions.
-        mapped[0].locale shouldBe null
+        // "american" is one of the accent labels we map to a VoiceLocale
+        // so the picker's locale filter narrows the refreshed list the
+        // same way it narrows the curated one.
+        mapped[0].locale shouldBe VoiceLocale.EN_US
     }
 
     @Test
@@ -103,5 +104,39 @@ class TtsVoicesTest {
             "Nameless",
             "Blank",
         )
+    }
+
+    @Test
+    fun `toVoiceOptions maps recognised accent labels onto VoiceLocale`() {
+        // Spot-check the headline English variants users are most likely to
+        // filter by. "south african" exercises the multi-word lookup;
+        // upper-case input exercises the lowercase normalisation.
+        val mapped = listOf(
+            ElevenLabsVoiceSummary("a", "A", accent = "American"),
+            ElevenLabsVoiceSummary("b", "B", accent = "british"),
+            ElevenLabsVoiceSummary("c", "C", accent = "australian"),
+            ElevenLabsVoiceSummary("d", "D", accent = "south african"),
+        ).toVoiceOptions()
+        mapped.map { it.locale } shouldBe listOf(
+            VoiceLocale.EN_US,
+            VoiceLocale.EN_GB,
+            VoiceLocale.EN_AU,
+            VoiceLocale.EN_ZA,
+        )
+    }
+
+    @Test
+    fun `toVoiceOptions leaves unrecognised or ambiguous accents as null`() {
+        // Unknown ("transatlantic"), ambiguous-within-VoiceLocale
+        // ("scottish" / "irish" — would they be EN_GB? we don't claim),
+        // and made-up labels all fall back to null so the locale filter
+        // doesn't silently hide them.
+        val mapped = listOf(
+            ElevenLabsVoiceSummary("t", "T", accent = "transatlantic"),
+            ElevenLabsVoiceSummary("s", "S", accent = "scottish"),
+            ElevenLabsVoiceSummary("i", "I", accent = "irish"),
+            ElevenLabsVoiceSummary("x", "X", accent = "klingon"),
+        ).toVoiceOptions()
+        mapped.forEach { it.locale shouldBe null }
     }
 }

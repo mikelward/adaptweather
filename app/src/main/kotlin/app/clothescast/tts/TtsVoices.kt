@@ -129,13 +129,12 @@ val ELEVENLABS_VOICES: List<TtsVoiceOption> = listOf(
  *  - accent only:                 `"Sarah (american)"`
  *  - neither (typical clone):     `"Sarah"`
  *
- * We deliberately leave [TtsVoiceOption.locale] null on every refreshed
- * entry rather than trying to map ElevenLabs's free-form `accent` label
- * ("american", "british", "australian", "transatlantic", custom user
- * strings, …) to [VoiceLocale]: the user explicitly hit "Refresh", so they
- * want to see what their key has access to without the locale filter
- * dropping non-matching accents. Cloned voices in particular often have no
- * accent label at all.
+ * The voice's [TtsVoiceOption.locale] is best-effort mapped from the
+ * ElevenLabs `accent` label (see [parseElevenLabsAccent]) so the picker's
+ * locale filter narrows the refreshed list the same way it narrows the
+ * curated one. Unrecognised or missing accent labels map to `null`,
+ * which the filter treats as accent-agnostic — better to show a voice
+ * than to hide it because we couldn't classify the accent string.
  */
 fun List<ElevenLabsVoiceSummary>.toVoiceOptions(): List<TtsVoiceOption> = map { summary ->
     val description = summary.description?.takeIf { it.isNotBlank() }
@@ -145,5 +144,73 @@ fun List<ElevenLabsVoiceSummary>.toVoiceOptions(): List<TtsVoiceOption> = map { 
         if (description != null) append(" — ").append(description)
         if (accent != null) append(" (").append(accent).append(')')
     }
-    TtsVoiceOption(id = summary.id, displayName = displayName, locale = null)
+    TtsVoiceOption(
+        id = summary.id,
+        displayName = displayName,
+        locale = parseElevenLabsAccent(accent),
+    )
 }
+
+/**
+ * Maps ElevenLabs's free-form `accent` label onto a [VoiceLocale] when we
+ * can do so unambiguously. Returns `null` for anything we don't recognise
+ * — including ambiguous labels like "transatlantic" and labels that
+ * straddle multiple `VoiceLocale` values ("irish", "scottish") — so the
+ * locale filter doesn't drop those voices wrongly.
+ *
+ * The label is lowercased and trimmed before lookup; ElevenLabs uses
+ * lowercase by convention but custom voices can use anything.
+ *
+ * Kept conservative on purpose: false positives are worse than false
+ * negatives here. A US user filtering to en-US who sees an extra
+ * "transatlantic" voice can ignore it; one whose only good clone is
+ * silently filtered out can't recover without flipping the picker
+ * back to "Follow phone language".
+ */
+private fun parseElevenLabsAccent(label: String?): VoiceLocale? {
+    // Locale.ROOT avoids the Turkish-locale gotcha where lowercasing "I"
+    // yields "ı" rather than "i", which would silently break the lookup
+    // for any user whose phone is set to tr-TR.
+    val key = label?.trim()?.lowercase(java.util.Locale.ROOT) ?: return null
+    return ACCENT_TO_VOICE_LOCALE[key]
+}
+
+private val ACCENT_TO_VOICE_LOCALE: Map<String, VoiceLocale> = mapOf(
+    // English variants — the ones ElevenLabs ships in the premade library.
+    "american" to VoiceLocale.EN_US,
+    "us english" to VoiceLocale.EN_US,
+    "british" to VoiceLocale.EN_GB,
+    "english" to VoiceLocale.EN_GB,
+    "british english" to VoiceLocale.EN_GB,
+    "australian" to VoiceLocale.EN_AU,
+    "canadian" to VoiceLocale.EN_CA,
+    "south african" to VoiceLocale.EN_ZA,
+    // Other locales we expose in the picker. Map the language name to the
+    // single VoiceLocale we have for it; users on the regional variants
+    // (es-MX, ar-EG, …) rely on the empty-filter fallback to still see
+    // these voices.
+    "german" to VoiceLocale.DE_DE,
+    "french" to VoiceLocale.FR_FR,
+    "italian" to VoiceLocale.IT_IT,
+    "spanish" to VoiceLocale.ES_ES,
+    "portuguese" to VoiceLocale.PT_BR,
+    "brazilian" to VoiceLocale.PT_BR,
+    "russian" to VoiceLocale.RU_RU,
+    "polish" to VoiceLocale.PL_PL,
+    "croatian" to VoiceLocale.HR_HR,
+    "ukrainian" to VoiceLocale.UK_UA,
+    "dutch" to VoiceLocale.NL_NL,
+    "swedish" to VoiceLocale.SV_SE,
+    "turkish" to VoiceLocale.TR_TR,
+    "indonesian" to VoiceLocale.ID_ID,
+    "filipino" to VoiceLocale.FIL_PH,
+    "vietnamese" to VoiceLocale.VI_VN,
+    "chinese" to VoiceLocale.ZH_CN,
+    "hindi" to VoiceLocale.HI_IN,
+    "bengali" to VoiceLocale.BN_BD,
+    "japanese" to VoiceLocale.JA_JP,
+    "korean" to VoiceLocale.KO_KR,
+    "arabic" to VoiceLocale.AR_SA,
+    "hebrew" to VoiceLocale.HE_IL,
+    "persian" to VoiceLocale.FA_IR,
+)
