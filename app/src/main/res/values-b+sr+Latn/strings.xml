@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Serbian (Latin) translation. Tone is informal "ti"-form throughout to match the
-existing Croatian register ("Ponesi …", "Obuci …"). Ekavian variant ("sneg",
-"verovatno", "ovde") rather than the ijekavian forms used in values-hr —
-otherwise the lexicon overlaps with Croatian heavily and we lean on that
-overlap rather than maintaining two near-identical files. Scope: insight-prose
-templates, garment labels, clothes-rule editor, outfit-card labels, and
-region/voice-locale picker names. Other UI surfaces fall back to default
-English (matching values-pl / values-uk).
+Serbian (Latin) translation. Lives in `values-b+sr+Latn` (the BCP-47
+script-qualified resource folder) rather than plain `values-sr` so
+users on a Cyrillic-Serbian device locale (`sr-Cyrl`) fall through to
+default English instead of being served Latin-script text. The in-app
+Region picker's `Region.SR_RS` carries the matching tag `sr-Latn-RS`
+so users who explicitly choose Serbian here resolve into this folder.
+
+Tone is informal "ti"-form throughout to match the existing Croatian
+register ("Ponesi …", "Obuci …"). Ekavian variant ("sneg", "verovatno",
+"ovde") rather than the ijekavian forms used in values-hr — otherwise
+the lexicon overlaps with Croatian heavily and we lean on that overlap
+rather than maintaining two near-identical files. Scope: insight-prose
+templates, garment labels, clothes-rule editor, outfit-card labels,
+and region/voice-locale picker names. Other UI surfaces fall back to
+default English (matching values-pl / values-uk).
 -->
 <resources>
     <string name="settings_region_language_sr_rs">Srpski (Srbija)</string>
