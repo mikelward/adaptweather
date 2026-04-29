@@ -251,15 +251,20 @@ internal fun VoiceContent(
                         onClear = onClearElevenLabsKey,
                     )
                     // Use the user's account voices once they've refreshed,
-                    // else fall back to the curated en-US library list. The
-                    // refreshed list is already accent-agnostic (locale = null
-                    // on every entry) so filterByVariant only narrows the
-                    // curated fallback. An empty refreshed list (exotic
-                    // account state) also falls back so the picker is never
-                    // empty.
+                    // else fall back to the curated en-US library list. Both
+                    // paths apply the same locale filter so the picker
+                    // behaves consistently whether the list is curated or
+                    // account-fetched. `keepSelected` keeps the user's
+                    // current voice visible if its mapped accent doesn't
+                    // match the chosen locale (otherwise the dialog would
+                    // omit it and the button label would fall back to the
+                    // raw voice ID). Empty refreshed list (exotic account
+                    // state) silently falls back to the curated list so the
+                    // picker is never empty.
                     val pickerVoices = elevenLabsRefreshedVoices
                         ?.takeIf { it.isNotEmpty() }
-                        ?: ELEVENLABS_VOICES.filterByVariant(voiceLocale)
+                        ?.filterByVariant(voiceLocale, keepSelected = elevenLabsVoice)
+                        ?: ELEVENLABS_VOICES.filterByVariant(voiceLocale, keepSelected = elevenLabsVoice)
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
                         voices = pickerVoices,
