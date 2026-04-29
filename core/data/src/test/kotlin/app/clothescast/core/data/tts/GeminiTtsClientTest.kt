@@ -161,6 +161,88 @@ class GeminiTtsClientTest {
 
         val body = checkNotNull(capturedBody)
         body.shouldContain("Sprich auf Deutsch")
+        // de-DE gets the Hochdeutsch fallback, not an Austrian or Swiss directive
+        body.shouldNotContain("österreichischen")
+        body.shouldNotContain("deutschschweizerischen")
+    }
+
+    @Test
+    fun `request body includes an austrian accent directive for de-AT locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hallo", locale = Locale.forLanguageTag("de-AT"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("österreichischen")
+        body.shouldNotContain("hochdeutschen")
+    }
+
+    @Test
+    fun `request body includes a swiss german accent directive for de-CH locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hallo", locale = Locale.forLanguageTag("de-CH"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("deutschschweizerischen")
+        body.shouldNotContain("hochdeutschen")
+    }
+
+    @Test
+    fun `request body includes a european portuguese directive for pt-PT locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "olá", locale = Locale.forLanguageTag("pt-PT"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("português europeu")
+        // Must not pick up the Brazilian directive
+        body.shouldNotContain("brasileiro")
+    }
+
+    @Test
+    fun `request body includes a taiwanese mandarin directive for zh-TW locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "你好", locale = Locale.forLanguageTag("zh-TW"))
+
+        val body = checkNotNull(capturedBody)
+        // zh-TW uses the Traditional Chinese "國語" (guóyǔ) directive,
+        // not the Simplified Chinese "普通话" (pǔtōnghuà) fallback.
+        body.shouldContain("國語")
+        body.shouldNotContain("普通话")
     }
 
     @Test
