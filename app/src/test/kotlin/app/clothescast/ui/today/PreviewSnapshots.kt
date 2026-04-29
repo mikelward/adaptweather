@@ -125,6 +125,7 @@ class PreviewSnapshots {
     @Test fun outfit_row_today_tonight() = capture { OutfitRowTodayTonightPreview() }
     @Test fun outfit_row_tonight_tomorrow() = capture { OutfitRowTonightTomorrowPreview() }
     @Test fun outfit_rationale_dialog() = captureDialog { OutfitRationaleDialogPreview() }
+    @Test fun outfit_rationale_dialog_tuned() = captureDialog { OutfitRationaleDialogTunedPreview() }
 
     @Test fun today_empty_state() = capture { EmptyStatePreview() }
     @Test fun today_insight_card() = capture { InsightCardPreview() }

@@ -12,7 +12,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -186,6 +188,63 @@ class SettingsRepository(
         dataStore.edit { it[USE_CALENDAR_EVENTS] = enabled }
     }
 
+    suspend fun setOutfitThresholds(thresholds: OutfitSuggestion.Thresholds) {
+        // Clamp on write so a relentless tap-spam can't drive the cutoff into
+        // nonsense territory. The domain helper applies the same bounds — this
+        // is belt-and-braces.
+        dataStore.edit { prefs ->
+            prefs[OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN] = thresholds.sweaterMaxFeelsLikeMinC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+            prefs[OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN] = thresholds.tshirtMinFeelsLikeMinC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+            prefs[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX] = thresholds.shortsMinFeelsLikeMaxC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+            prefs[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN] = thresholds.shortsMinFeelsLikeMinC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+        }
+    }
+
+    suspend fun resetOutfitThresholds() {
+        dataStore.edit { prefs ->
+            prefs.remove(OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN)
+            prefs.remove(OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN)
+            prefs.remove(OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX)
+            prefs.remove(OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN)
+        }
+    }
+
+    /**
+     * Atomically nudges one threshold by [deltaC] degrees Celsius. The read of
+     * the current value, the addition, and the write all happen inside a single
+     * [dataStore.edit] transaction — DataStore Preferences serialises edits, so
+     * even if a user spams `−` ten times in 100ms each tap reads the latest
+     * persisted value rather than the same pre-update snapshot, and no taps
+     * collapse into one. Final value is clamped to the documented sanity range.
+     */
+    suspend fun adjustOutfitThreshold(kind: Fact.ThresholdKind, deltaC: Double) {
+        dataStore.edit { prefs ->
+            val key = keyForOutfitThreshold(kind)
+            val default = OutfitSuggestion.Thresholds.DEFAULT.valueOf(kind)
+            val current = prefs[key]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: default
+            prefs[key] = (current + deltaC).coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            )
+        }
+    }
+
+    private fun keyForOutfitThreshold(
+        kind: Fact.ThresholdKind,
+    ): androidx.datastore.preferences.core.Preferences.Key<Double> = when (kind) {
+        Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN -> OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN
+        Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN -> OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN
+        Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX -> OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX
+        Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN -> OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN
+    }
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val time = this[SCHEDULE_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
             ?: DEFAULT_TIME
@@ -253,6 +312,26 @@ class SettingsRepository(
         val tonightEnabled = this[TONIGHT_ENABLED] != false
         val tonightNotifyOnlyOnEvents = this[TONIGHT_NOTIFY_ONLY_ON_EVENTS] == true
         val dailyMentionEveningEvents = this[DAILY_MENTION_EVENING_EVENTS] == true
+        // Each cutoff falls back independently to the matching DEFAULT field, so a user
+        // who only nudged the jacket cutoff still gets the default sweater/shorts cuts.
+        val outfitThresholds = OutfitSuggestion.Thresholds(
+            sweaterMaxFeelsLikeMinC = this[OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.sweaterMaxFeelsLikeMinC,
+            tshirtMinFeelsLikeMinC = this[OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.tshirtMinFeelsLikeMinC,
+            shortsMinFeelsLikeMaxC = this[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.shortsMinFeelsLikeMaxC,
+            shortsMinFeelsLikeMinC = this[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.shortsMinFeelsLikeMinC,
+        )
         val zone = zoneIdProvider()
 
         return UserPreferences(
@@ -280,6 +359,7 @@ class SettingsRepository(
             tonightDeliveryMode = tonightDeliveryMode,
             tonightNotifyOnlyOnEvents = tonightNotifyOnlyOnEvents,
             dailyMentionEveningEvents = dailyMentionEveningEvents,
+            outfitThresholds = outfitThresholds,
         )
     }
 
@@ -337,6 +417,14 @@ class SettingsRepository(
         private val TONIGHT_DELIVERY_MODE = stringPreferencesKey("tonight_delivery_mode")
         private val TONIGHT_NOTIFY_ONLY_ON_EVENTS = booleanPreferencesKey("tonight_notify_only_on_events")
         private val DAILY_MENTION_EVENING_EVENTS = booleanPreferencesKey("daily_mention_evening_events")
+        private val OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN =
+            doublePreferencesKey("outfit_threshold_sweater_max_feels_like_min_c")
+        private val OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN =
+            doublePreferencesKey("outfit_threshold_tshirt_min_feels_like_min_c")
+        private val OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX =
+            doublePreferencesKey("outfit_threshold_shorts_min_feels_like_max_c")
+        private val OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN =
+            doublePreferencesKey("outfit_threshold_shorts_min_feels_like_min_c")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

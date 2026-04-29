@@ -48,6 +48,7 @@ class OutfitSuggestionTest {
                 observedC = 13.0,
                 observedAt = LocalTime.of(7, 0),
                 thresholdC = 18.0,
+                thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
                 comparison = Fact.Comparison.BELOW,
             ),
         )
@@ -61,6 +62,7 @@ class OutfitSuggestionTest {
         )
         val fact = rationale.top.facts.single()
         fact.thresholdC shouldBe 8.0
+        fact.thresholdKind shouldBe Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN
         fact.observedC shouldBe 4.0
         fact.observedAt shouldBe LocalTime.of(6, 0)
         fact.comparison shouldBe Fact.Comparison.BELOW
@@ -157,5 +159,32 @@ class OutfitSuggestionTest {
         cases.forEach { (min, max, expected) ->
             OutfitSuggestion.fromForecast(forecast(min, max)) shouldBe expected
         }
+    }
+
+    @Test
+    fun `custom thresholds flip the recommendation`() {
+        // With defaults, 16°C min would land on SWEATER (< 18). Lower the t-shirt
+        // cutoff to 15°C and the same forecast picks TSHIRT instead — the threshold
+        // tuning controls in the rationale dialog ride on this exact behaviour.
+        val warmer = OutfitSuggestion.Thresholds.DEFAULT.copy(tshirtMinFeelsLikeMinC = 15.0)
+        val outfit = OutfitSuggestion.fromForecast(
+            forecast(feelsLikeMin = 16.0, feelsLikeMax = 24.0),
+            warmer,
+        )
+        outfit.top shouldBe OutfitSuggestion.Top.TSHIRT
+    }
+
+    @Test
+    fun `with clamps adjustments to MIN_C and MAX_C`() {
+        val below = OutfitSuggestion.Thresholds.DEFAULT.with(
+            Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN,
+            -100.0,
+        )
+        below.sweaterMaxFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MIN_C
+        val above = OutfitSuggestion.Thresholds.DEFAULT.with(
+            Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+            999.0,
+        )
+        above.tshirtMinFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MAX_C
     }
 }

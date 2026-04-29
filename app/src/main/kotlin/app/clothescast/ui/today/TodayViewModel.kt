@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.Insight
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.data.InsightCache
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 data class TodayState(
@@ -33,6 +36,12 @@ data class TodayState(
     // just exposes the prefs side of the equation.
     val useDeviceLocation: Boolean = false,
     val hasFallbackLocation: Boolean = false,
+    /** Live cutoffs the rationale dialog reads to render its current threshold value
+     * and the `−1°` / `+1°` controls. The cached [Insight.outfitRationale] still
+     * carries the threshold values that *were* in effect at insight-generation time
+     * (which might differ from these if the user has nudged a knob since); the
+     * dialog prefers these for display so the controls stay honest. */
+    val outfitThresholds: OutfitSuggestion.Thresholds = OutfitSuggestion.Thresholds.DEFAULT,
 )
 
 sealed class WorkStatus {
@@ -44,7 +53,7 @@ sealed class WorkStatus {
 class TodayViewModel(
     insightCache: InsightCache,
     workManager: WorkManager,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     // Combine status across both unique-work names so the spinner / failure
     // banner reflects an in-flight tonight refresh too — the Refresh button
@@ -64,8 +73,27 @@ class TodayViewModel(
             tonightTime = prefs.tonightSchedule.time,
             useDeviceLocation = prefs.useDeviceLocation,
             hasFallbackLocation = prefs.location != null,
+            outfitThresholds = prefs.outfitThresholds,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
+
+    /**
+     * Nudges one of [OutfitSuggestion.Thresholds]'s knobs by [deltaC] degrees Celsius.
+     * Wired to the rationale dialog's `−1°` / `+1°` controls. The read-modify-write
+     * is delegated to [SettingsRepository.adjustOutfitThreshold] which performs it
+     * inside a single `DataStore.edit { … }` transaction — rapid taps each read the
+     * latest persisted value, so taps don't collapse into one even when several
+     * coroutines are in flight. Final value is clamped to the documented sanity
+     * range.
+     */
+    fun adjustOutfitThreshold(kind: Fact.ThresholdKind, deltaC: Double) {
+        viewModelScope.launch { settingsRepository.adjustOutfitThreshold(kind, deltaC) }
+    }
+
+    /** Reverts every threshold to [OutfitSuggestion.Thresholds.DEFAULT]. */
+    fun resetOutfitThresholds() {
+        viewModelScope.launch { settingsRepository.resetOutfitThresholds() }
+    }
 
     private fun List<WorkInfo>.toStatus(): WorkStatus {
         // Most recent terminal or running entry — WorkManager may keep multiple history

@@ -117,16 +117,17 @@ class InsightCacheTest {
     @Test
     fun `corrupt JSON in the slot maps to null rather than crashing`() = runTest {
         dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v3")] = "{not valid json"
+            it[stringPreferencesKey("latest_insight_v4")] = "{not valid json"
         }
 
         subject.latest.first() shouldBe null
     }
 
     @Test
-    fun `pre-v3 prose-summary payloads are dropped rather than crashing the cache`() = runTest {
-        // Older app versions stored `summary` as a rendered string. The schema bump
-        // to v3 carries a structured InsightSummary instead, so a v2 payload no
+    fun `pre-v4 payloads are dropped rather than crashing the cache`() = runTest {
+        // Older app versions stored `summary` as a rendered string (v2) and
+        // later as a structured object without `Fact.thresholdKind` (v3). The
+        // current schema (v4) carries the kind tag, so a v2 / v3 payload no
         // longer deserialises and the slot drops to null. The next worker run
         // regenerates on the new key.
         val v2Json = """
@@ -138,9 +139,9 @@ class InsightCacheTest {
             }
         """.trimIndent()
         dataStore.edit {
-            // v3 key, v2-shaped payload — the decoder fails on the `summary` field
-            // and the runCatching in the cache returns null.
-            it[stringPreferencesKey("latest_insight_v3")] = v2Json
+            // v4 key, v2-shaped payload — the decoder fails on the `summary`
+            // field and the runCatching in the cache returns null.
+            it[stringPreferencesKey("latest_insight_v4")] = v2Json
         }
 
         subject.latest.first() shouldBe null
@@ -181,6 +182,7 @@ class InsightCacheTest {
                         observedC = 13.0,
                         observedAt = LocalTime.of(7, 0),
                         thresholdC = 18.0,
+                        thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
                         comparison = Fact.Comparison.BELOW,
                     ),
                 ),
@@ -192,6 +194,7 @@ class InsightCacheTest {
                         observedC = 19.0,
                         observedAt = null,
                         thresholdC = 22.0,
+                        thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX,
                         comparison = Fact.Comparison.BELOW,
                     ),
                 ),

@@ -211,6 +211,7 @@ internal fun OutfitRationaleDialogPreview() {
                             observedC = 13.0,
                             observedAt = LocalTime.of(7, 0),
                             thresholdC = 18.0,
+                            thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
                             comparison = Fact.Comparison.BELOW,
                         ),
                     ),
@@ -222,12 +223,63 @@ internal fun OutfitRationaleDialogPreview() {
                             observedC = 13.0,
                             observedAt = LocalTime.of(7, 0),
                             thresholdC = 15.0,
+                            thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN,
                             comparison = Fact.Comparison.BELOW,
                         ),
                     ),
                 ),
             ),
             temperatureUnit = TemperatureUnit.CELSIUS,
+            outfitThresholds = OutfitSuggestion.Thresholds.DEFAULT,
+            onAdjustThreshold = { _, _ -> },
+            onResetThresholds = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(name = "Outfit rationale · customised thresholds", widthDp = 360)
+@Composable
+internal fun OutfitRationaleDialogTunedPreview() {
+    Frame {
+        // Mid-tweak state: the t-shirt cutoff (`tshirtMinFeelsLikeMinC`) has been
+        // lowered from 18°C to 15°C, so observed 13°C is still BELOW the customised
+        // threshold and the comparison string stays "under". The Reset button
+        // surfaces because thresholds differ from DEFAULT.
+        OutfitRationaleDialog(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            rationale = OutfitRationale(
+                top = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 18.0,
+                            thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+                bottom = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 15.0,
+                            thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+            ),
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            outfitThresholds = OutfitSuggestion.Thresholds.DEFAULT.copy(
+                tshirtMinFeelsLikeMinC = 15.0,
+            ),
+            onAdjustThreshold = { _, _ -> },
+            onResetThresholds = {},
             onDismiss = {},
         )
     }
