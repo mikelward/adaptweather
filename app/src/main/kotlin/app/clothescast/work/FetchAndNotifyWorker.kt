@@ -28,6 +28,7 @@ import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.resolve
+import app.clothescast.tts.toJavaLocale
 import app.clothescast.tts.withSpeechAudioFocus
 import app.clothescast.widget.OutfitWidget
 import io.ktor.client.call.NoTransformationFoundException
@@ -38,6 +39,7 @@ import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.flow.first
 import java.io.IOException
 import java.time.LocalDate
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
@@ -343,7 +345,8 @@ class FetchAndNotifyWorker(
      * path is the primary delivery channel and has already fired by this point.
      */
     private suspend fun speakWithFallback(text: String, prefs: UserPreferences) {
-        val locale = prefs.voiceLocale.resolve()
+        val regionLocale = prefs.region.toJavaLocale() ?: Locale.getDefault()
+        val locale = prefs.voiceLocale.resolve(regionLocale)
         withSpeechAudioFocus(applicationContext) {
             when (prefs.ttsEngine) {
                 TtsEngine.GEMINI -> {

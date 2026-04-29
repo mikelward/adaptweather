@@ -121,6 +121,7 @@ internal fun SettingsVoiceDevicePreview() {
             elevenLabsStability = UserPreferences.DEFAULT_ELEVENLABS_STABILITY,
             openAiSpeed = UserPreferences.DEFAULT_OPENAI_SPEED,
             voiceLocale = VoiceLocale.SYSTEM,
+            region = Region.SYSTEM,
             padding = PaddingValues(0.dp),
             onSetTtsEngine = {},
             onSetGeminiVoice = {},

@@ -22,6 +22,7 @@ import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.tts.defaultOpenAiVoiceFor
+import app.clothescast.tts.toJavaLocale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -279,9 +280,11 @@ class SettingsRepository(
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
         // OpenAI default depends on locale (en-GB → fable; everything else → nova).
+        // Resolve with regionLocale as fallback: a SYSTEM voiceLocale on an en-GB
+        // region should default to fable just as an explicit EN_GB voiceLocale does.
         // Resolve only after voiceLocale is known so the picked voice matches.
         val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
-            ?: defaultOpenAiVoiceFor(voiceLocale)
+            ?: defaultOpenAiVoiceFor(voiceLocale, regionLocale)
         val elevenLabsVoice = this[ELEVENLABS_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_ELEVENLABS_VOICE
         val elevenLabsModel = this[ELEVENLABS_MODEL]?.takeIf { it.isNotBlank() }
@@ -436,8 +439,6 @@ class SettingsRepository(
 }
 
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
-private fun Region.toJavaLocale(): Locale? = bcp47?.let { Locale.forLanguageTag(it) }
 
 // Only the US uses Fahrenheit in everyday weather contexts. A handful of
 // dependencies (BS, BZ, KY, PW) also do, but they're rounding error and the
