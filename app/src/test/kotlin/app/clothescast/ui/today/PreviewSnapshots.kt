@@ -24,6 +24,7 @@ import app.clothescast.widget.WidgetTodayTShirtShortsPreview
 import app.clothescast.widget.WidgetTonightDarkPreview
 import app.clothescast.widget.WidgetTonightSweaterPantsPreview
 import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -82,6 +83,21 @@ class PreviewSnapshots {
     // snapshots directory and CI's `git add app/snapshots` finds them.
     private val outputDir: String = System.getProperty("roborazzi.output.dir")
         ?: error("roborazzi.output.dir not set; configure in app/build.gradle.kts testOptions")
+
+    // Robolectric creates a fresh Application per test method by default, but
+    // AndroidJUnit4 doesn't guarantee source-order execution: if `onboarding_partial`
+    // (which grants POST_NOTIFICATIONS) ran before `onboarding_fresh` *and* a
+    // future Robolectric / lifecycle change started sharing application state
+    // across methods, the fresh snapshot would silently capture the wrong
+    // baseline. Explicitly denying both perms before every test pins the
+    // starting state regardless of the surrounding harness's reset semantics.
+    @Before
+    fun resetPermissions() {
+        shadowOf(RuntimeEnvironment.getApplication()).denyPermissions(
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        )
+    }
 
     private fun capture(content: @Composable () -> Unit) {
         composeRule.setContent { content() }
