@@ -124,6 +124,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_region_language_it_it">Talijanski (Italija)</string>
     <string name="settings_region_language_es_es">Španjolski (Španjolska)</string>
     <string name="settings_region_language_es_mx">Španjolski (Meksiko)</string>
+    <string name="settings_region_language_ca_es">Katalonski (Španjolska)</string>
     <string name="settings_region_language_ru_ru">Ruski (Rusija)</string>
     <string name="settings_region_language_pl_pl">Poljski (Poljska)</string>
     <string name="settings_region_language_sr_rs">Srpski (Srbija)</string>
@@ -185,6 +186,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_it_it">Talijanski (Italija)</string>
     <string name="settings_tts_voice_locale_es_es">Španjolski (Španjolska)</string>
     <string name="settings_tts_voice_locale_es_mx">Španjolski (Meksiko)</string>
+    <string name="settings_tts_voice_locale_ca_es">Katalonski (Španjolska)</string>
     <string name="settings_tts_voice_locale_ru_ru">Ruski (Rusija)</string>
     <string name="settings_tts_voice_locale_pl_pl">Poljski (Poljska)</string>
     <string name="settings_tts_voice_locale_sr_rs">Srpski (Srbija)</string>

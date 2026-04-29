@@ -171,6 +171,7 @@
     <string name="settings_tts_voice_locale_it_it">Italian (Italy)</string>
     <string name="settings_tts_voice_locale_es_es">Spanish (Spain)</string>
     <string name="settings_tts_voice_locale_es_mx">Spanish (Mexico)</string>
+    <string name="settings_tts_voice_locale_ca_es">Catalan (Spain)</string>
     <string name="settings_tts_voice_locale_ru_ru">Russian (Russia)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polish (Poland)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croatian (Croatia)</string>
@@ -276,6 +277,7 @@
     <string name="settings_region_language_it_it">Italian (Italy)</string>
     <string name="settings_region_language_es_es">Spanish (Spain)</string>
     <string name="settings_region_language_es_mx">Spanish (Mexico)</string>
+    <string name="settings_region_language_ca_es">Catalan (Spain)</string>
     <string name="settings_region_language_ru_ru">Russian (Russia)</string>
     <string name="settings_region_language_pl_pl">Polish (Poland)</string>
     <string name="settings_region_language_hr_hr">Croatian (Croatia)</string>

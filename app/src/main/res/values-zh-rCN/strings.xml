@@ -146,6 +146,7 @@ label localizes.
     <string name="settings_region_language_it_it">意大利语（意大利）</string>
     <string name="settings_region_language_es_es">西班牙语（西班牙）</string>
     <string name="settings_region_language_es_mx">西班牙语（墨西哥）</string>
+    <string name="settings_region_language_ca_es">加泰罗尼亚语（西班牙）</string>
     <string name="settings_region_language_ru_ru">俄语（俄罗斯）</string>
     <string name="settings_region_language_pl_pl">波兰语（波兰）</string>
     <string name="settings_region_language_hr_hr">克罗地亚语（克罗地亚）</string>
@@ -204,6 +205,7 @@ label localizes.
     <string name="settings_tts_voice_locale_it_it">意大利语（意大利）</string>
     <string name="settings_tts_voice_locale_es_es">西班牙语（西班牙）</string>
     <string name="settings_tts_voice_locale_es_mx">西班牙语（墨西哥）</string>
+    <string name="settings_tts_voice_locale_ca_es">加泰罗尼亚语（西班牙）</string>
     <string name="settings_tts_voice_locale_ru_ru">俄语（俄罗斯）</string>
     <string name="settings_tts_voice_locale_pl_pl">波兰语（波兰）</string>
     <string name="settings_tts_voice_locale_hr_hr">克罗地亚语（克罗地亚）</string>

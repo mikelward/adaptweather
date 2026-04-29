@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Catalan translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Tone is
+informal "tu"-form throughout ("Posa't …", "Emporta't …"), matching the
+existing Spanish prose register. Time format uses ":" rather than "h" since
+the in-app clock is digit-driven and reads consistently across locales.
+-->
+<resources>
+    <string name="settings_region_language_ca_es">Català (Espanya)</string>
+    <string name="settings_tts_voice_locale_ca_es">Català (Espanya)</string>
+    <string name="settings_tts_voice_locale_label">Idioma</string>
+
+    <string name="garment_sweater">Jersei</string>
+    <string name="garment_hoodie">Dessuadora amb caputxa</string>
+    <string name="garment_jacket">Jaqueta</string>
+    <string name="garment_coat">Abric</string>
+    <string name="garment_tshirt">Samarreta</string>
+    <string name="garment_shirt">Camisa</string>
+    <string name="garment_shorts">Pantalons curts</string>
+    <string name="garment_pants">Pantalons</string>
+    <string name="garment_jeans">Texans</string>
+
+    <string name="settings_clothes_empty">Sense regles. Toca Afegir per crear-ne una.</string>
+    <string name="settings_clothes_add">Afegir</string>
+    <string name="settings_clothes_edit">Editar</string>
+    <string name="settings_clothes_delete">Eliminar</string>
+    <string name="settings_clothes_dialog_add_title">Afegir regla de roba</string>
+    <string name="settings_clothes_dialog_edit_title">Editar regla de roba</string>
+    <string name="settings_clothes_item_label">Peça de roba</string>
+    <string name="settings_clothes_condition_label">Condició</string>
+    <string name="settings_clothes_value_label_temp_c">Llindar (°C)</string>
+    <string name="settings_clothes_value_label_precip">Llindar (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Quan se sent més fred que</string>
+    <string name="settings_clothes_cond_type_temp_above">Quan se sent més càlid que</string>
+    <string name="settings_clothes_cond_type_precip_above">Quan la probabilitat de pluja supera</string>
+    <string name="settings_clothes_cond_temp_below">quan la temperatura percebuda és inferior a %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">quan la temperatura percebuda és superior a %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">quan la probabilitat de pluja supera el %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Samarreta</string>
+    <string name="today_outfit_top_sweater">Jersei</string>
+    <string name="today_outfit_top_thick_jacket">Jaqueta gruixuda</string>
+    <string name="today_outfit_bottom_shorts">Pantalons curts</string>
+    <string name="today_outfit_bottom_long_pants">Pantalons llargs</string>
+
+    <string name="insight_lead_today">Avui</string>
+    <string name="insight_lead_tonight">Aquesta nit</string>
+    <!-- Catalan weather-as-verb: "Avui farà fred." (today will-make cold). -->
+    <string name="insight_band_single">%1$s farà %2$s.</string>
+    <string name="insight_band_range">%1$s farà de %2$s a %3$s.</string>
+    <string name="insight_band_freezing">fred polar</string>
+    <string name="insight_band_cold">fred</string>
+    <string name="insight_band_cool">fresc</string>
+    <string name="insight_band_mild">bon temps</string>
+    <string name="insight_band_warm">calor</string>
+    <string name="insight_band_hot">molta calor</string>
+    <string name="insight_delta_warmer">Avui farà %1$d° més de calor.</string>
+    <string name="insight_delta_cooler">Avui farà %1$d° més de fred.</string>
+    <string name="insight_alert">Alerta: %1$s.</string>
+    <!-- Reflexive imperative "tu": "Posa't el jersei." -->
+    <string name="insight_clothes_wear">Posa\'t %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s i %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s i %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">a les %1$s</string>
+    <string name="insight_precip_overnight">durant la nit</string>
+    <string name="insight_condition_clear">Cel serè</string>
+    <string name="insight_condition_partly_cloudy">Parcialment ennuvolat</string>
+    <string name="insight_condition_cloudy">Ennuvolat</string>
+    <string name="insight_condition_fog">Boira</string>
+    <string name="insight_condition_drizzle">Plovisqueig</string>
+    <string name="insight_condition_rain">Pluja</string>
+    <string name="insight_condition_snow">Neu</string>
+    <string name="insight_condition_thunderstorm">Tempesta</string>
+    <string name="insight_condition_unknown">Desconegut</string>
+    <string name="insight_tie_in">Emporta\'t %1$s aquesta nit.</string>
+    <string name="insight_tie_in_with_rain">Emporta\'t %1$s aquesta nit, pluja a les %2$s.</string>
+    <!-- "15" / "15:30" — "a les" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

@@ -158,6 +158,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_it_it">Italiano (Itália)</string>
     <string name="settings_region_language_es_es">Espanhol (Espanha)</string>
     <string name="settings_region_language_es_mx">Espanhol (México)</string>
+    <string name="settings_region_language_ca_es">Catalão (Espanha)</string>
     <string name="settings_region_language_ru_ru">Russo (Rússia)</string>
     <string name="settings_region_language_pl_pl">Polonês (Polônia)</string>
     <string name="settings_region_language_hr_hr">Croata (Croácia)</string>
@@ -215,6 +216,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_it_it">Italiano (Itália)</string>
     <string name="settings_tts_voice_locale_es_es">Espanhol (Espanha)</string>
     <string name="settings_tts_voice_locale_es_mx">Espanhol (México)</string>
+    <string name="settings_tts_voice_locale_ca_es">Catalão (Espanha)</string>
     <string name="settings_tts_voice_locale_ru_ru">Russo (Rússia)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polonês (Polônia)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croata (Croácia)</string>
