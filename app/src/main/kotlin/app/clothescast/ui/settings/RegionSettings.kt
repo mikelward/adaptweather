@@ -177,6 +177,7 @@ private fun regionLabel(region: Region): Int = when (region) {
     Region.TR_TR -> R.string.settings_region_language_tr_tr
     Region.EN_ZA -> R.string.settings_region_language_en_za
     Region.ID_ID -> R.string.settings_region_language_id_id
+    Region.MS_MY -> R.string.settings_region_language_ms_my
     Region.FIL_PH -> R.string.settings_region_language_fil_ph
     Region.VI_VN -> R.string.settings_region_language_vi_vn
     Region.TH_TH -> R.string.settings_region_language_th_th
