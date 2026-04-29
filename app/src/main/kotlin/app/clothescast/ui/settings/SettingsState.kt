@@ -43,8 +43,9 @@ data class SettingsState(
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
     // Match SettingsRepository's locale-aware default so the picker doesn't
     // briefly render "alloy" before the first DataStore emission overrides it.
-    // When voiceLocale is SYSTEM (the default), this resolves through the phone's
-    // current locale → fable on en-GB, nova everywhere else.
+    // Region isn't known yet at construction time, so this initial value falls
+    // back to the phone's current locale → fable on en-GB, nova everywhere else.
+    // The DataStore emission immediately corrects it using the stored region.
     val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
     val openAiSpeed: Double = UserPreferences.DEFAULT_OPENAI_SPEED,
     val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,

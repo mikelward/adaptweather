@@ -42,6 +42,7 @@ import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.TemperatureBand
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.insight.InsightFormatter
@@ -63,6 +64,7 @@ import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.filterByVariant
 import app.clothescast.tts.localeFallbackTier
 import app.clothescast.tts.resolve
+import app.clothescast.tts.toJavaLocale
 import app.clothescast.tts.withSpeechAudioFocus
 import java.text.Collator
 import java.util.Locale
@@ -90,6 +92,7 @@ internal fun VoiceContent(
     elevenLabsStability: Double,
     openAiSpeed: Double,
     voiceLocale: VoiceLocale,
+    region: Region,
     padding: PaddingValues,
     onSetTtsEngine: (TtsEngine) -> Unit,
     onSetGeminiVoice: (String) -> Unit,
@@ -154,6 +157,7 @@ internal fun VoiceContent(
                     elevenLabsStability = eStability,
                     deviceVoice = dVoice,
                     voiceLocale = locale,
+                    region = region,
                 )
             } finally {
                 isPreviewing = false
@@ -180,6 +184,7 @@ internal fun VoiceContent(
             )
             VoiceLocalePicker(
                 selected = voiceLocale,
+                region = region,
                 enabled = !isPreviewing,
                 onSelect = {
                     onSetVoiceLocale(it)
@@ -441,22 +446,24 @@ internal fun VoiceContent(
 @Composable
 private fun VoiceLocalePicker(
     selected: VoiceLocale,
+    region: Region,
     onSelect: (VoiceLocale) -> Unit,
     enabled: Boolean = true,
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
     val title = stringResource(R.string.settings_tts_voice_locale_label)
-    // Show the actual runtime locale VoiceLocale.SYSTEM resolves to (device
-    // default), which can differ from the app UI language when the user sets
-    // an in-app language override.
+    // Show the locale that VoiceLocale.SYSTEM resolves to: the app's
+    // configured region language when the user has set one explicitly, or the
+    // device UI language otherwise. This is what the TTS engine actually uses,
+    // so the user can verify what accent they'll hear without leaving Settings.
     val uiLocale = LocalContext.current.resourcesLocale()
-    // Don't memoize without a key: Locale.getDefault() can change at runtime
-    // (device language switch) and we want the SYSTEM row to reflect the
-    // current resolved tag immediately.
+    // Prefer the region-configured locale over the device default. Fall back
+    // to uiLocale (the context resources locale) when region is SYSTEM so the
+    // tag still updates with runtime app-language changes.
     // Strip Unicode extensions (e.g. `-u-fw-mon` from a Monday-week device
     // preference) — they're irrelevant to the spoken accent and just clutter
     // the picker label.
-    val systemTag = VoiceLocale.SYSTEM.resolve().stripExtensions().toLanguageTag()
+    val systemTag = VoiceLocale.SYSTEM.resolve(region.toJavaLocale() ?: uiLocale).stripExtensions().toLanguageTag()
     val labelFor: @Composable (VoiceLocale) -> String = { option ->
         val base = stringResource(voiceLocaleLabel(option))
         if (option == VoiceLocale.SYSTEM) "$base ($systemTag)" else base
@@ -889,13 +896,14 @@ private suspend fun runTtsPreview(
     elevenLabsStability: Double,
     deviceVoice: String?,
     voiceLocale: VoiceLocale,
+    region: Region,
 ) {
     val app = context.applicationContext as app.clothescast.ClothesCastApplication
     // Network synthesis and AudioTrack write are both blocking-ish work — Ktor
     // suspends off-Main internally, but AudioTrack.write/play are JNI calls and
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
-        val locale = voiceLocale.resolve()
+        val locale = voiceLocale.resolve(region.toJavaLocale() ?: Locale.getDefault())
         // Render the canned sample in the *voice* locale, not the app's UI
         // locale — playing English prose through a Japanese voice is exactly
         // the mismatch the user picked the locale to avoid. The formatter

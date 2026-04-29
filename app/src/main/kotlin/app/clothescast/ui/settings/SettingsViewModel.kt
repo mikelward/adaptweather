@@ -20,6 +20,7 @@ import app.clothescast.data.SettingsRepository
 import app.clothescast.diag.DiagLog
 import app.clothescast.tts.TtsVoiceEnumerator
 import app.clothescast.tts.resolve
+import app.clothescast.tts.toJavaLocale
 import app.clothescast.tts.toVoiceOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,6 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalTime
+import java.util.Locale
 
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
@@ -116,7 +118,7 @@ class SettingsViewModel(
         deviceVoiceLoadJob = viewModelScope.launch {
             // All three enumerator calls bind the engine, which is JNI work
             // — keep them off the main dispatcher.
-            val resolvedLocale = locale.resolve()
+            val resolvedLocale = locale.resolve(_state.value.region.toJavaLocale() ?: Locale.getDefault())
             val voices = withContext(Dispatchers.IO) {
                 runCatching { voiceEnumerator.listVoices(resolvedLocale) }.getOrDefault(emptyList())
             }

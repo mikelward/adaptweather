@@ -381,6 +381,26 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `openAiVoice defaults to fable when voiceLocale is SYSTEM and region is EN_GB`() = runTest {
+        // voiceLocale = SYSTEM → accent follows the app's region setting;
+        // region = EN_GB → effective locale is en-GB → fable.
+        subject.setRegion(Region.EN_GB)
+        subject.preferences.first().openAiVoice shouldBe "fable"
+    }
+
+    @Test
+    fun `openAiVoice defaults to nova when voiceLocale is SYSTEM and region is EN_US`() = runTest {
+        subject.setRegion(Region.EN_US)
+        subject.preferences.first().openAiVoice shouldBe "nova"
+    }
+
+    @Test
+    fun `openAiVoice defaults from system locale when both voiceLocale and region are SYSTEM`() = runTest {
+        // Both SYSTEM → falls back to systemLocaleProvider (Locale.UK = en-GB in tests) → fable.
+        subject.preferences.first().openAiVoice shouldBe "fable"
+    }
+
+    @Test
     fun `useCalendarEvents defaults to false and round-trips`() = runTest {
         subject.preferences.first().useCalendarEvents shouldBe false
 

@@ -153,6 +153,7 @@ fun SettingsScreen(
                 elevenLabsStability = state.elevenLabsStability,
                 openAiSpeed = state.openAiSpeed,
                 voiceLocale = state.voiceLocale,
+                region = state.region,
                 padding = padding,
                 onSetTtsEngine = viewModel::setTtsEngine,
                 onSetGeminiVoice = viewModel::setGeminiVoice,
