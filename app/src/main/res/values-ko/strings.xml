@@ -183,6 +183,7 @@ displayed label localizes.
     <string name="settings_region_language_pt_pt">포르투갈어 (포르투갈)</string>
     <string name="settings_region_language_nl_nl">네덜란드어 (네덜란드)</string>
     <string name="settings_region_language_sv_se">스웨덴어 (스웨덴)</string>
+    <string name="settings_region_language_fi_fi">핀란드어 (핀란드)</string>
     <string name="settings_region_language_tr_tr">터키어 (터키)</string>
     <string name="settings_region_language_id_id">인도네시아어 (인도네시아)</string>
     <string name="settings_region_language_fil_ph">필리핀어 (필리핀)</string>
@@ -238,6 +239,7 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_pt_pt">포르투갈어 (포르투갈)</string>
     <string name="settings_tts_voice_locale_nl_nl">네덜란드어 (네덜란드)</string>
     <string name="settings_tts_voice_locale_sv_se">스웨덴어 (스웨덴)</string>
+    <string name="settings_tts_voice_locale_fi_fi">핀란드어 (핀란드)</string>
     <string name="settings_tts_voice_locale_tr_tr">터키어 (터키)</string>
     <string name="settings_tts_voice_locale_id_id">인도네시아어 (인도네시아)</string>
     <string name="settings_tts_voice_locale_fil_ph">필리핀어 (필리핀)</string>

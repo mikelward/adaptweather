@@ -214,6 +214,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_pt_pt">Πορτογαλικά (Πορτογαλία)</string>
     <string name="settings_region_language_nl_nl">Ολλανδικά (Ολλανδία)</string>
     <string name="settings_region_language_sv_se">Σουηδικά (Σουηδία)</string>
+    <string name="settings_region_language_fi_fi">Φινλανδικά (Φινλανδία)</string>
     <string name="settings_region_language_tr_tr">Τουρκικά (Τουρκία)</string>
     <string name="settings_region_language_id_id">Ινδονησιακά (Ινδονησία)</string>
     <string name="settings_region_language_fil_ph">Φιλιππινέζικα (Φιλιππίνες)</string>
@@ -272,6 +273,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_pt_pt">Πορτογαλικά (Πορτογαλία)</string>
     <string name="settings_tts_voice_locale_nl_nl">Ολλανδικά (Ολλανδία)</string>
     <string name="settings_tts_voice_locale_sv_se">Σουηδικά (Σουηδία)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Φινλανδικά (Φινλανδία)</string>
     <string name="settings_tts_voice_locale_tr_tr">Τουρκικά (Τουρκία)</string>
     <string name="settings_tts_voice_locale_id_id">Ινδονησιακά (Ινδονησία)</string>
     <string name="settings_tts_voice_locale_fil_ph">Φιλιππινέζικα (Φιλιππίνες)</string>
