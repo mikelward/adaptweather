@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Latvian translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Tone is
+informal "tu"-form throughout ("Apģērb …", "Paņem … līdzi").
+-->
+<resources>
+    <string name="settings_region_language_lv_lv">Latviešu (Latvija)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Latviešu (Latvija)</string>
+    <string name="settings_tts_voice_locale_label">Valoda</string>
+
+    <string name="garment_sweater">Džemperis</string>
+    <string name="garment_hoodie">Kapuces džemperis</string>
+    <string name="garment_jacket">Jaka</string>
+    <string name="garment_coat">Mētelis</string>
+    <string name="garment_tshirt">T krekls</string>
+    <string name="garment_shirt">Krekls</string>
+    <string name="garment_shorts">Šorti</string>
+    <string name="garment_pants">Bikses</string>
+    <string name="garment_jeans">Džinsi</string>
+
+    <string name="settings_clothes_empty">Nav noteikumu. Pieskaries Pievienot, lai izveidotu.</string>
+    <string name="settings_clothes_add">Pievienot</string>
+    <string name="settings_clothes_edit">Rediģēt</string>
+    <string name="settings_clothes_delete">Dzēst</string>
+    <string name="settings_clothes_dialog_add_title">Pievienot apģērba noteikumu</string>
+    <string name="settings_clothes_dialog_edit_title">Rediģēt apģērba noteikumu</string>
+    <string name="settings_clothes_item_label">Apģērba gabals</string>
+    <string name="settings_clothes_condition_label">Nosacījums</string>
+    <string name="settings_clothes_value_label_temp_c">Slieksnis (°C)</string>
+    <string name="settings_clothes_value_label_precip">Slieksnis (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Kad sajūtas vēsāks nekā</string>
+    <string name="settings_clothes_cond_type_temp_above">Kad sajūtas siltāks nekā</string>
+    <string name="settings_clothes_cond_type_precip_above">Kad lietus iespējamība pārsniedz</string>
+    <string name="settings_clothes_cond_temp_below">kad sajustā temperatūra ir zem %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">kad sajustā temperatūra ir virs %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">kad lietus iespējamība pārsniedz %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T krekls</string>
+    <string name="today_outfit_top_sweater">Džemperis</string>
+    <string name="today_outfit_top_thick_jacket">Bieza jaka</string>
+    <string name="today_outfit_bottom_shorts">Šorti</string>
+    <string name="today_outfit_bottom_long_pants">Garas bikses</string>
+
+    <string name="insight_lead_today">Šodien</string>
+    <string name="insight_lead_tonight">Šovakar</string>
+    <!-- Latvian masculine-nominative agreement (implicit subject "laiks"):
+         "Šodien būs auksts." -->
+    <string name="insight_band_single">%1$s būs %2$s.</string>
+    <string name="insight_band_range">%1$s būs %2$s līdz %3$s.</string>
+    <string name="insight_band_freezing">ledains</string>
+    <string name="insight_band_cold">auksts</string>
+    <string name="insight_band_cool">vēss</string>
+    <string name="insight_band_mild">mērens</string>
+    <string name="insight_band_warm">silts</string>
+    <string name="insight_band_hot">karsts</string>
+    <string name="insight_delta_warmer">Šodien būs par %1$d° siltāks.</string>
+    <string name="insight_delta_cooler">Šodien būs par %1$d° aukstāks.</string>
+    <string name="insight_alert">Brīdinājums: %1$s.</string>
+    <string name="insight_clothes_wear">Apģērb %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s un %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s un %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">plkst. %1$s</string>
+    <string name="insight_precip_overnight">naktī</string>
+    <string name="insight_condition_clear">Skaidrs</string>
+    <string name="insight_condition_partly_cloudy">Daļēji mākoņains</string>
+    <string name="insight_condition_cloudy">Mākoņains</string>
+    <string name="insight_condition_fog">Migla</string>
+    <string name="insight_condition_drizzle">Smidzina</string>
+    <string name="insight_condition_rain">Lietus</string>
+    <string name="insight_condition_snow">Sniegs</string>
+    <string name="insight_condition_thunderstorm">Pērkona negaiss</string>
+    <string name="insight_condition_unknown">Nezināms</string>
+    <string name="insight_tie_in">Paņem %1$s šovakar līdzi.</string>
+    <string name="insight_tie_in_with_rain">Paņem %1$s šovakar līdzi, lietus plkst. %2$s.</string>
+    <!-- Latvian time format uses "." separator: "plkst. 15.30". -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d.%2$02d</string>
+
+</resources>

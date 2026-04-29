@@ -169,6 +169,9 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_nl_nl">Néerlandais (Pays-Bas)</string>
     <string name="settings_region_language_sv_se">Suédois (Suède)</string>
     <string name="settings_region_language_fi_fi">Finnois (Finlande)</string>
+    <string name="settings_region_language_et_ee">Estonien (Estonie)</string>
+    <string name="settings_region_language_lv_lv">Letton (Lettonie)</string>
+    <string name="settings_region_language_lt_lt">Lituanien (Lituanie)</string>
     <string name="settings_region_language_tr_tr">Turc (Turquie)</string>
     <string name="settings_region_language_id_id">Indonésien (Indonésie)</string>
     <string name="settings_region_language_ms_my">Malais (Malaisie)</string>
@@ -232,6 +235,9 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_nl_nl">Néerlandais (Pays-Bas)</string>
     <string name="settings_tts_voice_locale_sv_se">Suédois (Suède)</string>
     <string name="settings_tts_voice_locale_fi_fi">Finnois (Finlande)</string>
+    <string name="settings_tts_voice_locale_et_ee">Estonien (Estonie)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Letton (Lettonie)</string>
+    <string name="settings_tts_voice_locale_lt_lt">Lituanien (Lituanie)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turc (Turquie)</string>
     <string name="settings_tts_voice_locale_id_id">Indonésien (Indonésie)</string>
     <string name="settings_tts_voice_locale_ms_my">Malais (Malaisie)</string>
