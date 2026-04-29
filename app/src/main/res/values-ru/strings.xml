@@ -163,6 +163,7 @@ only the displayed label localizes.
     <string name="settings_region_language_fil_ph">Филиппинский (Филиппины)</string>
     <string name="settings_region_language_vi_vn">Вьетнамский (Вьетнам)</string>
     <string name="settings_region_language_zh_cn">Китайский (упрощённый)</string>
+    <string name="settings_region_language_zh_tw">Китайский (традиционный)</string>
     <string name="settings_region_language_hi_in">Хинди (Индия)</string>
     <string name="settings_region_language_bn_bd">Бенгальский (Бангладеш)</string>
     <string name="settings_region_language_ja_jp">Японский (Япония)</string>
@@ -216,6 +217,7 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_fil_ph">Филиппинский (Филиппины)</string>
     <string name="settings_tts_voice_locale_vi_vn">Вьетнамский (Вьетнам)</string>
     <string name="settings_tts_voice_locale_zh_cn">Китайский (упрощённый)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Китайский (традиционный)</string>
     <string name="settings_tts_voice_locale_hi_in">Хинди (Индия)</string>
     <string name="settings_tts_voice_locale_bn_bd">Бенгальский (Бангладеш)</string>
     <string name="settings_tts_voice_locale_ja_jp">Японский (Япония)</string>
