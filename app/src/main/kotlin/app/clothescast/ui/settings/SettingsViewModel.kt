@@ -205,31 +205,38 @@ class SettingsViewModel(
      * Hits `GET /v1/voices` with the stored ElevenLabs key and replaces the
      * picker's voice list with whatever the user's account exposes —
      * premade library plus their own clones / generated voices. No-ops if
-     * the key isn't configured (the UI also gates the button) or if the
-     * client wasn't injected (test wiring).
+     * the key isn't configured (the UI also gates the button), if a refresh
+     * is already in flight, or if the client wasn't injected (test wiring).
      *
      * Failures surface through [showError] (the Activity wires a Toast)
      * and leave the picker on whatever list it was already showing — we
      * don't wipe a previous successful refresh because the network blipped.
+     * Coroutine cancellation (ViewModel cleared, navigation away) is *not*
+     * surfaced as a user-visible error — we re-throw so structured
+     * concurrency unwinds cleanly.
      */
     fun refreshElevenLabsVoices() {
         val client = elevenLabsTtsClient ?: return
-        if (_state.value.elevenLabsRefreshing) return
+        val current = _state.value
+        if (!current.elevenLabsKeyConfigured || current.elevenLabsRefreshing) return
         viewModelScope.launch {
             _state.update { it.copy(elevenLabsRefreshing = true) }
             try {
                 val voices = withContext(Dispatchers.IO) { client.listVoices() }
-                _state.update {
-                    it.copy(
-                        elevenLabsRefreshedVoices = voices.toVoiceOptions(),
-                        elevenLabsRefreshing = false,
-                    )
-                }
+                _state.update { it.copy(elevenLabsRefreshedVoices = voices.toVoiceOptions()) }
             } catch (t: Throwable) {
+                // Cancellation is a normal lifecycle signal (navigation
+                // away, ViewModel cleared) — re-throwing lets the
+                // coroutine machinery unwind without flashing a Toast at
+                // the user.
+                if (t is kotlinx.coroutines.CancellationException) throw t
                 DiagLog.w(TAG, "ElevenLabs voice refresh failed", t)
-                _state.update { it.copy(elevenLabsRefreshing = false) }
                 val message = t.message?.takeIf { it.isNotBlank() } ?: t.javaClass.simpleName
                 showError(message)
+            } finally {
+                // `finally` rather than per-branch updates so the spinner
+                // always clears, including on cancellation.
+                _state.update { it.copy(elevenLabsRefreshing = false) }
             }
         }
     }
