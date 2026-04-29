@@ -79,7 +79,7 @@ fun OnboardingScreen(
 }
 
 @Composable
-private fun OnboardingContent(
+internal fun OnboardingContent(
     geminiKeyConfigured: Boolean,
     location: Location?,
     useDeviceLocation: Boolean,

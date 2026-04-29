@@ -1,5 +1,6 @@
 package app.clothescast.ui.today
 
+import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -8,6 +9,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.notification.NotificationIconSweaterPreview
 import app.clothescast.notification.NotificationIconTShirtPreview
 import app.clothescast.notification.NotificationIconThickJacketPreview
+import app.clothescast.ui.onboarding.OnboardingCompletePreview
+import app.clothescast.ui.onboarding.OnboardingFreshPreview
+import app.clothescast.ui.onboarding.OnboardingMidFlowPreview
 import app.clothescast.ui.settings.SettingsRootPreview
 import app.clothescast.widget.WidgetEmptyPreview
 import app.clothescast.widget.WidgetTodayJacketPantsPreview
@@ -19,13 +23,16 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 //
 // Calls every preview wrapper across the app — `ui/today/TodayPreviews.kt`,
-// `notification/NotificationIconPreviews.kt`, `ui/settings/SettingsPreviews.kt`,
-// `widget/WidgetPreviews.kt` — and captures each to PNG under
+// `ui/onboarding/OnboardingPreviews.kt`, `ui/settings/SettingsPreviews.kt`,
+// `notification/NotificationIconPreviews.kt`, `widget/WidgetPreviews.kt` —
+// and captures each to PNG under
 // `app/snapshots/` — a *tracked* path, so GitHub renders image diffs natively
 // in the PR's "Files changed" view. CI commits any new/updated PNGs back to
 // the PR branch (see ci.yml), so reviewers see pixel changes inline without
@@ -111,4 +118,26 @@ class PreviewSnapshots {
     @Test fun widget_empty() = capture { WidgetEmptyPreview() }
 
     @Test fun settings_root() = capture { SettingsRootPreview() }
+
+    // Onboarding's notification + location step cards derive their "complete"
+    // checkmark from runtime permission state (POST_NOTIFICATIONS,
+    // ACCESS_COARSE_LOCATION) read via LocalContext, not from any value the
+    // composable accepts as a parameter. To capture states beyond "fresh
+    // install — nothing granted", grant the relevant permissions on the
+    // Robolectric application *before* setContent runs.
+    @Test fun onboarding_fresh() = capture { OnboardingFreshPreview() }
+
+    @Test fun onboarding_partial() {
+        shadowOf(RuntimeEnvironment.getApplication())
+            .grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        capture { OnboardingMidFlowPreview() }
+    }
+
+    @Test fun onboarding_complete() {
+        shadowOf(RuntimeEnvironment.getApplication()).grantPermissions(
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        )
+        capture { OnboardingCompletePreview() }
+    }
 }
