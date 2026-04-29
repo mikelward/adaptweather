@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Slovak translation. Tone is informal "ty"-form throughout ("Obleč si …",
+"Vezmi si …"). Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Other UI
+surfaces fall back to default English (matching values-pl / values-uk).
+-->
+<resources>
+    <string name="settings_region_language_sk_sk">Slovenčina (Slovensko)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Slovenčina (Slovensko)</string>
+    <string name="settings_tts_voice_locale_label">Jazyk</string>
+
+    <string name="garment_sweater">Sveter</string>
+    <string name="garment_hoodie">Mikina s kapucňou</string>
+    <string name="garment_jacket">Bunda</string>
+    <string name="garment_coat">Kabát</string>
+    <string name="garment_tshirt">Tričko</string>
+    <string name="garment_shirt">Košeľa</string>
+    <string name="garment_shorts">Šortky</string>
+    <string name="garment_pants">Nohavice</string>
+    <string name="garment_jeans">Rifle</string>
+
+    <string name="settings_clothes_empty">Žiadne pravidlá. Klepni na Pridať pre vytvorenie.</string>
+    <string name="settings_clothes_add">Pridať</string>
+    <string name="settings_clothes_edit">Upraviť</string>
+    <string name="settings_clothes_delete">Odstrániť</string>
+    <string name="settings_clothes_dialog_add_title">Pridať pravidlo obliekania</string>
+    <string name="settings_clothes_dialog_edit_title">Upraviť pravidlo obliekania</string>
+    <string name="settings_clothes_item_label">Oblečenie</string>
+    <string name="settings_clothes_condition_label">Podmienka</string>
+    <string name="settings_clothes_value_label_temp_c">Prah (°C)</string>
+    <string name="settings_clothes_value_label_precip">Prah (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Keď je pocitová pod</string>
+    <string name="settings_clothes_cond_type_temp_above">Keď je pocitová nad</string>
+    <string name="settings_clothes_cond_type_precip_above">Keď je pravdepodobnosť dažďa nad</string>
+    <string name="settings_clothes_cond_temp_below">keď je pocitová teplota pod %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">keď je pocitová teplota nad %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">keď je pravdepodobnosť dažďa nad %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Tričko</string>
+    <string name="today_outfit_top_sweater">Sveter</string>
+    <string name="today_outfit_top_thick_jacket">Hrubý kabát</string>
+    <string name="today_outfit_bottom_shorts">Šortky</string>
+    <string name="today_outfit_bottom_long_pants">Nohavice</string>
+
+    <string name="insight_lead_today">Dnes</string>
+    <string name="insight_lead_tonight">Dnes večer</string>
+    <string name="insight_band_single">%1$s bude %2$s.</string>
+    <string name="insight_band_range">%1$s bude od %2$s do %3$s.</string>
+    <string name="insight_band_freezing">mrazivo</string>
+    <string name="insight_band_cold">chladno</string>
+    <string name="insight_band_cool">sviežo</string>
+    <string name="insight_band_mild">mierne</string>
+    <string name="insight_band_warm">teplo</string>
+    <string name="insight_band_hot">horúco</string>
+    <string name="insight_delta_warmer">Dnes bude o %1$d° teplejšie.</string>
+    <string name="insight_delta_cooler">Dnes bude o %1$d° chladnejšie.</string>
+    <string name="insight_alert">Výstraha: %1$s.</string>
+    <string name="insight_clothes_wear">Obleč si %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s a %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s a %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">o %1$s</string>
+    <string name="insight_precip_overnight">v noci</string>
+    <string name="insight_condition_clear">Jasno</string>
+    <string name="insight_condition_partly_cloudy">Polooblačno</string>
+    <string name="insight_condition_cloudy">Zamračené</string>
+    <string name="insight_condition_fog">Hmla</string>
+    <string name="insight_condition_drizzle">Mrholenie</string>
+    <string name="insight_condition_rain">Dážď</string>
+    <string name="insight_condition_snow">Sneh</string>
+    <string name="insight_condition_thunderstorm">Búrka</string>
+    <string name="insight_condition_unknown">Neznáme</string>
+    <string name="insight_tie_in">Vezmi si %1$s na večer.</string>
+    <string name="insight_tie_in_with_rain">Vezmi si %1$s na večer, dážď o %2$s.</string>
+    <!-- "15" — preposition "o" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

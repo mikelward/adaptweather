@@ -147,6 +147,12 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_ru_ru">Russisch (Russland)</string>
     <string name="settings_region_language_pl_pl">Polnisch (Polen)</string>
     <string name="settings_region_language_hr_hr">Kroatisch (Kroatien)</string>
+    <string name="settings_region_language_sr_rs">Serbisch (Serbien)</string>
+    <string name="settings_region_language_bg_bg">Bulgarisch (Bulgarien)</string>
+    <string name="settings_region_language_cs_cz">Tschechisch (Tschechien)</string>
+    <string name="settings_region_language_sk_sk">Slowakisch (Slowakei)</string>
+    <string name="settings_region_language_hu_hu">Ungarisch (Ungarn)</string>
+    <string name="settings_region_language_ro_ro">Rumänisch (Rumänien)</string>
     <string name="settings_region_language_uk_ua">Ukrainisch (Ukraine)</string>
     <string name="settings_region_language_pt_br">Portugiesisch (Brasilien)</string>
     <string name="settings_region_language_nl_nl">Niederländisch (Niederlande)</string>
@@ -195,6 +201,12 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_ru_ru">Russisch (Russland)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polnisch (Polen)</string>
     <string name="settings_tts_voice_locale_hr_hr">Kroatisch (Kroatien)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Serbisch (Serbien)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Bulgarisch (Bulgarien)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Tschechisch (Tschechien)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Slowakisch (Slowakei)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Ungarisch (Ungarn)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Rumänisch (Rumänien)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ukrainisch (Ukraine)</string>
     <string name="settings_tts_voice_locale_pt_br">Portugiesisch (Brasilien)</string>
     <string name="settings_tts_voice_locale_nl_nl">Niederländisch (Niederlande)</string>

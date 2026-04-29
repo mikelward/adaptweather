@@ -122,6 +122,12 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_region_language_es_mx">Španjolski (Meksiko)</string>
     <string name="settings_region_language_ru_ru">Ruski (Rusija)</string>
     <string name="settings_region_language_pl_pl">Poljski (Poljska)</string>
+    <string name="settings_region_language_sr_rs">Srpski (Srbija)</string>
+    <string name="settings_region_language_bg_bg">Bugarski (Bugarska)</string>
+    <string name="settings_region_language_cs_cz">Češki (Češka)</string>
+    <string name="settings_region_language_sk_sk">Slovački (Slovačka)</string>
+    <string name="settings_region_language_hu_hu">Mađarski (Mađarska)</string>
+    <string name="settings_region_language_ro_ro">Rumunjski (Rumunjska)</string>
     <string name="settings_region_language_uk_ua">Ukrajinski (Ukrajina)</string>
     <string name="settings_region_language_pt_br">Portugalski (Brazil)</string>
     <string name="settings_region_language_nl_nl">Nizozemski (Nizozemska)</string>
@@ -170,6 +176,12 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_es_mx">Španjolski (Meksiko)</string>
     <string name="settings_tts_voice_locale_ru_ru">Ruski (Rusija)</string>
     <string name="settings_tts_voice_locale_pl_pl">Poljski (Poljska)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Srpski (Srbija)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Bugarski (Bugarska)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Češki (Češka)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Slovački (Slovačka)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Mađarski (Mađarska)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Rumunjski (Rumunjska)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ukrajinski (Ukrajina)</string>
     <string name="settings_tts_voice_locale_pt_br">Portugalski (Brazil)</string>
     <string name="settings_tts_voice_locale_nl_nl">Nizozemski (Nizozemska)</string>
