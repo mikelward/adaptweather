@@ -1,7 +1,9 @@
 package app.clothescast.work
 
 import android.content.Context
+import android.location.LocationManager
 import app.clothescast.diag.DiagLog
+import androidx.core.content.getSystemService
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -90,18 +92,25 @@ class FetchAndNotifyWorker(
                 //      them to grant permission or pick a city.
                 //
                 //   2. Transient — useDeviceLocation on, both permissions
-                //      granted, no saved fallback, but LocationResolver
-                //      returned null this time (NETWORK provider down,
-                //      timeout, momentary signal flake). A later attempt is
-                //      likely to succeed, so let WorkManager retry with
+                //      granted, location services enabled system-wide, no
+                //      saved fallback, but LocationResolver returned null
+                //      this time (NETWORK provider returned null, timeout,
+                //      momentary signal flake). A later attempt is likely
+                //      to succeed, so let WorkManager retry with
                 //      exponential backoff rather than burning the period's
                 //      forecast. Without a saved fallback this would
                 //      otherwise be the only path; with one, resolveLocation
                 //      would have used it and we wouldn't be in this branch.
+                //
+                // The provider-enabled check is what separates "Location
+                // services flipped off in system Settings" (user-actionable
+                // misconfig — would retry forever otherwise) from the
+                // genuinely-transient cases above.
                 val transientDeviceFailure = prefs.useDeviceLocation &&
                     prefs.location == null &&
                     hasCoarseLocationPermission(applicationContext) &&
-                    hasBackgroundLocationPermission(applicationContext)
+                    hasBackgroundLocationPermission(applicationContext) &&
+                    isLocationServicesEnabled(applicationContext)
                 if (transientDeviceFailure) {
                     DiagLog.w(TAG, "Device location read failed transiently; retrying.")
                     return Result.retry()
@@ -250,6 +259,21 @@ class FetchAndNotifyWorker(
             DiagLog.i(TAG, "Device location unavailable; falling back to settings location.")
         }
         return prefs.location
+    }
+
+    // Mirrors the providers LocationResolver itself queries — NETWORK +
+    // PASSIVE only (no GPS hardware fix). When both are off system-wide the
+    // user has flipped Location services off in Settings; our retry path
+    // would then loop indefinitely with no chance of progress, so callers
+    // treat that as misconfiguration and fail visibly instead.
+    private fun isLocationServicesEnabled(context: Context): Boolean {
+        val manager = context.getSystemService<LocationManager>() ?: return false
+        return try {
+            manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+                manager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)
+        } catch (_: Throwable) {
+            false
+        }
     }
 
     private suspend fun deliver(insight: Insight, prefs: UserPreferences, prose: String) {
