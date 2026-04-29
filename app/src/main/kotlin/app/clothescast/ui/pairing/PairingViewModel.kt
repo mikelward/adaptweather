@@ -2,6 +2,7 @@ package app.clothescast.ui.pairing
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -83,7 +84,8 @@ class PairingViewModel(
             }
             val port = try {
                 srv.start()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(TAG, "PairingServer failed to start", e)
                 _state.value = PairingState.Error
                 return@launch
             }
@@ -126,6 +128,10 @@ class PairingViewModel(
             return PairingViewModel(secureKeyStore) as T
         }
     }
+
+    companion object {
+        private const val TAG = "PairingViewModel"
+    }
 }
 
 private fun getLocalIpAddress(): String? =
@@ -137,11 +143,10 @@ private fun getLocalIpAddress(): String? =
 
 private fun generateQrBitmap(content: String): Bitmap {
     val bits = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, QR_SIZE_PX, QR_SIZE_PX)
-    val bmp = Bitmap.createBitmap(QR_SIZE_PX, QR_SIZE_PX, Bitmap.Config.ARGB_8888)
-    for (x in 0 until QR_SIZE_PX) {
-        for (y in 0 until QR_SIZE_PX) {
-            bmp.setPixel(x, y, if (bits[x, y]) Color.BLACK else Color.WHITE)
-        }
+    val pixels = IntArray(QR_SIZE_PX * QR_SIZE_PX) { i ->
+        if (bits[i % QR_SIZE_PX, i / QR_SIZE_PX]) Color.BLACK else Color.WHITE
     }
+    val bmp = Bitmap.createBitmap(QR_SIZE_PX, QR_SIZE_PX, Bitmap.Config.ARGB_8888)
+    bmp.setPixels(pixels, 0, QR_SIZE_PX, 0, 0, QR_SIZE_PX, QR_SIZE_PX)
     return bmp
 }
