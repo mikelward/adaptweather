@@ -298,7 +298,7 @@ class SettingsRepositoryTest {
         // shows the right initial selection on a fresh install.
         val initial = subject.preferences.first()
         initial.elevenLabsModel shouldBe "eleven_turbo_v2_5"
-        initial.elevenLabsSpeed shouldBe 0.9
+        initial.elevenLabsSpeed shouldBe 1.0
 
         subject.setElevenLabsModel("eleven_flash_v2_5")
         subject.setElevenLabsSpeed(1.05)
