@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Fact
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -19,7 +21,9 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -385,6 +389,82 @@ class SettingsRepositoryTest {
 
         subject.setUseCalendarEvents(false)
         subject.preferences.first().useCalendarEvents shouldBe false
+    }
+
+    @Test
+    fun `outfitThresholds defaults to DEFAULT and round-trips`() = runTest {
+        subject.preferences.first().outfitThresholds shouldBe OutfitSuggestion.Thresholds.DEFAULT
+
+        val tuned = OutfitSuggestion.Thresholds.DEFAULT.copy(
+            sweaterMaxFeelsLikeMinC = 7.0,
+            tshirtMinFeelsLikeMinC = 17.0,
+        )
+        subject.setOutfitThresholds(tuned)
+        subject.preferences.first().outfitThresholds shouldBe tuned
+    }
+
+    @Test
+    fun `outfitThresholds setter clamps to MIN_C and MAX_C`() = runTest {
+        // Out-of-range values can't reach DataStore — even a runaway tap loop
+        // can't push past the documented bounds.
+        val absurd = OutfitSuggestion.Thresholds(
+            sweaterMaxFeelsLikeMinC = -200.0,
+            tshirtMinFeelsLikeMinC = 999.0,
+            shortsMinFeelsLikeMaxC = 999.0,
+            shortsMinFeelsLikeMinC = -200.0,
+        )
+        subject.setOutfitThresholds(absurd)
+
+        val read = subject.preferences.first().outfitThresholds
+        read.sweaterMaxFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MIN_C
+        read.tshirtMinFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MAX_C
+        read.shortsMinFeelsLikeMaxC shouldBe OutfitSuggestion.Thresholds.MAX_C
+        read.shortsMinFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MIN_C
+    }
+
+    @Test
+    fun `resetOutfitThresholds restores DEFAULT`() = runTest {
+        subject.setOutfitThresholds(
+            OutfitSuggestion.Thresholds.DEFAULT.with(
+                Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN,
+                4.0,
+            ),
+        )
+        subject.preferences.first().outfitThresholds.sweaterMaxFeelsLikeMinC shouldBe 4.0
+
+        subject.resetOutfitThresholds()
+        subject.preferences.first().outfitThresholds shouldBe OutfitSuggestion.Thresholds.DEFAULT
+    }
+
+    @Test
+    fun `adjustOutfitThreshold serialises rapid taps so none are dropped`() = runTest {
+        // Five concurrent `−1°` taps must each see the prior write — final
+        // value is the starting threshold minus 5°C, not a single 1°C step
+        // from the same pre-update snapshot. DataStore.edit serialises edits,
+        // so this exercises the atomic read-modify-write path that protects
+        // tap-spam from collapsing into one.
+        val starting = OutfitSuggestion.Thresholds.DEFAULT.tshirtMinFeelsLikeMinC
+        coroutineScope {
+            repeat(5) {
+                launch {
+                    subject.adjustOutfitThreshold(
+                        Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                        -1.0,
+                    )
+                }
+            }
+        }
+        subject.preferences.first().outfitThresholds.tshirtMinFeelsLikeMinC shouldBe (starting - 5.0)
+    }
+
+    @Test
+    fun `adjustOutfitThreshold clamps to MIN_C and MAX_C`() = runTest {
+        // Even a relentless tap-spam can't escape the documented bounds.
+        repeat(100) {
+            subject.adjustOutfitThreshold(Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN, -1.0)
+        }
+        subject.preferences.first().outfitThresholds.sweaterMaxFeelsLikeMinC shouldBe
+            OutfitSuggestion.Thresholds.MIN_C
     }
 
     @Test

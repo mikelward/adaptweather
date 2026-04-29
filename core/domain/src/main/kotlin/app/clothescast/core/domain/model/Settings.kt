@@ -299,6 +299,14 @@ data class UserPreferences(
      * one clothes rule triggers against the evening hourly slice. Off by default.
      */
     val dailyMentionEveningEvents: Boolean = false,
+    /**
+     * Feels-like cutoffs that decide which top + bottom the home screen renders
+     * as the glanceable outfit. Defaults match the previously-hardcoded values
+     * in [OutfitSuggestion.fromForecast] so a fresh install picks the same
+     * outfit as before. Adjusted from the rationale dialog's `−1°` / `+1°`
+     * controls when the user pushes back on a recommendation.
+     */
+    val outfitThresholds: OutfitSuggestion.Thresholds = OutfitSuggestion.Thresholds.DEFAULT,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"

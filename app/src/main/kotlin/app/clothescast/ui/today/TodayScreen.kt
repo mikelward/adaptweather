@@ -23,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +49,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -167,6 +170,8 @@ fun TodayScreen(
             isWorking = isWorking,
             onRefresh = { triggerRefresh(context, state.morningTime, state.tonightTime) },
             onSetUpLocation = onNavigateToDataSources,
+            onAdjustThreshold = viewModel::adjustOutfitThreshold,
+            onResetThresholds = viewModel::resetOutfitThresholds,
         )
     }
 }
@@ -178,6 +183,8 @@ private fun TodayContent(
     isWorking: Boolean,
     onRefresh: () -> Unit,
     onSetUpLocation: () -> Unit,
+    onAdjustThreshold: (Fact.ThresholdKind, Double) -> Unit,
+    onResetThresholds: () -> Unit,
 ) {
     val context = LocalContext.current
     // Permission state is observed live, not snapshotted, so granting from system
@@ -228,7 +235,13 @@ private fun TodayContent(
         if (state.insight == null) {
             EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
-            OutfitPreviewRow(state.insight, state.temperatureUnit)
+            OutfitPreviewRow(
+                insight = state.insight,
+                temperatureUnit = state.temperatureUnit,
+                outfitThresholds = state.outfitThresholds,
+                onAdjustThreshold = onAdjustThreshold,
+                onResetThresholds = onResetThresholds,
+            )
             InsightCard(state.insight, state.region)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
@@ -390,6 +403,9 @@ internal fun EmptyState(onRefresh: () -> Unit, isWorking: Boolean = false) {
 internal fun OutfitPreviewRow(
     insight: Insight,
     temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
+    outfitThresholds: OutfitSuggestion.Thresholds = OutfitSuggestion.Thresholds.DEFAULT,
+    onAdjustThreshold: (Fact.ThresholdKind, Double) -> Unit = { _, _ -> },
+    onResetThresholds: () -> Unit = {},
 ) {
     val primary = insight.outfit ?: return
     val (primaryLabel, nextLabel) = outfitLabels(insight.period)
@@ -402,6 +418,9 @@ internal fun OutfitPreviewRow(
             label = stringResource(primaryLabel),
             rationale = insight.outfitRationale,
             temperatureUnit = temperatureUnit,
+            outfitThresholds = outfitThresholds,
+            onAdjustThreshold = onAdjustThreshold,
+            onResetThresholds = onResetThresholds,
             modifier = Modifier.weight(1f),
         )
         insight.nextOutfit?.let {
@@ -410,6 +429,9 @@ internal fun OutfitPreviewRow(
                 label = stringResource(nextLabel),
                 rationale = insight.nextOutfitRationale,
                 temperatureUnit = temperatureUnit,
+                outfitThresholds = outfitThresholds,
+                onAdjustThreshold = onAdjustThreshold,
+                onResetThresholds = onResetThresholds,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -429,6 +451,9 @@ internal fun OutfitPreviewCard(
     modifier: Modifier = Modifier,
     rationale: OutfitRationale? = null,
     temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
+    outfitThresholds: OutfitSuggestion.Thresholds = OutfitSuggestion.Thresholds.DEFAULT,
+    onAdjustThreshold: (Fact.ThresholdKind, Double) -> Unit = { _, _ -> },
+    onResetThresholds: () -> Unit = {},
 ) {
     var showRationale by remember { mutableStateOf(false) }
     // Material3's `Card(onClick = …)` overload is preferred over a bare
@@ -485,6 +510,9 @@ internal fun OutfitPreviewCard(
             outfit = outfit,
             rationale = rationale,
             temperatureUnit = temperatureUnit,
+            outfitThresholds = outfitThresholds,
+            onAdjustThreshold = onAdjustThreshold,
+            onResetThresholds = onResetThresholds,
             onDismiss = { showRationale = false },
         )
     }
@@ -493,21 +521,27 @@ internal fun OutfitPreviewCard(
 /**
  * "Why this outfit?" detail sheet — explains the deciding facts (feels-like min / max
  * + the hour they occurred + the threshold they crossed) so the user can sanity-check
- * the call against their own day.
+ * the call against their own day, and nudge the deciding cutoff with `−1°` / `+1°`.
  *
- * TODO(outfit-threshold-tuning): add `−1°` / `+1°` controls on each threshold here so
- *   the user can nudge the cutoff without leaving the dialog. Requires moving the
- *   currently-hardcoded [OutfitSuggestion.Thresholds.DEFAULT] into a preferences-backed
- *   instance plumbed into [GenerateDailyInsight], and a re-fetch / re-evaluate after
- *   the change so the cards refresh.
+ * The displayed threshold value tracks the *live* [outfitThresholds] (so a tap updates
+ * the number immediately), while the observed value + hour come from the cached
+ * [rationale] (frozen at insight-generation time). The comparison ("under" vs "above")
+ * is recomputed against the live threshold so the prose stays honest after a tap.
+ * Outfit cards on the home screen still show the cached pick — a refresh re-runs the
+ * pipeline against the new thresholds.
  */
 @Composable
 internal fun OutfitRationaleDialog(
     outfit: OutfitSuggestion,
     rationale: OutfitRationale?,
     temperatureUnit: TemperatureUnit,
+    outfitThresholds: OutfitSuggestion.Thresholds,
+    onAdjustThreshold: (Fact.ThresholdKind, Double) -> Unit,
+    onResetThresholds: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    var thresholdsTouched by remember { mutableStateOf(false) }
+    val isAtDefaults = outfitThresholds == OutfitSuggestion.Thresholds.DEFAULT
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.today_rationale_title)) },
@@ -523,18 +557,48 @@ internal fun OutfitRationaleDialog(
                         title = stringResource(topLabelRes(outfit.top)),
                         reason = rationale.top,
                         temperatureUnit = temperatureUnit,
+                        outfitThresholds = outfitThresholds,
+                        onAdjustThreshold = { kind, delta ->
+                            thresholdsTouched = true
+                            onAdjustThreshold(kind, delta)
+                        },
                     )
                     GarmentReasonBlock(
                         title = stringResource(bottomLabelRes(outfit.bottom)),
                         reason = rationale.bottom,
                         temperatureUnit = temperatureUnit,
+                        outfitThresholds = outfitThresholds,
+                        onAdjustThreshold = { kind, delta ->
+                            thresholdsTouched = true
+                            onAdjustThreshold(kind, delta)
+                        },
                     )
+                    if (thresholdsTouched) {
+                        Text(
+                            text = stringResource(R.string.today_rationale_threshold_changed_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.today_rationale_dismiss))
+            }
+        },
+        dismissButton = {
+            // Only surface the reset affordance when the user has actually customised
+            // a knob — at defaults the button has nothing to undo and would just be
+            // visual noise next to "Got it".
+            if (!isAtDefaults) {
+                TextButton(onClick = {
+                    thresholdsTouched = true
+                    onResetThresholds()
+                }) {
+                    Text(stringResource(R.string.today_rationale_reset))
+                }
             }
         },
     )
@@ -545,23 +609,80 @@ private fun GarmentReasonBlock(
     title: String,
     reason: GarmentReason,
     temperatureUnit: TemperatureUnit,
+    outfitThresholds: OutfitSuggestion.Thresholds,
+    onAdjustThreshold: (Fact.ThresholdKind, Double) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(text = title, style = MaterialTheme.typography.titleSmall)
         reason.facts.forEach { fact ->
-            Text(
-                text = formatFact(fact, temperatureUnit),
-                style = MaterialTheme.typography.bodyMedium,
+            FactRow(
+                fact = fact,
+                temperatureUnit = temperatureUnit,
+                liveThresholdC = outfitThresholds.valueOf(fact.thresholdKind),
+                onAdjust = { delta -> onAdjustThreshold(fact.thresholdKind, delta) },
             )
         }
     }
 }
 
 @Composable
-private fun formatFact(fact: Fact, unit: TemperatureUnit): String {
+private fun FactRow(
+    fact: Fact,
+    temperatureUnit: TemperatureUnit,
+    liveThresholdC: Double,
+    onAdjust: (Double) -> Unit,
+) {
+    // One tap = one degree *in the user's display unit*, persisted as the
+    // matching °C delta. Without this, a Fahrenheit user tapping `+` would see
+    // the displayed threshold jump by ~2°F per tap (1°C ≈ 1.8°F), which is
+    // surprising. Bound checks compare against the canonical Celsius range so
+    // the buttons disable at the documented MIN_C / MAX_C edges regardless of
+    // unit.
+    val stepC = when (temperatureUnit) {
+        TemperatureUnit.CELSIUS -> 1.0
+        TemperatureUnit.FAHRENHEIT -> 5.0 / 9.0
+    }
+    val decreaseDesc = stringResource(R.string.today_rationale_threshold_decrease)
+    val increaseDesc = stringResource(R.string.today_rationale_threshold_increase)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = formatFact(fact, temperatureUnit, liveThresholdC),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        FilledTonalIconButton(
+            onClick = { onAdjust(-stepC) },
+            enabled = liveThresholdC > OutfitSuggestion.Thresholds.MIN_C,
+            modifier = Modifier
+                .size(32.dp)
+                .semantics { contentDescription = decreaseDesc },
+        ) {
+            Text(
+                text = "−",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+        FilledTonalIconButton(
+            onClick = { onAdjust(stepC) },
+            enabled = liveThresholdC < OutfitSuggestion.Thresholds.MAX_C,
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .size(32.dp)
+                .semantics { contentDescription = increaseDesc },
+        ) {
+            Text(
+                text = "+",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun formatFact(fact: Fact, unit: TemperatureUnit, liveThresholdC: Double): String {
     val symbol = unit.symbol()
     val observedConverted = fact.observedC.toUnit(unit)
-    val thresholdConverted = fact.thresholdC.toUnit(unit)
+    val thresholdConverted = liveThresholdC.toUnit(unit)
     // Self-contradiction guard: if integer rounding makes the observed and
     // threshold values look equal but they're actually different (e.g. an
     // actual 17.6 < 18.0 displaying as "18°C, under 18°C"), drop to one-decimal
@@ -581,8 +702,12 @@ private fun formatFact(fact: Fact, unit: TemperatureUnit): String {
         thresholdStr = thresholdI.toString()
     }
     val time = fact.observedAt?.let { TIME_FORMAT.format(it) }
+    // Recompute the comparison against the live threshold so the prose ("under" /
+    // "above") stays honest after the user nudges the knob; the cached
+    // [Fact.comparison] reflects the value at insight-generation time.
+    val comparison = comparisonFor(fact.thresholdKind, fact.observedC, liveThresholdC)
     val res = when (fact.metric) {
-        Fact.Metric.FEELS_LIKE_MIN -> when (fact.comparison) {
+        Fact.Metric.FEELS_LIKE_MIN -> when (comparison) {
             Fact.Comparison.BELOW -> if (time != null) {
                 R.string.today_rationale_min_below_with_time
             } else {
@@ -594,7 +719,7 @@ private fun formatFact(fact: Fact, unit: TemperatureUnit): String {
                 R.string.today_rationale_min_above
             }
         }
-        Fact.Metric.FEELS_LIKE_MAX -> when (fact.comparison) {
+        Fact.Metric.FEELS_LIKE_MAX -> when (comparison) {
             Fact.Comparison.BELOW -> if (time != null) {
                 R.string.today_rationale_max_below_with_time
             } else {
@@ -612,6 +737,30 @@ private fun formatFact(fact: Fact, unit: TemperatureUnit): String {
     } else {
         stringResource(res, observedStr, symbol, thresholdStr)
     }
+}
+
+// Mirrors the boundary semantics used in [OutfitSuggestion.fromForecast]:
+//
+//  - Top cutoffs (sweater / t-shirt) use strict less-than: equality goes to
+//    AT_OR_ABOVE, matching the layered when-chain that picks SWEATER only
+//    when `feelsLikeMin < tshirtMinFeelsLikeMin`.
+//  - Bottom cutoffs (shorts max / shorts min) use inclusive greater-or-equal:
+//    equality goes to AT_OR_ABOVE, matching the AND-of-`>=` check in
+//    [OutfitSuggestion.fromForecast] that decides whether shorts are allowed.
+//
+// Without splitting the operator by kind, the rendered prose disagreed with
+// the rule outcome at the exact-equality edge.
+private fun comparisonFor(
+    kind: Fact.ThresholdKind,
+    observedC: Double,
+    thresholdC: Double,
+): Fact.Comparison = when (kind) {
+    Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN,
+    Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN ->
+        if (observedC < thresholdC) Fact.Comparison.BELOW else Fact.Comparison.AT_OR_ABOVE
+    Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX,
+    Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN ->
+        if (observedC >= thresholdC) Fact.Comparison.AT_OR_ABOVE else Fact.Comparison.BELOW
 }
 
 private val TIME_FORMAT: DateTimeFormatter =
