@@ -20,6 +20,8 @@ import androidx.work.WorkManager
 import app.clothescast.notification.NotificationPermission
 import app.clothescast.ui.onboarding.OnboardingScreen
 import app.clothescast.ui.onboarding.OnboardingViewModel
+import app.clothescast.ui.pairing.PairingScreen
+import app.clothescast.ui.pairing.PairingViewModel
 import app.clothescast.ui.settings.SettingsRoute
 import app.clothescast.ui.settings.SettingsScreen
 import app.clothescast.ui.settings.SettingsViewModel
@@ -29,7 +31,7 @@ import app.clothescast.ui.today.TodayViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
-private enum class Screen { Today, Settings, Onboarding }
+private enum class Screen { Today, Settings, Onboarding, Pairing }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,6 +145,7 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
             )
             OnboardingScreen(
                 viewModel = onboarding,
+                onPairFromPhone = { screen = Screen.Pairing },
                 onContinue = {
                     settingsInitialRoute = SettingsRoute.Schedule.name
                     screen = Screen.Settings
@@ -151,6 +154,18 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
                     settingsInitialRoute = null
                     screen = Screen.Today
                 },
+            )
+        }
+        Screen.Pairing -> {
+            val pairing: PairingViewModel = viewModel(
+                factory = PairingViewModel.Factory(
+                    secureKeyStore = app.secureKeyStore,
+                ),
+            )
+            PairingScreen(
+                viewModel = pairing,
+                onSuccess = { screen = Screen.Onboarding },
+                onCancel = { screen = Screen.Onboarding },
             )
         }
     }

@@ -57,6 +57,7 @@ import app.clothescast.ui.settings.LocationSearchDialog
 @Composable
 fun OnboardingScreen(
     viewModel: OnboardingViewModel,
+    onPairFromPhone: () -> Unit,
     onContinue: () -> Unit,
     onSkip: () -> Unit,
 ) {
@@ -72,6 +73,7 @@ fun OnboardingScreen(
             onSetUseDeviceLocation = viewModel::setUseDeviceLocation,
             onSelectLocation = viewModel::selectLocation,
             onSearchLocations = viewModel::searchLocations,
+            onPairFromPhone = onPairFromPhone,
             onContinue = onContinue,
             onSkip = onSkip,
         )
@@ -88,6 +90,7 @@ internal fun OnboardingContent(
     onSetUseDeviceLocation: (Boolean) -> Unit,
     onSelectLocation: (Location) -> Unit,
     onSearchLocations: suspend (String) -> List<Location>,
+    onPairFromPhone: () -> Unit,
     onContinue: () -> Unit,
     onSkip: () -> Unit,
 ) {
@@ -122,6 +125,7 @@ internal fun OnboardingContent(
         GeminiKeyStep(
             configured = geminiKeyConfigured,
             onSave = onSetApiKey,
+            onPairFromPhone = onPairFromPhone,
         )
 
         Row(
@@ -281,6 +285,7 @@ private fun LocationStep(
 private fun GeminiKeyStep(
     configured: Boolean,
     onSave: (String) -> Unit,
+    onPairFromPhone: () -> Unit,
 ) {
     StepCard(
         title = stringResource(R.string.onboarding_gemini_title),
@@ -297,6 +302,10 @@ private fun GeminiKeyStep(
                 onSave = onSave,
                 onClear = {},
             )
+            TextButton(
+                onClick = onPairFromPhone,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.onboarding_pair_from_phone)) }
         }
     }
 }

@@ -245,6 +245,15 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
 
+    // Ktor CIO server for the local phone-pairing HTTP endpoint. TV shows a QR code
+    // encoding the server URL; the phone browser opens the page, pastes the API key,
+    // and POSTs it back — no cloud relay, no new permissions, LAN-local only.
+    implementation(libs.ktor.server.cio)
+
+    // QR code generation: encodes the pairing URL into a BitMatrix that we render
+    // as an Android Bitmap. Pure-Java, no Android SDK dependency.
+    implementation(libs.zxing.core)
+
     testImplementation(platform("org.junit:junit-bom:5.11.3"))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
