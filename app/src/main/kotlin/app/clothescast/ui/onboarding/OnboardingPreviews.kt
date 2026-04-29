@@ -18,9 +18,11 @@ import app.clothescast.ui.theme.ClothesCastTheme
 // flags (Gemini key, device-location toggle, picked location) directly; the
 // snapshot tests grant permissions on the Robolectric application before
 // rendering the variants that need a checkmark on the notification or
-// location step. Studio's design pane has no permissions granted, so every
-// preview here renders as if both perms are denied — matching the fresh
-// install state regardless of which preview you click in the gutter.
+// location step. Studio's design pane has no permissions granted, so the
+// notification + location step checkmarks and "Grant …" buttons render as if
+// both perms are denied across all three previews here; the rest of each
+// preview still varies with the `location` and `geminiKeyConfigured`
+// parameters as you'd expect.
 //
 
 @Preview(name = "Onboarding · fresh install", widthDp = 360)
