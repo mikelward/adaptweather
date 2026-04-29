@@ -97,6 +97,8 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "pt-BR" to "Fale em português brasileiro com sotaque neutro e claro.",
     "nl" to "Spreek in het Nederlands met een duidelijk en natuurlijk accent.",
     "sv" to "Tala på svenska med ett tydligt och naturligt uttal.",
+    "da" to "Tal på dansk med en tydelig og naturlig udtale.",
+    "nb" to "Snakk på norsk bokmål med tydelig og naturlig uttale.",
     "tr" to "Türkçe konuş, net ve doğal bir Türkçe aksanıyla.",
     "en-ZA" to "Speak with a South African English accent.",
     "id" to "Bicara dalam bahasa Indonesia dengan aksen yang jelas dan alami.",
