@@ -7,7 +7,7 @@ informal "tu"-form throughout ("Apģērb …", "Paņem … līdzi").
 <resources>
     <string name="settings_region_language_lv_lv">Latviešu (Latvija)</string>
     <string name="settings_tts_voice_locale_lv_lv">Latviešu (Latvija)</string>
-    <string name="settings_tts_voice_locale_label">Valoda</string>
+    <string name="settings_tts_voice_locale_label">Akcents</string>
 
     <string name="garment_sweater">Džemperis</string>
     <string name="garment_hoodie">Kapuces džemperis</string>

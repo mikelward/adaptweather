@@ -45,7 +45,7 @@ label localises.
     <string name="settings_region_language_zh_tw">中文（繁體）</string>
     <string name="settings_tts_voice_locale_zh_cn">中文（簡體）</string>
     <string name="settings_tts_voice_locale_zh_tw">中文（繁體）</string>
-    <string name="settings_tts_voice_locale_label">語言</string>
+    <string name="settings_tts_voice_locale_label">口音</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">設定</string>

@@ -7,7 +7,7 @@ informal "sina"-form throughout ("Pane … selga", "Võta … kaasa").
 <resources>
     <string name="settings_region_language_et_ee">Eesti (Eesti)</string>
     <string name="settings_tts_voice_locale_et_ee">Eesti (Eesti)</string>
-    <string name="settings_tts_voice_locale_label">Keel</string>
+    <string name="settings_tts_voice_locale_label">Aktsent</string>
 
     <string name="garment_sweater">Kampsun</string>
     <string name="garment_hoodie">Kapuutsiga pusa</string>

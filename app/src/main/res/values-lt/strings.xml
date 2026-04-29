@@ -7,7 +7,7 @@ informal "tu"-form throughout ("Apsivilk …", "Pasiimk …").
 <resources>
     <string name="settings_region_language_lt_lt">Lietuvių (Lietuva)</string>
     <string name="settings_tts_voice_locale_lt_lt">Lietuvių (Lietuva)</string>
-    <string name="settings_tts_voice_locale_label">Kalba</string>
+    <string name="settings_tts_voice_locale_label">Akcentas</string>
 
     <string name="garment_sweater">Megztinis</string>
     <string name="garment_hoodie">Džemperis su gobtuvu</string>

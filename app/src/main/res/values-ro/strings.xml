@@ -8,7 +8,7 @@ surfaces fall back to default English (matching values-pl / values-uk).
 <resources>
     <string name="settings_region_language_ro_ro">Română (România)</string>
     <string name="settings_tts_voice_locale_ro_ro">Română (România)</string>
-    <string name="settings_tts_voice_locale_label">Limbă</string>
+    <string name="settings_tts_voice_locale_label">Accent</string>
 
     <string name="garment_sweater">Pulover</string>
     <string name="garment_hoodie">Hanorac</string>

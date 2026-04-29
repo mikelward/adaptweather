@@ -40,7 +40,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_fr_ca">Français (Canada)</string>
     <string name="settings_tts_voice_locale_fr_fr">Français (France)</string>
     <string name="settings_tts_voice_locale_fr_ca">Français (Canada)</string>
-    <string name="settings_tts_voice_locale_label">Langue</string>
+    <string name="settings_tts_voice_locale_label">Accent</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">Paramètres</string>

@@ -6,7 +6,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_nl_nl">Nederlands (Nederland)</string>
     <string name="settings_tts_voice_locale_nl_nl">Nederlands (Nederland)</string>
-    <string name="settings_tts_voice_locale_label">Taal</string>
+    <string name="settings_tts_voice_locale_label">Accent</string>
 
     <string name="garment_sweater">Trui</string>
     <string name="garment_hoodie">Hoodie</string>

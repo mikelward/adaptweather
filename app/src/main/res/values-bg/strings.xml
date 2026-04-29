@@ -8,7 +8,7 @@ surfaces fall back to default English (matching values-pl / values-uk).
 <resources>
     <string name="settings_region_language_bg_bg">Български (България)</string>
     <string name="settings_tts_voice_locale_bg_bg">Български (България)</string>
-    <string name="settings_tts_voice_locale_label">Език</string>
+    <string name="settings_tts_voice_locale_label">Акцент</string>
 
     <string name="garment_sweater">Пуловер</string>
     <string name="garment_hoodie">Суитчър с качулка</string>

@@ -7,7 +7,7 @@ The rest of the UI falls through to values/strings.xml (English).
 <resources>
     <string name="settings_region_language_fil_ph">Filipino (Pilipinas)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filipino (Pilipinas)</string>
-    <string name="settings_tts_voice_locale_label">Wika</string>
+    <string name="settings_tts_voice_locale_label">Punto</string>
 
     <string name="garment_sweater">Sweater</string>
     <string name="garment_hoodie">Hoodie</string>

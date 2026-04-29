@@ -6,7 +6,7 @@ clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_nb_no">Norsk bokmål (Norge)</string>
     <string name="settings_tts_voice_locale_nb_no">Norsk bokmål (Norge)</string>
-    <string name="settings_tts_voice_locale_label">Språk</string>
+    <string name="settings_tts_voice_locale_label">Aksent</string>
 
     <string name="garment_sweater">Genser</string>
     <string name="garment_hoodie">Hettegenser</string>

@@ -154,8 +154,8 @@
     <string name="settings_tts_device_voice_offline">Offline</string>
     <string name="settings_tts_install_google_hint">Install Google\'s text-to-speech engine for higher-quality voices.</string>
     <string name="settings_tts_install_google_button">Install Google TTS</string>
-    <string name="settings_tts_voice_locale_label">Language</string>
-    <!-- Caption under Voice > Language: only the spoken accent, not the on-screen
+    <string name="settings_tts_voice_locale_label">Accent</string>
+    <!-- Caption under Voice > Accent: only the spoken accent, not the on-screen
          text. Pairs with settings_region_language_description. -->
     <string name="settings_tts_voice_locale_description">Sets the accent of the spoken voice. Doesn\'t change the displayed text.</string>
     <string name="settings_tts_voice_locale_system">Follow phone language</string>

@@ -40,7 +40,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_es_es">Español (España)</string>
     <string name="settings_tts_voice_locale_es_mx">Español (México)</string>
     <string name="settings_tts_voice_locale_ca_es">Catalán (España)</string>
-    <string name="settings_tts_voice_locale_label">Idioma</string>
+    <string name="settings_tts_voice_locale_label">Acento</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">Ajustes</string>
