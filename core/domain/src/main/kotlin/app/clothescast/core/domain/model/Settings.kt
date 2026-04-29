@@ -175,6 +175,16 @@ data class UserPreferences(
      */
     val openAiVoice: String = DEFAULT_OPENAI_VOICE,
     /**
+     * Per-clip OpenAI playback rate (multiplier). Mirrors the ElevenLabs speed
+     * knob for consistency — same 0.7–1.2 range, same UI affordance. Sent as
+     * the `speed` field on the speech request. The active model
+     * (`gpt-4o-mini-tts`) currently steers pace primarily through the
+     * `instructions` field, but the wire parameter is harmless when ignored
+     * and forward-compatible with `tts-1` / `tts-1-hd`. Only consulted when
+     * [ttsEngine] == [TtsEngine.OPENAI].
+     */
+    val openAiSpeed: Double = DEFAULT_OPENAI_SPEED,
+    /**
      * ElevenLabs voice ID — the opaque library identifier (e.g.
      * "EXAVITQu4vr4xnSDxMaL" for Sarah). Only consulted when [ttsEngine]
      * == [TtsEngine.ELEVENLABS].
@@ -195,6 +205,13 @@ data class UserPreferences(
      * == [TtsEngine.ELEVENLABS].
      */
     val elevenLabsSpeed: Double = DEFAULT_ELEVENLABS_SPEED,
+    /**
+     * Per-clip ElevenLabs `voice_settings.stability` (0.0–1.0). Higher =
+     * steadier pronunciation, lower = more expressive. Default 0.65 favours
+     * pronunciation consistency over expression for short weather briefings.
+     * Only consulted when [ttsEngine] == [TtsEngine.ELEVENLABS].
+     */
+    val elevenLabsStability: Double = DEFAULT_ELEVENLABS_STABILITY,
     /**
      * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
      * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)
@@ -268,5 +285,21 @@ data class UserPreferences(
         const val DEFAULT_ELEVENLABS_SPEED = 0.9
         const val MIN_ELEVENLABS_SPEED = 0.7
         const val MAX_ELEVENLABS_SPEED = 1.2
+        // Documented voice_settings.stability range is 0–1. Default mirrors
+        // the previously-hardcoded value in ElevenLabsTtsClient so existing
+        // installs hear no change after the slider lands.
+        const val DEFAULT_ELEVENLABS_STABILITY = 0.65
+        const val MIN_ELEVENLABS_STABILITY = 0.0
+        const val MAX_ELEVENLABS_STABILITY = 1.0
+
+        // Same range as ElevenLabs speed for UI parity. OpenAI's API
+        // accepts 0.25–4.0 but values outside ~0.7–1.2 sound robotic / silly
+        // for a weather briefing; matching the ElevenLabs slider keeps the
+        // UX consistent and prevents users from accidentally picking 4×.
+        // Default 1.0 because there are no field reports of OpenAI sounding
+        // "too fast" the way ElevenLabs has.
+        const val DEFAULT_OPENAI_SPEED = 1.0
+        const val MIN_OPENAI_SPEED = 0.7
+        const val MAX_OPENAI_SPEED = 1.2
     }
 }

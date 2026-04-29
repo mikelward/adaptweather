@@ -2,6 +2,7 @@ package app.clothescast.tts
 
 import app.clothescast.core.data.tts.DEFAULT_ELEVENLABS_TTS_MODEL
 import app.clothescast.core.data.tts.DEFAULT_ELEVENLABS_TTS_SPEED
+import app.clothescast.core.data.tts.DEFAULT_ELEVENLABS_TTS_STABILITY
 import app.clothescast.core.data.tts.DEFAULT_ELEVENLABS_TTS_VOICE
 import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import java.util.Locale
@@ -24,6 +25,7 @@ class ElevenLabsTtsSpeaker(
     private val voiceId: String = DEFAULT_ELEVENLABS_TTS_VOICE,
     private val model: String = DEFAULT_ELEVENLABS_TTS_MODEL,
     private val speed: Double = DEFAULT_ELEVENLABS_TTS_SPEED,
+    private val stability: Double = DEFAULT_ELEVENLABS_TTS_STABILITY,
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
@@ -32,6 +34,7 @@ class ElevenLabsTtsSpeaker(
             voiceId = voiceId,
             model = model,
             speed = speed,
+            stability = stability,
         )
         PcmAudioPlayer.play(audio)
     }

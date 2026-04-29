@@ -317,6 +317,43 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `elevenLabs stability defaults to 0_65 and round-trips`() = runTest {
+        // Default mirrors the previously-hardcoded value in
+        // ElevenLabsTtsClient so existing installs hear no change after the
+        // slider lands.
+        subject.preferences.first().elevenLabsStability shouldBe 0.65
+
+        subject.setElevenLabsStability(0.4)
+        subject.preferences.first().elevenLabsStability shouldBe 0.4
+    }
+
+    @Test
+    fun `elevenLabs stability setter clamps to the documented 0 to 1 range`() = runTest {
+        subject.setElevenLabsStability(2.0)
+        subject.preferences.first().elevenLabsStability shouldBe 1.0
+
+        subject.setElevenLabsStability(-0.5)
+        subject.preferences.first().elevenLabsStability shouldBe 0.0
+    }
+
+    @Test
+    fun `openAi speed defaults to 1_0 and round-trips`() = runTest {
+        subject.preferences.first().openAiSpeed shouldBe 1.0
+
+        subject.setOpenAiSpeed(0.85)
+        subject.preferences.first().openAiSpeed shouldBe 0.85
+    }
+
+    @Test
+    fun `openAi speed setter clamps to the picker range`() = runTest {
+        subject.setOpenAiSpeed(2.0)
+        subject.preferences.first().openAiSpeed shouldBe 1.2
+
+        subject.setOpenAiSpeed(0.1)
+        subject.preferences.first().openAiSpeed shouldBe 0.7
+    }
+
+    @Test
     fun `openAiVoice defaults to nova for non-British locale preferences`() = runTest {
         subject.setVoiceLocale(VoiceLocale.EN_US)
         subject.preferences.first().openAiVoice shouldBe "nova"

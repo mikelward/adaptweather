@@ -106,6 +106,38 @@ class OpenAITtsClientTest {
     }
 
     @Test
+    fun `synthesize forwards a per-call speed override`() = runTest {
+        var capturedBody: String? = null
+        val client = OpenAITtsClient(
+            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", speed = 0.85)
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("\"speed\":0.85")
+    }
+
+    @Test
+    fun `synthesize omits the speed field at the API default`() = runTest {
+        // The default 1.0 is the API's stock pace; we leave the field off
+        // entirely rather than send a redundant value, both to keep the
+        // request body minimal and to avoid the (slim) chance the model
+        // changes behaviour at exactly 1.0.
+        var capturedBody: String? = null
+        val client = OpenAITtsClient(
+            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello")
+
+        val body = checkNotNull(capturedBody)
+        check(!body.contains("\"speed\"")) { "expected no speed field at default; body was: $body" }
+    }
+
+    @Test
     fun `throws MissingApiKeyException when key is blank`() = runTest {
         val client = OpenAITtsClient(
             httpClient = mockClient(),

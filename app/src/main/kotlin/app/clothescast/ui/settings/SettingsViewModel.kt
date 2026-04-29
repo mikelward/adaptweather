@@ -83,9 +83,11 @@ class SettingsViewModel(
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
                         openAiVoice = prefs.openAiVoice,
+                        openAiSpeed = prefs.openAiSpeed,
                         elevenLabsVoice = prefs.elevenLabsVoice,
                         elevenLabsModel = prefs.elevenLabsModel,
                         elevenLabsSpeed = prefs.elevenLabsSpeed,
+                        elevenLabsStability = prefs.elevenLabsStability,
                         deviceVoice = prefs.deviceVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
@@ -189,6 +191,10 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepository.setOpenAiVoice(voice) }
     }
 
+    fun setOpenAiSpeed(speed: Double) {
+        viewModelScope.launch { settingsRepository.setOpenAiSpeed(speed) }
+    }
+
     fun setElevenLabsVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setElevenLabsVoice(voice) }
     }
@@ -199,6 +205,10 @@ class SettingsViewModel(
 
     fun setElevenLabsSpeed(speed: Double) {
         viewModelScope.launch { settingsRepository.setElevenLabsSpeed(speed) }
+    }
+
+    fun setElevenLabsStability(stability: Double) {
+        viewModelScope.launch { settingsRepository.setElevenLabsStability(stability) }
     }
 
     /**

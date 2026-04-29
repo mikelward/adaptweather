@@ -238,6 +238,14 @@
     <!-- Heading above the speed slider; %1$s is the current value formatted
          as e.g. "0.90". -->
     <string name="settings_elevenlabs_speed_label">Speed × %1$s</string>
+    <!-- Heading above the stability slider; %1$s is the current value
+         formatted as e.g. "0.65". Higher = steadier pronunciation, lower =
+         more expressive. -->
+    <string name="settings_elevenlabs_stability_label">Stability %1$s</string>
+    <!-- Heading above the OpenAI speed slider; %1$s is the current value
+         formatted as e.g. "1.00". Mirrors the ElevenLabs speed slider for
+         consistency. -->
+    <string name="settings_openai_speed_label">Speed × %1$s</string>
 
     <string name="settings_region_language_title">Language</string>
     <!-- Caption rendered under the Region > Language title, pairing with

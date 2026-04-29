@@ -25,4 +25,12 @@ internal data class OpenAISpeechRequest(
      * enunciation directives do land. Null when we have nothing to add.
      */
     val instructions: String? = null,
+    /**
+     * Playback-rate multiplier (0.25–4.0 per the API; we only expose
+     * 0.7–1.2 in the picker). Documented as supported on `tts-1` /
+     * `tts-1-hd`; on `gpt-4o-mini-tts` pace is primarily steered through
+     * [instructions] but the field is harmless when the model ignores it.
+     * Null leaves the API default (1.0) untouched.
+     */
+    val speed: Double? = null,
 )

@@ -36,6 +36,9 @@ import kotlinx.serialization.json.JsonPrimitive
 //     "clear and unrushed in any language" rather than accent-shaping.
 const val DEFAULT_OPENAI_TTS_MODEL: String = "gpt-4o-mini-tts"
 const val DEFAULT_OPENAI_TTS_VOICE: String = "alloy"
+// Mirrors `core:domain:UserPreferences.DEFAULT_OPENAI_SPEED` — the API's
+// stock 1.0× pace. Duplicated here so this layer can stay domain-free.
+const val DEFAULT_OPENAI_TTS_SPEED: Double = 1.0
 
 private const val PACE_AND_CLARITY_INSTRUCTIONS: String =
     "Speak clearly at a measured, conversational pace, enunciating each word."
@@ -59,6 +62,7 @@ class OpenAITtsClient(
     suspend fun synthesize(
         text: String,
         voice: String = DEFAULT_OPENAI_TTS_VOICE,
+        speed: Double = DEFAULT_OPENAI_TTS_SPEED,
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException("OpenAI")
@@ -74,6 +78,10 @@ class OpenAITtsClient(
                     voice = voice,
                     responseFormat = "pcm",
                     instructions = PACE_AND_CLARITY_INSTRUCTIONS,
+                    // Only send a non-default value to keep the request body
+                    // minimal and to avoid the (slim) chance that the field
+                    // changes the model's behaviour at exactly 1.0.
+                    speed = speed.takeIf { it != DEFAULT_OPENAI_TTS_SPEED },
                 ),
             )
         }
