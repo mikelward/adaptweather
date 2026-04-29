@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Serbian (Latin) translation. Tone is informal "ti"-form throughout to match the
+existing Croatian register ("Ponesi …", "Obuci …"). Ekavian variant ("sneg",
+"verovatno", "ovde") rather than the ijekavian forms used in values-hr —
+otherwise the lexicon overlaps with Croatian heavily and we lean on that
+overlap rather than maintaining two near-identical files. Scope: insight-prose
+templates, garment labels, clothes-rule editor, outfit-card labels, and
+region/voice-locale picker names. Other UI surfaces fall back to default
+English (matching values-pl / values-uk).
+-->
+<resources>
+    <string name="settings_region_language_sr_rs">Srpski (Srbija)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Srpski (Srbija)</string>
+    <string name="settings_tts_voice_locale_label">Jezik</string>
+
+    <string name="garment_sweater">Džemper</string>
+    <string name="garment_hoodie">Duks sa kapuljačom</string>
+    <string name="garment_jacket">Jakna</string>
+    <string name="garment_coat">Kaput</string>
+    <string name="garment_tshirt">Majica</string>
+    <string name="garment_shirt">Košulja</string>
+    <string name="garment_shorts">Šorts</string>
+    <string name="garment_pants">Pantalone</string>
+    <string name="garment_jeans">Farmerke</string>
+
+    <string name="settings_clothes_empty">Nema pravila. Dodirni Dodaj za kreiranje.</string>
+    <string name="settings_clothes_add">Dodaj</string>
+    <string name="settings_clothes_edit">Izmeni</string>
+    <string name="settings_clothes_delete">Obriši</string>
+    <string name="settings_clothes_dialog_add_title">Dodaj pravilo odevanja</string>
+    <string name="settings_clothes_dialog_edit_title">Izmeni pravilo odevanja</string>
+    <string name="settings_clothes_item_label">Odevni predmet</string>
+    <string name="settings_clothes_condition_label">Uslov</string>
+    <string name="settings_clothes_value_label_temp_c">Prag (°C)</string>
+    <string name="settings_clothes_value_label_precip">Prag (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Kada se oseća hladnije od</string>
+    <string name="settings_clothes_cond_type_temp_above">Kada se oseća toplije od</string>
+    <string name="settings_clothes_cond_type_precip_above">Kada je verovatnoća kiše veća od</string>
+    <string name="settings_clothes_cond_temp_below">kada je osećajna temperatura ispod %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">kada je osećajna temperatura iznad %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">kada je verovatnoća kiše veća od %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Majica</string>
+    <string name="today_outfit_top_sweater">Džemper</string>
+    <string name="today_outfit_top_thick_jacket">Debela jakna</string>
+    <string name="today_outfit_bottom_shorts">Šorts</string>
+    <string name="today_outfit_bottom_long_pants">Pantalone</string>
+
+    <string name="insight_lead_today">Danas</string>
+    <string name="insight_lead_tonight">Večeras</string>
+    <string name="insight_band_single">%1$s će biti %2$s.</string>
+    <string name="insight_band_range">%1$s će biti od %2$s do %3$s.</string>
+    <string name="insight_band_freezing">ledeno</string>
+    <string name="insight_band_cold">hladno</string>
+    <string name="insight_band_cool">sveže</string>
+    <string name="insight_band_mild">blago</string>
+    <string name="insight_band_warm">toplo</string>
+    <string name="insight_band_hot">vruće</string>
+    <string name="insight_delta_warmer">Danas će biti %1$d° toplije.</string>
+    <string name="insight_delta_cooler">Danas će biti %1$d° hladnije.</string>
+    <string name="insight_alert">Upozorenje: %1$s.</string>
+    <string name="insight_clothes_wear">Obuci %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s i %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s i %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">u %1$s</string>
+    <string name="insight_precip_overnight">tokom noći</string>
+    <string name="insight_condition_clear">Vedro</string>
+    <string name="insight_condition_partly_cloudy">Delimično oblačno</string>
+    <string name="insight_condition_cloudy">Oblačno</string>
+    <string name="insight_condition_fog">Magla</string>
+    <string name="insight_condition_drizzle">Sitna kiša</string>
+    <string name="insight_condition_rain">Kiša</string>
+    <string name="insight_condition_snow">Sneg</string>
+    <string name="insight_condition_thunderstorm">Grmljavina</string>
+    <string name="insight_condition_unknown">Nepoznato</string>
+    <string name="insight_tie_in">Ponesi %1$s večeras.</string>
+    <string name="insight_tie_in_with_rain">Ponesi %1$s večeras, kiša u %2$s.</string>
+    <!-- "15" — preposition "u" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

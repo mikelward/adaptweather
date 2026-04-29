@@ -147,6 +147,12 @@ label localizes.
     <string name="settings_region_language_ru_ru">俄语（俄罗斯）</string>
     <string name="settings_region_language_pl_pl">波兰语（波兰）</string>
     <string name="settings_region_language_hr_hr">克罗地亚语（克罗地亚）</string>
+    <string name="settings_region_language_sr_rs">塞尔维亚语（塞尔维亚）</string>
+    <string name="settings_region_language_bg_bg">保加利亚语（保加利亚）</string>
+    <string name="settings_region_language_cs_cz">捷克语（捷克）</string>
+    <string name="settings_region_language_sk_sk">斯洛伐克语（斯洛伐克）</string>
+    <string name="settings_region_language_hu_hu">匈牙利语（匈牙利）</string>
+    <string name="settings_region_language_ro_ro">罗马尼亚语（罗马尼亚）</string>
     <string name="settings_region_language_uk_ua">乌克兰语（乌克兰）</string>
     <string name="settings_region_language_pt_br">葡萄牙语（巴西）</string>
     <string name="settings_region_language_nl_nl">荷兰语（荷兰）</string>
@@ -191,6 +197,12 @@ label localizes.
     <string name="settings_tts_voice_locale_ru_ru">俄语（俄罗斯）</string>
     <string name="settings_tts_voice_locale_pl_pl">波兰语（波兰）</string>
     <string name="settings_tts_voice_locale_hr_hr">克罗地亚语（克罗地亚）</string>
+    <string name="settings_tts_voice_locale_sr_rs">塞尔维亚语（塞尔维亚）</string>
+    <string name="settings_tts_voice_locale_bg_bg">保加利亚语（保加利亚）</string>
+    <string name="settings_tts_voice_locale_cs_cz">捷克语（捷克）</string>
+    <string name="settings_tts_voice_locale_sk_sk">斯洛伐克语（斯洛伐克）</string>
+    <string name="settings_tts_voice_locale_hu_hu">匈牙利语（匈牙利）</string>
+    <string name="settings_tts_voice_locale_ro_ro">罗马尼亚语（罗马尼亚）</string>
     <string name="settings_tts_voice_locale_uk_ua">乌克兰语（乌克兰）</string>
     <string name="settings_tts_voice_locale_pt_br">葡萄牙语（巴西）</string>
     <string name="settings_tts_voice_locale_nl_nl">荷兰语（荷兰）</string>

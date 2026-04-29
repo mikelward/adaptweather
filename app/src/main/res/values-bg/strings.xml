@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Bulgarian translation. Tone is informal "ти"-form throughout ("Облечи …",
+"Вземи …"). Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Other UI
+surfaces fall back to default English (matching values-pl / values-uk).
+-->
+<resources>
+    <string name="settings_region_language_bg_bg">Български (България)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Български (България)</string>
+    <string name="settings_tts_voice_locale_label">Език</string>
+
+    <string name="garment_sweater">Пуловер</string>
+    <string name="garment_hoodie">Суитчър с качулка</string>
+    <string name="garment_jacket">Яке</string>
+    <string name="garment_coat">Палто</string>
+    <string name="garment_tshirt">Тениска</string>
+    <string name="garment_shirt">Риза</string>
+    <string name="garment_shorts">Къси панталони</string>
+    <string name="garment_pants">Панталон</string>
+    <string name="garment_jeans">Дънки</string>
+
+    <string name="settings_clothes_empty">Няма правила. Докосни Добави, за да създадеш.</string>
+    <string name="settings_clothes_add">Добави</string>
+    <string name="settings_clothes_edit">Редактирай</string>
+    <string name="settings_clothes_delete">Изтрий</string>
+    <string name="settings_clothes_dialog_add_title">Добави правило за обличане</string>
+    <string name="settings_clothes_dialog_edit_title">Редактирай правило за обличане</string>
+    <string name="settings_clothes_item_label">Дреха</string>
+    <string name="settings_clothes_condition_label">Условие</string>
+    <string name="settings_clothes_value_label_temp_c">Праг (°C)</string>
+    <string name="settings_clothes_value_label_precip">Праг (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Когато усещаната е под</string>
+    <string name="settings_clothes_cond_type_temp_above">Когато усещаната е над</string>
+    <string name="settings_clothes_cond_type_precip_above">Когато вероятността за дъжд е над</string>
+    <string name="settings_clothes_cond_temp_below">когато усещаната температура е под %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">когато усещаната температура е над %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">когато вероятността за дъжд е над %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Тениска</string>
+    <string name="today_outfit_top_sweater">Пуловер</string>
+    <string name="today_outfit_top_thick_jacket">Дебело палто</string>
+    <string name="today_outfit_bottom_shorts">Къси панталони</string>
+    <string name="today_outfit_bottom_long_pants">Панталон</string>
+
+    <string name="insight_lead_today">Днес</string>
+    <string name="insight_lead_tonight">Тази вечер</string>
+    <string name="insight_band_single">%1$s ще бъде %2$s.</string>
+    <string name="insight_band_range">%1$s ще бъде от %2$s до %3$s.</string>
+    <string name="insight_band_freezing">мразовито</string>
+    <string name="insight_band_cold">студено</string>
+    <string name="insight_band_cool">хладно</string>
+    <string name="insight_band_mild">меко</string>
+    <string name="insight_band_warm">топло</string>
+    <string name="insight_band_hot">горещо</string>
+    <string name="insight_delta_warmer">Днес ще бъде с %1$d° по-топло.</string>
+    <string name="insight_delta_cooler">Днес ще бъде с %1$d° по-студено.</string>
+    <string name="insight_alert">Предупреждение: %1$s.</string>
+    <string name="insight_clothes_wear">Облечи %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s и %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s и %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">в %1$s</string>
+    <string name="insight_precip_overnight">през нощта</string>
+    <string name="insight_condition_clear">Ясно</string>
+    <string name="insight_condition_partly_cloudy">Частично облачно</string>
+    <string name="insight_condition_cloudy">Облачно</string>
+    <string name="insight_condition_fog">Мъгла</string>
+    <string name="insight_condition_drizzle">Ръмеж</string>
+    <string name="insight_condition_rain">Дъжд</string>
+    <string name="insight_condition_snow">Сняг</string>
+    <string name="insight_condition_thunderstorm">Гръмотевична буря</string>
+    <string name="insight_condition_unknown">Неизвестно</string>
+    <string name="insight_tie_in">Вземи %1$s за тази вечер.</string>
+    <string name="insight_tie_in_with_rain">Вземи %1$s за тази вечер, дъжд в %2$s.</string>
+    <!-- "15" — preposition "в" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

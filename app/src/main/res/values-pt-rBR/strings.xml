@@ -157,6 +157,12 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_ru_ru">Russo (Rússia)</string>
     <string name="settings_region_language_pl_pl">Polonês (Polônia)</string>
     <string name="settings_region_language_hr_hr">Croata (Croácia)</string>
+    <string name="settings_region_language_sr_rs">Sérvio (Sérvia)</string>
+    <string name="settings_region_language_bg_bg">Búlgaro (Bulgária)</string>
+    <string name="settings_region_language_cs_cz">Tcheco (Chéquia)</string>
+    <string name="settings_region_language_sk_sk">Eslovaco (Eslováquia)</string>
+    <string name="settings_region_language_hu_hu">Húngaro (Hungria)</string>
+    <string name="settings_region_language_ro_ro">Romeno (Romênia)</string>
     <string name="settings_region_language_uk_ua">Ucraniano (Ucrânia)</string>
     <string name="settings_region_language_nl_nl">Holandês (Países Baixos)</string>
     <string name="settings_region_language_sv_se">Sueco (Suécia)</string>
@@ -201,6 +207,12 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_ru_ru">Russo (Rússia)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polonês (Polônia)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croata (Croácia)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Sérvio (Sérvia)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Búlgaro (Bulgária)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Tcheco (Chéquia)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Eslovaco (Eslováquia)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Húngaro (Hungria)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Romeno (Romênia)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ucraniano (Ucrânia)</string>
     <string name="settings_tts_voice_locale_nl_nl">Holandês (Países Baixos)</string>
     <string name="settings_tts_voice_locale_sv_se">Sueco (Suécia)</string>

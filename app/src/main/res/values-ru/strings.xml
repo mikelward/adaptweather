@@ -145,6 +145,12 @@ only the displayed label localizes.
     <string name="settings_region_language_es_mx">Испанский (Мексика)</string>
     <string name="settings_region_language_pl_pl">Польский (Польша)</string>
     <string name="settings_region_language_hr_hr">Хорватский (Хорватия)</string>
+    <string name="settings_region_language_sr_rs">Сербский (Сербия)</string>
+    <string name="settings_region_language_bg_bg">Болгарский (Болгария)</string>
+    <string name="settings_region_language_cs_cz">Чешский (Чехия)</string>
+    <string name="settings_region_language_sk_sk">Словацкий (Словакия)</string>
+    <string name="settings_region_language_hu_hu">Венгерский (Венгрия)</string>
+    <string name="settings_region_language_ro_ro">Румынский (Румыния)</string>
     <string name="settings_region_language_uk_ua">Украинский (Украина)</string>
     <string name="settings_region_language_pt_br">Португальский (Бразилия)</string>
     <string name="settings_region_language_nl_nl">Нидерландский (Нидерланды)</string>
@@ -189,6 +195,12 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_es_mx">Испанский (Мексика)</string>
     <string name="settings_tts_voice_locale_pl_pl">Польский (Польша)</string>
     <string name="settings_tts_voice_locale_hr_hr">Хорватский (Хорватия)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Сербский (Сербия)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Болгарский (Болгария)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Чешский (Чехия)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Словацкий (Словакия)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Венгерский (Венгрия)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Румынский (Румыния)</string>
     <string name="settings_tts_voice_locale_uk_ua">Украинский (Украина)</string>
     <string name="settings_tts_voice_locale_pt_br">Португальский (Бразилия)</string>
     <string name="settings_tts_voice_locale_nl_nl">Нидерландский (Нидерланды)</string>
