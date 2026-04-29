@@ -10,7 +10,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_region_language_sl_si">Slovenski (Slovenija)</string>
     <string name="settings_tts_voice_locale_hr_hr">Hrvatski (Hrvatska)</string>
     <string name="settings_tts_voice_locale_sl_si">Slovenski (Slovenija)</string>
-    <string name="settings_tts_voice_locale_label">Jezik</string>
+    <string name="settings_tts_voice_locale_label">Naglasak</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">Postavke</string>

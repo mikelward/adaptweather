@@ -9,7 +9,7 @@ West Bengal vocabulary differences in a future PR.
 <resources>
     <string name="settings_region_language_bn_bd">বাংলা (বাংলাদেশ)</string>
     <string name="settings_tts_voice_locale_bn_bd">বাংলা (বাংলাদেশ)</string>
-    <string name="settings_tts_voice_locale_label">ভাষা</string>
+    <string name="settings_tts_voice_locale_label">উচ্চারণভঙ্গি</string>
 
     <string name="garment_sweater">সোয়েটার</string>
     <string name="garment_hoodie">হুডি</string>

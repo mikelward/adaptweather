@@ -6,7 +6,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_da_dk">Dansk (Danmark)</string>
     <string name="settings_tts_voice_locale_da_dk">Dansk (Danmark)</string>
-    <string name="settings_tts_voice_locale_label">Sprog</string>
+    <string name="settings_tts_voice_locale_label">Accent</string>
 
     <string name="garment_sweater">Sweater</string>
     <string name="garment_hoodie">Hættetrøje</string>

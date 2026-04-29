@@ -19,7 +19,7 @@ default English (matching values-pl / values-uk).
 <resources>
     <string name="settings_region_language_sr_rs">Srpski (Srbija)</string>
     <string name="settings_tts_voice_locale_sr_rs">Srpski (Srbija)</string>
-    <string name="settings_tts_voice_locale_label">Jezik</string>
+    <string name="settings_tts_voice_locale_label">Akcenat</string>
 
     <string name="garment_sweater">Džemper</string>
     <string name="garment_hoodie">Duks sa kapuljačom</string>

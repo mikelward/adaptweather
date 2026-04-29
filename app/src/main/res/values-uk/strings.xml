@@ -6,7 +6,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_uk_ua">Українська (Україна)</string>
     <string name="settings_tts_voice_locale_uk_ua">Українська (Україна)</string>
-    <string name="settings_tts_voice_locale_label">Мова</string>
+    <string name="settings_tts_voice_locale_label">Акцент</string>
 
     <string name="garment_sweater">Светр</string>
     <string name="garment_hoodie">Худі</string>

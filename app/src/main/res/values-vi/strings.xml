@@ -9,7 +9,7 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="settings_region_language_th_th">Tiếng Thái (Thái Lan)</string>
     <string name="settings_tts_voice_locale_vi_vn">Tiếng Việt (Việt Nam)</string>
     <string name="settings_tts_voice_locale_th_th">Tiếng Thái (Thái Lan)</string>
-    <string name="settings_tts_voice_locale_label">Ngôn ngữ</string>
+    <string name="settings_tts_voice_locale_label">Giọng</string>
 
     <string name="garment_sweater">Áo len</string>
     <string name="garment_hoodie">Áo hoodie</string>

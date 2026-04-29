@@ -50,9 +50,9 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_de_de">Deutsch (Deutschland)</string>
     <string name="settings_tts_voice_locale_de_at">Deutsch (Österreich)</string>
     <string name="settings_tts_voice_locale_de_ch">Deutsch (Schweiz)</string>
-    <!-- Voice-engine "Language" picker title (was "English variant" before
+    <!-- Voice-engine "Accent" picker title (was "English variant" before
          German got added; "English variant: Deutsch" was self-contradictory). -->
-    <string name="settings_tts_voice_locale_label">Sprache</string>
+    <string name="settings_tts_voice_locale_label">Akzent</string>
 
     <!--
     Settings — top bar + root navigation list ("Stimme", "Zeitplan", …).

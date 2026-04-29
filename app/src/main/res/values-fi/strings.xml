@@ -6,7 +6,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_fi_fi">Suomi (Suomi)</string>
     <string name="settings_tts_voice_locale_fi_fi">Suomi (Suomi)</string>
-    <string name="settings_tts_voice_locale_label">Kieli</string>
+    <string name="settings_tts_voice_locale_label">Aksentti</string>
 
     <string name="garment_sweater">Villapaita</string>
     <string name="garment_hoodie">Huppari</string>

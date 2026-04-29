@@ -33,7 +33,7 @@ only the displayed label localizes.
 <resources>
     <string name="settings_region_language_ru_ru">Русский (Россия)</string>
     <string name="settings_tts_voice_locale_ru_ru">Русский (Россия)</string>
-    <string name="settings_tts_voice_locale_label">Язык</string>
+    <string name="settings_tts_voice_locale_label">Акцент</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">Настройки</string>
