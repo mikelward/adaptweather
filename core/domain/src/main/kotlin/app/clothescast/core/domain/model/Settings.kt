@@ -230,9 +230,8 @@ data class UserPreferences(
     val elevenLabsModel: String = DEFAULT_ELEVENLABS_MODEL,
     /**
      * Per-clip ElevenLabs playback rate (multiplier, 0.7–1.2 per the
-     * documented range). Default 0.9 because field reports flagged the
-     * vendor's stock 1.0 as "too fast". Only consulted when [ttsEngine]
-     * == [TtsEngine.ELEVENLABS].
+     * documented range). Default 1.0 (vendor stock pace). Only consulted
+     * when [ttsEngine] == [TtsEngine.ELEVENLABS].
      */
     val elevenLabsSpeed: Double = DEFAULT_ELEVENLABS_SPEED,
     /**
@@ -318,9 +317,9 @@ data class UserPreferences(
         // independent. Update both sides together if the default ever shifts.
         const val DEFAULT_ELEVENLABS_MODEL = "eleven_turbo_v2_5"
         // Playback-rate multiplier applied per request (clamped 0.7–1.2 by
-        // the picker UI; ElevenLabs documents the same range). Below 1.0 by
-        // default for clarity over expression on short briefings.
-        const val DEFAULT_ELEVENLABS_SPEED = 0.9
+        // the picker UI; ElevenLabs documents the same range). Default 1.0
+        // matches the vendor's stock pace.
+        const val DEFAULT_ELEVENLABS_SPEED = 1.0
         const val MIN_ELEVENLABS_SPEED = 0.7
         const val MAX_ELEVENLABS_SPEED = 1.2
         // Documented voice_settings.stability range is 0–1. Default mirrors
