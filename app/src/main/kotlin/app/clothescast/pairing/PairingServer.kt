@@ -45,13 +45,12 @@ class PairingServer(
      */
     fun start(): Int {
         val port = findFreePort()
-        val tok = token // capture for lambda — server lifecycle outlives this call
         val srv = embeddedServer(CIO, port = port) {
             routing {
-                get("/pair/$tok") {
+                get("/pair/$token") {
                     call.respondText(htmlForm(), ContentType.Text.Html)
                 }
-                post("/pair/$tok") {
+                post("/pair/$token") {
                     val params = call.receiveParameters()
                     val key = params["gemini_key"]?.trim()
                     if (key.isNullOrEmpty()) {
