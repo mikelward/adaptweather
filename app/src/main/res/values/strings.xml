@@ -250,6 +250,16 @@
          consistency. -->
     <string name="settings_openai_speed_label">Speed × %1$s</string>
 
+    <!-- Captions under the cloud voice pickers when the user's chosen voice
+         locale has no exact-accent match. %1$s is the human-readable locale
+         label (e.g. "English (Australia)", "Japanese (Japan)"). The
+         "language fallback" variant fires when there's at least one voice
+         in the same language but a different accent — e.g. en-AU user with
+         only en-US/en-GB voices. The "no match" variant fires when nothing
+         in this engine speaks the requested language at all. -->
+    <string name="settings_tts_voice_locale_language_fallback">No %1$s voices in this engine — showing voices in the same language.</string>
+    <string name="settings_tts_voice_locale_no_match">No %1$s voices in this engine — try another accent.</string>
+
     <string name="settings_region_language_title">Language</string>
     <!-- Caption rendered under the Region > Language title, pairing with
          settings_tts_voice_locale_description so the user can tell which knob

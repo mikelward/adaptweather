@@ -11,6 +11,7 @@ class TtsVoicesTest {
     private val american = TtsVoiceOption("a", "Alice — US", VoiceLocale.EN_US)
     private val british = TtsVoiceOption("b", "Bob — UK", VoiceLocale.EN_GB)
     private val agnostic = TtsVoiceOption("c", "Cleo — any")
+    private val japanese = TtsVoiceOption("j", "Junko — JP", VoiceLocale.JA_JP)
 
     @Test
     fun `SYSTEM disables filtering`() {
@@ -26,11 +27,56 @@ class TtsVoicesTest {
     }
 
     @Test
-    fun `falls back to the full list when no voice matches the variant`() {
-        // No EN_AU voices in this list — better to show every voice (with the
-        // accent in the display name) than to leave the user with an empty picker.
-        val all = listOf(american, british)
+    fun `falls back to same-language voices when no exact accent matches`() {
+        // No EN_AU voice in the list, but both en-US and en-GB share the
+        // "en" language subtag with en-AU. Better to surface those near-
+        // matches than dump every voice — and certainly better than leaving
+        // the picker empty.
+        val all = listOf(american, british, japanese)
+        all.filterByVariant(VoiceLocale.EN_AU)
+            .shouldContainExactlyInAnyOrder(american, british)
+    }
+
+    @Test
+    fun `falls back to the full list when nothing in the source speaks that language`() {
+        // No "en" voice at all — showing the Japanese voice is the least bad
+        // option. The picker UI surfaces a "try another accent" caption in
+        // this case (see localeFallbackTier).
+        val all = listOf(japanese)
         all.filterByVariant(VoiceLocale.EN_AU) shouldBe all
+    }
+
+    @Test
+    fun `localeFallbackTier reports Exact when at least one voice matches`() {
+        val all = listOf(american, british)
+        all.localeFallbackTier(VoiceLocale.EN_GB) shouldBe LocaleFallbackTier.Exact
+    }
+
+    @Test
+    fun `localeFallbackTier reports SameLanguage on language-only fallback`() {
+        val all = listOf(american, british)
+        all.localeFallbackTier(VoiceLocale.EN_AU) shouldBe LocaleFallbackTier.SameLanguage
+    }
+
+    @Test
+    fun `localeFallbackTier reports FullList when no language match exists`() {
+        val all = listOf(japanese)
+        all.localeFallbackTier(VoiceLocale.EN_AU) shouldBe LocaleFallbackTier.FullList
+    }
+
+    @Test
+    fun `localeFallbackTier reports Exact for SYSTEM regardless of source`() {
+        // SYSTEM disables filtering, so there's no fallback caption to show.
+        val all = listOf(japanese)
+        all.localeFallbackTier(VoiceLocale.SYSTEM) shouldBe LocaleFallbackTier.Exact
+    }
+
+    @Test
+    fun `localeFallbackTier treats accent-agnostic voices as exact matches`() {
+        // Gemini-style language-agnostic voices count as Exact for any
+        // variant — they always pass the filter.
+        val all = listOf(agnostic)
+        all.localeFallbackTier(VoiceLocale.JA_JP) shouldBe LocaleFallbackTier.Exact
     }
 
     @Test
@@ -69,10 +115,22 @@ class TtsVoicesTest {
 
     @Test
     fun `keepSelected is ignored when the empty-filter fallback fires`() {
-        // No matches → fallback to full list (which already includes
-        // selected). keepSelected becomes a no-op rather than re-appending.
-        val all = listOf(american)
-        all.filterByVariant(VoiceLocale.EN_AU, keepSelected = "a") shouldBe all
+        // No "en" voice at all → tier=FullList, returns the source as-is
+        // (which already includes selected). keepSelected becomes a no-op
+        // rather than re-appending.
+        val all = listOf(japanese)
+        all.filterByVariant(VoiceLocale.EN_AU, keepSelected = "j") shouldBe all
+    }
+
+    @Test
+    fun `keepSelected appends a different-language voice on language-tier fallback`() {
+        // en-AU user with `j` (Japanese) persisted: tier resolves to
+        // SameLanguage, returning the en-* voices. keepSelected ensures the
+        // user's current pick still shows in the dialog so the button
+        // label doesn't fall back to a raw voice id.
+        val all = listOf(american, british, japanese)
+        all.filterByVariant(VoiceLocale.EN_AU, keepSelected = "j")
+            .shouldContainExactlyInAnyOrder(american, british, japanese)
     }
 
     @Test
