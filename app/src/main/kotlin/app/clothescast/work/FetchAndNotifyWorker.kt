@@ -20,6 +20,8 @@ import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.insight.InsightFormatter
+import app.clothescast.location.hasBackgroundLocationPermission
+import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OpenAITtsSpeaker
@@ -76,12 +78,34 @@ class FetchAndNotifyWorker(
 
         val location = resolveLocation(prefs)
             ?: run {
-                // Either useDeviceLocation is on but the worker can't read it
-                // (background grant missing / providers disabled / timeout) and
-                // there's no saved fallback, or both inputs are blank. Fail
-                // loudly via the failure-reason channel so the Today banner can
-                // prompt the user to act, instead of silently posting a
-                // London-default insight that erodes trust in the outfit advice.
+                // Two distinct null cases land here, and they want different
+                // outcomes:
+                //
+                //   1. Misconfigured — useDeviceLocation off + no saved
+                //      fallback, OR useDeviceLocation on but the user hasn't
+                //      granted ACCESS_BACKGROUND_LOCATION (Q+) yet. The user
+                //      has to do something; retrying on backoff would just
+                //      hammer the system every 30s with no progress. Fail
+                //      with REASON_NO_LOCATION so the Today banner prompts
+                //      them to grant permission or pick a city.
+                //
+                //   2. Transient — useDeviceLocation on, both permissions
+                //      granted, no saved fallback, but LocationResolver
+                //      returned null this time (NETWORK provider down,
+                //      timeout, momentary signal flake). A later attempt is
+                //      likely to succeed, so let WorkManager retry with
+                //      exponential backoff rather than burning the period's
+                //      forecast. Without a saved fallback this would
+                //      otherwise be the only path; with one, resolveLocation
+                //      would have used it and we wouldn't be in this branch.
+                val transientDeviceFailure = prefs.useDeviceLocation &&
+                    prefs.location == null &&
+                    hasCoarseLocationPermission(applicationContext) &&
+                    hasBackgroundLocationPermission(applicationContext)
+                if (transientDeviceFailure) {
+                    DiagLog.w(TAG, "Device location read failed transiently; retrying.")
+                    return Result.retry()
+                }
                 DiagLog.w(TAG, "No location available; failing run.")
                 return Result.failure(reason(REASON_NO_LOCATION))
             }
