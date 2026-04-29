@@ -12,10 +12,13 @@ import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.EveningEventTieInClause
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
@@ -104,6 +107,8 @@ class InsightCache(
         val hourly: List<HourlyDto> = emptyList(),
         val outfit: OutfitDto? = null,
         val nextOutfit: OutfitDto? = null,
+        val outfitRationale: OutfitRationaleDto? = null,
+        val nextOutfitRationale: OutfitRationaleDto? = null,
         val period: String = ForecastPeriod.TODAY.name,
         val hasEvents: Boolean = false,
     ) {
@@ -115,6 +120,8 @@ class InsightCache(
             hourly = hourly.map { it.toDomain() },
             outfit = outfit?.toDomain(),
             nextOutfit = nextOutfit?.toDomain(),
+            outfitRationale = outfitRationale?.toDomain(),
+            nextOutfitRationale = nextOutfitRationale?.toDomain(),
             period = runCatching { ForecastPeriod.valueOf(period) }.getOrDefault(ForecastPeriod.TODAY),
             hasEvents = hasEvents,
         )
@@ -205,6 +212,41 @@ class InsightCache(
     }
 
     @Serializable
+    private data class OutfitRationaleDto(
+        val top: GarmentReasonDto,
+        val bottom: GarmentReasonDto,
+    ) {
+        fun toDomain(): OutfitRationale = OutfitRationale(
+            top = top.toDomain(),
+            bottom = bottom.toDomain(),
+        )
+    }
+
+    @Serializable
+    private data class GarmentReasonDto(val facts: List<FactDto>) {
+        fun toDomain(): GarmentReason = GarmentReason(facts = facts.map { it.toDomain() })
+    }
+
+    @Serializable
+    private data class FactDto(
+        val metric: String,
+        val observedC: Double,
+        val observedAtSecondOfDay: Int? = null,
+        val thresholdC: Double,
+        val comparison: String,
+    ) {
+        fun toDomain(): Fact = Fact(
+            metric = runCatching { Fact.Metric.valueOf(metric) }
+                .getOrDefault(Fact.Metric.FEELS_LIKE_MIN),
+            observedC = observedC,
+            observedAt = observedAtSecondOfDay?.let { LocalTime.ofSecondOfDay(it.toLong()) },
+            thresholdC = thresholdC,
+            comparison = runCatching { Fact.Comparison.valueOf(comparison) }
+                .getOrDefault(Fact.Comparison.AT_OR_ABOVE),
+        )
+    }
+
+    @Serializable
     private data class HourlyDto(
         val secondOfDay: Int,
         val temperatureC: Double,
@@ -230,8 +272,26 @@ class InsightCache(
         hourly = hourly.map { it.toDto() },
         outfit = outfit?.let { OutfitDto(it.top.name, it.bottom.name) },
         nextOutfit = nextOutfit?.let { OutfitDto(it.top.name, it.bottom.name) },
+        outfitRationale = outfitRationale?.toDto(),
+        nextOutfitRationale = nextOutfitRationale?.toDto(),
         period = period.name,
         hasEvents = hasEvents,
+    )
+
+    private fun OutfitRationale.toDto(): OutfitRationaleDto = OutfitRationaleDto(
+        top = top.toDto(),
+        bottom = bottom.toDto(),
+    )
+
+    private fun GarmentReason.toDto(): GarmentReasonDto =
+        GarmentReasonDto(facts = facts.map { it.toDto() })
+
+    private fun Fact.toDto(): FactDto = FactDto(
+        metric = metric.name,
+        observedC = observedC,
+        observedAtSecondOfDay = observedAt?.toSecondOfDay(),
+        thresholdC = thresholdC,
+        comparison = comparison.name,
     )
 
     private fun InsightSummary.toDto(): InsightSummaryDto = InsightSummaryDto(

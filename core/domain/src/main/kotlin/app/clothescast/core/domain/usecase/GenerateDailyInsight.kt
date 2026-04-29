@@ -66,12 +66,12 @@ class GenerateDailyInsight(
         // both costs no extra API call. Null when the underlying data isn't
         // there (e.g. evening insight on a legacy bundle without tomorrow's
         // daily aggregates) — the screen falls back to a single card.
-        val nextOutfit = when (period) {
-            ForecastPeriod.TODAY -> tonightForecast
-                .takeIf { it.hourly.isNotEmpty() }
-                ?.let { OutfitSuggestion.fromForecast(it) }
-            ForecastPeriod.TONIGHT -> bundle.tomorrow?.let { OutfitSuggestion.fromForecast(it) }
+        val nextForecast = when (period) {
+            ForecastPeriod.TODAY -> tonightForecast.takeIf { it.hourly.isNotEmpty() }
+            ForecastPeriod.TONIGHT -> bundle.tomorrow
         }
+        val nextOutfit = nextForecast?.let { OutfitSuggestion.fromForecast(it) }
+        val nextOutfitRationale = nextForecast?.let { OutfitSuggestion.explainFromForecast(it) }
         val todayTriggered = evaluateClothesRules(periodForecast, prefs.clothesRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
         // Failures (missing permission, provider crash) degrade to no events so a
@@ -124,6 +124,8 @@ class GenerateDailyInsight(
             confidence = bundle.confidence,
             outfit = OutfitSuggestion.fromForecast(periodForecast),
             nextOutfit = nextOutfit,
+            outfitRationale = OutfitSuggestion.explainFromForecast(periodForecast),
+            nextOutfitRationale = nextOutfitRationale,
             period = period,
             hasEvents = periodEvents.isNotEmpty(),
         )

@@ -16,11 +16,14 @@ import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.DeltaClause
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.ForecastConfidence
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.Region
@@ -190,6 +193,42 @@ internal fun OutfitRowTonightTomorrowPreview() {
                 outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
                 nextOutfit = OutfitSuggestion(OutfitSuggestion.Top.THICK_JACKET, OutfitSuggestion.Bottom.LONG_PANTS),
             ),
+        )
+    }
+}
+
+@Preview(name = "Outfit rationale · sweater + pants", widthDp = 360)
+@Composable
+internal fun OutfitRationaleDialogPreview() {
+    Frame {
+        OutfitRationaleDialog(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            rationale = OutfitRationale(
+                top = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 18.0,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+                bottom = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 15.0,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+            ),
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            onDismiss = {},
         )
     }
 }

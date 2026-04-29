@@ -11,10 +11,14 @@ import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.EveningEventTieInClause
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.OutfitRationale
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherCondition
@@ -165,6 +169,42 @@ class InsightCacheTest {
         subject.store(withHourly)
 
         subject.latest.first() shouldBe withHourly
+    }
+
+    @Test
+    fun `outfit rationale round-trips through the cache`() = runTest {
+        val rationale = OutfitRationale(
+            top = GarmentReason(
+                facts = listOf(
+                    Fact(
+                        metric = Fact.Metric.FEELS_LIKE_MIN,
+                        observedC = 13.0,
+                        observedAt = LocalTime.of(7, 0),
+                        thresholdC = 18.0,
+                        comparison = Fact.Comparison.BELOW,
+                    ),
+                ),
+            ),
+            bottom = GarmentReason(
+                facts = listOf(
+                    Fact(
+                        metric = Fact.Metric.FEELS_LIKE_MAX,
+                        observedC = 19.0,
+                        observedAt = null,
+                        thresholdC = 22.0,
+                        comparison = Fact.Comparison.BELOW,
+                    ),
+                ),
+            ),
+        )
+        val withRationale = sample.copy(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            outfitRationale = rationale,
+        )
+
+        subject.store(withRationale)
+
+        subject.latest.first() shouldBe withRationale
     }
 
     @Test
