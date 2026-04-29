@@ -206,6 +206,7 @@ private val ACCENT_TO_VOICE_LOCALE: Map<String, VoiceLocale> = mapOf(
     "indonesian" to VoiceLocale.ID_ID,
     "filipino" to VoiceLocale.FIL_PH,
     "vietnamese" to VoiceLocale.VI_VN,
+    "thai" to VoiceLocale.TH_TH,
     "chinese" to VoiceLocale.ZH_CN,
     "hindi" to VoiceLocale.HI_IN,
     "bengali" to VoiceLocale.BN_BD,
