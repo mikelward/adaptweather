@@ -4,8 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.ClothesClause
@@ -47,6 +52,27 @@ import java.time.LocalTime
 internal fun Frame(darkTheme: Boolean = false, content: @Composable () -> Unit) {
     ClothesCastTheme(darkTheme = darkTheme, dynamicColor = false) {
         Surface { Column(modifier = Modifier.padding(16.dp)) { content() } }
+    }
+}
+
+// `@Preview(fontScale = …)` is metadata Studio honours in its design pane but
+// that doesn't reach a snapshot test invoking the composable directly — the
+// override has to come through LocalDensity at composition time. Same shape
+// for layoutDirection: the @Preview attribute is design-pane-only.
+@Composable
+private fun ScaledFrame(
+    fontScale: Float = 1.0f,
+    layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+    darkTheme: Boolean = false,
+    content: @Composable () -> Unit,
+) {
+    val baseDensity = LocalDensity.current
+    val scaledDensity = Density(density = baseDensity.density, fontScale = fontScale)
+    CompositionLocalProvider(
+        LocalDensity provides scaledDensity,
+        LocalLayoutDirection provides layoutDirection,
+    ) {
+        Frame(darkTheme = darkTheme, content = content)
     }
 }
 
@@ -325,6 +351,28 @@ internal fun ForecastChartDarkPreview() {
             hourly = SAMPLE_HOURLY,
             temperatureUnit = TemperatureUnit.CELSIUS,
             showFeelsLike = true,
+        )
+    }
+}
+
+// Accessibility / i18n stress variants. Each picks the surface most likely to
+// regress under the relevant axis: `headlineSmall` prose + adjacent confidence
+// chip for fontScale (the chip's row crowds the text at the top of the card),
+// and the period-label / outfit-icon row for RTL (label-vs-icon ordering and
+// padding mirror together).
+@Preview(name = "Insight card · fontScale 1.5", widthDp = 360, fontScale = 1.5f)
+@Composable
+internal fun InsightCardLargeFontPreview() {
+    ScaledFrame(fontScale = 1.5f) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
+}
+
+@Preview(name = "Outfit · t-shirt + shorts (RTL)", widthDp = 360, locale = "ar")
+@Composable
+internal fun OutfitTShirtShortsRtlPreview() {
+    ScaledFrame(layoutDirection = LayoutDirection.Rtl) {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.SHORTS),
+            label = "Today",
         )
     }
 }
