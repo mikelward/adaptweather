@@ -94,6 +94,20 @@
     <string name="onboarding_step_done">Done</string>
     <string name="onboarding_skip">Skip for now</string>
     <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_pair_from_phone">Pair from phone instead</string>
+
+    <!-- Phone-pairing screen: TV runs an HTTP server and shows a QR code; the user
+         scans it with their phone to open a web form where they paste their API key. -->
+    <string name="pairing_title">Scan to pair</string>
+    <string name="pairing_instructions">Scan this QR code with your phone, then paste your Gemini API key into the form that opens. The key will be sent directly to this TV over your home Wi-Fi — no cloud relay.</string>
+    <string name="pairing_qr_description">QR code linking to %1$s</string>
+    <string name="pairing_cancel">Cancel</string>
+    <string name="pairing_received">Key received — saving…</string>
+    <string name="pairing_timeout_title">Pairing window expired</string>
+    <string name="pairing_timeout_body">The 5-minute pairing window has closed. Tap Retry to open a new one.</string>
+    <string name="pairing_error_title">Could not start pairing</string>
+    <string name="pairing_error_body">Make sure the TV is connected to Wi-Fi, then try again.</string>
+    <string name="pairing_retry">Retry</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>

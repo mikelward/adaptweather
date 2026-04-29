@@ -39,6 +39,7 @@ internal fun OnboardingFreshPreview() {
                 onSetUseDeviceLocation = {},
                 onSelectLocation = {},
                 onSearchLocations = { emptyList() },
+                onPairFromPhone = {},
                 onContinue = {},
                 onSkip = {},
             )
@@ -64,6 +65,7 @@ internal fun OnboardingMidFlowPreview() {
                 onSetUseDeviceLocation = {},
                 onSelectLocation = {},
                 onSearchLocations = { emptyList() },
+                onPairFromPhone = {},
                 onContinue = {},
                 onSkip = {},
             )
@@ -85,6 +87,7 @@ internal fun OnboardingCompletePreview() {
                 onSetUseDeviceLocation = {},
                 onSelectLocation = {},
                 onSearchLocations = { emptyList() },
+                onPairFromPhone = {},
                 onContinue = {},
                 onSkip = {},
             )
