@@ -186,6 +186,8 @@
     <string name="settings_tts_voice_locale_pt_pt">Portuguese (Portugal)</string>
     <string name="settings_tts_voice_locale_nl_nl">Dutch (Netherlands)</string>
     <string name="settings_tts_voice_locale_sv_se">Swedish (Sweden)</string>
+    <string name="settings_tts_voice_locale_da_dk">Danish (Denmark)</string>
+    <string name="settings_tts_voice_locale_nb_no">Norwegian Bokmål (Norway)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turkish (Turkey)</string>
     <string name="settings_tts_voice_locale_en_za">English (South Africa)</string>
     <string name="settings_tts_voice_locale_id_id">Indonesian (Indonesia)</string>
@@ -286,6 +288,8 @@
     <string name="settings_region_language_pt_pt">Portuguese (Portugal)</string>
     <string name="settings_region_language_nl_nl">Dutch (Netherlands)</string>
     <string name="settings_region_language_sv_se">Swedish (Sweden)</string>
+    <string name="settings_region_language_da_dk">Danish (Denmark)</string>
+    <string name="settings_region_language_nb_no">Norwegian Bokmål (Norway)</string>
     <string name="settings_region_language_tr_tr">Turkish (Turkey)</string>
     <string name="settings_region_language_en_za">English (South Africa)</string>
     <string name="settings_region_language_id_id">Indonesian (Indonesia)</string>
