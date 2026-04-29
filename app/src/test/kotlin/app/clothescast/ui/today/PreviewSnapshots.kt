@@ -12,7 +12,7 @@ import app.clothescast.notification.NotificationIconTShirtPreview
 import app.clothescast.notification.NotificationIconThickJacketPreview
 import app.clothescast.ui.onboarding.OnboardingCompletePreview
 import app.clothescast.ui.onboarding.OnboardingFreshPreview
-import app.clothescast.ui.onboarding.OnboardingMidFlowPreview
+import app.clothescast.ui.onboarding.OnboardingPartialPreview
 import app.clothescast.ui.settings.SettingsClothesPreview
 import app.clothescast.ui.settings.SettingsDataSourcesPreview
 import app.clothescast.ui.settings.SettingsRegionPreview
@@ -127,15 +127,15 @@ class PreviewSnapshots {
     @Test fun outfit_rationale_dialog() = captureDialog { OutfitRationaleDialogPreview() }
     @Test fun outfit_rationale_dialog_tuned() = captureDialog { OutfitRationaleDialogTunedPreview() }
 
-    @Test fun today_empty_state() = capture { EmptyStatePreview() }
-    @Test fun today_insight_card() = capture { InsightCardPreview() }
-    @Test fun today_insight_card_dark() = capture { InsightCardDarkPreview() }
-    @Test fun today_insight_card_long() = capture { InsightCardLongPreview() }
+    @Test fun today_empty_state() = capture { TodayEmptyStatePreview() }
+    @Test fun today_insight_card() = capture { TodayInsightCardPreview() }
+    @Test fun today_insight_card_dark() = capture { TodayInsightCardDarkPreview() }
+    @Test fun today_insight_card_long() = capture { TodayInsightCardLongPreview() }
 
     @Test fun forecast_chart() = capture { ForecastChartPreview() }
     @Test fun forecast_chart_dark() = capture { ForecastChartDarkPreview() }
 
-    @Test fun today_insight_card_large_font() = capture { InsightCardLargeFontPreview() }
+    @Test fun today_insight_card_large_font() = capture { TodayInsightCardLargeFontPreview() }
     @Test fun outfit_tshirt_shorts_rtl() = capture { OutfitTShirtShortsRtlPreview() }
 
     @Test fun confidence_high() = capture { ConfidenceHighPreview() }
@@ -176,7 +176,7 @@ class PreviewSnapshots {
     @Test fun onboarding_partial() {
         shadowOf(RuntimeEnvironment.getApplication())
             .grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
-        capture { OnboardingMidFlowPreview() }
+        capture { OnboardingPartialPreview() }
     }
 
     @Test fun onboarding_complete() {
@@ -185,5 +185,56 @@ class PreviewSnapshots {
             Manifest.permission.ACCESS_COARSE_LOCATION,
         )
         capture { OnboardingCompletePreview() }
+    }
+
+    // Meta-test: verifies that every `@Preview internal fun XxxPreview()` declared
+    // in the app's `*Previews.kt` files has a corresponding `@Test` in this class.
+    // Also checks the reverse — no stale `@Test` calling a preview that no longer
+    // exists. Fails with a descriptive message listing the mismatch(es).
+    //
+    // Name mapping: "TodayInsightCardPreview" → remove "Preview" → "TodayInsightCard"
+    //   → insert "_" at every lowercase→UPPERCASE boundary → "Today_Insight_Card"
+    //   → lowercase → "today_insight_card". Consecutive-uppercase runs (e.g. "TShirt")
+    //   are treated as one word because there is no lowercase→UPPERCASE boundary
+    //   within the run, yielding "tshirt" rather than "t_shirt".
+    @Test fun no_preview_without_snapshot() {
+        val previewClasses = listOf(
+            "app.clothescast.ui.today.TodayPreviewsKt",
+            "app.clothescast.ui.onboarding.OnboardingPreviewsKt",
+            "app.clothescast.ui.settings.SettingsPreviewsKt",
+            "app.clothescast.notification.NotificationIconPreviewsKt",
+            "app.clothescast.widget.WidgetPreviewsKt",
+        ).map { Class.forName(it) }
+
+        val allPreviewFunctions = previewClasses
+            .flatMap { it.declaredMethods.toList() }
+            .filter { !it.isSynthetic && !it.isBridge && it.name.endsWith("Preview") }
+            .map { it.name }
+            .toSortedSet()
+
+        fun previewNameToTestName(name: String): String =
+            name.removeSuffix("Preview")
+                .replace(Regex("([a-z])([A-Z])"), "$1_$2")
+                .lowercase()
+
+        val expectedTestNames = allPreviewFunctions.map(::previewNameToTestName).toSortedSet()
+
+        val captureTestNames = PreviewSnapshots::class.java.methods
+            .filter { it.isAnnotationPresent(Test::class.java) && it.name != "no_preview_without_snapshot" }
+            .map { it.name }
+            .toSortedSet()
+
+        val untested = expectedTestNames - captureTestNames
+        val orphaned = captureTestNames - expectedTestNames
+
+        val errors = buildList {
+            if (untested.isNotEmpty()) {
+                add("@Preview functions missing a snapshot @Test — add capture { XxxPreview() }: $untested")
+            }
+            if (orphaned.isNotEmpty()) {
+                add("@Test methods without a matching @Preview function — rename to match or remove: $orphaned")
+            }
+        }
+        check(errors.isEmpty()) { errors.joinToString("\n") }
     }
 }
