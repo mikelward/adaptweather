@@ -42,8 +42,8 @@ import java.time.LocalTime
 //   - Studio's design pane renders these via `@Preview` so designers/devs can
 //     eyeball each state without running the app.
 //   - The Roborazzi snapshot test in `app/src/test` invokes each function and
-//     captures it to PNGs under `app/build/outputs/roborazzi/`, which CI
-//     uploads as a workflow artifact for human review on every PR.
+//     captures it to PNGs under `app/snapshots/`, which CI commits back to the
+//     PR branch so GitHub renders image diffs inline in "Files changed".
 //
 // Adding a new screen state: add a `@Preview internal fun XxxPreview()` here,
 // and add a corresponding test method in `PreviewSnapshots` that calls it.
@@ -287,19 +287,19 @@ internal fun OutfitRationaleDialogTunedPreview() {
 
 @Preview(name = "Today · empty state", widthDp = 360)
 @Composable
-internal fun EmptyStatePreview() {
+internal fun TodayEmptyStatePreview() {
     Frame { EmptyState(onRefresh = {}) }
 }
 
 @Preview(name = "Today · insight loaded", widthDp = 360)
 @Composable
-internal fun InsightCardPreview() {
+internal fun TodayInsightCardPreview() {
     Frame { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
 }
 
 @Preview(name = "Today · insight (dark)", widthDp = 360)
 @Composable
-internal fun InsightCardDarkPreview() {
+internal fun TodayInsightCardDarkPreview() {
     Frame(darkTheme = true) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
 }
 
@@ -453,7 +453,7 @@ internal fun ForecastChartDarkPreview() {
 // padding mirror together).
 @Preview(name = "Insight card · fontScale 1.5", widthDp = 360, fontScale = 1.5f)
 @Composable
-internal fun InsightCardLargeFontPreview() {
+internal fun TodayInsightCardLargeFontPreview() {
     ScaledFrame(fontScale = 1.5f) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
 }
 
@@ -472,10 +472,10 @@ internal fun OutfitTShirtShortsRtlPreview() {
 // length is dominated by the clothes clause's item count (the formatter joins
 // them into a comma list), so feeding it five items is what produces the
 // longest natural rendering. Catches wrapping / line-height regressions in
-// `headlineSmall` that the single-clause `InsightCardPreview` would miss.
+// `headlineSmall` that the single-clause `TodayInsightCardPreview` would miss.
 @Preview(name = "Today · insight (long clothes list)", widthDp = 360)
 @Composable
-internal fun InsightCardLongPreview() {
+internal fun TodayInsightCardLongPreview() {
     Frame {
         InsightCard(
             SAMPLE_INSIGHT.copy(

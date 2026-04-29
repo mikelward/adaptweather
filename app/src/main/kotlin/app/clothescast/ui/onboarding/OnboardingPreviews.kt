@@ -49,7 +49,7 @@ internal fun OnboardingFreshPreview() {
 
 @Preview(name = "Onboarding · location picked, key pending", widthDp = 360)
 @Composable
-internal fun OnboardingMidFlowPreview() {
+internal fun OnboardingPartialPreview() {
     ClothesCastTheme(dynamicColor = false) {
         Surface {
             OnboardingContent(
