@@ -74,6 +74,8 @@ internal fun VoiceContent(
     geminiKeyConfigured: Boolean,
     openAiKeyConfigured: Boolean,
     elevenLabsKeyConfigured: Boolean,
+    elevenLabsRefreshedVoices: List<TtsVoiceOption>?,
+    elevenLabsRefreshing: Boolean,
     voiceLocale: VoiceLocale,
     padding: PaddingValues,
     onSetTtsEngine: (TtsEngine) -> Unit,
@@ -88,6 +90,7 @@ internal fun VoiceContent(
     onClearOpenAiKey: () -> Unit,
     onSetElevenLabsKey: (String) -> Unit,
     onClearElevenLabsKey: () -> Unit,
+    onRefreshElevenLabsVoices: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -224,9 +227,19 @@ internal fun VoiceContent(
                         onSave = onSetElevenLabsKey,
                         onClear = onClearElevenLabsKey,
                     )
+                    // Use the user's account voices once they've refreshed,
+                    // else fall back to the curated en-US library list. The
+                    // refreshed list is already accent-agnostic (locale = null
+                    // on every entry) so filterByVariant only narrows the
+                    // curated fallback. An empty refreshed list (exotic
+                    // account state) also falls back so the picker is never
+                    // empty.
+                    val pickerVoices = elevenLabsRefreshedVoices
+                        ?.takeIf { it.isNotEmpty() }
+                        ?: ELEVENLABS_VOICES.filterByVariant(voiceLocale)
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
-                        voices = ELEVENLABS_VOICES.filterByVariant(voiceLocale),
+                        voices = pickerVoices,
                         selectedId = elevenLabsVoice,
                         enabled = !isPreviewing,
                         onSelect = {
@@ -234,6 +247,38 @@ internal fun VoiceContent(
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, deviceVoice, voiceLocale)
                         },
                     )
+                    if (elevenLabsRefreshedVoices != null) {
+                        Text(
+                            text = stringResource(
+                                R.string.settings_elevenlabs_refresh_voices_loaded,
+                                elevenLabsRefreshedVoices.size,
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    // Refresh is gated on the key being configured — without
+                    // a key the API call would 401. Disabled while a preview
+                    // or another refresh is in flight to avoid stacking
+                    // requests against the user's quota.
+                    if (elevenLabsKeyConfigured) {
+                        OutlinedButton(
+                            onClick = onRefreshElevenLabsVoices,
+                            enabled = !isPreviewing && !elevenLabsRefreshing,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            if (elevenLabsRefreshing) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(20.dp),
+                                        strokeWidth = 2.dp,
+                                    )
+                                }
+                            } else {
+                                Text(stringResource(R.string.settings_elevenlabs_refresh_voices))
+                            }
+                        }
+                    }
                     TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }

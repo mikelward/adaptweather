@@ -3,7 +3,9 @@ package app.clothescast.ui.settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import app.clothescast.core.data.insight.KeyProvider
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
+import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -23,7 +25,9 @@ import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.serialization.json.Json as KotlinxJson
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -189,6 +193,95 @@ class SettingsViewModelTest {
         }
         state.temperatureUnit shouldBe TemperatureUnit.FAHRENHEIT
         state.distanceUnit shouldBe DistanceUnit.MILES
+    }
+
+    @Test
+    fun `refreshElevenLabsVoices populates state from the API response`() = runTest {
+        val voicesJson = """
+            {"voices":[
+              {"voice_id":"v1","name":"Sarah","labels":{"description":"warm"}},
+              {"voice_id":"v2","name":"My Clone"}
+            ]}
+        """.trimIndent()
+        val client = ElevenLabsTtsClient(
+            httpClient = HttpClient(
+                MockEngine {
+                    respond(
+                        content = ByteReadChannel(voicesJson),
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                },
+            ) { install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) } },
+            keyProvider = object : KeyProvider {
+                override suspend fun get(): String = "test-key"
+            },
+        )
+        val refreshSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            elevenLabsTtsClient = client,
+        )
+
+        refreshSubject.refreshElevenLabsVoices()
+
+        val state = refreshSubject.state.first { it.elevenLabsRefreshedVoices != null }
+        state.elevenLabsRefreshing shouldBe false
+        val voices = checkNotNull(state.elevenLabsRefreshedVoices)
+        voices shouldHaveSize 2
+        voices[0].id shouldBe "v1"
+        voices[0].displayName shouldBe "Sarah — warm"
+        voices[1].id shouldBe "v2"
+        voices[1].displayName shouldBe "My Clone"
+    }
+
+    @Test
+    fun `refreshElevenLabsVoices reports failures via showError and leaves state untouched`() = runTest {
+        val client = ElevenLabsTtsClient(
+            httpClient = HttpClient(
+                MockEngine {
+                    respond(
+                        content = ByteReadChannel(
+                            """{"detail":{"status":"unauthorized","message":"Invalid API key"}}""",
+                        ),
+                        status = HttpStatusCode.Unauthorized,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                },
+            ) { install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) } },
+            keyProvider = object : KeyProvider {
+                override suspend fun get(): String = "bad-key"
+            },
+        )
+        var reported: String? = null
+        val refreshSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            elevenLabsTtsClient = client,
+            showError = { reported = it },
+        )
+
+        refreshSubject.refreshElevenLabsVoices()
+
+        refreshSubject.state.first { !it.elevenLabsRefreshing }
+        refreshSubject.state.value.elevenLabsRefreshedVoices shouldBe null
+        checkNotNull(reported).shouldContain("Invalid API key")
     }
 }
 

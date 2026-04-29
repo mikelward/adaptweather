@@ -1,5 +1,6 @@
 package app.clothescast.tts
 
+import app.clothescast.core.data.tts.ElevenLabsVoiceSummary
 import app.clothescast.core.domain.model.VoiceLocale
 
 /**
@@ -113,3 +114,26 @@ val ELEVENLABS_VOICES: List<TtsVoiceOption> = listOf(
     TtsVoiceOption("TxGEqnHWrfWFTfGW9XjX", "Josh — Young, male", VoiceLocale.EN_US),
     TtsVoiceOption("VR6AewLTigWG4xSOukaG", "Arnold — Crisp, male", VoiceLocale.EN_US),
 )
+
+/**
+ * Adapts a list of [ElevenLabsVoiceSummary] (the wire-side projection from
+ * `GET /v1/voices`) into the picker's [TtsVoiceOption] type.
+ *
+ * The display name is `name` plus an optional " — description" tail when the
+ * voice has a description label, matching the curated [ELEVENLABS_VOICES]
+ * formatting. We deliberately leave [TtsVoiceOption.locale] null on every
+ * refreshed entry rather than trying to map ElevenLabs's free-form `accent`
+ * label ("american", "british", "australian", "transatlantic", custom user
+ * strings, …) to [VoiceLocale]: the user explicitly hit "Refresh", so they
+ * want to see what their key has access to without the locale filter
+ * dropping non-matching accents. Cloned voices in particular often have no
+ * accent label at all.
+ */
+fun List<ElevenLabsVoiceSummary>.toVoiceOptions(): List<TtsVoiceOption> = map { summary ->
+    val displayName = if (summary.description.isNullOrBlank()) {
+        summary.name
+    } else {
+        "${summary.name} — ${summary.description}"
+    }
+    TtsVoiceOption(id = summary.id, displayName = displayName, locale = null)
+}

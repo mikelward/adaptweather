@@ -146,6 +146,8 @@ fun SettingsScreen(
                 geminiKeyConfigured = state.apiKeyConfigured,
                 openAiKeyConfigured = state.openAiKeyConfigured,
                 elevenLabsKeyConfigured = state.elevenLabsKeyConfigured,
+                elevenLabsRefreshedVoices = state.elevenLabsRefreshedVoices,
+                elevenLabsRefreshing = state.elevenLabsRefreshing,
                 voiceLocale = state.voiceLocale,
                 padding = padding,
                 onSetTtsEngine = viewModel::setTtsEngine,
@@ -160,6 +162,7 @@ fun SettingsScreen(
                 onClearOpenAiKey = viewModel::clearOpenAiKey,
                 onSetElevenLabsKey = viewModel::setElevenLabsKey,
                 onClearElevenLabsKey = viewModel::clearElevenLabsKey,
+                onRefreshElevenLabsVoices = viewModel::refreshElevenLabsVoices,
             )
             SettingsRoute.DataSources -> DataSourcesContent(
                 location = state.location,
