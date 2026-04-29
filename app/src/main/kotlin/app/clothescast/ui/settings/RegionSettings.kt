@@ -102,6 +102,8 @@ private fun regionLabel(region: Region): Int = when (region) {
     Region.EN_AU -> R.string.settings_region_language_en_au
     Region.EN_CA -> R.string.settings_region_language_en_ca
     Region.DE_DE -> R.string.settings_region_language_de_de
+    Region.DE_AT -> R.string.settings_region_language_de_at
+    Region.DE_CH -> R.string.settings_region_language_de_ch
     Region.FR_FR -> R.string.settings_region_language_fr_fr
     Region.FR_CA -> R.string.settings_region_language_fr_ca
     Region.IT_IT -> R.string.settings_region_language_it_it
@@ -112,6 +114,7 @@ private fun regionLabel(region: Region): Int = when (region) {
     Region.HR_HR -> R.string.settings_region_language_hr_hr
     Region.UK_UA -> R.string.settings_region_language_uk_ua
     Region.PT_BR -> R.string.settings_region_language_pt_br
+    Region.PT_PT -> R.string.settings_region_language_pt_pt
     Region.NL_NL -> R.string.settings_region_language_nl_nl
     Region.SV_SE -> R.string.settings_region_language_sv_se
     Region.TR_TR -> R.string.settings_region_language_tr_tr

@@ -138,6 +138,8 @@ only the displayed label localizes.
     <string name="settings_region_language_en_ca">Английский (Канада)</string>
     <string name="settings_region_language_en_za">Английский (Южная Африка)</string>
     <string name="settings_region_language_de_de">Немецкий (Германия)</string>
+    <string name="settings_region_language_de_at">Немецкий (Австрия)</string>
+    <string name="settings_region_language_de_ch">Немецкий (Швейцария)</string>
     <string name="settings_region_language_fr_fr">Французский (Франция)</string>
     <string name="settings_region_language_fr_ca">Французский (Канада)</string>
     <string name="settings_region_language_it_it">Итальянский (Италия)</string>
@@ -147,6 +149,7 @@ only the displayed label localizes.
     <string name="settings_region_language_hr_hr">Хорватский (Хорватия)</string>
     <string name="settings_region_language_uk_ua">Украинский (Украина)</string>
     <string name="settings_region_language_pt_br">Португальский (Бразилия)</string>
+    <string name="settings_region_language_pt_pt">Португальский (Португалия)</string>
     <string name="settings_region_language_nl_nl">Нидерландский (Нидерланды)</string>
     <string name="settings_region_language_sv_se">Шведский (Швеция)</string>
     <string name="settings_region_language_tr_tr">Турецкий (Турция)</string>
@@ -182,6 +185,8 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_en_ca">Английский (Канада)</string>
     <string name="settings_tts_voice_locale_en_za">Английский (Южная Африка)</string>
     <string name="settings_tts_voice_locale_de_de">Немецкий (Германия)</string>
+    <string name="settings_tts_voice_locale_de_at">Немецкий (Австрия)</string>
+    <string name="settings_tts_voice_locale_de_ch">Немецкий (Швейцария)</string>
     <string name="settings_tts_voice_locale_fr_fr">Французский (Франция)</string>
     <string name="settings_tts_voice_locale_fr_ca">Французский (Канада)</string>
     <string name="settings_tts_voice_locale_it_it">Итальянский (Италия)</string>
@@ -191,6 +196,7 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_hr_hr">Хорватский (Хорватия)</string>
     <string name="settings_tts_voice_locale_uk_ua">Украинский (Украина)</string>
     <string name="settings_tts_voice_locale_pt_br">Португальский (Бразилия)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Португальский (Португалия)</string>
     <string name="settings_tts_voice_locale_nl_nl">Нидерландский (Нидерланды)</string>
     <string name="settings_tts_voice_locale_sv_se">Шведский (Швеция)</string>
     <string name="settings_tts_voice_locale_tr_tr">Турецкий (Турция)</string>

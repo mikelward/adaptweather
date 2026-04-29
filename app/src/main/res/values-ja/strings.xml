@@ -144,6 +144,8 @@ the displayed label localizes.
     <string name="settings_region_language_en_ca">英語（カナダ）</string>
     <string name="settings_region_language_en_za">英語（南アフリカ）</string>
     <string name="settings_region_language_de_de">ドイツ語（ドイツ）</string>
+    <string name="settings_region_language_de_at">ドイツ語（オーストリア）</string>
+    <string name="settings_region_language_de_ch">ドイツ語（スイス）</string>
     <string name="settings_region_language_fr_fr">フランス語（フランス）</string>
     <string name="settings_region_language_fr_ca">フランス語（カナダ）</string>
     <string name="settings_region_language_it_it">イタリア語（イタリア）</string>
@@ -154,6 +156,7 @@ the displayed label localizes.
     <string name="settings_region_language_hr_hr">クロアチア語（クロアチア）</string>
     <string name="settings_region_language_uk_ua">ウクライナ語（ウクライナ）</string>
     <string name="settings_region_language_pt_br">ポルトガル語（ブラジル）</string>
+    <string name="settings_region_language_pt_pt">ポルトガル語（ポルトガル）</string>
     <string name="settings_region_language_nl_nl">オランダ語（オランダ）</string>
     <string name="settings_region_language_sv_se">スウェーデン語（スウェーデン）</string>
     <string name="settings_region_language_tr_tr">トルコ語（トルコ）</string>
@@ -188,6 +191,8 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_en_ca">英語（カナダ）</string>
     <string name="settings_tts_voice_locale_en_za">英語（南アフリカ）</string>
     <string name="settings_tts_voice_locale_de_de">ドイツ語（ドイツ）</string>
+    <string name="settings_tts_voice_locale_de_at">ドイツ語（オーストリア）</string>
+    <string name="settings_tts_voice_locale_de_ch">ドイツ語（スイス）</string>
     <string name="settings_tts_voice_locale_fr_fr">フランス語（フランス）</string>
     <string name="settings_tts_voice_locale_fr_ca">フランス語（カナダ）</string>
     <string name="settings_tts_voice_locale_it_it">イタリア語（イタリア）</string>
@@ -198,6 +203,7 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_hr_hr">クロアチア語（クロアチア）</string>
     <string name="settings_tts_voice_locale_uk_ua">ウクライナ語（ウクライナ）</string>
     <string name="settings_tts_voice_locale_pt_br">ポルトガル語（ブラジル）</string>
+    <string name="settings_tts_voice_locale_pt_pt">ポルトガル語（ポルトガル）</string>
     <string name="settings_tts_voice_locale_nl_nl">オランダ語（オランダ）</string>
     <string name="settings_tts_voice_locale_sv_se">スウェーデン語（スウェーデン）</string>
     <string name="settings_tts_voice_locale_tr_tr">トルコ語（トルコ）</string>

@@ -161,6 +161,8 @@ displayed label localizes.
     <string name="settings_region_language_en_ca">영어 (캐나다)</string>
     <string name="settings_region_language_en_za">영어 (남아프리카공화국)</string>
     <string name="settings_region_language_de_de">독일어 (독일)</string>
+    <string name="settings_region_language_de_at">독일어 (오스트리아)</string>
+    <string name="settings_region_language_de_ch">독일어 (스위스)</string>
     <string name="settings_region_language_fr_fr">프랑스어 (프랑스)</string>
     <string name="settings_region_language_fr_ca">프랑스어 (캐나다)</string>
     <string name="settings_region_language_it_it">이탈리아어 (이탈리아)</string>
@@ -171,6 +173,7 @@ displayed label localizes.
     <string name="settings_region_language_hr_hr">크로아티아어 (크로아티아)</string>
     <string name="settings_region_language_uk_ua">우크라이나어 (우크라이나)</string>
     <string name="settings_region_language_pt_br">포르투갈어 (브라질)</string>
+    <string name="settings_region_language_pt_pt">포르투갈어 (포르투갈)</string>
     <string name="settings_region_language_nl_nl">네덜란드어 (네덜란드)</string>
     <string name="settings_region_language_sv_se">스웨덴어 (스웨덴)</string>
     <string name="settings_region_language_tr_tr">터키어 (터키)</string>
@@ -205,6 +208,8 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_en_ca">영어 (캐나다)</string>
     <string name="settings_tts_voice_locale_en_za">영어 (남아프리카공화국)</string>
     <string name="settings_tts_voice_locale_de_de">독일어 (독일)</string>
+    <string name="settings_tts_voice_locale_de_at">독일어 (오스트리아)</string>
+    <string name="settings_tts_voice_locale_de_ch">독일어 (스위스)</string>
     <string name="settings_tts_voice_locale_fr_fr">프랑스어 (프랑스)</string>
     <string name="settings_tts_voice_locale_fr_ca">프랑스어 (캐나다)</string>
     <string name="settings_tts_voice_locale_it_it">이탈리아어 (이탈리아)</string>
@@ -215,6 +220,7 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_hr_hr">크로아티아어 (크로아티아)</string>
     <string name="settings_tts_voice_locale_uk_ua">우크라이나어 (우크라이나)</string>
     <string name="settings_tts_voice_locale_pt_br">포르투갈어 (브라질)</string>
+    <string name="settings_tts_voice_locale_pt_pt">포르투갈어 (포르투갈)</string>
     <string name="settings_tts_voice_locale_nl_nl">네덜란드어 (네덜란드)</string>
     <string name="settings_tts_voice_locale_sv_se">스웨덴어 (스웨덴)</string>
     <string name="settings_tts_voice_locale_tr_tr">터키어 (터키)</string>
