@@ -42,7 +42,7 @@ import app.clothescast.ui.theme.ClothesCastTheme
 //
 
 private val WidgetWidth = 160.dp
-private val WidgetHeight = 200.dp
+private val WidgetHeight = 160.dp
 
 @Composable
 private fun WidgetFrame(darkTheme: Boolean = false, content: @Composable () -> Unit) {
@@ -66,7 +66,7 @@ private fun WidgetSurface(content: @Composable () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp),
+                .padding(8.dp),
             contentAlignment = Alignment.Center,
         ) { content() }
     }
@@ -136,7 +136,7 @@ internal fun OutfitWidgetMockEmpty() {
     }
 }
 
-@Preview(name = "Widget · today · t-shirt + shorts", widthDp = 192, heightDp = 232)
+@Preview(name = "Widget · today · t-shirt + shorts", widthDp = 192, heightDp = 192)
 @Composable
 internal fun WidgetTodayTShirtShortsPreview() {
     WidgetFrame {
@@ -147,7 +147,7 @@ internal fun WidgetTodayTShirtShortsPreview() {
     }
 }
 
-@Preview(name = "Widget · tonight · sweater + long pants", widthDp = 192, heightDp = 232)
+@Preview(name = "Widget · tonight · sweater + long pants", widthDp = 192, heightDp = 192)
 @Composable
 internal fun WidgetTonightSweaterPantsPreview() {
     WidgetFrame {
@@ -158,7 +158,7 @@ internal fun WidgetTonightSweaterPantsPreview() {
     }
 }
 
-@Preview(name = "Widget · today · thick jacket + long pants", widthDp = 192, heightDp = 232)
+@Preview(name = "Widget · today · thick jacket + long pants", widthDp = 192, heightDp = 192)
 @Composable
 internal fun WidgetTodayJacketPantsPreview() {
     WidgetFrame {
@@ -169,7 +169,7 @@ internal fun WidgetTodayJacketPantsPreview() {
     }
 }
 
-@Preview(name = "Widget · tonight (dark)", widthDp = 192, heightDp = 232)
+@Preview(name = "Widget · tonight (dark)", widthDp = 192, heightDp = 192)
 @Composable
 internal fun WidgetTonightDarkPreview() {
     WidgetFrame(darkTheme = true) {
@@ -180,7 +180,7 @@ internal fun WidgetTonightDarkPreview() {
     }
 }
 
-@Preview(name = "Widget · empty", widthDp = 192, heightDp = 232)
+@Preview(name = "Widget · empty", widthDp = 192, heightDp = 192)
 @Composable
 internal fun WidgetEmptyPreview() {
     WidgetFrame { OutfitWidgetMockEmpty() }
