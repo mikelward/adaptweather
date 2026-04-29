@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+European Portuguese (pt-PT) translation — full UI coverage. Tu-form
+throughout (2nd-person singular imperatives "Toca", "Define", "Veste",
+"Leva"), the casual / intimate register the app already uses
+elsewhere. No você-form: in Portugal "você" reads as semi-formal
+(roughly between BR's você and "o senhor"); modern PT app UX defaults
+to tu unless the brand explicitly wants distance, which we don't.
+Brand name "ClothesCast" stays verbatim.
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. PT
+  Portuguese uses `insight_time_hour` / `_hour_minutes` ("15h" /
+  "15h30") which are translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in a
+  pt-PT runtime.
+
+Vocabulary that diverges from pt-BR throughout this file:
+- "Definições" (PT) for "Configurações" (BR)
+- "Telemóvel" (PT) for "celular" / "telefone" (BR)
+- "Ecrã" (PT) for "tela" (BR)
+- "Dispositivo" (PT) for "aparelho" (BR) where it appears
+- "Eliminar" (PT) for "Excluir" (BR)
+- "Guardar" (PT) for "Salvar" (BR)
+- "Partilhar" (PT) for "Compartilhar" (BR)
+- "Encriptada" (PT) for "criptografada" (BR)
+- "Saltar" (PT) for "Pular" (BR)
+- "Obter" (PT) for "Buscar" (BR) in the "fetch now" action
+- Garments: "Camisola" / "Casaco" / "T-shirt" / "Calções" / "Calças
+  de ganga" — see the garment block for the full pt-BR ↔ pt-PT map.
+- Insight bands / conditions: "Chuvisco" (PT) for "Garoa" (BR);
+  "Trovoada" (PT) for "Tempestade" (BR).
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the European-Portuguese names for
+every offered locale (Inglês (Estados Unidos), Francês (Canadá),
+Chinês (simplificado), …). The locale tag stored on disk (en-US /
+fr-CA / zh-CN) is unchanged; only the displayed label localizes.
+Polaco / Neerlandês / Japonês / etc. follow PT-PT conventions where
+they diverge from BR ("Polonês" → "Polaco", "Holandês" →
+"Neerlandês").
+-->
+<resources>
+    <string name="settings_region_language_pt_pt">Português (Portugal)</string>
+    <string name="settings_region_language_pt_br">Português (Brasil)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Português (Portugal)</string>
+    <string name="settings_tts_voice_locale_pt_br">Português (Brasil)</string>
+    <string name="settings_tts_voice_locale_label">Idioma</string>
+
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Definições</string>
+    <string name="settings_back">Voltar</string>
+
+    <string name="settings_root_voice">Voz</string>
+    <string name="settings_root_schedule">Agendamento</string>
+    <string name="settings_root_region">Região</string>
+    <string name="settings_root_clothes">Vestuário</string>
+    <string name="settings_root_data_sources">Origens de dados</string>
+    <string name="settings_root_about">Acerca</string>
+
+    <!-- Garment dropdown labels — translated names for the picker on the
+         Vestuário settings page. PT-PT garment vocabulary diverges from
+         pt-BR more than most categories: "Camisola" is a sweater (BR
+         "Suéter"); "Casaco" is a jacket (BR "Jaqueta") with "Casacão"
+         reserved for the heavier outer coat (BR "Casaco"); "Calções"
+         are shorts (BR "Shorts"); jeans are "calças de ganga" though
+         "Jeans" alone reads fine too. The stored key on disk is the
+         en-US form ("sweater" / "pants" / …); these strings only
+         change the display. -->
+    <string name="garment_sweater">Camisola</string>
+    <string name="garment_hoodie">Sweat com capuz</string>
+    <string name="garment_jacket">Casaco</string>
+    <string name="garment_coat">Casacão</string>
+    <string name="garment_tshirt">T-shirt</string>
+    <string name="garment_shirt">Camisa</string>
+    <string name="garment_shorts">Calções</string>
+    <string name="garment_pants">Calças</string>
+    <string name="garment_jeans">Calças de ganga</string>
+
+    <!-- Clothes settings — top of the screen. Tu-form imperatives
+         throughout ("Toca em Adicionar", "Eliminar"). pt-PT uses
+         "Eliminar" for the destructive action where pt-BR uses
+         "Excluir"; the Eliminar / Apagar pair are both standard PT
+         but Eliminar reads more app-native. "Probabilidade de chuva"
+         is the PT idiom; "chance de chuva" (BR) reads as imported. -->
+    <string name="settings_clothes_title">Regras de vestuário</string>
+    <string name="settings_clothes_description">Se uma previsão ultrapassar um destes limites, a peça aparece no teu ClothesCast diário.</string>
+
+    <string name="settings_clothes_empty">Sem regras. Toca em Adicionar para criar uma.</string>
+    <string name="settings_clothes_add">Adicionar</string>
+    <string name="settings_clothes_edit">Editar</string>
+    <string name="settings_clothes_delete">Eliminar</string>
+    <string name="settings_clothes_dialog_add_title">Adicionar regra de vestuário</string>
+    <string name="settings_clothes_dialog_edit_title">Editar regra de vestuário</string>
+    <string name="settings_clothes_item_label">Peça</string>
+    <string name="settings_clothes_condition_label">Condição</string>
+    <string name="settings_clothes_value_label_temp_c">Limite (°C)</string>
+    <string name="settings_clothes_value_label_precip">Limite (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Quando a sensação térmica for inferior a</string>
+    <string name="settings_clothes_cond_type_temp_above">Quando a sensação térmica for superior a</string>
+    <string name="settings_clothes_cond_type_precip_above">Quando a probabilidade de chuva ultrapassar</string>
+    <string name="settings_clothes_cond_temp_below">quando a temperatura sentida for inferior a %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">quando a temperatura sentida for superior a %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">quando a probabilidade de chuva ultrapassar %.0f%%</string>
+
+    <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "Mencionar eventos da noite" toggle, and the nightly-only
+    "notificar apenas com eventos" toggle. Description uses Portuguese
+    «…» guillemets around the nested toggle label, matching modern PT
+    typographic convention (BR uses German „…" low-high; PT prefers
+    French-style guillemets in formal copy).
+    -->
+    <string name="settings_schedule_title">ClothesCast diário</string>
+    <string name="settings_schedule_time_label">Hora</string>
+    <string name="settings_schedule_days_label">Dias da semana</string>
+    <string name="settings_daily_mention_evening_events">Mencionar eventos da noite</string>
+
+    <string name="settings_tonight_title">ClothesCast noturno</string>
+    <string name="settings_tonight_description">Um segundo ClothesCast à noite que cobre o tempo para esta noite. Em noites tranquilas fica silencioso, ou nem aparece se «Notificar apenas quando houver eventos noturnos» estiver ativo; em noites com eventos toca um som e (se ativaste a leitura em voz alta) lê-se sozinho.</string>
+    <string name="settings_tonight_enabled">Mostrar um ClothesCast noturno</string>
+    <string name="settings_tonight_time_label">Hora</string>
+    <string name="settings_tonight_days_label">Dias da semana</string>
+    <string name="settings_tonight_notify_only_on_events">Notificar apenas quando houver eventos noturnos</string>
+
+    <string name="settings_delivery_label">Entrega</string>
+    <string name="settings_delivery_notification_only">Apenas notificação</string>
+    <string name="settings_delivery_tts_only">Apenas leitura em voz alta</string>
+    <string name="settings_delivery_notification_and_tts">Notificação e leitura em voz alta</string>
+
+    <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, test-voice button. PT uses "a + infinitive"
+    where BR uses the -ndo gerund: "A testar" instead of "Testando",
+    "A pesquisar" instead of "Pesquisando". "Dispositivo" is the PT
+    register for what BR calls "aparelho" — both are understood, but
+    "dispositivo" reads as native PT in the engine picker.
+    -->
+    <string name="settings_tts_engine_title">Motor de voz</string>
+    <string name="settings_tts_engine_description">Os motores online (Gemini, OpenAI, ElevenLabs) soam muito mais naturais, mas exigem uma chamada de rede no momento da fala e usam a tua chave API para a síntese (uma chamada curta por ClothesCast lido). Recorre à voz do dispositivo se o motor escolhido falhar.</string>
+    <string name="settings_tts_engine_device">Dispositivo (offline, gratuito)</string>
+    <string name="settings_tts_engine_gemini">Gemini (alta qualidade, online)</string>
+    <string name="settings_tts_engine_openai">OpenAI (alta qualidade, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (qualidade máxima, online)</string>
+
+    <string name="settings_tts_voice_label">Voz</string>
+    <string name="settings_tts_voice_dismiss">Concluído</string>
+    <string name="settings_tts_voice_locale_description">Define o sotaque da voz falada. Não altera o texto apresentado.</string>
+    <string name="settings_tts_voice_locale_system">Seguir o idioma do telemóvel</string>
+
+    <string name="settings_tts_test">Testar voz</string>
+    <string name="settings_tts_test_in_flight">A testar — aguarda…</string>
+
+    <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale
+    labels in European Portuguese style. Notable divergences from BR:
+    "Polaco" (PT) vs "Polonês" (BR), "Neerlandês" (PT) vs "Holandês"
+    (BR), "Definições regionais" (PT) vs "Configurações regionais"
+    (BR) in the system-default option. The locale tag stored on disk
+    (en-US / fr-CA / zh-CN) is unchanged; only the displayed label
+    localizes.
+    -->
+    <string name="settings_region_language_title">Idioma</string>
+    <string name="settings_region_language_description">Define o idioma do texto apresentado e das notificações.</string>
+    <string name="settings_region_language_system">Seguir as definições regionais do sistema</string>
+    <string name="settings_region_language_en_us">Inglês (Estados Unidos)</string>
+    <string name="settings_region_language_en_gb">Inglês (Reino Unido)</string>
+    <string name="settings_region_language_en_au">Inglês (Austrália)</string>
+    <string name="settings_region_language_en_ca">Inglês (Canadá)</string>
+    <string name="settings_region_language_en_za">Inglês (África do Sul)</string>
+    <string name="settings_region_language_de_de">Alemão (Alemanha)</string>
+    <string name="settings_region_language_de_at">Alemão (Áustria)</string>
+    <string name="settings_region_language_de_ch">Alemão (Suíça)</string>
+    <string name="settings_region_language_fr_fr">Francês (França)</string>
+    <string name="settings_region_language_fr_ca">Francês (Canadá)</string>
+    <string name="settings_region_language_it_it">Italiano (Itália)</string>
+    <string name="settings_region_language_es_es">Espanhol (Espanha)</string>
+    <string name="settings_region_language_es_mx">Espanhol (México)</string>
+    <string name="settings_region_language_ru_ru">Russo (Rússia)</string>
+    <string name="settings_region_language_pl_pl">Polaco (Polónia)</string>
+    <string name="settings_region_language_hr_hr">Croata (Croácia)</string>
+    <string name="settings_region_language_uk_ua">Ucraniano (Ucrânia)</string>
+    <string name="settings_region_language_nl_nl">Neerlandês (Países Baixos)</string>
+    <string name="settings_region_language_sv_se">Sueco (Suécia)</string>
+    <string name="settings_region_language_tr_tr">Turco (Turquia)</string>
+    <string name="settings_region_language_id_id">Indonésio (Indonésia)</string>
+    <string name="settings_region_language_fil_ph">Filipino (Filipinas)</string>
+    <string name="settings_region_language_vi_vn">Vietnamita (Vietname)</string>
+    <string name="settings_region_language_zh_cn">Chinês (simplificado)</string>
+    <string name="settings_region_language_hi_in">Hindi (Índia)</string>
+    <string name="settings_region_language_bn_bd">Bengali (Bangladeche)</string>
+    <string name="settings_region_language_ja_jp">Japonês (Japão)</string>
+    <string name="settings_region_language_ko_kr">Coreano (Coreia do Sul)</string>
+    <string name="settings_region_language_ar_sa">Árabe (Arábia Saudita)</string>
+    <string name="settings_region_language_he_il">Hebraico (Israel)</string>
+    <string name="settings_region_language_fa_ir">Persa (Irão)</string>
+
+    <!-- Region screen — units pickers. "Quilómetros" with acute on the
+         ó (PT spelling) instead of BR's "Quilômetros" with circumflex. -->
+    <string name="settings_temperature_unit_title">Unidade de temperatura</string>
+    <string name="settings_temperature_unit_celsius">Celsius (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">Fahrenheit (°F)</string>
+    <string name="settings_distance_unit_title">Unidade de distância</string>
+    <string name="settings_distance_unit_kilometers">Quilómetros</string>
+    <string name="settings_distance_unit_miles">Milhas</string>
+
+    <!--
+    Voice locale picker labels — same European Portuguese language-name
+    translations as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface.
+    -->
+    <string name="settings_tts_voice_locale_en_us">Inglês (Estados Unidos)</string>
+    <string name="settings_tts_voice_locale_en_gb">Inglês (Reino Unido)</string>
+    <string name="settings_tts_voice_locale_en_au">Inglês (Austrália)</string>
+    <string name="settings_tts_voice_locale_en_ca">Inglês (Canadá)</string>
+    <string name="settings_tts_voice_locale_en_za">Inglês (África do Sul)</string>
+    <string name="settings_tts_voice_locale_de_de">Alemão (Alemanha)</string>
+    <string name="settings_tts_voice_locale_de_at">Alemão (Áustria)</string>
+    <string name="settings_tts_voice_locale_de_ch">Alemão (Suíça)</string>
+    <string name="settings_tts_voice_locale_fr_fr">Francês (França)</string>
+    <string name="settings_tts_voice_locale_fr_ca">Francês (Canadá)</string>
+    <string name="settings_tts_voice_locale_it_it">Italiano (Itália)</string>
+    <string name="settings_tts_voice_locale_es_es">Espanhol (Espanha)</string>
+    <string name="settings_tts_voice_locale_es_mx">Espanhol (México)</string>
+    <string name="settings_tts_voice_locale_ru_ru">Russo (Rússia)</string>
+    <string name="settings_tts_voice_locale_pl_pl">Polaco (Polónia)</string>
+    <string name="settings_tts_voice_locale_hr_hr">Croata (Croácia)</string>
+    <string name="settings_tts_voice_locale_uk_ua">Ucraniano (Ucrânia)</string>
+    <string name="settings_tts_voice_locale_nl_nl">Neerlandês (Países Baixos)</string>
+    <string name="settings_tts_voice_locale_sv_se">Sueco (Suécia)</string>
+    <string name="settings_tts_voice_locale_tr_tr">Turco (Turquia)</string>
+    <string name="settings_tts_voice_locale_id_id">Indonésio (Indonésia)</string>
+    <string name="settings_tts_voice_locale_fil_ph">Filipino (Filipinas)</string>
+    <string name="settings_tts_voice_locale_vi_vn">Vietnamita (Vietname)</string>
+    <string name="settings_tts_voice_locale_zh_cn">Chinês (simplificado)</string>
+    <string name="settings_tts_voice_locale_hi_in">Hindi (Índia)</string>
+    <string name="settings_tts_voice_locale_bn_bd">Bengali (Bangladeche)</string>
+    <string name="settings_tts_voice_locale_ja_jp">Japonês (Japão)</string>
+    <string name="settings_tts_voice_locale_ko_kr">Coreano (Coreia do Sul)</string>
+    <string name="settings_tts_voice_locale_ar_sa">Árabe (Arábia Saudita)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Árabe (Egito)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Árabe (Emirados Árabes Unidos)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Árabe (Marrocos)</string>
+    <string name="settings_tts_voice_locale_he_il">Hebraico (Israel)</string>
+    <string name="settings_tts_voice_locale_fa_ir">Persa (Irão)</string>
+
+    <!--
+    API keys screen — three identical-shape blocks (Gemini, OpenAI,
+    ElevenLabs), each with status copy, paste-key placeholder, and
+    save / clear buttons. URLs stay verbatim. PT uses "Guardar" for
+    the save action where BR uses "Salvar"; "Cola" is the tu-form
+    imperative of "colar" (paste).
+    -->
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
+
+    <string name="settings_api_key_status_set">Está configurada uma chave Gemini.</string>
+    <string name="settings_api_key_status_unset">Nenhuma chave Gemini configurada. Obtém uma em aistudio.google.com para utilizar vozes Gemini.</string>
+    <string name="settings_api_key_placeholder">Cola a tua chave API Gemini</string>
+    <string name="settings_api_key_save">Guardar chave Gemini</string>
+    <string name="settings_api_key_clear">Apagar chave Gemini guardada</string>
+
+    <string name="settings_openai_key_status_set">Está configurada uma chave OpenAI.</string>
+    <string name="settings_openai_key_status_unset">Nenhuma chave OpenAI configurada. Obtém uma em platform.openai.com para utilizar vozes OpenAI.</string>
+    <string name="settings_openai_key_placeholder">Cola a tua chave API OpenAI</string>
+    <string name="settings_openai_key_save">Guardar chave OpenAI</string>
+    <string name="settings_openai_key_clear">Apagar chave OpenAI guardada</string>
+
+    <string name="settings_elevenlabs_key_status_set">Está configurada uma chave ElevenLabs.</string>
+    <string name="settings_elevenlabs_key_status_unset">Nenhuma chave ElevenLabs configurada. Obtém uma em elevenlabs.io para utilizar vozes ElevenLabs.</string>
+    <string name="settings_elevenlabs_key_placeholder">Cola a tua chave API ElevenLabs</string>
+    <string name="settings_elevenlabs_key_save">Guardar chave ElevenLabs</string>
+    <string name="settings_elevenlabs_key_clear">Apagar chave ElevenLabs guardada</string>
+
+    <!--
+    Location screen — device-location toggle, manual city search +
+    selection, and the "no location set" empty state. "Dispositivo"
+    (PT) for BR "aparelho", "definições do sistema" (PT) for BR
+    "configurações do sistema", "A procurar…" (PT estar+infinitive)
+    for BR "Pesquisando…" gerund.
+    -->
+    <string name="settings_location_title">Localização</string>
+    <string name="settings_location_use_device">Utilizar localização do dispositivo</string>
+    <string name="settings_location_grant_background">Conceder localização em segundo plano (definições do sistema)</string>
+    <string name="settings_location_unset">Localização não definida</string>
+    <string name="settings_location_description">A previsão é obtida para este local. Procura pelo nome da cidade; os resultados vêm do serviço gratuito de geocodificação da Open-Meteo.</string>
+    <string name="settings_location_description_device_on">Quando ativada, o ClothesCast lê a localização aproximada do teu dispositivo no momento da notificação (apenas torre celular / Wi-Fi — sem fixação GPS por hardware). A localização abaixo é usada como reserva caso a leitura do dispositivo falhe. A localização em segundo plano tem de estar concedida nas definições do sistema, caso contrário o Worker matinal não consegue lê-la.</string>
+    <string name="settings_location_set">Definir localização</string>
+    <string name="settings_location_change">Alterar localização</string>
+    <string name="settings_location_clear">Limpar localização</string>
+    <string name="settings_location_search_title">Procurar uma localização</string>
+    <string name="settings_location_query_label">Cidade ou local</string>
+    <string name="settings_location_search">Procurar</string>
+    <string name="settings_location_searching">A procurar…</string>
+    <string name="settings_location_no_results">Sem resultados.</string>
+
+    <!--
+    Notification channels (system Definições → App → Notificações)
+    and the per-channel notification titles. Three channels: daily,
+    nightly (default + silent variants), weather alerts. "Predefinido"
+    (PT) for BR "padrão" in the default-sound copy; "ecrã de bloqueio"
+    (PT) for BR "tela de bloqueio".
+    -->
+    <string name="notification_channel_daily_insight_name">ClothesCast diário</string>
+    <string name="notification_channel_daily_insight_description">O resumo matinal do tempo que ativaste.</string>
+    <string name="notification_daily_insight_title">Tempo de hoje</string>
+
+    <string name="notification_channel_tonight_insight_default_name">ClothesCast noturno (com eventos)</string>
+    <string name="notification_channel_tonight_insight_default_description">O resumo do tempo da noite quando tens eventos no calendário para esta noite. Toca o teu som de notificação predefinido.</string>
+    <string name="notification_channel_tonight_insight_silent_name">ClothesCast noturno (silencioso)</string>
+    <string name="notification_channel_tonight_insight_silent_description">O resumo do tempo da noite quando a tua noite está livre. Entregue em silêncio — podes vê-lo no ecrã de bloqueio, mas não emite som.</string>
+    <string name="notification_tonight_insight_title">Tempo desta noite</string>
+
+    <string name="notification_channel_weather_alerts_name">Alertas meteorológicos</string>
+    <string name="notification_channel_weather_alerts_description">Alertas de alta prioridade para eventos meteorológicos graves ou extremos na tua região. Enviados assim que a obtenção diária os deteta.</string>
+    <string name="notification_weather_alert_title">Alerta meteorológico: %1$s</string>
+
+    <!-- Notification-permission card. -->
+    <string name="settings_notification_permission_title">As notificações estão bloqueadas</string>
+    <string name="settings_notification_permission_description">Sem permissão para notificações, o teu ClothesCast diário não tem para onde ir. Concede-a para que o ClothesCast possa aparecer amanhã de manhã.</string>
+    <string name="settings_notification_permission_grant">Conceder notificações</string>
+
+    <!-- Calendar opt-in card. Description preserves the privacy
+         disclosure ("descrições, participantes e locais … nunca saem
+         do dispositivo"). Quotes around the nested example follow
+         PT's «…» guillemets house style (BR uses German „…"). -->
+    <string name="settings_calendar_title">Calendário</string>
+    <string name="settings_calendar_use_events">Utilizar eventos do calendário de hoje</string>
+    <string name="settings_calendar_description_off">Quando ativado, o ClothesCast lê os eventos de hoje do calendário do teu dispositivo, para que o teu ClothesCast matinal possa sugerir peças associadas a eventos específicos — por exemplo «leva um chapéu de chuva para a tua corrida no parque às 15h». Apenas títulos e horas dos eventos são utilizados; descrições, participantes e locais são lidos, mas nunca saem do dispositivo.</string>
+    <string name="settings_calendar_description_on">A ler os eventos de hoje do calendário do teu dispositivo para enriquecer o teu ClothesCast matinal. No resumo, apenas títulos e horas são utilizados; descrições e participantes não. Tudo permanece no dispositivo.</string>
+    <string name="settings_calendar_grant_permission">Conceder acesso ao calendário</string>
+    <string name="settings_calendar_open_settings">Acesso ao calendário recusado. Concede-o nas definições do sistema.</string>
+
+    <!-- Debug screen — visible only on debug builds. "Acionar" (PT)
+         for BR "Disparar"; "apenas" (PT) for BR "somente". -->
+    <string name="settings_debug_title">Depuração (apenas em builds de depuração)</string>
+    <string name="settings_debug_description">Aciona imediatamente o pipeline do ClothesCast diário. Útil para verificar sem esperar pela hora agendada.</string>
+    <string name="settings_debug_fire_now">Acionar ClothesCast agora</string>
+    <string name="settings_debug_fire_toast">Worker do ClothesCast em fila</string>
+
+    <!-- About screen — version line, build-type suffix, privacy
+         summary, outbound links / actions. "Encriptada" (PT) for BR
+         "criptografada"; "associada" for "vinculada"; "Partilhar"
+         for "Compartilhar"; "erro" (PT) for the bug-report wording
+         where BR keeps the loanword "bug". -->
+    <string name="settings_about_title">Acerca</string>
+    <string name="settings_about_version">Versão %1$s (%2$d)</string>
+    <string name="settings_about_build_type_suffix"> · build %1$s</string>
+    <string name="settings_about_privacy">A tua chave API Gemini (utilizada para a leitura em voz alta TTS) é encriptada em repouso com uma chave associada ao Android Keystore. As previsões vêm da Open-Meteo (sem chave, sem conta); o texto do resumo diário é gerado localmente no dispositivo. O ClothesCast não tem backend — nada é enviado para nenhum servidor que controlemos.</string>
+    <string name="settings_about_privacy_policy">Política de privacidade</string>
+    <string name="settings_about_source">Código-fonte no GitHub</string>
+    <string name="settings_about_dontkillmyapp">Restrições em segundo plano (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">Partilhar relatório de erro</string>
+    <string name="settings_about_version_copied">Versão copiada para a área de transferência</string>
+
+    <!--
+    Today screen — top bar, refresh toasts, empty state, generated-at
+    timestamp, outfit card, hourly chart, confidence chip, work-status
+    banner. Tu-form imperatives ("Define", "Toca", "Obter agora") —
+    casual register matching the rest of the file. "Obter" (PT) for
+    BR "Buscar" on the fetch action; "A atualizar" / "A obter" (PT
+    estar+infinitive) for BR "Atualizando" / "Buscando" gerunds.
+    -->
+    <string name="today_title">Hoje</string>
+    <string name="today_open_settings">Abrir definições</string>
+    <string name="today_more_options">Mais opções</string>
+    <string name="today_report_a_bug">Reportar um erro</string>
+    <string name="today_refresh">Atualizar</string>
+    <string name="today_refresh_toast_daily">A atualizar o teu ClothesCast diário — vai aparecer em breve.</string>
+    <string name="today_refresh_toast_nightly">A atualizar o teu ClothesCast noturno — vai aparecer em breve.</string>
+    <string name="today_empty_title">Ainda sem ClothesCast</string>
+    <string name="today_empty_subtitle">O teu ClothesCast matinal aparece aqui assim que for gerado. Define a tua localização nas definições e toca em Obter agora.</string>
+    <string name="today_fetch_now">Obter agora</string>
+    <string name="today_generated_at">Gerado às %1$s</string>
+
+    <string name="today_outfit_title">O que vestir</string>
+    <string name="today_outfit_label_today">Hoje</string>
+    <string name="today_outfit_label_tonight">Esta noite</string>
+    <string name="today_outfit_label_tomorrow">Amanhã</string>
+
+    <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_sweater">Camisola</string>
+    <string name="today_outfit_top_thick_jacket">Casaco grosso</string>
+    <string name="today_outfit_bottom_shorts">Calções</string>
+    <string name="today_outfit_bottom_long_pants">Calças</string>
+
+    <string name="today_forecast_title">Previsão por hora</string>
+    <string name="today_forecast_min_max">Sensação %1$d – %2$d%3$s · Ar %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Sensação térmica (%1$s) por hora · toca para ver a temperatura do ar</string>
+    <string name="today_forecast_legend_air">Temperatura do ar (%1$s) por hora · toca para ver a sensação térmica</string>
+
+    <string name="today_confidence_high">Confiança elevada — os principais modelos concordam</string>
+    <string name="today_confidence_medium">Confiança média</string>
+    <string name="today_confidence_low">Confiança baixa — as previsões discordam</string>
+    <string name="today_confidence_spread">Dispersão: %1$.1f°C, %2$.0fpp de precipitação em %3$d modelos</string>
+
+    <string name="today_working">A obter o teu ClothesCast…</string>
+    <string name="today_failed_title">A última tentativa falhou</string>
+    <string name="today_failed_unexpected_http">Erro HTTP inesperado do serviço de previsão.</string>
+    <string name="today_failed_unhandled">Ocorreu um erro inesperado.</string>
+    <string name="today_failed_show_details">Mostrar detalhes</string>
+    <string name="today_failed_hide_details">Ocultar detalhes</string>
+
+    <!-- Home-screen App Widget. "Visual" (PT) for the widget label
+         where pt-BR uses the loanword "Look" — both languages know
+         "look" as a fashion term, but "visual" is the native PT
+         noun ("gosto do teu visual") and reads less imported in a
+         glanceable system surface. -->
+    <string name="widget_label">Visual</string>
+    <string name="widget_description">O visual do momento, num relance.</string>
+    <string name="widget_empty_title">Ainda sem visual</string>
+    <string name="widget_empty_subtitle">Toca para abrir o ClothesCast</string>
+
+    <!--
+    Onboarding flow — first-run welcome, two permission steps, Gemini
+    API-key step. Welcome reuses BR's "Boas-vindas" (gender-neutral
+    plural-noun) — same trick works in PT and sidesteps the
+    Bem-vindo / Bem-vinda gender pick. Buttons stay imperative tu-form
+    ("Concede", "Continua", "Escolhe"). "Predefinido" (PT) for BR
+    "padrão"; "Saltar" (PT) for BR "Pular".
+    -->
+    <string name="onboarding_title">Boas-vindas ao ClothesCast</string>
+    <string name="onboarding_subtitle">Duas escolhas rápidas e está tudo pronto. Tudo o resto tem um valor predefinido razoável que poderás ajustar depois nas definições.</string>
+    <string name="onboarding_notifications_title">Notificações</string>
+    <string name="onboarding_notifications_description">Necessárias para entregar o teu ClothesCast diário. Concede uma vez e o ClothesCast aparece amanhã de manhã.</string>
+    <string name="onboarding_notifications_grant">Conceder notificações</string>
+    <string name="onboarding_location_title">Localização</string>
+    <string name="onboarding_location_description">Utilizada para obter a previsão correta. Ao conceder a localização, o ClothesCast pode ler todas as manhãs a localização aproximada do teu dispositivo; caso contrário, escolhe uma cidade manualmente.</string>
+    <string name="onboarding_location_grant">Conceder acesso à localização</string>
+    <string name="onboarding_location_denied_hint">Acesso à localização recusado. Podes escolher uma cidade manualmente.</string>
+    <string name="onboarding_location_enter_manual">Introduzir localização manualmente</string>
+    <string name="onboarding_location_using_device">A utilizar a localização do teu dispositivo todas as manhãs.</string>
+
+    <string name="onboarding_gemini_title">Chave API Gemini</string>
+    <string name="onboarding_gemini_description">Utilizada pelo ClothesCast para vozes faladas e geração de previsões. Obtém uma gratuitamente em aistudio.google.com. A chave é encriptada em repouso com o Android Keystore.</string>
+    <string name="onboarding_step_done">Concluído</string>
+    <string name="onboarding_skip">Saltar por agora</string>
+    <string name="onboarding_continue">Continuar</string>
+
+    <!-- Insight prose templates — pt-PT equivalents of the keys in
+         values/strings.xml. Tu-form imperative ("Veste …", "Leva …")
+         matches the rest of the file. Notable PT-specific weather
+         vocabulary: "Nevoeiro" (PT) for "Névoa" (BR fog), "Chuvisco"
+         (PT) for "Garoa" (BR drizzle), "Trovoada" (PT) for
+         "Tempestade" (BR thunderstorm). -->
+    <string name="insight_lead_today">Hoje</string>
+    <string name="insight_lead_tonight">Esta noite</string>
+    <string name="insight_band_single">%1$s será %2$s.</string>
+    <string name="insight_band_range">%1$s estará entre %2$s e %3$s.</string>
+    <string name="insight_band_freezing">gelado</string>
+    <string name="insight_band_cold">frio</string>
+    <string name="insight_band_cool">fresco</string>
+    <string name="insight_band_mild">ameno</string>
+    <string name="insight_band_warm">quente</string>
+    <string name="insight_band_hot">muito quente</string>
+    <string name="insight_delta_warmer">Hoje estará %1$d° mais quente.</string>
+    <string name="insight_delta_cooler">Hoje estará %1$d° mais frio.</string>
+    <string name="insight_alert">Alerta: %1$s.</string>
+    <string name="insight_clothes_wear">Veste %1$s.</string>
+    <!-- Articles omitted — Portuguese gender agreement requires per-garment metadata. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s e %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s e %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">às %1$s</string>
+    <string name="insight_precip_overnight">de madrugada</string>
+    <string name="insight_condition_clear">Céu limpo</string>
+    <string name="insight_condition_partly_cloudy">Parcialmente nublado</string>
+    <string name="insight_condition_cloudy">Nublado</string>
+    <string name="insight_condition_fog">Nevoeiro</string>
+    <string name="insight_condition_drizzle">Chuvisco</string>
+    <string name="insight_condition_rain">Chuva</string>
+    <string name="insight_condition_snow">Neve</string>
+    <string name="insight_condition_thunderstorm">Trovoada</string>
+    <string name="insight_condition_unknown">Desconhecido</string>
+    <string name="insight_tie_in">Leva %1$s esta noite.</string>
+    <string name="insight_tie_in_with_rain">Leva %1$s esta noite, chuva às %2$s.</string>
+    <!-- "15h" / "15h30" — PT-PT hour notation, TTS reads naturally. -->
+    <string name="insight_time_hour">%1$dh</string>
+    <string name="insight_time_hour_minutes">%1$dh%2$02d</string>
+
+</resources>
