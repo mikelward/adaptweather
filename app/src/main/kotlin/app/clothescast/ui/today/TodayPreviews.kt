@@ -13,12 +13,14 @@ import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastConfidence
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureBand
+import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.WeatherCondition
 import app.clothescast.ui.theme.ClothesCastTheme
 import app.clothescast.work.FetchAndNotifyWorker
@@ -279,4 +281,72 @@ internal fun WorkStatusFailedNoLocationPreview() {
 @Composable
 internal fun LocationActionRequiredBannerPreview() {
     Frame { LocationActionRequiredBanner(onSetUpLocation = {}) }
+}
+
+// 24-hour curve loosely tracking a temperate spring day: cool overnight low,
+// warming through morning, peak around 15:00, then dropping back. Values are
+// in Celsius — the ForecastChart converts at the edge per temperatureUnit.
+private val SAMPLE_HOURLY: List<HourlyForecast> = run {
+    val tempsC = listOf(
+        9.0, 8.5, 8.0, 7.5, 7.5, 8.0,        // 00–05
+        9.0, 10.5, 12.0, 13.5, 15.0, 16.0,   // 06–11
+        17.0, 17.5, 18.0, 18.0, 17.5, 16.5,  // 12–17
+        15.0, 13.5, 12.5, 11.5, 10.5, 9.5,   // 18–23
+    )
+    tempsC.mapIndexed { hour, t ->
+        HourlyForecast(
+            time = LocalTime.of(hour, 0),
+            temperatureC = t,
+            // Feels-like 1–2°C below air through the cool hours, equal at the peak.
+            feelsLikeC = t - if (t < 14.0) 1.5 else 0.0,
+            precipitationProbabilityPct = 0.0,
+            condition = WeatherCondition.PARTLY_CLOUDY,
+        )
+    }
+}
+
+@Preview(name = "Forecast chart · 24h curve", widthDp = 360)
+@Composable
+internal fun ForecastChartPreview() {
+    Frame {
+        ForecastChart(
+            hourly = SAMPLE_HOURLY,
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            showFeelsLike = true,
+        )
+    }
+}
+
+@Preview(name = "Forecast chart · 24h curve (dark)", widthDp = 360)
+@Composable
+internal fun ForecastChartDarkPreview() {
+    Frame(darkTheme = true) {
+        ForecastChart(
+            hourly = SAMPLE_HOURLY,
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            showFeelsLike = true,
+        )
+    }
+}
+
+// Stress variant of the InsightCard: the structured InsightSummary's prose
+// length is dominated by the clothes clause's item count (the formatter joins
+// them into a comma list), so feeding it five items is what produces the
+// longest natural rendering. Catches wrapping / line-height regressions in
+// `headlineSmall` that the single-clause `InsightCardPreview` would miss.
+@Preview(name = "Today · insight (long clothes list)", widthDp = 360)
+@Composable
+internal fun InsightCardLongPreview() {
+    Frame {
+        InsightCard(
+            SAMPLE_INSIGHT.copy(
+                summary = SAMPLE_INSIGHT.summary.copy(
+                    clothes = ClothesClause(
+                        listOf("sweater", "jacket", "scarf", "gloves", "umbrella"),
+                    ),
+                ),
+            ),
+            Region.SYSTEM,
+        )
+    }
 }

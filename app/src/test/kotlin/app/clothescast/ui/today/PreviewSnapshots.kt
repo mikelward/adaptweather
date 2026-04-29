@@ -101,6 +101,10 @@ class PreviewSnapshots {
     @Test fun today_empty_state() = capture { EmptyStatePreview() }
     @Test fun today_insight_card() = capture { InsightCardPreview() }
     @Test fun today_insight_card_dark() = capture { InsightCardDarkPreview() }
+    @Test fun today_insight_card_long() = capture { InsightCardLongPreview() }
+
+    @Test fun forecast_chart() = capture { ForecastChartPreview() }
+    @Test fun forecast_chart_dark() = capture { ForecastChartDarkPreview() }
 
     @Test fun confidence_high() = capture { ConfidenceHighPreview() }
     @Test fun confidence_medium() = capture { ConfidenceMediumPreview() }
