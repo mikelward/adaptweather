@@ -164,6 +164,7 @@ label localizes.
     <string name="settings_region_language_id_id">印尼语（印度尼西亚）</string>
     <string name="settings_region_language_fil_ph">菲律宾语（菲律宾）</string>
     <string name="settings_region_language_vi_vn">越南语（越南）</string>
+    <string name="settings_region_language_th_th">泰语（泰国）</string>
     <string name="settings_region_language_hi_in">印地语（印度）</string>
     <string name="settings_region_language_bn_bd">孟加拉语（孟加拉国）</string>
     <string name="settings_region_language_ja_jp">日语（日本）</string>
@@ -217,6 +218,7 @@ label localizes.
     <string name="settings_tts_voice_locale_id_id">印尼语（印度尼西亚）</string>
     <string name="settings_tts_voice_locale_fil_ph">菲律宾语（菲律宾）</string>
     <string name="settings_tts_voice_locale_vi_vn">越南语（越南）</string>
+    <string name="settings_tts_voice_locale_th_th">泰语（泰国）</string>
     <string name="settings_tts_voice_locale_hi_in">印地语（印度）</string>
     <string name="settings_tts_voice_locale_bn_bd">孟加拉语（孟加拉国）</string>
     <string name="settings_tts_voice_locale_ja_jp">日语（日本）</string>

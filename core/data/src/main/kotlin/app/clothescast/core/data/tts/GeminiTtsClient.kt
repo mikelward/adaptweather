@@ -60,9 +60,9 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
  *
  * Lookup is two-step: an exact `language-COUNTRY` match wins (so variants like
  * en-GB / en-AU / en-US can carry their own directive), otherwise a
- * language-only key. Today the table holds only `language-COUNTRY` entries —
- * the language-only branch exists for a future `de` / `fr` / etc. directive
- * that follows the same shape. Adding a new locale is a one-line entry in
+ * language-only key. The table mixes both shapes — most non-English entries
+ * are language-only (`de`, `fr`, `vi`, …), while English and Arabic
+ * enumerate per-country variants. Adding a new locale is a one-line entry in
  * [ACCENT_DIRECTIVES].
  */
 internal fun geminiAccentDirectiveFor(locale: Locale): String? {
