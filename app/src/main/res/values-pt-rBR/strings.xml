@@ -171,6 +171,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_uk_ua">Ucraniano (Ucrânia)</string>
     <string name="settings_region_language_nl_nl">Holandês (Países Baixos)</string>
     <string name="settings_region_language_sv_se">Sueco (Suécia)</string>
+    <string name="settings_region_language_fi_fi">Finlandês (Finlândia)</string>
     <string name="settings_region_language_tr_tr">Turco (Turquia)</string>
     <string name="settings_region_language_id_id">Indonésio (Indonésia)</string>
     <string name="settings_region_language_fil_ph">Filipino (Filipinas)</string>
@@ -226,6 +227,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_uk_ua">Ucraniano (Ucrânia)</string>
     <string name="settings_tts_voice_locale_nl_nl">Holandês (Países Baixos)</string>
     <string name="settings_tts_voice_locale_sv_se">Sueco (Suécia)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Finlandês (Finlândia)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turco (Turquia)</string>
     <string name="settings_tts_voice_locale_id_id">Indonésio (Indonésia)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filipino (Filipinas)</string>

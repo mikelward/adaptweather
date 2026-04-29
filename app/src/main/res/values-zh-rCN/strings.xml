@@ -163,6 +163,7 @@ label localizes.
     <string name="settings_region_language_pt_pt">葡萄牙语（葡萄牙）</string>
     <string name="settings_region_language_nl_nl">荷兰语（荷兰）</string>
     <string name="settings_region_language_sv_se">瑞典语（瑞典）</string>
+    <string name="settings_region_language_fi_fi">芬兰语（芬兰）</string>
     <string name="settings_region_language_tr_tr">土耳其语（土耳其）</string>
     <string name="settings_region_language_id_id">印尼语（印度尼西亚）</string>
     <string name="settings_region_language_fil_ph">菲律宾语（菲律宾）</string>
@@ -218,6 +219,7 @@ label localizes.
     <string name="settings_tts_voice_locale_pt_pt">葡萄牙语（葡萄牙）</string>
     <string name="settings_tts_voice_locale_nl_nl">荷兰语（荷兰）</string>
     <string name="settings_tts_voice_locale_sv_se">瑞典语（瑞典）</string>
+    <string name="settings_tts_voice_locale_fi_fi">芬兰语（芬兰）</string>
     <string name="settings_tts_voice_locale_tr_tr">土耳其语（土耳其）</string>
     <string name="settings_tts_voice_locale_id_id">印尼语（印度尼西亚）</string>
     <string name="settings_tts_voice_locale_fil_ph">菲律宾语（菲律宾）</string>
