@@ -24,6 +24,27 @@
     <string name="today_outfit_bottom_shorts">Shorts</string>
     <string name="today_outfit_bottom_long_pants">Long pants</string>
 
+    <!-- "Why this outfit?" rationale dialog. Tapping the outfit card opens this.
+         Observed and threshold values come through as %s (not %d) so we can fall
+         back to one-decimal precision when integer rounding would make them
+         indistinguishable (e.g. an actual 17.6 < 18.0 must not render as
+         "18°C, under 18°C"). The `at least` wording matches the AT_OR_ABOVE
+         comparison's inclusive semantics — equality is honest, not a contradiction. -->
+    <string name="today_rationale_title">Why this outfit?</string>
+    <string name="today_rationale_show">Why?</string>
+    <string name="today_rationale_dismiss">Got it</string>
+    <string name="today_rationale_unavailable">No rationale available — open the app after the next refresh.</string>
+    <!-- "Feels-like low 13°C at 6am, under 18°C" -->
+    <string name="today_rationale_min_below_with_time">Feels-like low %1$s%2$s at %3$s, under %4$s%2$s</string>
+    <!-- "Feels-like low 13°C, under 18°C" — when hourly data is missing -->
+    <string name="today_rationale_min_below">Feels-like low %1$s%2$s, under %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Feels-like low %1$s%2$s at %3$s, at least %4$s%2$s</string>
+    <string name="today_rationale_min_above">Feels-like low %1$s%2$s, at least %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Feels-like high only %1$s%2$s at %3$s, under %4$s%2$s</string>
+    <string name="today_rationale_max_below">Feels-like high only %1$s%2$s, under %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Feels-like high %1$s%2$s at %3$s, at least %4$s%2$s</string>
+    <string name="today_rationale_max_above">Feels-like high %1$s%2$s, at least %3$s%2$s</string>
+
     <!-- Home-screen App Widget. -->
     <string name="widget_label">Outfit</string>
     <string name="widget_description">The current period\'s outfit at a glance.</string>

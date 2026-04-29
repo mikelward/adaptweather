@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -53,10 +55,13 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.R
 import app.clothescast.core.domain.model.ConfidenceInfo
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.ForecastConfidence
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
+import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -223,7 +228,7 @@ private fun TodayContent(
         if (state.insight == null) {
             EmptyState(onRefresh = onRefresh, isWorking = isWorking)
         } else {
-            OutfitPreviewRow(state.insight)
+            OutfitPreviewRow(state.insight, state.temperatureUnit)
             InsightCard(state.insight, state.region)
             if (state.insight.hourly.isNotEmpty()) {
                 ForecastCard(state.insight.hourly, state.temperatureUnit)
@@ -382,7 +387,10 @@ internal fun EmptyState(onRefresh: () -> Unit, isWorking: Boolean = false) {
  *   outfit cards, and the notification large icon all read as one family.
  */
 @Composable
-internal fun OutfitPreviewRow(insight: Insight) {
+internal fun OutfitPreviewRow(
+    insight: Insight,
+    temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
+) {
     val primary = insight.outfit ?: return
     val (primaryLabel, nextLabel) = outfitLabels(insight.period)
     Row(
@@ -392,12 +400,16 @@ internal fun OutfitPreviewRow(insight: Insight) {
         OutfitPreviewCard(
             outfit = primary,
             label = stringResource(primaryLabel),
+            rationale = insight.outfitRationale,
+            temperatureUnit = temperatureUnit,
             modifier = Modifier.weight(1f),
         )
         insight.nextOutfit?.let {
             OutfitPreviewCard(
                 outfit = it,
                 label = stringResource(nextLabel),
+                rationale = insight.nextOutfitRationale,
+                temperatureUnit = temperatureUnit,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -409,13 +421,24 @@ private fun outfitLabels(period: ForecastPeriod): Pair<Int, Int> = when (period)
     ForecastPeriod.TONIGHT -> R.string.today_outfit_label_tonight to R.string.today_outfit_label_tomorrow
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun OutfitPreviewCard(
     outfit: OutfitSuggestion,
     label: String,
     modifier: Modifier = Modifier,
+    rationale: OutfitRationale? = null,
+    temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
 ) {
-    Card(modifier = modifier) {
+    var showRationale by remember { mutableStateOf(false) }
+    // Material3's `Card(onClick = …)` overload is preferred over a bare
+    // `modifier.clickable` — it carries the right semantics for accessibility
+    // tooling and matches how SettingsNavRow / other tap-targets in the app are
+    // wired.
+    Card(
+        onClick = { showRationale = true },
+        modifier = modifier,
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -450,9 +473,159 @@ internal fun OutfitPreviewCard(
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
             )
+            Text(
+                text = stringResource(R.string.today_rationale_show),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+    if (showRationale) {
+        OutfitRationaleDialog(
+            outfit = outfit,
+            rationale = rationale,
+            temperatureUnit = temperatureUnit,
+            onDismiss = { showRationale = false },
+        )
+    }
+}
+
+/**
+ * "Why this outfit?" detail sheet — explains the deciding facts (feels-like min / max
+ * + the hour they occurred + the threshold they crossed) so the user can sanity-check
+ * the call against their own day.
+ *
+ * TODO(outfit-threshold-tuning): add `−1°` / `+1°` controls on each threshold here so
+ *   the user can nudge the cutoff without leaving the dialog. Requires moving the
+ *   currently-hardcoded [OutfitSuggestion.Thresholds.DEFAULT] into a preferences-backed
+ *   instance plumbed into [GenerateDailyInsight], and a re-fetch / re-evaluate after
+ *   the change so the cards refresh.
+ */
+@Composable
+internal fun OutfitRationaleDialog(
+    outfit: OutfitSuggestion,
+    rationale: OutfitRationale?,
+    temperatureUnit: TemperatureUnit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.today_rationale_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (rationale == null) {
+                    Text(
+                        text = stringResource(R.string.today_rationale_unavailable),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                } else {
+                    GarmentReasonBlock(
+                        title = stringResource(topLabelRes(outfit.top)),
+                        reason = rationale.top,
+                        temperatureUnit = temperatureUnit,
+                    )
+                    GarmentReasonBlock(
+                        title = stringResource(bottomLabelRes(outfit.bottom)),
+                        reason = rationale.bottom,
+                        temperatureUnit = temperatureUnit,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.today_rationale_dismiss))
+            }
+        },
+    )
+}
+
+@Composable
+private fun GarmentReasonBlock(
+    title: String,
+    reason: GarmentReason,
+    temperatureUnit: TemperatureUnit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(text = title, style = MaterialTheme.typography.titleSmall)
+        reason.facts.forEach { fact ->
+            Text(
+                text = formatFact(fact, temperatureUnit),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
+
+@Composable
+private fun formatFact(fact: Fact, unit: TemperatureUnit): String {
+    val symbol = unit.symbol()
+    val observedConverted = fact.observedC.toUnit(unit)
+    val thresholdConverted = fact.thresholdC.toUnit(unit)
+    // Self-contradiction guard: if integer rounding makes the observed and
+    // threshold values look equal but they're actually different (e.g. an
+    // actual 17.6 < 18.0 displaying as "18°C, under 18°C"), drop to one-decimal
+    // precision so the printed numbers tell the same story as the prose. The
+    // common case is still bare integers — fractional formatting only kicks in
+    // on the exact-boundary edge.
+    val observedI = observedConverted.roundToInt()
+    val thresholdI = thresholdConverted.roundToInt()
+    val collide = observedI == thresholdI && observedConverted != thresholdConverted
+    val observedStr: String
+    val thresholdStr: String
+    if (collide) {
+        observedStr = ONE_DECIMAL_FORMAT.format(observedConverted)
+        thresholdStr = ONE_DECIMAL_FORMAT.format(thresholdConverted)
+    } else {
+        observedStr = observedI.toString()
+        thresholdStr = thresholdI.toString()
+    }
+    val time = fact.observedAt?.let { TIME_FORMAT.format(it) }
+    val res = when (fact.metric) {
+        Fact.Metric.FEELS_LIKE_MIN -> when (fact.comparison) {
+            Fact.Comparison.BELOW -> if (time != null) {
+                R.string.today_rationale_min_below_with_time
+            } else {
+                R.string.today_rationale_min_below
+            }
+            Fact.Comparison.AT_OR_ABOVE -> if (time != null) {
+                R.string.today_rationale_min_above_with_time
+            } else {
+                R.string.today_rationale_min_above
+            }
+        }
+        Fact.Metric.FEELS_LIKE_MAX -> when (fact.comparison) {
+            Fact.Comparison.BELOW -> if (time != null) {
+                R.string.today_rationale_max_below_with_time
+            } else {
+                R.string.today_rationale_max_below
+            }
+            Fact.Comparison.AT_OR_ABOVE -> if (time != null) {
+                R.string.today_rationale_max_above_with_time
+            } else {
+                R.string.today_rationale_max_above
+            }
+        }
+    }
+    return if (time != null) {
+        stringResource(res, observedStr, symbol, time, thresholdStr)
+    } else {
+        stringResource(res, observedStr, symbol, thresholdStr)
+    }
+}
+
+private val TIME_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale.getDefault())
+
+// Locale-aware one-decimal formatter used as a fallback in [formatFact] when
+// integer rounding of observed and threshold values would otherwise collide
+// (e.g. "17.6" and "18.0" both rounding to "18"). Default locale picks the
+// right decimal separator (`,` in de-DE, `.` in en-US, etc.).
+private val ONE_DECIMAL_FORMAT: java.text.NumberFormat =
+    java.text.NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+        minimumFractionDigits = 1
+        maximumFractionDigits = 1
+    }
 
 private fun topIconRes(top: OutfitSuggestion.Top): Int = when (top) {
     OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt

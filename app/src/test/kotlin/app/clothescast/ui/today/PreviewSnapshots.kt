@@ -3,6 +3,7 @@ package app.clothescast.ui.today
 import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -104,6 +105,16 @@ class PreviewSnapshots {
         composeRule.onRoot().captureRoboImage(filePath = "$outputDir/${testName.methodName}.png")
     }
 
+    // Dialog previews live in their own popup window — `composeRule.onRoot()`
+    // sees both the host composition and the popup and errors with "Expected
+    // exactly 1 node but found 2 that satisfy isRoot". Capture the dialog
+    // node directly instead so the snapshot covers the popup contents (which
+    // is the visible thing here).
+    private fun captureDialog(content: @Composable () -> Unit) {
+        composeRule.setContent { content() }
+        composeRule.onNode(isDialog()).captureRoboImage(filePath = "$outputDir/${testName.methodName}.png")
+    }
+
     @Test fun outfit_tshirt_shorts() = capture { OutfitTShirtShortsPreview() }
     @Test fun outfit_tshirt_pants() = capture { OutfitTShirtPantsPreview() }
     @Test fun outfit_sweater_shorts() = capture { OutfitSweaterShortsPreview() }
@@ -113,6 +124,7 @@ class PreviewSnapshots {
     @Test fun outfit_sweater_pants_dark() = capture { OutfitSweaterPantsDarkPreview() }
     @Test fun outfit_row_today_tonight() = capture { OutfitRowTodayTonightPreview() }
     @Test fun outfit_row_tonight_tomorrow() = capture { OutfitRowTonightTomorrowPreview() }
+    @Test fun outfit_rationale_dialog() = captureDialog { OutfitRationaleDialogPreview() }
 
     @Test fun today_empty_state() = capture { EmptyStatePreview() }
     @Test fun today_insight_card() = capture { InsightCardPreview() }
