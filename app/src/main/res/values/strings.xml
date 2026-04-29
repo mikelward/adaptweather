@@ -221,7 +221,8 @@
     <string name="settings_tts_voice_locale_pl_pl">Polish (Poland)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croatian (Croatia)</string>
     <string name="settings_tts_voice_locale_sl_si">Slovenian (Slovenia)</string>
-    <string name="settings_tts_voice_locale_sr_rs">Serbian (Serbia)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Serbian, Latin (Serbia)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Serbian, Cyrillic (Serbia)</string>
     <string name="settings_tts_voice_locale_bg_bg">Bulgarian (Bulgaria)</string>
     <string name="settings_tts_voice_locale_cs_cz">Czech (Czechia)</string>
     <string name="settings_tts_voice_locale_sk_sk">Slovak (Slovakia)</string>
@@ -341,7 +342,8 @@
     <string name="settings_region_language_pl_pl">Polish (Poland)</string>
     <string name="settings_region_language_hr_hr">Croatian (Croatia)</string>
     <string name="settings_region_language_sl_si">Slovenian (Slovenia)</string>
-    <string name="settings_region_language_sr_rs">Serbian (Serbia)</string>
+    <string name="settings_region_language_sr_rs">Serbian, Latin (Serbia)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Serbian, Cyrillic (Serbia)</string>
     <string name="settings_region_language_bg_bg">Bulgarian (Bulgaria)</string>
     <string name="settings_region_language_cs_cz">Czech (Czechia)</string>
     <string name="settings_region_language_sk_sk">Slovak (Slovakia)</string>
