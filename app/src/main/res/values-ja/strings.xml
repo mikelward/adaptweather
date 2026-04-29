@@ -154,6 +154,7 @@ the displayed label localizes.
     <string name="settings_region_language_ru_ru">ロシア語（ロシア）</string>
     <string name="settings_region_language_pl_pl">ポーランド語（ポーランド）</string>
     <string name="settings_region_language_hr_hr">クロアチア語（クロアチア）</string>
+    <string name="settings_region_language_sl_si">スロベニア語（スロベニア）</string>
     <string name="settings_region_language_sr_rs">セルビア語（セルビア）</string>
     <string name="settings_region_language_bg_bg">ブルガリア語（ブルガリア）</string>
     <string name="settings_region_language_cs_cz">チェコ語（チェコ）</string>
@@ -210,6 +211,7 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_ru_ru">ロシア語（ロシア）</string>
     <string name="settings_tts_voice_locale_pl_pl">ポーランド語（ポーランド）</string>
     <string name="settings_tts_voice_locale_hr_hr">クロアチア語（クロアチア）</string>
+    <string name="settings_tts_voice_locale_sl_si">スロベニア語（スロベニア）</string>
     <string name="settings_tts_voice_locale_sr_rs">セルビア語（セルビア）</string>
     <string name="settings_tts_voice_locale_bg_bg">ブルガリア語（ブルガリア）</string>
     <string name="settings_tts_voice_locale_cs_cz">チェコ語（チェコ）</string>

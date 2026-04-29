@@ -92,6 +92,7 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "ru" to "Говори по-русски с чётким литературным произношением.",
     "pl" to "Mów po polsku z wyraźną i naturalną wymową.",
     "hr" to "Govori na hrvatskom jeziku s jasnim i prirodnim izgovorom.",
+    "sl" to "Govori v slovenščini z jasnim in naravnim izgovorom.",
     "el" to "Μίλα στα ελληνικά με καθαρή και φυσική προφορά.",
     "uk" to "Говори українською мовою з чітким літературним вимовленням.",
     "pt-BR" to "Fale em português brasileiro com sotaque neutro e claro.",
