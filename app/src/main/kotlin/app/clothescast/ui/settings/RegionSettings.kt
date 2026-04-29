@@ -93,16 +93,20 @@ private fun RegionLanguagePicker(
         val base = stringResource(regionLabel(option))
         if (option == Region.SYSTEM) "$base ($systemTag)" else base
     }
+    val title = stringResource(R.string.settings_region_language_title)
     OutlinedButton(
         onClick = { dialogOpen = true },
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Text(labelFor(selected))
+        // Include the title in the button text so TalkBack announces this as
+        // a language picker even when read in isolation from the surrounding
+        // SectionCard header. Mirrors VoiceLocalePicker in VoiceSettings.kt.
+        Text("$title: ${labelFor(selected)}")
     }
     if (dialogOpen) {
         AlertDialog(
             onDismissRequest = { dialogOpen = false },
-            title = { Text(stringResource(R.string.settings_region_language_title)) },
+            title = { Text(title) },
             text = {
                 // Sort by the resolved display label using a locale-aware
                 // collator so the order reads naturally in the user's UI
