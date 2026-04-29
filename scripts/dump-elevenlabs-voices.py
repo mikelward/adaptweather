@@ -274,6 +274,9 @@ def main() -> int:
             ]
             descriptor = ", ".join(b for b in descriptor_bits if b)
             display = f"{name} — {descriptor}" if descriptor else name
+            preview = v.get("preview_url") or ""
+            if preview:
+                print(f"    // preview: {preview}")
             print(
                 f"    TtsVoiceOption({kotlin_string(voice_id)}, "
                 f"{kotlin_string(display)}, VoiceLocale.{enum_name}),"
