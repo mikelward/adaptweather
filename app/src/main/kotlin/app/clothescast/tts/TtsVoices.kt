@@ -35,8 +35,7 @@ data class TtsVoiceOption(
  * so the picker is never empty *and* near-matches are preferred over a
  * language-mismatched dump:
  *
- *  1. **Exact**: voices whose [TtsVoiceOption.locale] matches [variant]
- *     (plus accent-agnostic voices, which always pass).
+ *  1. **Exact**: voices whose [TtsVoiceOption.locale] matches [variant].
  *  2. **Language**: if (1) is empty, voices whose locale shares the BCP-47
  *     language subtag with [variant] — e.g. an en-AU user with no AU voice
  *     in the list still gets the en-US + en-GB voices, not Japanese ones.
@@ -44,11 +43,18 @@ data class TtsVoiceOption(
  *     *some* picker. The UI surfaces a "try another accent" caption in this
  *     case via [localeFallbackTier].
  *
+ * Voices with a `null` locale are accent-agnostic (Gemini's prebuilt voices,
+ * or ElevenLabs voices whose `accent` label didn't parse): they always ride
+ * along with whichever tier wins, but they don't drive tier selection. This
+ * matters for refreshed ElevenLabs lists that mix known-accent voices with
+ * unparseable ones — without this distinction a single unknown-accent voice
+ * would suppress the language-fallback tier and hide the caption.
+ *
  * [VoiceLocale.SYSTEM] disables filtering — the user has not expressed a
  * preference, so show everything.
  *
  * If [keepSelected] is supplied and points to a voice in the receiver list
- * that doesn't match the filter tier, that voice is appended so the picker
+ * that doesn't match the chosen tier, that voice is appended so the picker
  * still shows the user's current selection. Without this, a user who'd
  * persisted `nova` and then switched the variant to en-GB would see a
  * picker label of "Voice: nova" with no `nova` row in the dialog —
@@ -60,12 +66,14 @@ fun List<TtsVoiceOption>.filterByVariant(
     keepSelected: String? = null,
 ): List<TtsVoiceOption> {
     if (variant == VoiceLocale.SYSTEM) return this
-    val exact = filter { it.locale == null || it.locale == variant }
-    if (exact.isNotEmpty()) return appendKeepSelected(exact, keepSelected)
+    val agnostic = filter { it.locale == null }
+    val withLocale = filter { it.locale != null }
+    val exact = withLocale.filter { it.locale == variant }
+    if (exact.isNotEmpty()) return appendKeepSelected(agnostic + exact, keepSelected)
     val variantLang = variant.languageSubtag()
     if (variantLang != null) {
-        val sameLanguage = filter { it.locale?.languageSubtag() == variantLang }
-        if (sameLanguage.isNotEmpty()) return appendKeepSelected(sameLanguage, keepSelected)
+        val sameLanguage = withLocale.filter { it.locale?.languageSubtag() == variantLang }
+        if (sameLanguage.isNotEmpty()) return appendKeepSelected(agnostic + sameLanguage, keepSelected)
     }
     return this
 }
@@ -74,9 +82,15 @@ fun List<TtsVoiceOption>.filterByVariant(
  * Which tier [filterByVariant] landed on for [variant]. The picker UI uses
  * this to caption the picker with the right explanation when we couldn't
  * give the user their exact accent.
+ *
+ * Tier detection considers only voices whose locale is known (non-null).
+ * An all-agnostic source — Gemini's prebuilt voices, or a refreshed
+ * ElevenLabs library where every voice's accent label was unparseable —
+ * is treated as Exact (no caption), since by construction we can't tell
+ * the user a more useful story than "showing everything".
  */
 enum class LocaleFallbackTier {
-    /** Engine has voices in this exact accent (or accent-agnostic). No caption needed. */
+    /** Engine has voices in this exact accent. No caption needed. */
     Exact,
 
     /** No exact-accent match, but at least one same-language voice exists. */
@@ -88,7 +102,13 @@ enum class LocaleFallbackTier {
 
 fun List<TtsVoiceOption>.localeFallbackTier(variant: VoiceLocale): LocaleFallbackTier {
     if (variant == VoiceLocale.SYSTEM) return LocaleFallbackTier.Exact
-    if (any { it.locale == null || it.locale == variant }) return LocaleFallbackTier.Exact
+    // All-agnostic (or empty) source: there's no accent claim to fall back
+    // *from*, so don't try to caption one. Gemini's voice list lands here
+    // by design; an ElevenLabs library where every voice failed accent-
+    // parsing also lands here, since we can't credibly say "no <locale>
+    // voices" when we don't know any voice's accent.
+    if (none { it.locale != null }) return LocaleFallbackTier.Exact
+    if (any { it.locale == variant }) return LocaleFallbackTier.Exact
     val variantLang = variant.languageSubtag() ?: return LocaleFallbackTier.FullList
     if (any { it.locale?.languageSubtag() == variantLang }) return LocaleFallbackTier.SameLanguage
     return LocaleFallbackTier.FullList

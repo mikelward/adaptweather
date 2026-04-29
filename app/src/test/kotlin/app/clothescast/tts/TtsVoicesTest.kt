@@ -38,6 +38,28 @@ class TtsVoicesTest {
     }
 
     @Test
+    fun `accent-agnostic voices ride along with the language-fallback tier`() {
+        // Mixed list (e.g. refreshed ElevenLabs library where one voice's
+        // accent label didn't parse → locale=null). en-AU user: the unknown-
+        // accent voice rides along with the same-language matches rather
+        // than being the *only* voice shown. Without this, a single
+        // unparseable voice would hide the en-* near-matches and leave the
+        // user with one weirdly-named voice and no caption.
+        val all = listOf(american, british, japanese, agnostic)
+        all.filterByVariant(VoiceLocale.EN_AU)
+            .shouldContainExactlyInAnyOrder(american, british, agnostic)
+    }
+
+    @Test
+    fun `accent-agnostic voices ride along with the full-list fallback tier`() {
+        // No "en" voice and a single null-locale voice. The agnostic voice
+        // still appears (it's part of `this` when we return the full list);
+        // the test mostly locks in that nothing magic happens here.
+        val all = listOf(japanese, agnostic)
+        all.filterByVariant(VoiceLocale.EN_AU) shouldBe all
+    }
+
+    @Test
     fun `falls back to the full list when nothing in the source speaks that language`() {
         // No "en" voice at all — showing the Japanese voice is the least bad
         // option. The picker UI surfaces a "try another accent" caption in
@@ -72,11 +94,30 @@ class TtsVoicesTest {
     }
 
     @Test
-    fun `localeFallbackTier treats accent-agnostic voices as exact matches`() {
-        // Gemini-style language-agnostic voices count as Exact for any
-        // variant — they always pass the filter.
+    fun `localeFallbackTier treats an all-agnostic source as Exact`() {
+        // Gemini's prebuilt voices are language-agnostic — there's no
+        // accent claim to fall back *from*, so the picker doesn't caption.
         val all = listOf(agnostic)
         all.localeFallbackTier(VoiceLocale.JA_JP) shouldBe LocaleFallbackTier.Exact
+    }
+
+    @Test
+    fun `localeFallbackTier ignores agnostic voices when other voices have known accents`() {
+        // Mixed list where the *known-accent* voices don't include en-AU:
+        // tier should be SameLanguage so the picker captions the fallback.
+        // Previously a single null-locale voice would have collapsed the
+        // detection to Exact and hidden the caption.
+        val all = listOf(american, british, japanese, agnostic)
+        all.localeFallbackTier(VoiceLocale.EN_AU) shouldBe LocaleFallbackTier.SameLanguage
+    }
+
+    @Test
+    fun `localeFallbackTier reports FullList on a mixed source with no language match`() {
+        // Same shape as above but the user's language isn't represented
+        // among the known-accent voices either. Caption should be the
+        // "try another accent" copy.
+        val all = listOf(japanese, agnostic)
+        all.localeFallbackTier(VoiceLocale.EN_AU) shouldBe LocaleFallbackTier.FullList
     }
 
     @Test
