@@ -139,6 +139,8 @@ label localizes.
     <string name="settings_region_language_en_ca">英语（加拿大）</string>
     <string name="settings_region_language_en_za">英语（南非）</string>
     <string name="settings_region_language_de_de">德语（德国）</string>
+    <string name="settings_region_language_de_at">德语（奥地利）</string>
+    <string name="settings_region_language_de_ch">德语（瑞士）</string>
     <string name="settings_region_language_fr_fr">法语（法国）</string>
     <string name="settings_region_language_fr_ca">法语（加拿大）</string>
     <string name="settings_region_language_it_it">意大利语（意大利）</string>
@@ -155,6 +157,7 @@ label localizes.
     <string name="settings_region_language_ro_ro">罗马尼亚语（罗马尼亚）</string>
     <string name="settings_region_language_uk_ua">乌克兰语（乌克兰）</string>
     <string name="settings_region_language_pt_br">葡萄牙语（巴西）</string>
+    <string name="settings_region_language_pt_pt">葡萄牙语（葡萄牙）</string>
     <string name="settings_region_language_nl_nl">荷兰语（荷兰）</string>
     <string name="settings_region_language_sv_se">瑞典语（瑞典）</string>
     <string name="settings_region_language_tr_tr">土耳其语（土耳其）</string>
@@ -189,6 +192,8 @@ label localizes.
     <string name="settings_tts_voice_locale_en_ca">英语（加拿大）</string>
     <string name="settings_tts_voice_locale_en_za">英语（南非）</string>
     <string name="settings_tts_voice_locale_de_de">德语（德国）</string>
+    <string name="settings_tts_voice_locale_de_at">德语（奥地利）</string>
+    <string name="settings_tts_voice_locale_de_ch">德语（瑞士）</string>
     <string name="settings_tts_voice_locale_fr_fr">法语（法国）</string>
     <string name="settings_tts_voice_locale_fr_ca">法语（加拿大）</string>
     <string name="settings_tts_voice_locale_it_it">意大利语（意大利）</string>
@@ -205,6 +210,7 @@ label localizes.
     <string name="settings_tts_voice_locale_ro_ro">罗马尼亚语（罗马尼亚）</string>
     <string name="settings_tts_voice_locale_uk_ua">乌克兰语（乌克兰）</string>
     <string name="settings_tts_voice_locale_pt_br">葡萄牙语（巴西）</string>
+    <string name="settings_tts_voice_locale_pt_pt">葡萄牙语（葡萄牙）</string>
     <string name="settings_tts_voice_locale_nl_nl">荷兰语（荷兰）</string>
     <string name="settings_tts_voice_locale_sv_se">瑞典语（瑞典）</string>
     <string name="settings_tts_voice_locale_tr_tr">土耳其语（土耳其）</string>

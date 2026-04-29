@@ -134,6 +134,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_en_ca">Inglese (Canada)</string>
     <string name="settings_region_language_en_za">Inglese (Sudafrica)</string>
     <string name="settings_region_language_de_de">Tedesco (Germania)</string>
+    <string name="settings_region_language_de_at">Tedesco (Austria)</string>
+    <string name="settings_region_language_de_ch">Tedesco (Svizzera)</string>
     <string name="settings_region_language_fr_fr">Francese (Francia)</string>
     <string name="settings_region_language_fr_ca">Francese (Canada)</string>
     <string name="settings_region_language_es_es">Spagnolo (Spagna)</string>
@@ -149,6 +151,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_ro_ro">Rumeno (Romania)</string>
     <string name="settings_region_language_uk_ua">Ucraino (Ucraina)</string>
     <string name="settings_region_language_pt_br">Portoghese (Brasile)</string>
+    <string name="settings_region_language_pt_pt">Portoghese (Portogallo)</string>
     <string name="settings_region_language_nl_nl">Olandese (Paesi Bassi)</string>
     <string name="settings_region_language_sv_se">Svedese (Svezia)</string>
     <string name="settings_region_language_tr_tr">Turco (Turchia)</string>
@@ -188,6 +191,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_en_ca">Inglese (Canada)</string>
     <string name="settings_tts_voice_locale_en_za">Inglese (Sudafrica)</string>
     <string name="settings_tts_voice_locale_de_de">Tedesco (Germania)</string>
+    <string name="settings_tts_voice_locale_de_at">Tedesco (Austria)</string>
+    <string name="settings_tts_voice_locale_de_ch">Tedesco (Svizzera)</string>
     <string name="settings_tts_voice_locale_fr_fr">Francese (Francia)</string>
     <string name="settings_tts_voice_locale_fr_ca">Francese (Canada)</string>
     <string name="settings_tts_voice_locale_es_es">Spagnolo (Spagna)</string>
@@ -203,6 +208,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_ro_ro">Rumeno (Romania)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ucraino (Ucraina)</string>
     <string name="settings_tts_voice_locale_pt_br">Portoghese (Brasile)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Portoghese (Portogallo)</string>
     <string name="settings_tts_voice_locale_nl_nl">Olandese (Paesi Bassi)</string>
     <string name="settings_tts_voice_locale_sv_se">Svedese (Svezia)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turco (Turchia)</string>
