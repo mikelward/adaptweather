@@ -183,6 +183,7 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="settings_region_language_ru_ru">Russo (Rússia)</string>
     <string name="settings_region_language_pl_pl">Polaco (Polónia)</string>
     <string name="settings_region_language_hr_hr">Croata (Croácia)</string>
+    <string name="settings_region_language_sl_si">Esloveno (Eslovénia)</string>
     <string name="settings_region_language_uk_ua">Ucraniano (Ucrânia)</string>
     <string name="settings_region_language_nl_nl">Neerlandês (Países Baixos)</string>
     <string name="settings_region_language_sv_se">Sueco (Suécia)</string>
@@ -233,6 +234,7 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="settings_tts_voice_locale_ru_ru">Russo (Rússia)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polaco (Polónia)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croata (Croácia)</string>
+    <string name="settings_tts_voice_locale_sl_si">Esloveno (Eslovénia)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ucraniano (Ucrânia)</string>
     <string name="settings_tts_voice_locale_nl_nl">Neerlandês (Países Baixos)</string>
     <string name="settings_tts_voice_locale_sv_se">Sueco (Suécia)</string>

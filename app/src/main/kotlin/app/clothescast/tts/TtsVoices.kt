@@ -198,6 +198,7 @@ private val ACCENT_TO_VOICE_LOCALE: Map<String, VoiceLocale> = mapOf(
     "russian" to VoiceLocale.RU_RU,
     "polish" to VoiceLocale.PL_PL,
     "croatian" to VoiceLocale.HR_HR,
+    "slovenian" to VoiceLocale.SL_SI,
     "greek" to VoiceLocale.EL_GR,
     "ukrainian" to VoiceLocale.UK_UA,
     "dutch" to VoiceLocale.NL_NL,
