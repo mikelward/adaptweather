@@ -140,6 +140,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_region_language_id_id">Indonezijski (Indonezija)</string>
     <string name="settings_region_language_fil_ph">Filipinski (Filipini)</string>
     <string name="settings_region_language_vi_vn">Vijetnamski (Vijetnam)</string>
+    <string name="settings_region_language_th_th">Tajski (Tajland)</string>
     <string name="settings_region_language_zh_cn">Kineski (pojednostavljeni)</string>
     <string name="settings_region_language_hi_in">Hindski (Indija)</string>
     <string name="settings_region_language_bn_bd">Bengalski (Bangladeš)</string>
@@ -198,6 +199,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_id_id">Indonezijski (Indonezija)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filipinski (Filipini)</string>
     <string name="settings_tts_voice_locale_vi_vn">Vijetnamski (Vijetnam)</string>
+    <string name="settings_tts_voice_locale_th_th">Tajski (Tajland)</string>
     <string name="settings_tts_voice_locale_zh_cn">Kineski (pojednostavljeni)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindski (Indija)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengalski (Bangladeš)</string>

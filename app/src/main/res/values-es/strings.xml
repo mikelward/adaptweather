@@ -168,6 +168,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_id_id">Indonesio (Indonesia)</string>
     <string name="settings_region_language_fil_ph">Filipino (Filipinas)</string>
     <string name="settings_region_language_vi_vn">Vietnamita (Vietnam)</string>
+    <string name="settings_region_language_th_th">Tailandés (Tailandia)</string>
     <string name="settings_region_language_zh_cn">Chino (simplificado)</string>
     <string name="settings_region_language_hi_in">Hindi (India)</string>
     <string name="settings_region_language_bn_bd">Bengalí (Bangladés)</string>
@@ -225,6 +226,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_id_id">Indonesio (Indonesia)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filipino (Filipinas)</string>
     <string name="settings_tts_voice_locale_vi_vn">Vietnamita (Vietnam)</string>
+    <string name="settings_tts_voice_locale_th_th">Tailandés (Tailandia)</string>
     <string name="settings_tts_voice_locale_zh_cn">Chino (simplificado)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindi (India)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengalí (Bangladés)</string>
