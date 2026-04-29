@@ -8,6 +8,7 @@ import app.clothescast.core.data.location.OpenMeteoGeocodingClient
 import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
@@ -337,6 +338,41 @@ class SettingsViewModelTest {
         listVoicesCallCount shouldBe 0
         refreshSubject.state.value.elevenLabsRefreshedVoices shouldBe null
         refreshSubject.state.value.elevenLabsRefreshing shouldBe false
+    }
+
+    @Test
+    fun `re-enumerates device voices when region changes while voiceLocale is SYSTEM`() = runTest {
+        var enumerationCount = 0
+        val countingEnumerator = object : TtsVoiceEnumerator {
+            override suspend fun listVoices(locale: Locale): List<DeviceVoice> {
+                enumerationCount++
+                return emptyList()
+            }
+            override suspend fun resolveAutoPick(locale: Locale): DeviceVoice? = null
+            override suspend fun findVoice(id: String): DeviceVoice? = null
+        }
+        val countingSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = countingEnumerator,
+        )
+        // Wait for the initial prefs emission so the first enumeration has fired.
+        countingSubject.state.first { it.region == Region.SYSTEM }
+        val afterInit = enumerationCount
+
+        // Changing region while voiceLocale stays SYSTEM changes the effective
+        // locale — the device-voice list should be refreshed for en-AU.
+        countingSubject.setRegion(Region.EN_AU)
+        countingSubject.state.first { it.region == Region.EN_AU }
+
+        enumerationCount shouldBe afterInit + 1
     }
 }
 
