@@ -168,6 +168,7 @@ displayed label localizes.
     <string name="settings_region_language_it_it">이탈리아어 (이탈리아)</string>
     <string name="settings_region_language_es_es">스페인어 (스페인)</string>
     <string name="settings_region_language_es_mx">스페인어 (멕시코)</string>
+    <string name="settings_region_language_ca_es">카탈루냐어 (스페인)</string>
     <string name="settings_region_language_ru_ru">러시아어 (러시아)</string>
     <string name="settings_region_language_pl_pl">폴란드어 (폴란드)</string>
     <string name="settings_region_language_hr_hr">크로아티아어 (크로아티아)</string>
@@ -227,6 +228,7 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_it_it">이탈리아어 (이탈리아)</string>
     <string name="settings_tts_voice_locale_es_es">스페인어 (스페인)</string>
     <string name="settings_tts_voice_locale_es_mx">스페인어 (멕시코)</string>
+    <string name="settings_tts_voice_locale_ca_es">카탈루냐어 (스페인)</string>
     <string name="settings_tts_voice_locale_ru_ru">러시아어 (러시아)</string>
     <string name="settings_tts_voice_locale_pl_pl">폴란드어 (폴란드)</string>
     <string name="settings_tts_voice_locale_hr_hr">크로아티아어 (크로아티아)</string>

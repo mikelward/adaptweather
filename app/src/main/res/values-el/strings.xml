@@ -200,6 +200,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_it_it">Ιταλικά (Ιταλία)</string>
     <string name="settings_region_language_es_es">Ισπανικά (Ισπανία)</string>
     <string name="settings_region_language_es_mx">Ισπανικά (Μεξικό)</string>
+    <string name="settings_region_language_ca_es">Καταλανικά (Ισπανία)</string>
     <string name="settings_region_language_ru_ru">Ρωσικά (Ρωσία)</string>
     <string name="settings_region_language_pl_pl">Πολωνικά (Πολωνία)</string>
     <string name="settings_region_language_hr_hr">Κροατικά (Κροατία)</string>
@@ -261,6 +262,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_it_it">Ιταλικά (Ιταλία)</string>
     <string name="settings_tts_voice_locale_es_es">Ισπανικά (Ισπανία)</string>
     <string name="settings_tts_voice_locale_es_mx">Ισπανικά (Μεξικό)</string>
+    <string name="settings_tts_voice_locale_ca_es">Καταλανικά (Ισπανία)</string>
     <string name="settings_tts_voice_locale_ru_ru">Ρωσικά (Ρωσία)</string>
     <string name="settings_tts_voice_locale_pl_pl">Πολωνικά (Πολωνία)</string>
     <string name="settings_tts_voice_locale_hr_hr">Κροατικά (Κροατία)</string>

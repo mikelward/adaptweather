@@ -89,6 +89,7 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "it" to "Parla in italiano con un accento italiano chiaro e naturale.",
     "es-ES" to "Habla en español de España con un acento castellano claro.",
     "es-MX" to "Habla en español mexicano con un acento neutro y claro.",
+    "ca" to "Parla en català amb una pronunciació clara i natural.",
     "ru" to "Говори по-русски с чётким литературным произношением.",
     "pl" to "Mów po polsku z wyraźną i naturalną wymową.",
     "hr" to "Govori na hrvatskom jeziku s jasnim i prirodnim izgovorom.",

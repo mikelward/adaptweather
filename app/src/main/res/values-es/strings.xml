@@ -36,8 +36,10 @@ zh-CN) is unchanged; only the displayed label localizes.
 <resources>
     <string name="settings_region_language_es_es">Español (España)</string>
     <string name="settings_region_language_es_mx">Español (México)</string>
+    <string name="settings_region_language_ca_es">Catalán (España)</string>
     <string name="settings_tts_voice_locale_es_es">Español (España)</string>
     <string name="settings_tts_voice_locale_es_mx">Español (México)</string>
+    <string name="settings_tts_voice_locale_ca_es">Catalán (España)</string>
     <string name="settings_tts_voice_locale_label">Idioma</string>
 
     <!-- Settings — top bar + root navigation list. -->
