@@ -115,6 +115,20 @@ class ElevenLabsTtsClientTest {
     }
 
     @Test
+    fun `synthesize forwards a per-call stability override into voice_settings`() = runTest {
+        var capturedBody: String? = null
+        val client = ElevenLabsTtsClient(
+            httpClient = mockClient { capturedBody = capturedBodyOf(it) },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", stability = 0.4)
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("\"stability\":0.4")
+    }
+
+    @Test
     fun `request body sends voice_settings with speed and stability`() = runTest {
         // We override per-voice library defaults on every clip so the pacing
         // / stability tuning is consistent regardless of which voice the user

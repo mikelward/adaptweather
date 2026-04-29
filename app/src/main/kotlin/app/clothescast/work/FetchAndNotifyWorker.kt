@@ -356,7 +356,11 @@ class FetchAndNotifyWorker(
                 }
                 TtsEngine.OPENAI -> {
                     try {
-                        OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text, locale)
+                        OpenAITtsSpeaker(
+                            client = app.openAiTtsClient,
+                            voice = prefs.openAiVoice,
+                            speed = prefs.openAiSpeed,
+                        ).speak(text, locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
                         DiagLog.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
@@ -369,6 +373,7 @@ class FetchAndNotifyWorker(
                             voiceId = prefs.elevenLabsVoice,
                             model = prefs.elevenLabsModel,
                             speed = prefs.elevenLabsSpeed,
+                            stability = prefs.elevenLabsStability,
                         ).speak(text, locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {

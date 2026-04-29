@@ -150,11 +150,14 @@ fun SettingsScreen(
                 elevenLabsRefreshing = state.elevenLabsRefreshing,
                 elevenLabsModel = state.elevenLabsModel,
                 elevenLabsSpeed = state.elevenLabsSpeed,
+                elevenLabsStability = state.elevenLabsStability,
+                openAiSpeed = state.openAiSpeed,
                 voiceLocale = state.voiceLocale,
                 padding = padding,
                 onSetTtsEngine = viewModel::setTtsEngine,
                 onSetGeminiVoice = viewModel::setGeminiVoice,
                 onSetOpenAiVoice = viewModel::setOpenAiVoice,
+                onSetOpenAiSpeed = viewModel::setOpenAiSpeed,
                 onSetElevenLabsVoice = viewModel::setElevenLabsVoice,
                 onSetDeviceVoice = viewModel::setDeviceVoice,
                 onSetVoiceLocale = viewModel::setVoiceLocale,
@@ -167,6 +170,7 @@ fun SettingsScreen(
                 onRefreshElevenLabsVoices = viewModel::refreshElevenLabsVoices,
                 onSetElevenLabsModel = viewModel::setElevenLabsModel,
                 onSetElevenLabsSpeed = viewModel::setElevenLabsSpeed,
+                onSetElevenLabsStability = viewModel::setElevenLabsStability,
             )
             SettingsRoute.DataSources -> DataSourcesContent(
                 location = state.location,

@@ -134,6 +134,16 @@ class SettingsRepository(
         dataStore.edit { it[OPENAI_VOICE] = voice }
     }
 
+    suspend fun setOpenAiSpeed(speed: Double) {
+        // Clamp on write so a misconfigured caller can't push out-of-range
+        // values into DataStore. Mirrors setElevenLabsSpeed.
+        val clamped = speed.coerceIn(
+            UserPreferences.MIN_OPENAI_SPEED,
+            UserPreferences.MAX_OPENAI_SPEED,
+        )
+        dataStore.edit { it[OPENAI_SPEED] = clamped }
+    }
+
     suspend fun setElevenLabsVoice(voice: String) {
         dataStore.edit { it[ELEVENLABS_VOICE] = voice }
     }
@@ -150,6 +160,14 @@ class SettingsRepository(
             UserPreferences.MAX_ELEVENLABS_SPEED,
         )
         dataStore.edit { it[ELEVENLABS_SPEED] = clamped }
+    }
+
+    suspend fun setElevenLabsStability(stability: Double) {
+        val clamped = stability.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_STABILITY,
+            UserPreferences.MAX_ELEVENLABS_STABILITY,
+        )
+        dataStore.edit { it[ELEVENLABS_STABILITY] = clamped }
     }
 
     suspend fun setDeviceVoice(voice: String?) {
@@ -213,6 +231,14 @@ class SettingsRepository(
             UserPreferences.MIN_ELEVENLABS_SPEED,
             UserPreferences.MAX_ELEVENLABS_SPEED,
         ) ?: UserPreferences.DEFAULT_ELEVENLABS_SPEED
+        val elevenLabsStability = this[ELEVENLABS_STABILITY]?.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_STABILITY,
+            UserPreferences.MAX_ELEVENLABS_STABILITY,
+        ) ?: UserPreferences.DEFAULT_ELEVENLABS_STABILITY
+        val openAiSpeed = this[OPENAI_SPEED]?.coerceIn(
+            UserPreferences.MIN_OPENAI_SPEED,
+            UserPreferences.MAX_OPENAI_SPEED,
+        ) ?: UserPreferences.DEFAULT_OPENAI_SPEED
         val deviceVoice = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
         val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
         val tonightTime = this[TONIGHT_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
@@ -241,9 +267,11 @@ class SettingsRepository(
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
+            openAiSpeed = openAiSpeed,
             elevenLabsVoice = elevenLabsVoice,
             elevenLabsModel = elevenLabsModel,
             elevenLabsSpeed = elevenLabsSpeed,
+            elevenLabsStability = elevenLabsStability,
             deviceVoice = deviceVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
@@ -298,6 +326,8 @@ class SettingsRepository(
         private val ELEVENLABS_VOICE = stringPreferencesKey("elevenlabs_voice")
         private val ELEVENLABS_MODEL = stringPreferencesKey("elevenlabs_model")
         private val ELEVENLABS_SPEED = doublePreferencesKey("elevenlabs_speed")
+        private val ELEVENLABS_STABILITY = doublePreferencesKey("elevenlabs_stability")
+        private val OPENAI_SPEED = doublePreferencesKey("openai_speed")
         private val DEVICE_VOICE = stringPreferencesKey("device_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")

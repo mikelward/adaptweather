@@ -1,5 +1,6 @@
 package app.clothescast.tts
 
+import app.clothescast.core.data.tts.DEFAULT_OPENAI_TTS_SPEED
 import app.clothescast.core.data.tts.DEFAULT_OPENAI_TTS_VOICE
 import app.clothescast.core.data.tts.OpenAITtsClient
 import java.util.Locale
@@ -17,6 +18,7 @@ import java.util.Locale
 class OpenAITtsSpeaker(
     private val client: OpenAITtsClient,
     private val voice: String = DEFAULT_OPENAI_TTS_VOICE,
+    private val speed: Double = DEFAULT_OPENAI_TTS_SPEED,
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
@@ -26,7 +28,7 @@ class OpenAITtsSpeaker(
         // Settings, not from anything we can send at synthesis time. So we drop
         // [locale] on the floor here, intentionally — see TtsVoices.kt for the
         // picker-side filter that surfaces the accent-appropriate voices.
-        val audio = client.synthesize(text = prepareForTts(text), voice = voice)
+        val audio = client.synthesize(text = prepareForTts(text), voice = voice, speed = speed)
         PcmAudioPlayer.play(audio)
     }
 }

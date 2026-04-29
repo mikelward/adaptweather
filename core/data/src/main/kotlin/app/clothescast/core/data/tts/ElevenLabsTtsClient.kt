@@ -68,8 +68,9 @@ const val ELEVENLABS_MODEL_V3: String = "eleven_v3"
 const val DEFAULT_ELEVENLABS_TTS_SPEED: Double = 0.9
 
 // Above the stock 0.5 to favour pronunciation consistency over expression
-// for short weather briefings — drops fewer consonants.
-private const val DEFAULT_STABILITY = 0.65
+// for short weather briefings — drops fewer consonants. Mirrors
+// `core:domain:UserPreferences.DEFAULT_ELEVENLABS_STABILITY`.
+const val DEFAULT_ELEVENLABS_TTS_STABILITY: Double = 0.65
 
 /**
  * ElevenLabs TTS via `POST https://api.elevenlabs.io/v1/text-to-speech/{voice_id}`.
@@ -93,6 +94,7 @@ class ElevenLabsTtsClient(
         voiceId: String = DEFAULT_ELEVENLABS_TTS_VOICE,
         model: String = defaultModel,
         speed: Double = DEFAULT_ELEVENLABS_TTS_SPEED,
+        stability: Double = DEFAULT_ELEVENLABS_TTS_STABILITY,
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException("ElevenLabs")
@@ -117,7 +119,7 @@ class ElevenLabsTtsClient(
                     modelId = model,
                     voiceSettings = ElevenLabsVoiceSettings(
                         speed = speed,
-                        stability = DEFAULT_STABILITY,
+                        stability = stability,
                     ),
                 ),
             )

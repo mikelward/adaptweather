@@ -85,11 +85,14 @@ internal fun VoiceContent(
     elevenLabsRefreshing: Boolean,
     elevenLabsModel: String,
     elevenLabsSpeed: Double,
+    elevenLabsStability: Double,
+    openAiSpeed: Double,
     voiceLocale: VoiceLocale,
     padding: PaddingValues,
     onSetTtsEngine: (TtsEngine) -> Unit,
     onSetGeminiVoice: (String) -> Unit,
     onSetOpenAiVoice: (String) -> Unit,
+    onSetOpenAiSpeed: (Double) -> Unit,
     onSetElevenLabsVoice: (String) -> Unit,
     onSetDeviceVoice: (String?) -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
@@ -102,6 +105,7 @@ internal fun VoiceContent(
     onRefreshElevenLabsVoices: () -> Unit,
     onSetElevenLabsModel: (String) -> Unit,
     onSetElevenLabsSpeed: (Double) -> Unit,
+    onSetElevenLabsStability: (Double) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -119,17 +123,19 @@ internal fun VoiceContent(
         isPreviewing = true
         coroutineScope.launch {
             try {
-                // ElevenLabs model + speed are read off the latest props on
-                // every preview (rather than threaded through every caller)
-                // because they only matter for the one engine.
+                // Engine-specific tuning params are read off the latest props
+                // on every preview (rather than threaded through every
+                // caller) because each only matters for its one engine.
                 runTtsPreview(
                     context = context,
                     engine = engine,
                     geminiVoice = gVoice,
                     openAiVoice = oVoice,
+                    openAiSpeed = openAiSpeed,
                     elevenLabsVoice = eVoice,
                     elevenLabsModel = elevenLabsModel,
                     elevenLabsSpeed = elevenLabsSpeed,
+                    elevenLabsStability = elevenLabsStability,
                     deviceVoice = dVoice,
                     voiceLocale = locale,
                 )
@@ -234,6 +240,18 @@ internal fun VoiceContent(
                             preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
+                    TtsParameterSlider(
+                        labelRes = R.string.settings_openai_speed_label,
+                        persistedValue = openAiSpeed,
+                        min = UserPreferences.MIN_OPENAI_SPEED,
+                        max = UserPreferences.MAX_OPENAI_SPEED,
+                        step = 0.05,
+                        enabled = !isPreviewing,
+                        onValueChangeFinished = { released ->
+                            onSetOpenAiSpeed(released)
+                            preview(TtsEngine.OPENAI, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        },
+                    )
                     TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }
@@ -323,8 +341,12 @@ internal fun VoiceContent(
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
-                    ElevenLabsSpeedSlider(
+                    TtsParameterSlider(
+                        labelRes = R.string.settings_elevenlabs_speed_label,
                         persistedValue = elevenLabsSpeed,
+                        min = UserPreferences.MIN_ELEVENLABS_SPEED,
+                        max = UserPreferences.MAX_ELEVENLABS_SPEED,
+                        step = 0.05,
                         enabled = !isPreviewing,
                         // Persist + preview on slider release only. Every
                         // drag tick would fire a DataStore write, a
@@ -333,6 +355,22 @@ internal fun VoiceContent(
                         // value in local Compose state until release.
                         onValueChangeFinished = { released ->
                             onSetElevenLabsSpeed(released)
+                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        },
+                    )
+                    TtsParameterSlider(
+                        labelRes = R.string.settings_elevenlabs_stability_label,
+                        persistedValue = elevenLabsStability,
+                        min = UserPreferences.MIN_ELEVENLABS_STABILITY,
+                        max = UserPreferences.MAX_ELEVENLABS_STABILITY,
+                        // 0.05 increments give 21 selectable values across
+                        // 0.0–1.0 — fine enough that the user can audition
+                        // "expressive" (≤0.4), "default" (~0.65), and
+                        // "steady" (≥0.85) without overwhelming the picker.
+                        step = 0.05,
+                        enabled = !isPreviewing,
+                        onValueChangeFinished = { released ->
+                            onSetElevenLabsStability(released)
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
@@ -604,11 +642,9 @@ private fun ElevenLabsModelPicker(
 }
 
 /**
- * Slider for the per-clip ElevenLabs playback rate (0.7×–1.2×, the
- * documented voice_settings.speed range). Steps in 0.05 increments — fine
- * enough to be expressive, coarse enough that one tap of the thumb makes a
- * clearly audible difference. The vendor's stock 1.0 is "too fast" by
- * field-report; we default to 0.9.
+ * Slider for a per-clip TTS tuning parameter (currently used for ElevenLabs
+ * speed + stability and OpenAI speed). [labelRes] takes one `%1$s` formatted
+ * placeholder for the live numeric value (e.g. "Speed × %1$s" → "Speed × 0.95").
  *
  * The dragged value is held in local Compose state — only on release does
  * [onValueChangeFinished] fire with the final value, which the caller
@@ -620,31 +656,37 @@ private fun ElevenLabsModelPicker(
  * thumb-following number isn't laggy.
  */
 @Composable
-private fun ElevenLabsSpeedSlider(
+private fun TtsParameterSlider(
+    @androidx.annotation.StringRes labelRes: Int,
     persistedValue: Double,
+    min: Double,
+    max: Double,
+    step: Double,
     onValueChangeFinished: (Double) -> Unit,
     enabled: Boolean = true,
 ) {
-    val min = UserPreferences.MIN_ELEVENLABS_SPEED.toFloat()
-    val max = UserPreferences.MAX_ELEVENLABS_SPEED.toFloat()
-    // (max - min) / 0.05 = 10 internal positions ⇒ 11 selectable values.
-    val steps = 9
+    val minF = min.toFloat()
+    val maxF = max.toFloat()
+    // Slider's `steps` is the count of positions *between* the endpoints, so
+    // an N-step range uses (N - 1) here. round() guards against the floating
+    // tail of e.g. (1.0 - 0.0) / 0.05 producing 19.999…
+    val steps = (((max - min) / step).let { Math.round(it).toInt() } - 1).coerceAtLeast(0)
     // `persistedValue` keys the remember so an external change (DataStore
     // emission landing after `onValueChangeFinished` persists, or a future
     // settings reset) overwrites the local-during-drag value.
     var draggedValue by remember(persistedValue) {
-        mutableStateOf(persistedValue.toFloat().coerceIn(min, max))
+        mutableStateOf(persistedValue.toFloat().coerceIn(minF, maxF))
     }
     val displayValue = String.format(Locale.US, "%.2f", draggedValue)
     Text(
-        text = stringResource(R.string.settings_elevenlabs_speed_label, displayValue),
+        text = stringResource(labelRes, displayValue),
         style = MaterialTheme.typography.titleSmall,
     )
     Slider(
         value = draggedValue,
         onValueChange = { draggedValue = it },
         onValueChangeFinished = { onValueChangeFinished(draggedValue.toDouble()) },
-        valueRange = min..max,
+        valueRange = minF..maxF,
         steps = steps,
         enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
@@ -762,9 +804,11 @@ private suspend fun runTtsPreview(
     engine: TtsEngine,
     geminiVoice: String,
     openAiVoice: String,
+    openAiSpeed: Double,
     elevenLabsVoice: String,
     elevenLabsModel: String,
     elevenLabsSpeed: Double,
+    elevenLabsStability: Double,
     deviceVoice: String?,
     voiceLocale: VoiceLocale,
 ) {
@@ -785,13 +829,18 @@ private suspend fun runTtsPreview(
                     TtsEngine.GEMINI ->
                         GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text, locale)
                     TtsEngine.OPENAI ->
-                        OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text, locale)
+                        OpenAITtsSpeaker(
+                            client = app.openAiTtsClient,
+                            voice = openAiVoice,
+                            speed = openAiSpeed,
+                        ).speak(text, locale)
                     TtsEngine.ELEVENLABS ->
                         ElevenLabsTtsSpeaker(
                             client = app.elevenLabsTtsClient,
                             voiceId = elevenLabsVoice,
                             model = elevenLabsModel,
                             speed = elevenLabsSpeed,
+                            stability = elevenLabsStability,
                         ).speak(text, locale)
                     TtsEngine.DEVICE ->
                         app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
