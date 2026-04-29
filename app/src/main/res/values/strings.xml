@@ -210,11 +210,15 @@
     <string name="settings_elevenlabs_key_placeholder">Paste your ElevenLabs API key</string>
     <string name="settings_elevenlabs_key_save">Save ElevenLabs key</string>
     <string name="settings_elevenlabs_key_clear">Clear stored ElevenLabs key</string>
+    <!-- TODO(translations): the ElevenLabs refresh / model / speed strings
+         below are en-only for now. Localised values-*/strings.xml files
+         already translate the rest of the ElevenLabs settings keys, so
+         non-English users will see these specific controls in English
+         until translations land in a follow-up. -->
     <!-- Button shown only when an ElevenLabs key is set; fetches the
          account's voice library (premade + cloned) so the picker shows
          exactly what the user has access to. -->
     <string name="settings_elevenlabs_refresh_voices">Refresh voices</string>
-    <string name="settings_elevenlabs_refresh_voices_in_flight">Refreshing…</string>
     <!-- Caption under the picker after a successful refresh. %1$d is the
          number of voices loaded from the user's account. -->
     <string name="settings_elevenlabs_refresh_voices_loaded">Showing %1$d voices from your ElevenLabs account.</string>

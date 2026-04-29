@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -275,7 +276,11 @@ internal fun VoiceContent(
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, deviceVoice, voiceLocale)
                         },
                     )
-                    if (elevenLabsRefreshedVoices != null) {
+                    // Caption only when we actually rendered the refreshed
+                    // list. An empty refresh result silently falls back to
+                    // the curated voices (above), so "Showing 0 voices …"
+                    // would be misleading.
+                    if (!elevenLabsRefreshedVoices.isNullOrEmpty()) {
                         Text(
                             text = stringResource(
                                 R.string.settings_elevenlabs_refresh_voices_loaded,
@@ -295,16 +300,19 @@ internal fun VoiceContent(
                             enabled = !isPreviewing && !elevenLabsRefreshing,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
+                            // Always render the text label so TalkBack /
+                            // VoiceOver have something to announce (the
+                            // spinner alone is unlabeled). The spinner
+                            // sits to the left of the label while a
+                            // refresh is in flight.
                             if (elevenLabsRefreshing) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
-                                    )
-                                }
-                            } else {
-                                Text(stringResource(R.string.settings_elevenlabs_refresh_voices))
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp,
+                                )
+                                Spacer(modifier = Modifier.size(8.dp))
                             }
+                            Text(stringResource(R.string.settings_elevenlabs_refresh_voices))
                         }
                     }
                     ElevenLabsModelPicker(
@@ -316,16 +324,15 @@ internal fun VoiceContent(
                         },
                     )
                     ElevenLabsSpeedSlider(
-                        value = elevenLabsSpeed,
+                        persistedValue = elevenLabsSpeed,
                         enabled = !isPreviewing,
-                        onValueChange = onSetElevenLabsSpeed,
-                        // Preview only on slider release — every drag tick
-                        // would fire a billed synthesis call and stack
-                        // playback. The picker's "lock-while-previewing"
-                        // gate gives us release semantics for free: once
-                        // the user lifts and we trigger preview, further
-                        // drags are ignored until it finishes.
-                        onValueChangeFinished = {
+                        // Persist + preview on slider release only. Every
+                        // drag tick would fire a DataStore write, a
+                        // preferences-flow emission, and (worse) a billed
+                        // synthesis call. The slider holds its dragged
+                        // value in local Compose state until release.
+                        onValueChangeFinished = { released ->
+                            onSetElevenLabsSpeed(released)
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
@@ -594,30 +601,40 @@ private fun ElevenLabsModelPicker(
  * clearly audible difference. The vendor's stock 1.0 is "too fast" by
  * field-report; we default to 0.9.
  *
- * `onValueChange` fires continuously during drag so the label updates
- * smoothly; `onValueChangeFinished` fires once on release so the caller
- * can trigger a single billed synthesis preview rather than one per tick.
+ * The dragged value is held in local Compose state — only on release does
+ * [onValueChangeFinished] fire with the final value, which the caller
+ * persists and uses to trigger a billed synthesis preview. This avoids a
+ * burst of DataStore writes (one per drag tick) and keeps a single
+ * preview from stacking on top of itself if the user is still dragging.
+ *
+ * The label updates live during drag (off the local state), so the
+ * thumb-following number isn't laggy.
  */
 @Composable
 private fun ElevenLabsSpeedSlider(
-    value: Double,
-    onValueChange: (Double) -> Unit,
-    onValueChangeFinished: () -> Unit,
+    persistedValue: Double,
+    onValueChangeFinished: (Double) -> Unit,
     enabled: Boolean = true,
 ) {
     val min = UserPreferences.MIN_ELEVENLABS_SPEED.toFloat()
     val max = UserPreferences.MAX_ELEVENLABS_SPEED.toFloat()
     // (max - min) / 0.05 = 10 internal positions ⇒ 11 selectable values.
     val steps = 9
-    val displayValue = String.format(Locale.US, "%.2f", value)
+    // `persistedValue` keys the remember so an external change (DataStore
+    // emission landing after `onValueChangeFinished` persists, or a future
+    // settings reset) overwrites the local-during-drag value.
+    var draggedValue by remember(persistedValue) {
+        mutableStateOf(persistedValue.toFloat().coerceIn(min, max))
+    }
+    val displayValue = String.format(Locale.US, "%.2f", draggedValue)
     Text(
         text = stringResource(R.string.settings_elevenlabs_speed_label, displayValue),
         style = MaterialTheme.typography.titleSmall,
     )
     Slider(
-        value = value.toFloat().coerceIn(min, max),
-        onValueChange = { onValueChange(it.toDouble()) },
-        onValueChangeFinished = onValueChangeFinished,
+        value = draggedValue,
+        onValueChange = { draggedValue = it },
+        onValueChangeFinished = { onValueChangeFinished(draggedValue.toDouble()) },
         valueRange = min..max,
         steps = steps,
         enabled = enabled,

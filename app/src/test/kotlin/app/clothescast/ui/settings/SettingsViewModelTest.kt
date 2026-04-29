@@ -230,6 +230,11 @@ class SettingsViewModelTest {
             voiceEnumerator = EmptyVoiceEnumerator,
             elevenLabsTtsClient = client,
         )
+        // refreshElevenLabsVoices early-returns when the key isn't
+        // configured (the UI also gates the button), so persist a key
+        // first and wait for the state flag to flip before triggering.
+        refreshSubject.setElevenLabsKey("test-key")
+        refreshSubject.state.first { it.elevenLabsKeyConfigured }
 
         refreshSubject.refreshElevenLabsVoices()
 
@@ -276,12 +281,62 @@ class SettingsViewModelTest {
             elevenLabsTtsClient = client,
             showError = { reported = it },
         )
+        // The early-return covers "no key" so the 401 path needs a
+        // configured (but server-rejected) key. Setting a stored key
+        // flips the state flag; the request itself will still 401
+        // because the MockEngine returns Unauthorized regardless of
+        // what the key actually is.
+        refreshSubject.setElevenLabsKey("bad-key")
+        refreshSubject.state.first { it.elevenLabsKeyConfigured }
 
         refreshSubject.refreshElevenLabsVoices()
 
         refreshSubject.state.first { !it.elevenLabsRefreshing }
         refreshSubject.state.value.elevenLabsRefreshedVoices shouldBe null
         checkNotNull(reported).shouldContain("Invalid API key")
+    }
+
+    @Test
+    fun `refreshElevenLabsVoices no-ops when no ElevenLabs key is configured`() = runTest {
+        // The UI hides the Refresh button without a key, but a defensive
+        // early-return means even if it's invoked manually (e.g. test
+        // wiring) we don't fire a guaranteed-401 request.
+        var listVoicesCallCount = 0
+        val client = ElevenLabsTtsClient(
+            httpClient = HttpClient(
+                MockEngine {
+                    listVoicesCallCount++
+                    respond("""{"voices":[]}""")
+                },
+            ) { install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) } },
+            keyProvider = object : KeyProvider {
+                override suspend fun get(): String = ""
+            },
+        )
+        val refreshSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            elevenLabsTtsClient = client,
+        )
+        // Wait for the initial keystore probe to land — without it the
+        // state flag is still its default `false`, which would also
+        // short-circuit but for the wrong reason.
+        refreshSubject.state.first { !it.elevenLabsKeyConfigured }
+
+        refreshSubject.refreshElevenLabsVoices()
+
+        // No HTTP traffic, no state change.
+        listVoicesCallCount shouldBe 0
+        refreshSubject.state.value.elevenLabsRefreshedVoices shouldBe null
+        refreshSubject.state.value.elevenLabsRefreshing shouldBe false
     }
 }
 
