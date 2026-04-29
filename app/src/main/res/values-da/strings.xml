@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Danish translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_da_dk">Dansk (Danmark)</string>
+    <string name="settings_tts_voice_locale_da_dk">Dansk (Danmark)</string>
+    <string name="settings_tts_voice_locale_label">Sprog</string>
+
+    <string name="garment_sweater">Sweater</string>
+    <string name="garment_hoodie">Hættetrøje</string>
+    <string name="garment_jacket">Jakke</string>
+    <string name="garment_coat">Frakke</string>
+    <string name="garment_tshirt">T-shirt</string>
+    <string name="garment_shirt">Skjorte</string>
+    <string name="garment_shorts">Shorts</string>
+    <string name="garment_pants">Bukser</string>
+    <string name="garment_jeans">Jeans</string>
+
+    <string name="settings_clothes_empty">Ingen regler. Tryk på Tilføj for at oprette en.</string>
+    <string name="settings_clothes_add">Tilføj</string>
+    <string name="settings_clothes_edit">Rediger</string>
+    <string name="settings_clothes_delete">Slet</string>
+    <string name="settings_clothes_dialog_add_title">Tilføj tøjregel</string>
+    <string name="settings_clothes_dialog_edit_title">Rediger tøjregel</string>
+    <string name="settings_clothes_item_label">Tøjstykke</string>
+    <string name="settings_clothes_condition_label">Betingelse</string>
+    <string name="settings_clothes_value_label_temp_c">Tærskel (°C)</string>
+    <string name="settings_clothes_value_label_precip">Tærskel (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Når det føles koldere end</string>
+    <string name="settings_clothes_cond_type_temp_above">Når det føles varmere end</string>
+    <string name="settings_clothes_cond_type_precip_above">Når regnsandsynligheden er over</string>
+    <string name="settings_clothes_cond_temp_below">når den følte temperatur er under %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">når den følte temperatur er over %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">når regnsandsynligheden er over %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_sweater">Sweater</string>
+    <string name="today_outfit_top_thick_jacket">Tyk jakke</string>
+    <string name="today_outfit_bottom_shorts">Shorts</string>
+    <string name="today_outfit_bottom_long_pants">Lange bukser</string>
+
+    <string name="insight_lead_today">I dag</string>
+    <string name="insight_lead_tonight">I aften</string>
+    <!-- Danish V2 word order: "I dag bliver det mildt." -->
+    <string name="insight_band_single">%1$s bliver det %2$s.</string>
+    <string name="insight_band_range">%1$s bliver det %2$s til %3$s.</string>
+    <string name="insight_band_freezing">iskoldt</string>
+    <string name="insight_band_cold">koldt</string>
+    <string name="insight_band_cool">køligt</string>
+    <string name="insight_band_mild">mildt</string>
+    <string name="insight_band_warm">varmt</string>
+    <string name="insight_band_hot">meget varmt</string>
+    <string name="insight_delta_warmer">Det bliver %1$d° varmere i dag.</string>
+    <string name="insight_delta_cooler">Det bliver %1$d° koldere i dag.</string>
+    <string name="insight_alert">Advarsel: %1$s.</string>
+    <!-- Split-verb "tag … på" = put on. -->
+    <string name="insight_clothes_wear">Tag %1$s på.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s og %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s og %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">klokken %1$s</string>
+    <string name="insight_precip_overnight">i nat</string>
+    <string name="insight_condition_clear">Klart</string>
+    <string name="insight_condition_partly_cloudy">Delvist skyet</string>
+    <string name="insight_condition_cloudy">Skyet</string>
+    <string name="insight_condition_fog">Tåge</string>
+    <string name="insight_condition_drizzle">Støvregn</string>
+    <string name="insight_condition_rain">Regn</string>
+    <string name="insight_condition_snow">Sne</string>
+    <string name="insight_condition_thunderstorm">Tordenvejr</string>
+    <string name="insight_condition_unknown">Ukendt</string>
+    <string name="insight_tie_in">Tag %1$s med i aften.</string>
+    <string name="insight_tie_in_with_rain">Tag %1$s med i aften, regn klokken %2$s.</string>
+    <!-- "15" — "klokken" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>
