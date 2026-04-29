@@ -118,24 +118,38 @@ internal fun VoiceContent(
     // atomic with respect to other UI events.
     var isPreviewing by remember { mutableStateOf(false) }
 
-    fun preview(engine: TtsEngine, gVoice: String, oVoice: String, eVoice: String, dVoice: String?, locale: VoiceLocale) {
+    // Slider / picker callbacks need to pass the just-released value into
+    // `preview` directly: `onSet…` writes asynchronously through DataStore →
+    // StateFlow, so the prop hasn't caught up yet when we kick off the
+    // preview. Defaulting each override to the current prop means callers
+    // that aren't changing that knob can keep passing positional args as
+    // before; callers that *are* changing it pass the released value.
+    fun preview(
+        engine: TtsEngine,
+        gVoice: String,
+        oVoice: String,
+        eVoice: String,
+        dVoice: String?,
+        locale: VoiceLocale,
+        oSpeed: Double = openAiSpeed,
+        eSpeed: Double = elevenLabsSpeed,
+        eStability: Double = elevenLabsStability,
+        eModel: String = elevenLabsModel,
+    ) {
         if (isPreviewing) return
         isPreviewing = true
         coroutineScope.launch {
             try {
-                // Engine-specific tuning params are read off the latest props
-                // on every preview (rather than threaded through every
-                // caller) because each only matters for its one engine.
                 runTtsPreview(
                     context = context,
                     engine = engine,
                     geminiVoice = gVoice,
                     openAiVoice = oVoice,
-                    openAiSpeed = openAiSpeed,
+                    openAiSpeed = oSpeed,
                     elevenLabsVoice = eVoice,
-                    elevenLabsModel = elevenLabsModel,
-                    elevenLabsSpeed = elevenLabsSpeed,
-                    elevenLabsStability = elevenLabsStability,
+                    elevenLabsModel = eModel,
+                    elevenLabsSpeed = eSpeed,
+                    elevenLabsStability = eStability,
                     deviceVoice = dVoice,
                     voiceLocale = locale,
                 )
@@ -249,7 +263,10 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onValueChangeFinished = { released ->
                             onSetOpenAiSpeed(released)
-                            preview(TtsEngine.OPENAI, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                            preview(
+                                TtsEngine.OPENAI, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                oSpeed = released,
+                            )
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
@@ -336,9 +353,12 @@ internal fun VoiceContent(
                     ElevenLabsModelPicker(
                         selected = elevenLabsModel,
                         enabled = !isPreviewing,
-                        onSelect = {
-                            onSetElevenLabsModel(it)
-                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        onSelect = { picked ->
+                            onSetElevenLabsModel(picked)
+                            preview(
+                                TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                eModel = picked,
+                            )
                         },
                     )
                     TtsParameterSlider(
@@ -355,7 +375,10 @@ internal fun VoiceContent(
                         // value in local Compose state until release.
                         onValueChangeFinished = { released ->
                             onSetElevenLabsSpeed(released)
-                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                            preview(
+                                TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                eSpeed = released,
+                            )
                         },
                     )
                     TtsParameterSlider(
@@ -371,7 +394,10 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onValueChangeFinished = { released ->
                             onSetElevenLabsStability(released)
-                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                            preview(
+                                TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                eStability = released,
+                            )
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
