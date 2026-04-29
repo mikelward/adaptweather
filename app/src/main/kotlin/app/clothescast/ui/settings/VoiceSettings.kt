@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -43,6 +44,11 @@ import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.insight.InsightFormatter
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_FLASH_V2_5
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_MULTILINGUAL_V2
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_TURBO_V2_5
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_V3
+import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.tts.DeviceVoice
 import app.clothescast.tts.ELEVENLABS_VOICES
 import app.clothescast.tts.ElevenLabsTtsSpeaker
@@ -76,6 +82,8 @@ internal fun VoiceContent(
     elevenLabsKeyConfigured: Boolean,
     elevenLabsRefreshedVoices: List<TtsVoiceOption>?,
     elevenLabsRefreshing: Boolean,
+    elevenLabsModel: String,
+    elevenLabsSpeed: Double,
     voiceLocale: VoiceLocale,
     padding: PaddingValues,
     onSetTtsEngine: (TtsEngine) -> Unit,
@@ -91,6 +99,8 @@ internal fun VoiceContent(
     onSetElevenLabsKey: (String) -> Unit,
     onClearElevenLabsKey: () -> Unit,
     onRefreshElevenLabsVoices: () -> Unit,
+    onSetElevenLabsModel: (String) -> Unit,
+    onSetElevenLabsSpeed: (Double) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -108,7 +118,20 @@ internal fun VoiceContent(
         isPreviewing = true
         coroutineScope.launch {
             try {
-                runTtsPreview(context, engine, gVoice, oVoice, eVoice, dVoice, locale)
+                // ElevenLabs model + speed are read off the latest props on
+                // every preview (rather than threaded through every caller)
+                // because they only matter for the one engine.
+                runTtsPreview(
+                    context = context,
+                    engine = engine,
+                    geminiVoice = gVoice,
+                    openAiVoice = oVoice,
+                    elevenLabsVoice = eVoice,
+                    elevenLabsModel = elevenLabsModel,
+                    elevenLabsSpeed = elevenLabsSpeed,
+                    deviceVoice = dVoice,
+                    voiceLocale = locale,
+                )
             } finally {
                 isPreviewing = false
             }
@@ -279,6 +302,28 @@ internal fun VoiceContent(
                             }
                         }
                     }
+                    ElevenLabsModelPicker(
+                        selected = elevenLabsModel,
+                        enabled = !isPreviewing,
+                        onSelect = {
+                            onSetElevenLabsModel(it)
+                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        },
+                    )
+                    ElevenLabsSpeedSlider(
+                        value = elevenLabsSpeed,
+                        enabled = !isPreviewing,
+                        onValueChange = onSetElevenLabsSpeed,
+                        // Preview only on slider release — every drag tick
+                        // would fire a billed synthesis call and stack
+                        // playback. The picker's "lock-while-previewing"
+                        // gate gives us release semantics for free: once
+                        // the user lifts and we trigger preview, further
+                        // drags are ignored until it finishes.
+                        onValueChangeFinished = {
+                            preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
+                        },
+                    )
                     TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }
@@ -503,6 +548,79 @@ private fun DeviceVoicePicker(
 private const val DEVICE_VOICE_AUTO_ID = "__auto__"
 
 /**
+ * Radio list for the four ElevenLabs models we expose: Turbo v2.5 (default,
+ * balanced), Multilingual v2 (legacy flagship — 2× the credit cost), Flash
+ * v2.5 (lowest latency), and v3 (alpha). Kept as a small fixed list rather
+ * than a `GET /v1/models` fetch — the cost / latency trade-offs of each are
+ * UX prose the user benefits from seeing inline, and the wire IDs don't
+ * change often. Add a new constant + entry here when ElevenLabs ships
+ * something worth surfacing.
+ */
+@Composable
+private fun ElevenLabsModelPicker(
+    selected: String,
+    onSelect: (String) -> Unit,
+    enabled: Boolean = true,
+) {
+    val models = listOf(
+        ELEVENLABS_MODEL_TURBO_V2_5 to R.string.settings_elevenlabs_model_turbo_v2_5,
+        ELEVENLABS_MODEL_MULTILINGUAL_V2 to R.string.settings_elevenlabs_model_multilingual_v2,
+        ELEVENLABS_MODEL_FLASH_V2_5 to R.string.settings_elevenlabs_model_flash_v2_5,
+        ELEVENLABS_MODEL_V3 to R.string.settings_elevenlabs_model_v3,
+    )
+    Text(
+        text = stringResource(R.string.settings_elevenlabs_model_label),
+        style = MaterialTheme.typography.titleSmall,
+    )
+    models.forEach { (id, labelRes) ->
+        RadioRow(
+            label = stringResource(labelRes),
+            selected = id == selected,
+            enabled = enabled,
+            onSelect = { onSelect(id) },
+        )
+    }
+}
+
+/**
+ * Slider for the per-clip ElevenLabs playback rate (0.7×–1.2×, the
+ * documented voice_settings.speed range). Steps in 0.05 increments — fine
+ * enough to be expressive, coarse enough that one tap of the thumb makes a
+ * clearly audible difference. The vendor's stock 1.0 is "too fast" by
+ * field-report; we default to 0.9.
+ *
+ * `onValueChange` fires continuously during drag so the label updates
+ * smoothly; `onValueChangeFinished` fires once on release so the caller
+ * can trigger a single billed synthesis preview rather than one per tick.
+ */
+@Composable
+private fun ElevenLabsSpeedSlider(
+    value: Double,
+    onValueChange: (Double) -> Unit,
+    onValueChangeFinished: () -> Unit,
+    enabled: Boolean = true,
+) {
+    val min = UserPreferences.MIN_ELEVENLABS_SPEED.toFloat()
+    val max = UserPreferences.MAX_ELEVENLABS_SPEED.toFloat()
+    // (max - min) / 0.05 = 10 internal positions ⇒ 11 selectable values.
+    val steps = 9
+    val displayValue = String.format(Locale.US, "%.2f", value)
+    Text(
+        text = stringResource(R.string.settings_elevenlabs_speed_label, displayValue),
+        style = MaterialTheme.typography.titleSmall,
+    )
+    Slider(
+        value = value.toFloat().coerceIn(min, max),
+        onValueChange = { onValueChange(it.toDouble()) },
+        onValueChangeFinished = onValueChangeFinished,
+        valueRange = min..max,
+        steps = steps,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+/**
  * Tracks whether `com.google.android.tts` is currently installed, refreshing
  * on every `ON_RESUME`. Lives in the composable layer (rather than the
  * SettingsViewModel) because the ViewModel instance is reused across
@@ -614,6 +732,8 @@ private suspend fun runTtsPreview(
     geminiVoice: String,
     openAiVoice: String,
     elevenLabsVoice: String,
+    elevenLabsModel: String,
+    elevenLabsSpeed: Double,
     deviceVoice: String?,
     voiceLocale: VoiceLocale,
 ) {
@@ -636,7 +756,12 @@ private suspend fun runTtsPreview(
                     TtsEngine.OPENAI ->
                         OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text, locale)
                     TtsEngine.ELEVENLABS ->
-                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = elevenLabsVoice).speak(text, locale)
+                        ElevenLabsTtsSpeaker(
+                            client = app.elevenLabsTtsClient,
+                            voiceId = elevenLabsVoice,
+                            model = elevenLabsModel,
+                            speed = elevenLabsSpeed,
+                        ).speak(text, locale)
                     TtsEngine.DEVICE ->
                         app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
                 }

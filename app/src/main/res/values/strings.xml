@@ -219,6 +219,16 @@
          number of voices loaded from the user's account. -->
     <string name="settings_elevenlabs_refresh_voices_loaded">Showing %1$d voices from your ElevenLabs account.</string>
 
+    <!-- Section heading above the four-radio model picker. -->
+    <string name="settings_elevenlabs_model_label">Model</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — balanced (default, 0.5 credits/char)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — flagship quality (1.0 credits/char)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — fastest (0.5 credits/char)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — audio-tag aware (experimental)</string>
+    <!-- Heading above the speed slider; %1$s is the current value formatted
+         as e.g. "0.90". -->
+    <string name="settings_elevenlabs_speed_label">Speed × %1$s</string>
+
     <string name="settings_region_language_title">Language</string>
     <!-- Caption rendered under the Region > Language title, pairing with
          settings_tts_voice_locale_description so the user can tell which knob

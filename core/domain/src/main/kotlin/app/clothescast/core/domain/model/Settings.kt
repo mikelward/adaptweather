@@ -169,6 +169,21 @@ data class UserPreferences(
      */
     val elevenLabsVoice: String = DEFAULT_ELEVENLABS_VOICE,
     /**
+     * ElevenLabs synthesis model ID (e.g. `eleven_turbo_v2_5`,
+     * `eleven_multilingual_v2`, `eleven_flash_v2_5`, `eleven_v3`). Stored
+     * as a free-form string so adding a new model doesn't need a domain
+     * enum migration. Only consulted when [ttsEngine] ==
+     * [TtsEngine.ELEVENLABS].
+     */
+    val elevenLabsModel: String = DEFAULT_ELEVENLABS_MODEL,
+    /**
+     * Per-clip ElevenLabs playback rate (multiplier, 0.7–1.2 per the
+     * documented range). Default 0.9 because field reports flagged the
+     * vendor's stock 1.0 as "too fast". Only consulted when [ttsEngine]
+     * == [TtsEngine.ELEVENLABS].
+     */
+    val elevenLabsSpeed: Double = DEFAULT_ELEVENLABS_SPEED,
+    /**
      * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
      * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)
      * means "auto-pick the highest-quality voice for [voiceLocale]" — the
@@ -231,5 +246,15 @@ data class UserPreferences(
         const val DEFAULT_OPENAI_VOICE = "alloy"
         // Sarah — the most generally pleasant of ElevenLabs's stock library voices.
         const val DEFAULT_ELEVENLABS_VOICE = "EXAVITQu4vr4xnSDxMaL"
+        // Mirrors `core:data:ElevenLabsTtsClient.DEFAULT_ELEVENLABS_TTS_MODEL`
+        // — duplicated as a literal so domain stays Android- and data-layer-
+        // independent. Update both sides together if the default ever shifts.
+        const val DEFAULT_ELEVENLABS_MODEL = "eleven_turbo_v2_5"
+        // Playback-rate multiplier applied per request (clamped 0.7–1.2 by
+        // the picker UI; ElevenLabs documents the same range). Below 1.0 by
+        // default for clarity over expression on short briefings.
+        const val DEFAULT_ELEVENLABS_SPEED = 0.9
+        const val MIN_ELEVENLABS_SPEED = 0.7
+        const val MAX_ELEVENLABS_SPEED = 1.2
     }
 }

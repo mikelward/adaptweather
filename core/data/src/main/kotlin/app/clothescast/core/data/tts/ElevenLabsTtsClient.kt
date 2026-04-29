@@ -44,10 +44,28 @@ import kotlinx.serialization.json.JsonPrimitive
 const val DEFAULT_ELEVENLABS_TTS_MODEL: String = "eleven_turbo_v2_5"
 const val DEFAULT_ELEVENLABS_TTS_VOICE: String = "EXAVITQu4vr4xnSDxMaL" // Sarah
 
+// Wire-IDs for the four models we surface in the picker. Kept as a small set
+// (rather than every model ElevenLabs ships) so the radio list stays scannable
+// — these are the ones with meaningfully different cost / latency / quality
+// trade-offs for short weather briefings.
+//
+// turbo_v2_5  — current default. 0.5 credits/char, multilingual, low latency,
+//               near-multilingual_v2 quality on stock voices.
+// multilingual_v2 — 1.0 credits/char (2× the cost), historically the
+//               flagship-quality option; some voice clones still tune for it.
+// flash_v2_5  — 0.5 credits/char, fastest first-byte, slightly less natural;
+//               the "if turbo is still too slow" option.
+// v3          — alpha (April 2026). Audio-tag aware. Pricing not yet
+//               finalised; surfaced for users who want to experiment.
+const val ELEVENLABS_MODEL_TURBO_V2_5: String = "eleven_turbo_v2_5"
+const val ELEVENLABS_MODEL_MULTILINGUAL_V2: String = "eleven_multilingual_v2"
+const val ELEVENLABS_MODEL_FLASH_V2_5: String = "eleven_flash_v2_5"
+const val ELEVENLABS_MODEL_V3: String = "eleven_v3"
+
 // Below ElevenLabs' stock 1.0 because field reports flagged the default pace
 // as "too fast" — 0.9 is a noticeable but not draggy slowdown. Stays inside
 // the documented 0.7–1.2 range.
-private const val DEFAULT_SPEED = 0.9
+const val DEFAULT_ELEVENLABS_TTS_SPEED: Double = 0.9
 
 // Above the stock 0.5 to favour pronunciation consistency over expression
 // for short weather briefings — drops fewer consonants.
@@ -68,11 +86,13 @@ private const val DEFAULT_STABILITY = 0.65
 class ElevenLabsTtsClient(
     private val httpClient: HttpClient,
     private val keyProvider: KeyProvider,
-    private val model: String = DEFAULT_ELEVENLABS_TTS_MODEL,
+    private val defaultModel: String = DEFAULT_ELEVENLABS_TTS_MODEL,
 ) {
     suspend fun synthesize(
         text: String,
         voiceId: String = DEFAULT_ELEVENLABS_TTS_VOICE,
+        model: String = defaultModel,
+        speed: Double = DEFAULT_ELEVENLABS_TTS_SPEED,
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException("ElevenLabs")
@@ -96,7 +116,7 @@ class ElevenLabsTtsClient(
                     text = text,
                     modelId = model,
                     voiceSettings = ElevenLabsVoiceSettings(
-                        speed = DEFAULT_SPEED,
+                        speed = speed,
                         stability = DEFAULT_STABILITY,
                     ),
                 ),

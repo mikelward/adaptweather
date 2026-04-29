@@ -148,6 +148,8 @@ fun SettingsScreen(
                 elevenLabsKeyConfigured = state.elevenLabsKeyConfigured,
                 elevenLabsRefreshedVoices = state.elevenLabsRefreshedVoices,
                 elevenLabsRefreshing = state.elevenLabsRefreshing,
+                elevenLabsModel = state.elevenLabsModel,
+                elevenLabsSpeed = state.elevenLabsSpeed,
                 voiceLocale = state.voiceLocale,
                 padding = padding,
                 onSetTtsEngine = viewModel::setTtsEngine,
@@ -163,6 +165,8 @@ fun SettingsScreen(
                 onSetElevenLabsKey = viewModel::setElevenLabsKey,
                 onClearElevenLabsKey = viewModel::clearElevenLabsKey,
                 onRefreshElevenLabsVoices = viewModel::refreshElevenLabsVoices,
+                onSetElevenLabsModel = viewModel::setElevenLabsModel,
+                onSetElevenLabsSpeed = viewModel::setElevenLabsSpeed,
             )
             SettingsRoute.DataSources -> DataSourcesContent(
                 location = state.location,

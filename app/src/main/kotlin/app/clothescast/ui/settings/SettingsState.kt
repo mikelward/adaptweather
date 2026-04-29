@@ -47,6 +47,8 @@ data class SettingsState(
     // current locale → fable on en-GB, nova everywhere else.
     val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
     val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,
+    val elevenLabsModel: String = UserPreferences.DEFAULT_ELEVENLABS_MODEL,
+    val elevenLabsSpeed: Double = UserPreferences.DEFAULT_ELEVENLABS_SPEED,
     /**
      * On-device voice ID the user has pinned, or `null` for "auto-pick the
      * highest-quality voice for [voiceLocale]" (the default for installs

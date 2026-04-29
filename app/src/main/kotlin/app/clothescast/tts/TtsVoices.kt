@@ -119,21 +119,31 @@ val ELEVENLABS_VOICES: List<TtsVoiceOption> = listOf(
  * Adapts a list of [ElevenLabsVoiceSummary] (the wire-side projection from
  * `GET /v1/voices`) into the picker's [TtsVoiceOption] type.
  *
- * The display name is `name` plus an optional " — description" tail when the
- * voice has a description label, matching the curated [ELEVENLABS_VOICES]
- * formatting. We deliberately leave [TtsVoiceOption.locale] null on every
- * refreshed entry rather than trying to map ElevenLabs's free-form `accent`
- * label ("american", "british", "australian", "transatlantic", custom user
+ * Display-name shape mirrors the curated [ELEVENLABS_VOICES] format and
+ * folds in whatever metadata the API returned, so users with similarly-
+ * named voices (e.g. several clones called "Mike") can still tell them
+ * apart in the picker:
+ *
+ *  - both description and accent: `"Sarah — warm (american)"`
+ *  - description only:            `"Sarah — warm"`
+ *  - accent only:                 `"Sarah (american)"`
+ *  - neither (typical clone):     `"Sarah"`
+ *
+ * We deliberately leave [TtsVoiceOption.locale] null on every refreshed
+ * entry rather than trying to map ElevenLabs's free-form `accent` label
+ * ("american", "british", "australian", "transatlantic", custom user
  * strings, …) to [VoiceLocale]: the user explicitly hit "Refresh", so they
  * want to see what their key has access to without the locale filter
  * dropping non-matching accents. Cloned voices in particular often have no
  * accent label at all.
  */
 fun List<ElevenLabsVoiceSummary>.toVoiceOptions(): List<TtsVoiceOption> = map { summary ->
-    val displayName = if (summary.description.isNullOrBlank()) {
-        summary.name
-    } else {
-        "${summary.name} — ${summary.description}"
+    val description = summary.description?.takeIf { it.isNotBlank() }
+    val accent = summary.accent?.takeIf { it.isNotBlank() }
+    val displayName = buildString {
+        append(summary.name)
+        if (description != null) append(" — ").append(description)
+        if (accent != null) append(" (").append(accent).append(')')
     }
     TtsVoiceOption(id = summary.id, displayName = displayName, locale = null)
 }

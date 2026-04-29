@@ -1,5 +1,6 @@
 package app.clothescast.tts
 
+import app.clothescast.core.data.tts.ElevenLabsVoiceSummary
 import app.clothescast.core.domain.model.VoiceLocale
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
@@ -72,5 +73,35 @@ class TtsVoicesTest {
         // selected). keepSelected becomes a no-op rather than re-appending.
         val all = listOf(american)
         all.filterByVariant(VoiceLocale.EN_AU, keepSelected = "a") shouldBe all
+    }
+
+    @Test
+    fun `toVoiceOptions formats name plus description plus accent when all present`() {
+        val mapped = listOf(
+            ElevenLabsVoiceSummary(id = "v1", name = "Sarah", accent = "american", description = "warm"),
+        ).toVoiceOptions()
+        mapped[0].id shouldBe "v1"
+        mapped[0].displayName shouldBe "Sarah — warm (american)"
+        // Refreshed entries are accent-agnostic so the locale filter never
+        // drops them — see the comment on toVoiceOptions.
+        mapped[0].locale shouldBe null
+    }
+
+    @Test
+    fun `toVoiceOptions falls through gracefully when labels are partial or missing`() {
+        val mapped = listOf(
+            ElevenLabsVoiceSummary(id = "d", name = "DescOnly", description = "calm"),
+            ElevenLabsVoiceSummary(id = "a", name = "AccentOnly", accent = "british"),
+            ElevenLabsVoiceSummary(id = "n", name = "Nameless"),
+            // Whitespace-only labels are treated the same as null so we don't
+            // render "Sarah —  ()" for sparsely-tagged clones.
+            ElevenLabsVoiceSummary(id = "b", name = "Blank", accent = "  ", description = ""),
+        ).toVoiceOptions()
+        mapped.map { it.displayName } shouldBe listOf(
+            "DescOnly — calm",
+            "AccentOnly (british)",
+            "Nameless",
+            "Blank",
+        )
     }
 }

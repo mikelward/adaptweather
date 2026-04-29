@@ -289,6 +289,34 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `elevenLabs model and speed round-trip and default sensibly`() = runTest {
+        // Defaults match the constants exposed by core:domain so the picker
+        // shows the right initial selection on a fresh install.
+        val initial = subject.preferences.first()
+        initial.elevenLabsModel shouldBe "eleven_turbo_v2_5"
+        initial.elevenLabsSpeed shouldBe 0.9
+
+        subject.setElevenLabsModel("eleven_flash_v2_5")
+        subject.setElevenLabsSpeed(1.05)
+
+        val updated = subject.preferences.first()
+        updated.elevenLabsModel shouldBe "eleven_flash_v2_5"
+        updated.elevenLabsSpeed shouldBe 1.05
+    }
+
+    @Test
+    fun `elevenLabs speed setter clamps to the documented 0_7 to 1_2 range`() = runTest {
+        // Out-of-range values get clamped on write so a malformed prefs
+        // edit (or a future migration that bypasses the slider) can't
+        // push past what ElevenLabs actually accepts.
+        subject.setElevenLabsSpeed(2.0)
+        subject.preferences.first().elevenLabsSpeed shouldBe 1.2
+
+        subject.setElevenLabsSpeed(0.1)
+        subject.preferences.first().elevenLabsSpeed shouldBe 0.7
+    }
+
+    @Test
     fun `openAiVoice defaults to nova for non-British locale preferences`() = runTest {
         subject.setVoiceLocale(VoiceLocale.EN_US)
         subject.preferences.first().openAiVoice shouldBe "nova"
