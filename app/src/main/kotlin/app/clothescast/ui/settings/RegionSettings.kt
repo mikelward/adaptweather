@@ -4,13 +4,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -20,7 +27,6 @@ import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import java.text.Collator
-import java.util.Locale
 
 @Composable
 internal fun RegionContent(
@@ -46,33 +52,7 @@ internal fun RegionContent(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            // System tag exposed next to "Follow system locale" so the user can
-            // verify what the app currently resolves to (e.g. "en-GB").
-            // Use the context resources locale so this updates with runtime
-            // app-language changes, instead of freezing the process default.
-            // Strip Unicode extensions (e.g. `-u-fw-mon` from a Monday-week
-            // device preference) — they're irrelevant to language/region and
-            // just clutter the picker label.
-            val uiLocale = LocalContext.current.resourcesLocale()
-            val systemTag = remember(uiLocale) { uiLocale.stripExtensions().toLanguageTag() }
-            // Sort by the resolved display label using a locale-aware collator
-            // so the order reads naturally in the user's UI language. SYSTEM
-            // stays pinned at the top — it's a "follow device" option, not a
-            // language to sort with the rest.
-            val collator = remember(uiLocale) { Collator.getInstance(uiLocale) }
-            val labelled = Region.entries.map { option ->
-                val base = stringResource(regionLabel(option))
-                option to if (option == Region.SYSTEM) "$base ($systemTag)" else base
-            }
-            val (system, rest) = labelled.partition { it.first == Region.SYSTEM }
-            val sorted = system + rest.sortedWith(compareBy(collator) { it.second })
-            sorted.forEach { (option, label) ->
-                RadioRow(
-                    label = label,
-                    selected = option == region,
-                    onSelect = { onSetRegion(option) },
-                )
-            }
+            RegionLanguagePicker(selected = region, onSelect = onSetRegion)
         }
         SectionCard(title = stringResource(R.string.settings_temperature_unit_title)) {
             TemperatureUnit.entries.forEach { unit ->
@@ -92,6 +72,68 @@ internal fun RegionContent(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun RegionLanguagePicker(
+    selected: Region,
+    onSelect: (Region) -> Unit,
+) {
+    var dialogOpen by remember { mutableStateOf(false) }
+    // System tag exposed next to "Follow system locale" so the user can verify
+    // what the app currently resolves to (e.g. "en-GB"). Use the context
+    // resources locale so this updates with runtime app-language changes,
+    // instead of freezing the process default. Strip Unicode extensions
+    // (e.g. `-u-fw-mon` from a Monday-week device preference) — they're
+    // irrelevant to language/region and just clutter the picker label.
+    val uiLocale = LocalContext.current.resourcesLocale()
+    val systemTag = remember(uiLocale) { uiLocale.stripExtensions().toLanguageTag() }
+    val labelFor: @Composable (Region) -> String = { option ->
+        val base = stringResource(regionLabel(option))
+        if (option == Region.SYSTEM) "$base ($systemTag)" else base
+    }
+    OutlinedButton(
+        onClick = { dialogOpen = true },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(labelFor(selected))
+    }
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen = false },
+            title = { Text(stringResource(R.string.settings_region_language_title)) },
+            text = {
+                // Sort by the resolved display label using a locale-aware
+                // collator so the order reads naturally in the user's UI
+                // language. SYSTEM stays pinned at the top — it's a "follow
+                // device" option, not a language to sort with the rest.
+                val collator = remember(uiLocale) { Collator.getInstance(uiLocale) }
+                val labelled = Region.entries.map { option -> option to labelFor(option) }
+                val (system, rest) = labelled.partition { it.first == Region.SYSTEM }
+                val sorted = system + rest.sortedWith(compareBy(collator) { it.second })
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    sorted.forEach { (option, label) ->
+                        RadioRow(
+                            label = label,
+                            selected = option == selected,
+                            onSelect = {
+                                onSelect(option)
+                                dialogOpen = false
+                            },
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                // Reuse the already-translated "Done" from the voice locale
+                // picker — same dismiss semantics, avoids duplicating the
+                // string in 30+ locale files.
+                TextButton(onClick = { dialogOpen = false }) {
+                    Text(stringResource(R.string.settings_tts_voice_dismiss))
+                }
+            },
+        )
     }
 }
 
