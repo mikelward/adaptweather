@@ -195,6 +195,7 @@
     <string name="settings_tts_voice_locale_vi_vn">Vietnamese (Vietnam)</string>
     <string name="settings_tts_voice_locale_th_th">Thai (Thailand)</string>
     <string name="settings_tts_voice_locale_zh_cn">Chinese (Simplified)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Chinese (Traditional)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindi (India)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_tts_voice_locale_ja_jp">Japanese (Japan)</string>
@@ -297,6 +298,7 @@
     <string name="settings_region_language_vi_vn">Vietnamese (Vietnam)</string>
     <string name="settings_region_language_th_th">Thai (Thailand)</string>
     <string name="settings_region_language_zh_cn">Chinese (Simplified)</string>
+    <string name="settings_region_language_zh_tw">Chinese (Traditional)</string>
     <string name="settings_region_language_hi_in">Hindi (India)</string>
     <string name="settings_region_language_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_region_language_ja_jp">Japanese (Japan)</string>

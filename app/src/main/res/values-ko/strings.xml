@@ -189,6 +189,7 @@ displayed label localizes.
     <string name="settings_region_language_vi_vn">베트남어 (베트남)</string>
     <string name="settings_region_language_th_th">태국어 (태국)</string>
     <string name="settings_region_language_zh_cn">중국어 (간체)</string>
+    <string name="settings_region_language_zh_tw">중국어 (번체)</string>
     <string name="settings_region_language_hi_in">힌디어 (인도)</string>
     <string name="settings_region_language_bn_bd">벵골어 (방글라데시)</string>
     <string name="settings_region_language_ja_jp">일본어 (일본)</string>
@@ -244,6 +245,7 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_vi_vn">베트남어 (베트남)</string>
     <string name="settings_tts_voice_locale_th_th">태국어 (태국)</string>
     <string name="settings_tts_voice_locale_zh_cn">중국어 (간체)</string>
+    <string name="settings_tts_voice_locale_zh_tw">중국어 (번체)</string>
     <string name="settings_tts_voice_locale_hi_in">힌디어 (인도)</string>
     <string name="settings_tts_voice_locale_bn_bd">벵골어 (방글라데시)</string>
     <string name="settings_tts_voice_locale_ja_jp">일본어 (일본)</string>

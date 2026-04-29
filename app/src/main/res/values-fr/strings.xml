@@ -172,6 +172,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_vi_vn">Vietnamien (Vietnam)</string>
     <string name="settings_region_language_th_th">Thaï (Thaïlande)</string>
     <string name="settings_region_language_zh_cn">Chinois (simplifié)</string>
+    <string name="settings_region_language_zh_tw">Chinois (traditionnel)</string>
     <string name="settings_region_language_hi_in">Hindi (Inde)</string>
     <string name="settings_region_language_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_region_language_ja_jp">Japonais (Japon)</string>
@@ -230,6 +231,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_vi_vn">Vietnamien (Vietnam)</string>
     <string name="settings_tts_voice_locale_th_th">Thaï (Thaïlande)</string>
     <string name="settings_tts_voice_locale_zh_cn">Chinois (simplifié)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Chinois (traditionnel)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindi (Inde)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_tts_voice_locale_ja_jp">Japonais (Japon)</string>
