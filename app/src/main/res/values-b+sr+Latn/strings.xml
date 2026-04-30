@@ -17,8 +17,10 @@ and region/voice-locale picker names. Other UI surfaces fall back to
 default English (matching values-pl / values-uk).
 -->
 <resources>
-    <string name="settings_region_language_sr_rs">Srpski (Srbija)</string>
-    <string name="settings_tts_voice_locale_sr_rs">Srpski (Srbija)</string>
+    <string name="settings_region_language_sr_rs">Srpski (latinica)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Srpski (ćirilica)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Srpski (latinica)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Srpski (ćirilica)</string>
     <string name="settings_tts_voice_locale_label">Akcenat</string>
 
     <string name="garment_sweater">Džemper</string>

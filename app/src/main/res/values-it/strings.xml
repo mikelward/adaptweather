@@ -145,7 +145,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_pl_pl">Polacco (Polonia)</string>
     <string name="settings_region_language_hr_hr">Croato (Croazia)</string>
     <string name="settings_region_language_sl_si">Sloveno (Slovenia)</string>
-    <string name="settings_region_language_sr_rs">Serbo (Serbia)</string>
+    <string name="settings_region_language_sr_rs">Serbo (latino)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Serbo (cirillico)</string>
     <string name="settings_region_language_bg_bg">Bulgaro (Bulgaria)</string>
     <string name="settings_region_language_cs_cz">Ceco (Cechia)</string>
     <string name="settings_region_language_sk_sk">Slovacco (Slovacchia)</string>
@@ -212,7 +213,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_pl_pl">Polacco (Polonia)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croato (Croazia)</string>
     <string name="settings_tts_voice_locale_sl_si">Sloveno (Slovenia)</string>
-    <string name="settings_tts_voice_locale_sr_rs">Serbo (Serbia)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Serbo (latino)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Serbo (cirillico)</string>
     <string name="settings_tts_voice_locale_bg_bg">Bulgaro (Bulgaria)</string>
     <string name="settings_tts_voice_locale_cs_cz">Ceco (Cechia)</string>
     <string name="settings_tts_voice_locale_sk_sk">Slovacco (Slovacchia)</string>

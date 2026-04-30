@@ -149,7 +149,8 @@ only the displayed label localizes.
     <string name="settings_region_language_pl_pl">Польский (Польша)</string>
     <string name="settings_region_language_hr_hr">Хорватский (Хорватия)</string>
     <string name="settings_region_language_sl_si">Словенский (Словения)</string>
-    <string name="settings_region_language_sr_rs">Сербский (Сербия)</string>
+    <string name="settings_region_language_sr_rs">Сербский (латиница)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Сербский (кириллица)</string>
     <string name="settings_region_language_bg_bg">Болгарский (Болгария)</string>
     <string name="settings_region_language_cs_cz">Чешский (Чехия)</string>
     <string name="settings_region_language_sk_sk">Словацкий (Словакия)</string>
@@ -212,7 +213,8 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_pl_pl">Польский (Польша)</string>
     <string name="settings_tts_voice_locale_hr_hr">Хорватский (Хорватия)</string>
     <string name="settings_tts_voice_locale_sl_si">Словенский (Словения)</string>
-    <string name="settings_tts_voice_locale_sr_rs">Сербский (Сербия)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Сербский (латиница)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Сербский (кириллица)</string>
     <string name="settings_tts_voice_locale_bg_bg">Болгарский (Болгария)</string>
     <string name="settings_tts_voice_locale_cs_cz">Чешский (Чехия)</string>
     <string name="settings_tts_voice_locale_sk_sk">Словацкий (Словакия)</string>
