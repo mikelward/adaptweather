@@ -1,16 +1,12 @@
 package app.clothescast.notification
 
-import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import app.clothescast.MainActivity
@@ -27,7 +23,7 @@ import app.clothescast.core.domain.model.OutfitSuggestion
 class InsightNotifier(private val context: Context) {
 
     fun notify(insight: Insight, prose: String) {
-        if (!hasPostNotificationPermission()) return
+        if (!NotificationPermission.isGranted(context)) return
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -57,14 +53,6 @@ class InsightNotifier(private val context: Context) {
             .build()
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_DAILY_INSIGHT, notification)
-    }
-
-    private fun hasPostNotificationPermission(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS,
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object {

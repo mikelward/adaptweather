@@ -1,14 +1,10 @@
 package app.clothescast.notification
 
-import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.WeatherAlert
@@ -25,7 +21,7 @@ import app.clothescast.core.domain.model.WeatherAlert
 class WeatherAlertNotifier(private val context: Context) {
 
     fun notify(alert: WeatherAlert) {
-        if (!hasPostNotificationPermission()) return
+        if (!NotificationPermission.isGranted(context)) return
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -53,14 +49,6 @@ class WeatherAlertNotifier(private val context: Context) {
             .build()
 
         NotificationManagerCompat.from(context).notify(notificationIdFor(alert), notification)
-    }
-
-    private fun hasPostNotificationPermission(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS,
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun notificationIdFor(alert: WeatherAlert): Int {
