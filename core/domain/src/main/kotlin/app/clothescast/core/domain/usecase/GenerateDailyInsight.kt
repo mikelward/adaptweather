@@ -163,9 +163,13 @@ class GenerateDailyInsight(
  *  - rewrites [DailyForecast.condition] to the wettest in-window hour (preventing
  *    the precip-peak fallback from naming a midday rain on a sunny afternoon),
  *  - falls back to the day-level aggregates with an empty hourly list when the
- *    slice would be empty (sparse fixtures, legacy day-level-only payloads, or
- *    a degenerate `morningStart >= eveningEnd` window) so the pipeline always
- *    emits something even without in-window hourly data.
+ *    slice would be empty for an otherwise valid window (sparse fixtures or
+ *    legacy day-level-only payloads), so the pipeline always emits something
+ *    even without in-window hourly data,
+ *  - returns the original [DailyForecast] unchanged on a degenerate
+ *    `morningStart >= eveningEnd` window — the tonight pass covers overnight
+ *    users via its own wrap, so blanking out the hourly here would just lose
+ *    information the tonight slice still needs.
  */
 private fun DailyForecast.slicedForToday(
     morningStart: LocalTime,
