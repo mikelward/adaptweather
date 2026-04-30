@@ -49,9 +49,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (intent?.getBooleanExtra(EXTRA_NAVIGATE_TO_TODAY, false) == true) {
-            navigateToTodayVersion++
-        }
+        consumeNavigateToTodayExtra(intent)
         val app = application as ClothesCastApplication
         setContent {
             ClothesCastTheme {
@@ -67,8 +65,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_TODAY, false)) {
+        // Update the stored intent so a later configuration change replays this
+        // (already-consumed) intent rather than the original launching one.
+        setIntent(intent)
+        consumeNavigateToTodayExtra(intent)
+    }
+
+    // Removes the extra after handling so a later onCreate (rotation, process
+    // recreation) replaying the same intent doesn't snap the user back to Today
+    // after they've navigated away.
+    private fun consumeNavigateToTodayExtra(intent: Intent?) {
+        if (intent?.getBooleanExtra(EXTRA_NAVIGATE_TO_TODAY, false) == true) {
             navigateToTodayVersion++
+            intent.removeExtra(EXTRA_NAVIGATE_TO_TODAY)
         }
     }
 
