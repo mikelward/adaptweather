@@ -101,7 +101,7 @@ class RenderInsightSummary {
             // enough; chaining "Bring an umbrella for your 3pm standup." after
             // it just repeats what the user already heard.
             calendarTieIn = if (period == ForecastPeriod.TONIGHT) calendarTieInClause(items, peak, events) else null,
-            eveningEventTieIn = eveningEventTieInClause(period, eveningEvents, eveningTriggeredRules, eveningPeak),
+            eveningEventTieIn = eveningEventTieInClause(period, eveningEvents, eveningTriggeredRules, eveningPeak, items),
         )
     }
 
@@ -204,20 +204,32 @@ class RenderInsightSummary {
      * first clothes item triggered by the evening forecast slice (umbrella first if
      * present). Caller is responsible for filtering [eveningEvents] to actually-evening
      * events and for evaluating clothes rules against the evening forecast.
+     *
+     * Suppressed when:
+     *  - No evening event has a location (location-less events don't imply outdoor
+     *    exposure where the weather matters).
+     *  - The evening clothes items are the same set as [todayItems] — the morning
+     *    insight already told the user what to wear; repeating it for the evening
+     *    adds no new information.
      */
     private fun eveningEventTieInClause(
         period: ForecastPeriod,
         eveningEvents: List<CalendarEvent>,
         eveningTriggeredRules: List<ClothesRule>,
         eveningPeak: PeakPrecip?,
+        todayItems: List<String>,
     ): EveningEventTieInClause? {
         if (period != ForecastPeriod.TODAY) return null
         if (eveningEvents.isEmpty() || eveningTriggeredRules.isEmpty()) return null
-        // Gate on at least one non-all-day evening event existing, but don't
-        // capture its title — the rendered prose only says "Bring a jacket
-        // tonight." Calendar event titles never flow to off-device TTS.
-        eveningEvents.firstOrNull { !it.allDay } ?: return null
+        // Gate on at least one non-all-day evening event that has a location.
+        // Events without a location don't imply outdoor exposure, so the
+        // weather-specific clothing tip isn't warranted. Calendar event titles
+        // never flow to off-device TTS.
+        eveningEvents.firstOrNull { !it.allDay && !it.location.isNullOrBlank() } ?: return null
         val items = eveningTriggeredRules.map { it.item }
+        // If the evening calls for the same clothing as today, the morning
+        // insight already covered it — no new information to add.
+        if (items.toSet() == todayItems.toSet()) return null
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return EveningEventTieInClause(item = item, rainTime = eveningPeak?.time)
     }
