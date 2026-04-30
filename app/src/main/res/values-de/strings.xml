@@ -498,4 +498,95 @@ zh-CN) is unchanged; only the displayed label localizes.
     <!-- "15 Uhr" / "15 Uhr 30" — read naturally by German TTS. -->
     <string name="insight_time_hour">%1$d Uhr</string>
     <string name="insight_time_hour_minutes">%1$d Uhr %2$02d</string>
+
+    <string name="onboarding_pair_from_phone">Stattdessen vom Telefon koppeln</string>
+
+    <string name="pairing_title">Zum Koppeln scannen</string>
+    <string name="pairing_instructions">Scanne diesen QR-Code mit deinem Telefon und füge dann deinen Gemini-API-Schlüssel in das Formular ein, das sich öffnet. Der Schlüssel wird direkt über dein Heimnetzwerk an diesen Fernseher gesendet — ohne Cloud-Relay.</string>
+    <string name="pairing_qr_description">QR-Code mit Link zu %1$s</string>
+    <string name="pairing_cancel">Abbrechen</string>
+    <string name="pairing_received">Schlüssel empfangen — wird gespeichert…</string>
+    <string name="pairing_timeout_title">Kopplungsfenster abgelaufen</string>
+    <string name="pairing_timeout_body">Das 5-minütige Kopplungsfenster ist geschlossen. Tippe auf Wiederholen, um ein neues zu öffnen.</string>
+    <string name="pairing_error_title">Kopplung konnte nicht gestartet werden</string>
+    <string name="pairing_error_body">Stelle sicher, dass der Fernseher mit WLAN verbunden ist, und versuche es erneut.</string>
+    <string name="pairing_retry">Wiederholen</string>
+
+    <string name="settings_elevenlabs_model_label">Modell</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — ausgewogen (Standard, 0,5 Credits/Zeichen)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — Flaggschiff-Qualität (1,0 Credits/Zeichen)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — schnellste (0,5 Credits/Zeichen)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — audio-tag-fähig (experimentell)</string>
+    <string name="settings_elevenlabs_refresh_voices">Stimmen aktualisieren</string>
+    <string name="settings_elevenlabs_refresh_voices_loaded">%1$d Stimmen aus deinem ElevenLabs-Konto werden angezeigt.</string>
+    <string name="settings_elevenlabs_speed_label">Geschwindigkeit × %1$s</string>
+    <string name="settings_elevenlabs_stability_label">Stabilität %1$s</string>
+
+    <string name="settings_location_background_rationale_title">Immer zulassen</string>
+    <string name="settings_location_background_rationale_body">ClothesCast ruft deine Vorhersage jeden Morgen im Hintergrund ab. Dafür wird der Standortzugriff \'Immer zulassen\' benötigt. Du wirst zu den Systemeinstellungen weitergeleitet, um ihn zu erteilen.</string>
+    <string name="settings_location_background_rationale_continue">Einstellungen öffnen</string>
+    <string name="settings_location_background_rationale_dismiss">Nicht jetzt</string>
+
+    <string name="settings_location_background_denied_title">Dauerzugriff nicht erteilt</string>
+    <string name="settings_location_background_denied_body">Ohne \'Immer zulassen\' greift die Morgenvorhersage auf deinen gespeicherten Standort zurück. Möchtest du die Systemeinstellungen öffnen, um ihn zu erteilen?</string>
+    <string name="settings_location_background_denied_open">Einstellungen öffnen</string>
+    <string name="settings_location_background_denied_keep">Gespeicherten Standort behalten</string>
+
+    <string name="settings_location_rationale_title">Dauerhafter Standort</string>
+    <string name="settings_location_rationale_body">ClothesCast aktualisiert deine Vorhersage im Hintergrund, um sie pünktlich zu liefern. Dafür wird die Standortberechtigung \'Immer zulassen\' benötigt.</string>
+    <string name="settings_location_rationale_continue">Weiter</string>
+    <string name="settings_location_rationale_dismiss">Nicht jetzt</string>
+
+    <string name="settings_openai_speed_label">Geschwindigkeit × %1$s</string>
+
+    <string name="settings_region_language_am_et">Amharisch (Äthiopien)</string>
+    <string name="settings_region_language_da_dk">Dänisch (Dänemark)</string>
+    <string name="settings_region_language_nb_no">Norwegisch Bokmål (Norwegen)</string>
+    <string name="settings_region_language_sq_al">Albanisch (Albanien)</string>
+    <string name="settings_region_language_sw_ke">Suaheli (Kenia)</string>
+
+    <string name="settings_root_schedule_subtitle">Benachrichtigungen und Zeiten</string>
+    <string name="settings_root_clothes_subtitle">Temperaturen und Outfits</string>
+    <string name="settings_root_region_subtitle">Sprachen und Einheiten</string>
+    <string name="settings_root_voice_subtitle">Anbieter und Akzente</string>
+    <string name="settings_root_data_sources_subtitle">Standort und Kalender</string>
+
+    <string name="settings_tts_device_voice_label">Gerätestimme</string>
+    <string name="settings_tts_device_voice_auto">Automatisch (bester Akzent)</string>
+    <string name="settings_tts_device_voice_currently">Aktuell: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">Wird geladen…</string>
+    <string name="settings_tts_device_voice_network">Netzwerk</string>
+    <string name="settings_tts_device_voice_offline">Offline</string>
+    <string name="settings_tts_install_google_hint">Installiere Googles Text-to-Speech-Engine für hochwertigere Stimmen.</string>
+    <string name="settings_tts_install_google_button">Google TTS installieren</string>
+
+    <string name="settings_tts_voice_locale_am_et">Amharisch (Äthiopien)</string>
+    <string name="settings_tts_voice_locale_da_dk">Dänisch (Dänemark)</string>
+    <string name="settings_tts_voice_locale_nb_no">Norwegisch Bokmål (Norwegen)</string>
+    <string name="settings_tts_voice_locale_sq_al">Albanisch (Albanien)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Suaheli (Kenia)</string>
+    <string name="settings_tts_voice_locale_language_fallback">Keine %1$s-Stimmen in dieser Engine — Stimmen in derselben Sprache werden angezeigt.</string>
+    <string name="settings_tts_voice_locale_no_match">Keine %1$s-Stimmen in dieser Engine — versuche einen anderen Akzent.</string>
+
+    <string name="today_failed_no_location">Dein Standort konnte nicht ermittelt werden. Erteile dauerhaften Standortzugriff oder lege eine Stadt in den Einstellungen fest.</string>
+    <string name="today_location_required_title">Richte deinen Standort ein</string>
+    <string name="today_location_required_body">ClothesCast muss deinen Standort kennen, um die Vorhersage abzurufen. Erteile dauerhaften Standortzugriff oder wähle eine Stadt aus.</string>
+    <string name="today_location_required_action">Standorteinstellungen öffnen</string>
+
+    <string name="today_rationale_title">Warum dieses Outfit?</string>
+    <string name="today_rationale_show">Warum?</string>
+    <string name="today_rationale_dismiss">Verstanden</string>
+    <string name="today_rationale_reset">Schwellenwerte zurücksetzen</string>
+    <string name="today_rationale_threshold_decrease">Schwellenwert um 1 Grad senken</string>
+    <string name="today_rationale_threshold_increase">Schwellenwert um 1 Grad erhöhen</string>
+    <string name="today_rationale_threshold_changed_hint">Aktualisieren, um das neue Outfit zu sehen.</string>
+    <string name="today_rationale_unavailable">Keine Begründung verfügbar — öffne die App nach der nächsten Aktualisierung.</string>
+    <string name="today_rationale_min_below_with_time">Gefühlte Tiefsttemperatur %1$s%2$s um %3$s Uhr, unter %4$s%2$s</string>
+    <string name="today_rationale_min_below">Gefühlte Tiefsttemperatur %1$s%2$s, unter %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Gefühlte Tiefsttemperatur %1$s%2$s um %3$s Uhr, mindestens %4$s%2$s</string>
+    <string name="today_rationale_min_above">Gefühlte Tiefsttemperatur %1$s%2$s, mindestens %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Gefühlte Höchsttemperatur nur %1$s%2$s um %3$s Uhr, unter %4$s%2$s</string>
+    <string name="today_rationale_max_below">Gefühlte Höchsttemperatur nur %1$s%2$s, unter %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Gefühlte Höchsttemperatur %1$s%2$s um %3$s Uhr, mindestens %4$s%2$s</string>
+    <string name="today_rationale_max_above">Gefühlte Höchsttemperatur %1$s%2$s, mindestens %3$s%2$s</string>
 </resources>

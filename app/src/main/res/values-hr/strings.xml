@@ -445,4 +445,95 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
 
+
+    <string name="onboarding_pair_from_phone">Upari s telefona</string>
+
+    <string name="pairing_title">Skeniraj za uparivanje</string>
+    <string name="pairing_instructions">Skeniraj ovaj QR kod telefonom, zatim zalijepi svoj Gemini API ključ u obrazac koji se otvori. Ključ će biti poslan izravno na ovaj TV putem kućnog Wi-Fi-ja — bez posrednika u oblaku.</string>
+    <string name="pairing_qr_description">QR kod koji vodi na %1$s</string>
+    <string name="pairing_cancel">Odustani</string>
+    <string name="pairing_received">Ključ primljen — spremanje…</string>
+    <string name="pairing_timeout_title">Prozor za uparivanje istekao</string>
+    <string name="pairing_timeout_body">5-minutni prozor za uparivanje je zatvoren. Tapni Pokušaj ponovo za otvaranje novog.</string>
+    <string name="pairing_error_title">Uparivanje se nije moglo pokrenuti</string>
+    <string name="pairing_error_body">Provjeri je li TV spojen na Wi-Fi i pokušaj ponovo.</string>
+    <string name="pairing_retry">Pokušaj ponovo</string>
+
+    <string name="settings_elevenlabs_model_label">Model</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — uravnotežen (zadano, 0,5 kredita/znak)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — vrhunska kvaliteta (1,0 kredit/znak)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — najbrži (0,5 kredita/znak)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — podrška audio oznaka (eksperimentalno)</string>
+    <string name="settings_elevenlabs_refresh_voices">Osvježi glasove</string>
+    <string name="settings_elevenlabs_refresh_voices_loaded">Prikazano %1$d glasova iz tvog ElevenLabs računa.</string>
+    <string name="settings_elevenlabs_speed_label">Brzina × %1$s</string>
+    <string name="settings_elevenlabs_stability_label">Stabilnost %1$s</string>
+
+    <string name="settings_location_background_rationale_title">Dopusti uvijek</string>
+    <string name="settings_location_background_rationale_body">ClothesCast dohvaća tvoju prognozu u pozadini svako jutro, pa mu je potreban pristup lokaciji \'Dopusti uvijek\'. Bit ćeš preusmjeren na sistemske Postavke radi odobrenja.</string>
+    <string name="settings_location_background_rationale_continue">Otvori Postavke</string>
+    <string name="settings_location_background_rationale_dismiss">Sad ne</string>
+
+    <string name="settings_location_background_denied_title">Stalni pristup nije odobren</string>
+    <string name="settings_location_background_denied_body">Bez \'Dopusti uvijek\' jutarnja prognoza koristi tvoju spremljenu lokaciju. Otvoriti sistemske Postavke za odobrenje?</string>
+    <string name="settings_location_background_denied_open">Otvori Postavke</string>
+    <string name="settings_location_background_denied_keep">Nastavi koristiti spremljenu lokaciju</string>
+
+    <string name="settings_location_rationale_title">Stalna lokacija</string>
+    <string name="settings_location_rationale_body">ClothesCast ažurira tvoju prognozu u pozadini kako bi je dostavio na vrijeme, pa mu je potrebno dopuštenje lokacije \'Dopusti uvijek\'.</string>
+    <string name="settings_location_rationale_continue">Nastavi</string>
+    <string name="settings_location_rationale_dismiss">Sad ne</string>
+
+    <string name="settings_openai_speed_label">Brzina × %1$s</string>
+
+    <string name="settings_region_language_am_et">Amharski (Etiopija)</string>
+    <string name="settings_region_language_da_dk">Danski (Danska)</string>
+    <string name="settings_region_language_nb_no">Norveški Bokmål (Norveška)</string>
+    <string name="settings_region_language_sq_al">Albanski (Albanija)</string>
+    <string name="settings_region_language_sw_ke">Svahili (Kenija)</string>
+
+    <string name="settings_root_schedule_subtitle">Obavijesti i vremena</string>
+    <string name="settings_root_clothes_subtitle">Temperature i odjevne kombinacije</string>
+    <string name="settings_root_region_subtitle">Jezici i jedinice</string>
+    <string name="settings_root_voice_subtitle">Pružatelji i naglasci</string>
+    <string name="settings_root_data_sources_subtitle">Lokacija i kalendar</string>
+
+    <string name="settings_tts_device_voice_label">Glas uređaja</string>
+    <string name="settings_tts_device_voice_auto">Automatski (najbolji za naglasak)</string>
+    <string name="settings_tts_device_voice_currently">Trenutno: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">Učitavanje…</string>
+    <string name="settings_tts_device_voice_network">Mreža</string>
+    <string name="settings_tts_device_voice_offline">Izvan mreže</string>
+    <string name="settings_tts_install_google_hint">Instaliraj Googleov engine za sintezu govora za glasove više kvalitete.</string>
+    <string name="settings_tts_install_google_button">Instaliraj Google TTS</string>
+
+    <string name="settings_tts_voice_locale_am_et">Amharski (Etiopija)</string>
+    <string name="settings_tts_voice_locale_da_dk">Danski (Danska)</string>
+    <string name="settings_tts_voice_locale_nb_no">Norveški Bokmål (Norveška)</string>
+    <string name="settings_tts_voice_locale_sq_al">Albanski (Albanija)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Svahili (Kenija)</string>
+    <string name="settings_tts_voice_locale_language_fallback">Nema %1$s glasova u ovom engineu — prikazuju se glasovi istog jezika.</string>
+    <string name="settings_tts_voice_locale_no_match">Nema %1$s glasova u ovom engineu — pokušaj drugi naglasak.</string>
+
+    <string name="today_failed_no_location">Nismo mogli dobiti tvoju lokaciju. Odobri stalni pristup lokaciji ili postavi grad u Postavkama.</string>
+    <string name="today_location_required_title">Postavi svoju lokaciju</string>
+    <string name="today_location_required_body">ClothesCast treba znati gdje si kako bi dohvatio prognozu. Odobri stalni pristup lokaciji ili odaberi grad.</string>
+    <string name="today_location_required_action">Otvori postavke lokacije</string>
+
+    <string name="today_rationale_title">Zašto ova odjevna kombinacija?</string>
+    <string name="today_rationale_show">Zašto?</string>
+    <string name="today_rationale_dismiss">Razumijem</string>
+    <string name="today_rationale_reset">Resetiraj pragove</string>
+    <string name="today_rationale_threshold_decrease">Smanji prag za 1 stupanj</string>
+    <string name="today_rationale_threshold_increase">Povećaj prag za 1 stupanj</string>
+    <string name="today_rationale_threshold_changed_hint">Osvježi da vidiš novu odjevnu kombinaciju.</string>
+    <string name="today_rationale_unavailable">Nema dostupnog objašnjenja — otvori aplikaciju nakon sljedećeg osvježavanja.</string>
+    <string name="today_rationale_min_below_with_time">Osjetna minimalna %1$s%2$s u %3$s, ispod %4$s%2$s</string>
+    <string name="today_rationale_min_below">Osjetna minimalna %1$s%2$s, ispod %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Osjetna minimalna %1$s%2$s u %3$s, najmanje %4$s%2$s</string>
+    <string name="today_rationale_min_above">Osjetna minimalna %1$s%2$s, najmanje %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Osjetna maksimalna samo %1$s%2$s u %3$s, ispod %4$s%2$s</string>
+    <string name="today_rationale_max_below">Osjetna maksimalna samo %1$s%2$s, ispod %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Osjetna maksimalna %1$s%2$s u %3$s, najmanje %4$s%2$s</string>
+    <string name="today_rationale_max_above">Osjetna maksimalna %1$s%2$s, najmanje %3$s%2$s</string>
 </resources>
