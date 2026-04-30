@@ -8,6 +8,7 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="settings_region_language_hi_in">हिंदी (भारत)</string>
     <string name="settings_tts_voice_locale_hi_in">हिंदी (भारत)</string>
     <string name="settings_tts_voice_locale_label">लहजा</string>
+    <string name="settings_tts_voice_locale_system">भाषा सेटिंग का पालन करें</string>
 
     <string name="garment_sweater">स्वेटर</string>
     <string name="garment_hoodie">हुडी</string>

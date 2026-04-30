@@ -94,7 +94,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_label">Glas</string>
     <string name="settings_tts_voice_dismiss">Gotovo</string>
     <string name="settings_tts_voice_locale_description">Postavlja naglasak izgovorenog glasa. Ne mijenja prikazani tekst.</string>
-    <string name="settings_tts_voice_locale_system">Koristi jezik telefona</string>
+    <string name="settings_tts_voice_locale_system">Koristi postavku jezika</string>
 
     <string name="settings_tts_test">Testiraj glas</string>
     <string name="settings_tts_test_in_flight">Testiranje — pričekaj…</string>

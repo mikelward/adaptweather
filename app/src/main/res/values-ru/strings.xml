@@ -115,7 +115,7 @@ only the displayed label localizes.
     <string name="settings_tts_voice_label">Голос</string>
     <string name="settings_tts_voice_dismiss">Готово</string>
     <string name="settings_tts_voice_locale_description">Задаёт акцент озвучивания. Не меняет отображаемый текст.</string>
-    <string name="settings_tts_voice_locale_system">По языку телефона</string>
+    <string name="settings_tts_voice_locale_system">По настройке языка</string>
 
     <string name="settings_tts_test">Проверить голос</string>
     <string name="settings_tts_test_in_flight">Проверка — подожди…</string>

@@ -10,6 +10,7 @@ vs "kemungkinan", "padam" vs "hapus").
     <string name="settings_region_language_ms_my">Bahasa Melayu (Malaysia)</string>
     <string name="settings_tts_voice_locale_ms_my">Bahasa Melayu (Malaysia)</string>
     <string name="settings_tts_voice_locale_label">Loghat</string>
+    <string name="settings_tts_voice_locale_system">Ikut tetapan bahasa</string>
 
     <string name="garment_sweater">Baju panas</string>
     <string name="garment_hoodie">Baju berhud</string>

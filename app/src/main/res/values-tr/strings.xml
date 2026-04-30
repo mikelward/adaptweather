@@ -7,6 +7,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_region_language_tr_tr">Türkçe (Türkiye)</string>
     <string name="settings_tts_voice_locale_tr_tr">Türkçe (Türkiye)</string>
     <string name="settings_tts_voice_locale_label">Aksan</string>
+    <string name="settings_tts_voice_locale_system">Dil ayarını takip et</string>
 
     <string name="garment_sweater">Kazak</string>
     <string name="garment_hoodie">Kapüşonlu sweatshirt</string>

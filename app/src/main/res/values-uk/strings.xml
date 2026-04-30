@@ -7,9 +7,9 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_region_language_uk_ua">Українська (Україна)</string>
     <string name="settings_tts_voice_locale_uk_ua">Українська (Україна)</string>
     <string name="settings_tts_voice_locale_label">Акцент</string>
+    <string name="settings_tts_voice_locale_system">За налаштуванням мови</string>
 
     <string name="garment_sweater">Светр</string>
-    <string name="garment_hoodie">Худі</string>
     <string name="garment_jacket">Куртка</string>
     <string name="garment_coat">Пальто</string>
     <string name="garment_tshirt">Футболка</string>

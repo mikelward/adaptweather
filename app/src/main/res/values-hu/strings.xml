@@ -9,6 +9,7 @@ surfaces fall back to default English (matching values-pl / values-uk).
     <string name="settings_region_language_hu_hu">Magyar (Magyarország)</string>
     <string name="settings_tts_voice_locale_hu_hu">Magyar (Magyarország)</string>
     <string name="settings_tts_voice_locale_label">Akcentus</string>
+    <string name="settings_tts_voice_locale_system">Kövesse a nyelvbeállítást</string>
 
     <string name="garment_sweater">Pulóver</string>
     <string name="garment_hoodie">Kapucnis pulóver</string>

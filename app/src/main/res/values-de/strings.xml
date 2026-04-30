@@ -121,7 +121,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_label">Stimme</string>
     <string name="settings_tts_voice_dismiss">Fertig</string>
     <string name="settings_tts_voice_locale_description">Legt den Akzent der gesprochenen Stimme fest. Ändert den angezeigten Text nicht.</string>
-    <string name="settings_tts_voice_locale_system">Telefonsprache verwenden</string>
+    <string name="settings_tts_voice_locale_system">Spracheinstellung verwenden</string>
 
     <string name="settings_tts_test">Stimme testen</string>
     <string name="settings_tts_test_in_flight">Teste — bitte warten…</string>

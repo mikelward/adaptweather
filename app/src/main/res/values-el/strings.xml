@@ -142,7 +142,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_label">Φωνή</string>
     <string name="settings_tts_voice_dismiss">Έγινε</string>
     <string name="settings_tts_voice_locale_description">Ορίζει την προφορά της φωνής εκφώνησης. Δεν αλλάζει το εμφανιζόμενο κείμενο.</string>
-    <string name="settings_tts_voice_locale_system">Ακολούθησε τη γλώσσα του τηλεφώνου</string>
+    <string name="settings_tts_voice_locale_system">Ακολούθησε τη ρύθμιση γλώσσας</string>
 
     <!-- Device-voice sub-picker (Android system TTS voices) and the
          inline Google-TTS install hint shown when no Google network

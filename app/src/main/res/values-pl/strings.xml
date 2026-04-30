@@ -7,6 +7,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_region_language_pl_pl">Polski (Polska)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polski (Polska)</string>
     <string name="settings_tts_voice_locale_label">Akcent</string>
+    <string name="settings_tts_voice_locale_system">Podążaj za ustawieniem języka</string>
 
     <string name="garment_sweater">Sweter</string>
     <string name="garment_hoodie">Bluza z kapturem</string>

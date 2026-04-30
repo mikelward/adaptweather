@@ -22,6 +22,7 @@ default English (matching values-pl / values-uk).
     <string name="settings_tts_voice_locale_sr_rs">Srpski (latinica)</string>
     <string name="settings_tts_voice_locale_sr_cyrl_rs">Srpski (ćirilica)</string>
     <string name="settings_tts_voice_locale_label">Akcenat</string>
+    <string name="settings_tts_voice_locale_system">Prati podešavanje jezika</string>
 
     <string name="garment_sweater">Džemper</string>
     <string name="garment_hoodie">Duks sa kapuljačom</string>

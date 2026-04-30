@@ -123,7 +123,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_label">Voix</string>
     <string name="settings_tts_voice_dismiss">Terminé</string>
     <string name="settings_tts_voice_locale_description">Définit l\'accent de la voix parlée. Ne change pas le texte affiché.</string>
-    <string name="settings_tts_voice_locale_system">Suivre la langue du téléphone</string>
+    <string name="settings_tts_voice_locale_system">Suivre le paramètre de langue</string>
 
     <string name="settings_tts_test">Tester la voix</string>
     <string name="settings_tts_test_in_flight">Test en cours — patiente…</string>

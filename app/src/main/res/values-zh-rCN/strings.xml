@@ -119,7 +119,7 @@ label localizes.
     <string name="settings_tts_voice_label">语音</string>
     <string name="settings_tts_voice_dismiss">完成</string>
     <string name="settings_tts_voice_locale_description">设置朗读语音的口音。不改变显示文本。</string>
-    <string name="settings_tts_voice_locale_system">跟随手机语言</string>
+    <string name="settings_tts_voice_locale_system">跟随语言设置</string>
 
     <string name="settings_tts_test">测试语音</string>
     <string name="settings_tts_test_in_flight">测试中 — 稍等…</string>
