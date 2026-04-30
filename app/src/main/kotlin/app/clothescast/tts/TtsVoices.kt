@@ -294,4 +294,5 @@ private val ACCENT_TO_VOICE_LOCALE: Map<String, VoiceLocale> = mapOf(
     "hebrew" to VoiceLocale.HE_IL,
     "persian" to VoiceLocale.FA_IR,
     "urdu" to VoiceLocale.UR_PK,
+    "amharic" to VoiceLocale.AM_ET,
 )

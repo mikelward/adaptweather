@@ -2,6 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- TV: opt the app into the leanback launcher so it appears on the TV home screen.
+         required="false" keeps the phone/tablet Play Store entry unaffected. -->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <!-- TV has no touchscreen. Declaring it optional keeps the Play Store from
+         filtering the app out on TV devices entirely. -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <!-- Network for Open-Meteo + Gemini. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -40,6 +51,7 @@
     <application
         android:name=".ClothesCastApplication"
         android:allowBackup="false"
+        android:banner="@drawable/tv_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -52,6 +64,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- TV home-screen launcher. A separate intent-filter is required so
+                 the phone and TV launchers both work from the same activity. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
 

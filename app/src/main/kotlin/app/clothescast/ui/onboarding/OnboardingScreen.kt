@@ -40,6 +40,7 @@ import app.clothescast.R
 import app.clothescast.core.domain.model.Location
 import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.notification.NotificationPermission
+import app.clothescast.ui.isTelevision
 import app.clothescast.ui.settings.KeyEntryFields
 import app.clothescast.ui.settings.LinkifiedText
 import app.clothescast.ui.settings.LocationSearchDialog
@@ -62,12 +63,15 @@ fun OnboardingScreen(
     onSkip: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val isTV = remember(context) { isTelevision(context) }
 
     Scaffold { padding ->
         OnboardingContent(
             geminiKeyConfigured = state.geminiKeyConfigured,
             location = state.location,
             useDeviceLocation = state.useDeviceLocation,
+            isTelevision = isTV,
             padding = padding,
             onSetApiKey = viewModel::setApiKey,
             onSetUseDeviceLocation = viewModel::setUseDeviceLocation,
@@ -85,6 +89,7 @@ internal fun OnboardingContent(
     geminiKeyConfigured: Boolean,
     location: Location?,
     useDeviceLocation: Boolean,
+    isTelevision: Boolean = false,
     padding: PaddingValues,
     onSetApiKey: (String) -> Unit,
     onSetUseDeviceLocation: (Boolean) -> Unit,
@@ -112,11 +117,15 @@ internal fun OnboardingContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        NotificationStep()
-        HorizontalDivider()
+        // TV OS does not expose POST_NOTIFICATIONS as a runtime permission — skip it.
+        if (!isTelevision) {
+            NotificationStep()
+            HorizontalDivider()
+        }
         LocationStep(
             location = location,
             useDeviceLocation = useDeviceLocation,
+            isTelevision = isTelevision,
             onSetUseDeviceLocation = onSetUseDeviceLocation,
             onSelectLocation = onSelectLocation,
             onSearchLocations = onSearchLocations,
@@ -184,6 +193,7 @@ private fun NotificationStep() {
 private fun LocationStep(
     location: Location?,
     useDeviceLocation: Boolean,
+    isTelevision: Boolean,
     onSetUseDeviceLocation: (Boolean) -> Unit,
     onSelectLocation: (Location) -> Unit,
     onSearchLocations: suspend (String) -> List<Location>,
@@ -219,9 +229,12 @@ private fun LocationStep(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // The step is "complete" if either branch is satisfied: we'll read device
-    // location at notify time, or the user picked a fixed city.
-    val configured = (useDeviceLocation && permissionGranted) || location != null
+    // On TV device location is unavailable; only a manually picked city counts.
+    val configured = if (isTelevision) {
+        location != null
+    } else {
+        (useDeviceLocation && permissionGranted) || location != null
+    }
 
     StepCard(
         title = stringResource(R.string.onboarding_location_title),
@@ -230,7 +243,7 @@ private fun LocationStep(
     ) {
         if (configured) {
             val summary = when {
-                useDeviceLocation && permissionGranted ->
+                !isTelevision && useDeviceLocation && permissionGranted ->
                     stringResource(R.string.onboarding_location_using_device)
                 location?.displayName != null -> location.displayName!!
                 location != null -> "${location.latitude}, ${location.longitude}"
@@ -240,27 +253,30 @@ private fun LocationStep(
                 Text(text = summary, style = MaterialTheme.typography.bodyMedium)
             }
         } else {
-            Button(
-                onClick = {
-                    if (permissionGranted) {
-                        onSetUseDeviceLocation(true)
-                    } else {
-                        launcher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.onboarding_location_grant)) }
+            // On TV, device location is not available — go straight to manual entry.
+            if (!isTelevision) {
+                Button(
+                    onClick = {
+                        if (permissionGranted) {
+                            onSetUseDeviceLocation(true)
+                        } else {
+                            launcher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.onboarding_location_grant)) }
 
-            // Once the user has been asked once and denied, surface the manual
-            // fallback as a primary path. Showing it from the start would compete
-            // with the permission button; showing it only on denial keeps the
-            // happier path uncluttered.
-            if (permissionAsked && !permissionGranted) {
-                Text(
-                    text = stringResource(R.string.onboarding_location_denied_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                // Once the user has been asked once and denied, surface the manual
+                // fallback as a primary path. Showing it from the start would compete
+                // with the permission button; showing it only on denial keeps the
+                // happier path uncluttered.
+                if (permissionAsked && !permissionGranted) {
+                    Text(
+                        text = stringResource(R.string.onboarding_location_denied_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             TextButton(
                 onClick = { searchOpen = true },

@@ -18,8 +18,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -84,6 +87,7 @@ private fun WaitingContent(
     state: PairingState.Waiting,
     onCancel: () -> Unit,
 ) {
+    val focusRequester = remember { FocusRequester() }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -110,10 +114,14 @@ private fun WaitingContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
-        TextButton(onClick = onCancel) {
+        TextButton(
+            onClick = onCancel,
+            modifier = Modifier.focusRequester(focusRequester),
+        ) {
             Text(stringResource(R.string.pairing_cancel))
         }
     }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 }
 
 @Composable
@@ -137,6 +145,7 @@ private fun TimeoutContent(
     onRetry: () -> Unit,
     onCancel: () -> Unit,
 ) {
+    val focusRequester = remember { FocusRequester() }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -152,9 +161,13 @@ private fun TimeoutContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
-        Button(onClick = onRetry) { Text(stringResource(R.string.pairing_retry)) }
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.focusRequester(focusRequester),
+        ) { Text(stringResource(R.string.pairing_retry)) }
         TextButton(onClick = onCancel) { Text(stringResource(R.string.pairing_cancel)) }
     }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 }
 
 @Composable
@@ -162,6 +175,7 @@ private fun ErrorContent(
     onRetry: () -> Unit,
     onCancel: () -> Unit,
 ) {
+    val focusRequester = remember { FocusRequester() }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -177,7 +191,11 @@ private fun ErrorContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
-        Button(onClick = onRetry) { Text(stringResource(R.string.pairing_retry)) }
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.focusRequester(focusRequester),
+        ) { Text(stringResource(R.string.pairing_retry)) }
         TextButton(onClick = onCancel) { Text(stringResource(R.string.pairing_cancel)) }
     }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 }
