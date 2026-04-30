@@ -233,6 +233,27 @@ class InsightFormatterTest {
         }
     }
 
+    @Test
+    fun `de-AT region on an en-GB base context produces fully German prose`() {
+        // Regression: device locale en-GB, Region set to DE_AT.
+        // On Android 13+ without android:localeConfig, createConfigurationContext()
+        // could fall back to the device locale instead of honouring the de-AT
+        // override, producing English sentence templates but German clothing names
+        // ("Tonight will be cold to cool. Wear Pullover and Jacke.").
+        val enGbConfig = Configuration(context.resources.configuration).apply {
+            setLocale(Locale.forLanguageTag("en-GB"))
+        }
+        val enGbContext = context.createConfigurationContext(enGbConfig)
+
+        InsightFormatter.forRegion(enGbContext, Region.DE_AT).format(
+            summary(
+                period = ForecastPeriod.TONIGHT,
+                band = BandClause(TemperatureBand.COLD, TemperatureBand.COOL),
+                clothes = ClothesClause(listOf("sweater", "jacket")),
+            ),
+        ) shouldBe "Heute Abend wird es kalt bis kühl. Trag Pullover und Jacke."
+    }
+
     // ---------------------------------------------------------------------
     // British / Australian English — picks up the en-rGB / en-rAU vocabulary
     // overrides on `garment_*` resources so the rendered prose matches the
