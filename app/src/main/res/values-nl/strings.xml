@@ -10,6 +10,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_tts_voice_locale_system">Taalinstelling volgen</string>
 
     <string name="garment_sweater">Trui</string>
+    <string name="garment_hoodie">Hoodie</string>
     <string name="garment_jacket">Jas</string>
     <string name="garment_coat">Winterjas</string>
     <string name="garment_tshirt">T-shirt</string>
