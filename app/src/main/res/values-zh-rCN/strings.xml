@@ -183,6 +183,8 @@ label localizes.
     <string name="settings_region_language_ar_sa">阿拉伯语（沙特阿拉伯）</string>
     <string name="settings_region_language_he_il">希伯来语（以色列）</string>
     <string name="settings_region_language_fa_ir">波斯语（伊朗）</string>
+    <string name="settings_region_language_sq_al">阿尔巴尼亚语（阿尔巴尼亚）</string>
+    <string name="settings_region_language_ur_pk">乌尔都语（巴基斯坦）</string>
 
     <!-- Region screen — units pickers. -->
     <string name="settings_temperature_unit_title">温度单位</string>
@@ -249,6 +251,8 @@ label localizes.
     <string name="settings_tts_voice_locale_ar_ma">阿拉伯语（摩洛哥）</string>
     <string name="settings_tts_voice_locale_he_il">希伯来语（以色列）</string>
     <string name="settings_tts_voice_locale_fa_ir">波斯语（伊朗）</string>
+    <string name="settings_tts_voice_locale_sq_al">阿尔巴尼亚语（阿尔巴尼亚）</string>
+    <string name="settings_tts_voice_locale_ur_pk">乌尔都语（巴基斯坦）</string>
 
     <!--
     API keys screen — three identical-shape blocks (Gemini, OpenAI,

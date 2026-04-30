@@ -187,6 +187,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_ar_sa">Árabe (Arabia Saudita)</string>
     <string name="settings_region_language_he_il">Hebreo (Israel)</string>
     <string name="settings_region_language_fa_ir">Persa (Irán)</string>
+    <string name="settings_region_language_sq_al">Albanés (Albania)</string>
+    <string name="settings_region_language_ur_pk">Urdu (Pakistán)</string>
 
     <!-- Region screen — units pickers (Temperature: Celsius / Fahrenheit;
          Distance: Kilómetros / Millas). The unit symbols (°C, °F) stay
@@ -256,6 +258,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_ar_ma">Árabe (Marruecos)</string>
     <string name="settings_tts_voice_locale_he_il">Hebreo (Israel)</string>
     <string name="settings_tts_voice_locale_fa_ir">Persa (Irán)</string>
+    <string name="settings_tts_voice_locale_sq_al">Albanés (Albania)</string>
+    <string name="settings_tts_voice_locale_ur_pk">Urdu (Pakistán)</string>
 
     <!--
     API keys screen — three identical-shape blocks (Gemini, OpenAI,

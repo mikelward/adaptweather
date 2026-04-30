@@ -225,6 +225,17 @@ class TtsVoicesTest {
     }
 
     @Test
+    fun `toVoiceOptions maps urdu accent label onto UR_PK`() {
+        // Exercises the ACCENT_TO_VOICE_LOCALE entry added for Urdu, including
+        // upper-case normalisation (ElevenLabs returns the label as-is).
+        val mapped = listOf(
+            ElevenLabsVoiceSummary("u", "Uzma", accent = "urdu"),
+            ElevenLabsVoiceSummary("U", "Uzma2", accent = "Urdu"),
+        ).toVoiceOptions()
+        mapped.forEach { it.locale shouldBe VoiceLocale.UR_PK }
+    }
+
+    @Test
     fun `toVoiceOptions leaves unrecognised or ambiguous accents as null`() {
         // Unknown ("transatlantic"), ambiguous-within-VoiceLocale
         // ("scottish" / "irish" — would they be EN_GB? we don't claim),

@@ -83,7 +83,7 @@ Western Arabic numerals (0-9) are used for TTS compatibility.
     <string name="insight_condition_unknown">نامعلوم</string>
     <!-- SOV: "%1$s آج رات ساتھ لے جائیں" = "[item] tonight take". -->
     <string name="insight_tie_in">آج رات %1$s ساتھ لے جائیں۔</string>
-    <!-- %2$s is the spoken time — "بجے" embedded in insight_precip_at_time. -->
+    <!-- %2$s is the spoken time passed directly; this template itself adds "بجے". -->
     <string name="insight_tie_in_with_rain">آج رات %1$s ساتھ لے جائیں، %2$s بجے بارش۔</string>
     <!-- Bare number; "بجے" comes from insight_precip_at_time. -->
     <string name="insight_time_hour">%1$d</string>

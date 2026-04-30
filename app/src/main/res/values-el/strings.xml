@@ -234,6 +234,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_ar_sa">Αραβικά (Σαουδική Αραβία)</string>
     <string name="settings_region_language_he_il">Εβραϊκά (Ισραήλ)</string>
     <string name="settings_region_language_fa_ir">Περσικά (Ιράν)</string>
+    <string name="settings_region_language_sq_al">Αλβανικά (Αλβανία)</string>
+    <string name="settings_region_language_ur_pk">Ουρντού (Πακιστάν)</string>
 
     <!-- Region screen — units pickers. "Κελσίου" / "Φαρενάιτ" are the
          standard Greek transliterations of Celsius / Fahrenheit; the
@@ -303,6 +305,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_ar_ma">Αραβικά (Μαρόκο)</string>
     <string name="settings_tts_voice_locale_he_il">Εβραϊκά (Ισραήλ)</string>
     <string name="settings_tts_voice_locale_fa_ir">Περσικά (Ιράν)</string>
+    <string name="settings_tts_voice_locale_sq_al">Αλβανικά (Αλβανία)</string>
+    <string name="settings_tts_voice_locale_ur_pk">Ουρντού (Πακιστάν)</string>
 
     <!--
     API keys screen — three identical-shape blocks (Gemini, OpenAI,
