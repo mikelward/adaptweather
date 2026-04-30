@@ -156,7 +156,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_pl_pl">Polonais (Pologne)</string>
     <string name="settings_region_language_hr_hr">Croate (Croatie)</string>
     <string name="settings_region_language_sl_si">Slovène (Slovénie)</string>
-    <string name="settings_region_language_sr_rs">Serbe (Serbie)</string>
+    <string name="settings_region_language_sr_rs">Serbe (latin)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Serbe (cyrillique)</string>
     <string name="settings_region_language_bg_bg">Bulgare (Bulgarie)</string>
     <string name="settings_region_language_cs_cz">Tchèque (Tchéquie)</string>
     <string name="settings_region_language_sk_sk">Slovaque (Slovaquie)</string>
@@ -222,7 +223,8 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_pl_pl">Polonais (Pologne)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croate (Croatie)</string>
     <string name="settings_tts_voice_locale_sl_si">Slovène (Slovénie)</string>
-    <string name="settings_tts_voice_locale_sr_rs">Serbe (Serbie)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Serbe (latin)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Serbe (cyrillique)</string>
     <string name="settings_tts_voice_locale_bg_bg">Bulgare (Bulgarie)</string>
     <string name="settings_tts_voice_locale_cs_cz">Tchèque (Tchéquie)</string>
     <string name="settings_tts_voice_locale_sk_sk">Slovaque (Slovaquie)</string>
