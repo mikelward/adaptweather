@@ -159,6 +159,10 @@
     <string name="settings_location_rationale_body">ClothesCast updates your forecast in the background to deliver it on time, so it needs \'Allow all the time\' location permission.</string>
     <string name="settings_location_rationale_continue">Continue</string>
     <string name="settings_location_rationale_dismiss">Not now</string>
+    <string name="settings_location_background_rationale_title">Allow all the time</string>
+    <string name="settings_location_background_rationale_body">ClothesCast fetches your forecast in the background each morning, so it needs \'Allow all the time\' location access. You\'ll be taken to system Settings to grant it.</string>
+    <string name="settings_location_background_rationale_continue">Open Settings</string>
+    <string name="settings_location_background_rationale_dismiss">Not now</string>
     <string name="settings_location_background_denied_title">Always-on not granted</string>
     <string name="settings_location_background_denied_body">Without \'Allow all the time\', the morning forecast falls back to your saved location. Open system Settings to grant it?</string>
     <string name="settings_location_background_denied_open">Open Settings</string>
