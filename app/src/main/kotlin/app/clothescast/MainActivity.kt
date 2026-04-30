@@ -38,14 +38,20 @@ import kotlinx.coroutines.runBlocking
 private enum class Screen { Today, Settings, Onboarding, Pairing }
 
 class MainActivity : ComponentActivity() {
-    // Incremented each time a notification tap arrives via onNewIntent while the
-    // activity is already running. ClothesCastNav observes this counter and snaps
-    // back to Today whenever it ticks — so e.g. a Settings-screen user who taps the
-    // morning notification lands on Today, not the Settings screen they left open.
+    // Incremented every time a notification tap delivers EXTRA_NAVIGATE_TO_TODAY —
+    // both via onNewIntent (activity already running) and via the launching intent
+    // in onCreate (cold start / activity recreated after process death, where
+    // rememberSaveable would otherwise restore the previously-saved screen, e.g.
+    // Settings). ClothesCastNav observes this counter and snaps back to Today
+    // whenever it ticks, so a notification tap reliably lands the user on Today
+    // regardless of cold/warm start.
     private var navigateToTodayVersion by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (intent?.getBooleanExtra(EXTRA_NAVIGATE_TO_TODAY, false) == true) {
+            navigateToTodayVersion++
+        }
         val app = application as ClothesCastApplication
         setContent {
             ClothesCastTheme {

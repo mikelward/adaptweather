@@ -64,8 +64,8 @@ class InsightNotifier(private val context: Context) {
         // notification shade already says "sweater day" / "jacket day" before the
         // user reads anything. ic_notification_insight is itself a t-shirt silhouette,
         // so it doubles as both the TSHIRT icon and the null fallback (older cached
-        // insights without an outfit). Each variant is an explicit branch so adding a
-        // new Top to the enum is a compile error here, not a silent fall-through.
+        // insights without an outfit). Each variant gets its own explicit branch so
+        // the mapping is easy to scan and the t-shirt-vs-null sharing is obvious.
         internal fun smallIconFor(top: OutfitSuggestion.Top?): Int = when (top) {
             OutfitSuggestion.Top.SWEATER -> R.drawable.ic_notification_top_sweater
             OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_notification_top_thick_jacket
