@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Urdu (Pakistan) translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+Urdu is RTL; android:supportsRtl="true" is already set in the manifest.
+Urdu word order is SOV (Subject-Object-Verb): the object precedes the verb in
+commands — "%1$s پہنیں" reads naturally as "[item] wear".
+Western Arabic numerals (0-9) are used for TTS compatibility.
+-->
+<resources>
+    <string name="settings_region_language_ur_pk">اردو (پاکستان)</string>
+    <string name="settings_tts_voice_locale_ur_pk">اردو (پاکستان)</string>
+    <string name="settings_tts_voice_locale_label">لہجہ</string>
+
+    <string name="garment_sweater">سویٹر</string>
+    <string name="garment_hoodie">ہوڈی</string>
+    <string name="garment_jacket">جیکٹ</string>
+    <string name="garment_coat">کوٹ</string>
+    <string name="garment_tshirt">ٹی شرٹ</string>
+    <string name="garment_shirt">قمیض</string>
+    <string name="garment_shorts">شارٹس</string>
+    <string name="garment_pants">پتلون</string>
+    <string name="garment_jeans">جینز</string>
+
+    <string name="settings_clothes_empty">کوئی اصول نہیں۔ ایک بنانے کے لیے شامل کریں پر ٹیپ کریں۔</string>
+    <string name="settings_clothes_add">شامل کریں</string>
+    <string name="settings_clothes_edit">ترمیم کریں</string>
+    <string name="settings_clothes_delete">حذف کریں</string>
+    <string name="settings_clothes_dialog_add_title">لباس کا اصول شامل کریں</string>
+    <string name="settings_clothes_dialog_edit_title">لباس کا اصول ترمیم کریں</string>
+    <string name="settings_clothes_item_label">لباس</string>
+    <string name="settings_clothes_condition_label">شرط</string>
+    <string name="settings_clothes_value_label_temp_c">حد (°C)</string>
+    <string name="settings_clothes_value_label_precip">حد (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">جب محسوس درجہ حرارت سے کم ہو</string>
+    <string name="settings_clothes_cond_type_temp_above">جب محسوس درجہ حرارت سے زیادہ ہو</string>
+    <string name="settings_clothes_cond_type_precip_above">جب بارش کا امکان سے زیادہ ہو</string>
+    <string name="settings_clothes_cond_temp_below">جب کم از کم محسوس درجہ حرارت %.0f°C سے کم ہو</string>
+    <string name="settings_clothes_cond_temp_above">جب زیادہ سے زیادہ محسوس درجہ حرارت %.0f°C سے زیادہ ہو</string>
+    <string name="settings_clothes_cond_precip_above">جب بارش کا امکان %.0f%% سے زیادہ ہو</string>
+
+    <string name="today_outfit_top_tshirt">ٹی شرٹ</string>
+    <string name="today_outfit_top_sweater">سویٹر</string>
+    <string name="today_outfit_top_thick_jacket">موٹی جیکٹ</string>
+    <string name="today_outfit_bottom_shorts">شارٹس</string>
+    <string name="today_outfit_bottom_long_pants">پتلون</string>
+
+    <string name="insight_lead_today">آج</string>
+    <string name="insight_lead_tonight">آج رات</string>
+    <!-- "آج موسم معتدل رہے گا۔" — SOV with lead first. -->
+    <string name="insight_band_single">%1$s موسم %2$s رہے گا۔</string>
+    <string name="insight_band_range">%1$s موسم %2$s سے %3$s رہے گا۔</string>
+    <string name="insight_band_freezing">انتہائی سرد</string>
+    <string name="insight_band_cold">سرد</string>
+    <string name="insight_band_cool">ٹھنڈا</string>
+    <string name="insight_band_mild">معتدل</string>
+    <string name="insight_band_warm">گرم</string>
+    <string name="insight_band_hot">سخت گرم</string>
+    <string name="insight_delta_warmer">آج %1$d° زیادہ گرم۔</string>
+    <string name="insight_delta_cooler">آج %1$d° زیادہ سرد۔</string>
+    <string name="insight_alert">انتباہ: %1$s۔</string>
+    <!-- SOV: "%1$s پہنیں" = "[item] wear". -->
+    <string name="insight_clothes_wear">%1$s پہنیں۔</string>
+    <!-- Urdu has no indefinite article equivalent to English "a/an". -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <!-- "اور" (aur) = and. -->
+    <string name="insight_clothes_join_two">%1$s اور %2$s</string>
+    <string name="insight_clothes_join_many">%1$s، %2$s اور %3$s</string>
+    <string name="insight_precip">%1$s %2$s۔</string>
+    <!-- "بجے" = "o\'clock / at". -->
+    <string name="insight_precip_at_time">%1$s بجے</string>
+    <string name="insight_precip_overnight">رات بھر</string>
+    <string name="insight_condition_clear">صاف</string>
+    <string name="insight_condition_partly_cloudy">جزوی طور پر ابر آلود</string>
+    <string name="insight_condition_cloudy">ابر آلود</string>
+    <string name="insight_condition_fog">دھند</string>
+    <string name="insight_condition_drizzle">ہلکی بارش</string>
+    <string name="insight_condition_rain">بارش</string>
+    <string name="insight_condition_snow">برف</string>
+    <string name="insight_condition_thunderstorm">آندھی</string>
+    <string name="insight_condition_unknown">نامعلوم</string>
+    <!-- SOV: "%1$s آج رات ساتھ لے جائیں" = "[item] tonight take". -->
+    <string name="insight_tie_in">آج رات %1$s ساتھ لے جائیں۔</string>
+    <!-- %2$s is the spoken time — "بجے" embedded in insight_precip_at_time. -->
+    <string name="insight_tie_in_with_rain">آج رات %1$s ساتھ لے جائیں، %2$s بجے بارش۔</string>
+    <!-- Bare number; "بجے" comes from insight_precip_at_time. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>
