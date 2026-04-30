@@ -234,7 +234,7 @@ fun List<ElevenLabsVoiceSummary>.toVoiceOptions(): List<TtsVoiceOption> = map { 
  * negatives here. A US user filtering to en-US who sees an extra
  * "transatlantic" voice can ignore it; one whose only good clone is
  * silently filtered out can't recover without flipping the picker
- * back to "Follow phone language".
+ * back to "Follow language setting".
  */
 private fun parseElevenLabsAccent(label: String?): VoiceLocale? {
     // Locale.ROOT avoids the Turkish-locale gotcha where lowercasing "I"

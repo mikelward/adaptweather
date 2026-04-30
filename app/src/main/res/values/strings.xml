@@ -207,7 +207,7 @@
     <!-- Caption under Voice > Accent: only the spoken accent, not the on-screen
          text. Pairs with settings_region_language_description. -->
     <string name="settings_tts_voice_locale_description">Sets the accent of the spoken voice. Doesn\'t change the displayed text.</string>
-    <string name="settings_tts_voice_locale_system">Follow phone language</string>
+    <string name="settings_tts_voice_locale_system">Follow language setting</string>
     <string name="settings_tts_voice_locale_en_us">English (United States)</string>
     <string name="settings_tts_voice_locale_en_gb">English (United Kingdom)</string>
     <string name="settings_tts_voice_locale_en_au">English (Australia)</string>
