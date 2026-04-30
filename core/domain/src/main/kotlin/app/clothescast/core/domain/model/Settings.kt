@@ -105,6 +105,7 @@ enum class VoiceLocale(val bcp47: String?) {
     HE_IL("he-IL"),
     FA_IR("fa-IR"),
     SQ_AL("sq-AL"),
+    AM_ET("am-ET"),
 }
 
 /**
@@ -177,6 +178,7 @@ enum class Region(val bcp47: String?) {
     HE_IL("he-IL"),
     FA_IR("fa-IR"),
     SQ_AL("sq-AL"),
+    AM_ET("am-ET"),
 }
 
 data class UserPreferences(
