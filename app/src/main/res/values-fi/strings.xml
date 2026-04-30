@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Finnish translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names.
+-->
+<resources>
+    <string name="settings_region_language_fi_fi">Suomi (Suomi)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Suomi (Suomi)</string>
+    <string name="settings_tts_voice_locale_label">Aksentti</string>
+    <string name="settings_tts_voice_locale_system">Noudata kieliasetusta</string>
+
+    <string name="garment_sweater">Villapaita</string>
+    <string name="garment_hoodie">Huppari</string>
+    <string name="garment_jacket">Takki</string>
+    <string name="garment_coat">Päällystakki</string>
+    <string name="garment_tshirt">T-paita</string>
+    <string name="garment_shirt">Paita</string>
+    <string name="garment_shorts">Shortsit</string>
+    <string name="garment_pants">Housut</string>
+    <string name="garment_jeans">Farkut</string>
+
+    <string name="settings_clothes_empty">Ei sääntöjä. Lisää uusi painamalla Lisää.</string>
+    <string name="settings_clothes_add">Lisää</string>
+    <string name="settings_clothes_edit">Muokkaa</string>
+    <string name="settings_clothes_delete">Poista</string>
+    <string name="settings_clothes_dialog_add_title">Lisää vaatesääntö</string>
+    <string name="settings_clothes_dialog_edit_title">Muokkaa vaatesääntöä</string>
+    <string name="settings_clothes_item_label">Vaatekappale</string>
+    <string name="settings_clothes_condition_label">Ehto</string>
+    <string name="settings_clothes_value_label_temp_c">Raja-arvo (°C)</string>
+    <string name="settings_clothes_value_label_precip">Raja-arvo (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Kun tuntuu kylmemmältä kuin</string>
+    <string name="settings_clothes_cond_type_temp_above">Kun tuntuu lämpimämmältä kuin</string>
+    <string name="settings_clothes_cond_type_precip_above">Kun sateen todennäköisyys on yli</string>
+    <string name="settings_clothes_cond_temp_below">kun tuntuva lämpötila on alle %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">kun tuntuva lämpötila on yli %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">kun sateen todennäköisyys on yli %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T-paita</string>
+    <string name="today_outfit_top_sweater">Villapaita</string>
+    <string name="today_outfit_top_thick_jacket">Paksu takki</string>
+    <string name="today_outfit_bottom_shorts">Shortsit</string>
+    <string name="today_outfit_bottom_long_pants">Pitkät housut</string>
+
+    <string name="insight_lead_today">Tänään</string>
+    <string name="insight_lead_tonight">Tänä iltana</string>
+    <!-- Finnish predicative-partitive: "Tänään on kylmää." -->
+    <string name="insight_band_single">%1$s on %2$s.</string>
+    <string name="insight_band_range">%1$s on %2$s tai %3$s.</string>
+    <string name="insight_band_freezing">pakkasta</string>
+    <string name="insight_band_cold">kylmää</string>
+    <string name="insight_band_cool">viileää</string>
+    <string name="insight_band_mild">leutoa</string>
+    <string name="insight_band_warm">lämmintä</string>
+    <string name="insight_band_hot">kuumaa</string>
+    <string name="insight_delta_warmer">Tänään on %1$d° lämpimämpi.</string>
+    <string name="insight_delta_cooler">Tänään on %1$d° kylmempi.</string>
+    <string name="insight_alert">Varoitus: %1$s.</string>
+    <!-- "Pue" = imperative "put on"; clothing nouns appear in partitive case. -->
+    <string name="insight_clothes_wear">Pue %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s ja %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s ja %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">kello %1$s</string>
+    <string name="insight_precip_overnight">yön aikana</string>
+    <string name="insight_condition_clear">Selkeää</string>
+    <string name="insight_condition_partly_cloudy">Puolipilvistä</string>
+    <string name="insight_condition_cloudy">Pilvistä</string>
+    <string name="insight_condition_fog">Sumua</string>
+    <string name="insight_condition_drizzle">Tihkusadetta</string>
+    <string name="insight_condition_rain">Sadetta</string>
+    <string name="insight_condition_snow">Lumisadetta</string>
+    <string name="insight_condition_thunderstorm">Ukkosmyrsky</string>
+    <string name="insight_condition_unknown">Tuntematon</string>
+    <string name="insight_tie_in">Ota %1$s mukaan tänä iltana.</string>
+    <string name="insight_tie_in_with_rain">Ota %1$s mukaan tänä iltana, sadetta kello %2$s.</string>
+    <!-- "15" — "kello" tulee ympäröivistä malleista. Finnish time format is "15.30". -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d.%2$02d</string>
+
+</resources>

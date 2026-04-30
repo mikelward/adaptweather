@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Estonian translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Tone is
+informal "sina"-form throughout ("Pane … selga", "Võta … kaasa").
+-->
+<resources>
+    <string name="settings_region_language_et_ee">Eesti (Eesti)</string>
+    <string name="settings_tts_voice_locale_et_ee">Eesti (Eesti)</string>
+    <string name="settings_tts_voice_locale_label">Aktsent</string>
+    <string name="settings_tts_voice_locale_system">Järgi keelesätet</string>
+
+    <string name="garment_sweater">Kampsun</string>
+    <string name="garment_hoodie">Kapuutsiga pusa</string>
+    <string name="garment_jacket">Jope</string>
+    <string name="garment_coat">Mantel</string>
+    <string name="garment_tshirt">T-särk</string>
+    <string name="garment_shirt">Särk</string>
+    <string name="garment_shorts">Lühikesed püksid</string>
+    <string name="garment_pants">Püksid</string>
+    <string name="garment_jeans">Teksad</string>
+
+    <string name="settings_clothes_empty">Reegleid pole. Lisa uus puudutades Lisa.</string>
+    <string name="settings_clothes_add">Lisa</string>
+    <string name="settings_clothes_edit">Muuda</string>
+    <string name="settings_clothes_delete">Kustuta</string>
+    <string name="settings_clothes_dialog_add_title">Lisa riietusereegel</string>
+    <string name="settings_clothes_dialog_edit_title">Muuda riietusereeglit</string>
+    <string name="settings_clothes_item_label">Riietusese</string>
+    <string name="settings_clothes_condition_label">Tingimus</string>
+    <string name="settings_clothes_value_label_temp_c">Lävi (°C)</string>
+    <string name="settings_clothes_value_label_precip">Lävi (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Kui tundub külmem kui</string>
+    <string name="settings_clothes_cond_type_temp_above">Kui tundub soojem kui</string>
+    <string name="settings_clothes_cond_type_precip_above">Kui vihma tõenäosus on üle</string>
+    <string name="settings_clothes_cond_temp_below">kui tunnetatav temperatuur on alla %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">kui tunnetatav temperatuur on üle %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">kui vihma tõenäosus on üle %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T-särk</string>
+    <string name="today_outfit_top_sweater">Kampsun</string>
+    <string name="today_outfit_top_thick_jacket">Paks jope</string>
+    <string name="today_outfit_bottom_shorts">Lühikesed püksid</string>
+    <string name="today_outfit_bottom_long_pants">Pikad püksid</string>
+
+    <string name="insight_lead_today">Täna</string>
+    <string name="insight_lead_tonight">Täna õhtul</string>
+    <!-- Estonian copular shape: "Täna on külm." -->
+    <string name="insight_band_single">%1$s on %2$s.</string>
+    <string name="insight_band_range">%1$s on %2$s kuni %3$s.</string>
+    <string name="insight_band_freezing">jäine</string>
+    <string name="insight_band_cold">külm</string>
+    <string name="insight_band_cool">jahe</string>
+    <string name="insight_band_mild">mahe</string>
+    <string name="insight_band_warm">soe</string>
+    <string name="insight_band_hot">kuum</string>
+    <string name="insight_delta_warmer">Täna on %1$d° soojem.</string>
+    <string name="insight_delta_cooler">Täna on %1$d° külmem.</string>
+    <string name="insight_alert">Hoiatus: %1$s.</string>
+    <!-- "Pane selga" = idiomatic "put on" with split verb. -->
+    <string name="insight_clothes_wear">Pane selga %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s ja %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s ja %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">kell %1$s</string>
+    <string name="insight_precip_overnight">öö jooksul</string>
+    <string name="insight_condition_clear">Selge</string>
+    <string name="insight_condition_partly_cloudy">Vahelduv pilvisus</string>
+    <string name="insight_condition_cloudy">Pilves</string>
+    <string name="insight_condition_fog">Udu</string>
+    <string name="insight_condition_drizzle">Uduvihm</string>
+    <string name="insight_condition_rain">Vihm</string>
+    <string name="insight_condition_snow">Lumi</string>
+    <string name="insight_condition_thunderstorm">Äike</string>
+    <string name="insight_condition_unknown">Teadmata</string>
+    <string name="insight_tie_in">Võta %1$s täna õhtul kaasa.</string>
+    <string name="insight_tie_in_with_rain">Võta %1$s täna õhtul kaasa, vihma kell %2$s.</string>
+    <!-- Estonian time format uses "." separator: "kell 15.30". -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d.%2$02d</string>
+
+</resources>

@@ -6,7 +6,8 @@ editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_tr_tr">Türkçe (Türkiye)</string>
     <string name="settings_tts_voice_locale_tr_tr">Türkçe (Türkiye)</string>
-    <string name="settings_tts_voice_locale_label">Dil</string>
+    <string name="settings_tts_voice_locale_label">Aksan</string>
+    <string name="settings_tts_voice_locale_system">Dil ayarını takip et</string>
 
     <string name="garment_sweater">Kazak</string>
     <string name="garment_hoodie">Kapüşonlu sweatshirt</string>
@@ -72,7 +73,6 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_snow">Kar</string>
     <string name="insight_condition_thunderstorm">Fırtına</string>
     <string name="insight_condition_unknown">Bilinmiyor</string>
-    <string name="insight_calendar_tie_in">%2$s\'deki %3$s için %1$s al.</string>
     <string name="insight_tie_in">Bu gece %1$s al.</string>
     <string name="insight_tie_in_with_rain">Bu gece %1$s al, saat %2$s\'de yağmur.</string>
     <!-- "15" — "saat" comes from surrounding templates. -->

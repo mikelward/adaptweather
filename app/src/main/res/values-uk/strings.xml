@@ -6,10 +6,10 @@ editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_uk_ua">Українська (Україна)</string>
     <string name="settings_tts_voice_locale_uk_ua">Українська (Україна)</string>
-    <string name="settings_tts_voice_locale_label">Мова</string>
+    <string name="settings_tts_voice_locale_label">Акцент</string>
+    <string name="settings_tts_voice_locale_system">За налаштуванням мови</string>
 
     <string name="garment_sweater">Светр</string>
-    <string name="garment_hoodie">Худі</string>
     <string name="garment_jacket">Куртка</string>
     <string name="garment_coat">Пальто</string>
     <string name="garment_tshirt">Футболка</string>
@@ -71,7 +71,6 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_snow">Сніг</string>
     <string name="insight_condition_thunderstorm">Гроза</string>
     <string name="insight_condition_unknown">Невідомо</string>
-    <string name="insight_calendar_tie_in">Візьміть %1$s на %3$s о %2$s.</string>
     <string name="insight_tie_in">Візьміть %1$s сьогодні ввечері.</string>
     <string name="insight_tie_in_with_rain">Візьміть %1$s сьогодні ввечері, дощ о %2$s.</string>
     <!-- "15" — preposition "о" comes from surrounding templates. -->

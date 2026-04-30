@@ -33,8 +33,10 @@ label localizes.
 -->
 <resources>
     <string name="settings_region_language_zh_cn">中文（简体）</string>
+    <string name="settings_region_language_zh_tw">中文（繁体）</string>
     <string name="settings_tts_voice_locale_zh_cn">中文（简体）</string>
-    <string name="settings_tts_voice_locale_label">语言</string>
+    <string name="settings_tts_voice_locale_zh_tw">中文（繁体）</string>
+    <string name="settings_tts_voice_locale_label">口音</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">设置</string>
@@ -44,7 +46,6 @@ label localizes.
     <string name="settings_root_schedule">计划</string>
     <string name="settings_root_region">地区</string>
     <string name="settings_root_clothes">服装</string>
-    <string name="settings_root_api_keys">API 密钥</string>
     <string name="settings_root_data_sources">数据源</string>
     <string name="settings_root_about">关于</string>
 
@@ -118,15 +119,10 @@ label localizes.
     <string name="settings_tts_voice_label">语音</string>
     <string name="settings_tts_voice_dismiss">完成</string>
     <string name="settings_tts_voice_locale_description">设置朗读语音的口音。不改变显示文本。</string>
-    <string name="settings_tts_voice_locale_system">跟随手机语言</string>
+    <string name="settings_tts_voice_locale_system">跟随语言设置</string>
 
     <string name="settings_tts_test">测试语音</string>
     <string name="settings_tts_test_in_flight">测试中 — 稍等…</string>
-    <string name="settings_tts_no_key_hint">未配置 %1$s 密钥 — 添加一个以启用此引擎。</string>
-    <string name="settings_tts_add_api_key">添加 API 密钥</string>
-    <string name="settings_tts_add_api_key_title">添加 %1$s API 密钥</string>
-    <string name="settings_tts_add_api_key_save">保存</string>
-    <string name="settings_tts_add_api_key_cancel">取消</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -145,22 +141,41 @@ label localizes.
     <string name="settings_region_language_en_ca">英语（加拿大）</string>
     <string name="settings_region_language_en_za">英语（南非）</string>
     <string name="settings_region_language_de_de">德语（德国）</string>
+    <string name="settings_region_language_de_at">德语（奥地利）</string>
+    <string name="settings_region_language_de_ch">德语（瑞士）</string>
     <string name="settings_region_language_fr_fr">法语（法国）</string>
     <string name="settings_region_language_fr_ca">法语（加拿大）</string>
     <string name="settings_region_language_it_it">意大利语（意大利）</string>
     <string name="settings_region_language_es_es">西班牙语（西班牙）</string>
     <string name="settings_region_language_es_mx">西班牙语（墨西哥）</string>
+    <string name="settings_region_language_ca_es">加泰罗尼亚语（西班牙）</string>
     <string name="settings_region_language_ru_ru">俄语（俄罗斯）</string>
     <string name="settings_region_language_pl_pl">波兰语（波兰）</string>
     <string name="settings_region_language_hr_hr">克罗地亚语（克罗地亚）</string>
+    <string name="settings_region_language_sl_si">斯洛文尼亚语（斯洛文尼亚）</string>
+    <string name="settings_region_language_sr_rs">塞尔维亚语（拉丁文）</string>
+    <string name="settings_region_language_sr_cyrl_rs">塞尔维亚语（西里尔文）</string>
+    <string name="settings_region_language_bg_bg">保加利亚语（保加利亚）</string>
+    <string name="settings_region_language_cs_cz">捷克语（捷克）</string>
+    <string name="settings_region_language_sk_sk">斯洛伐克语（斯洛伐克）</string>
+    <string name="settings_region_language_hu_hu">匈牙利语（匈牙利）</string>
+    <string name="settings_region_language_ro_ro">罗马尼亚语（罗马尼亚）</string>
+    <string name="settings_region_language_el_gr">希腊语（希腊）</string>
     <string name="settings_region_language_uk_ua">乌克兰语（乌克兰）</string>
     <string name="settings_region_language_pt_br">葡萄牙语（巴西）</string>
+    <string name="settings_region_language_pt_pt">葡萄牙语（葡萄牙）</string>
     <string name="settings_region_language_nl_nl">荷兰语（荷兰）</string>
     <string name="settings_region_language_sv_se">瑞典语（瑞典）</string>
+    <string name="settings_region_language_fi_fi">芬兰语（芬兰）</string>
+    <string name="settings_region_language_et_ee">爱沙尼亚语（爱沙尼亚）</string>
+    <string name="settings_region_language_lv_lv">拉脱维亚语（拉脱维亚）</string>
+    <string name="settings_region_language_lt_lt">立陶宛语（立陶宛）</string>
     <string name="settings_region_language_tr_tr">土耳其语（土耳其）</string>
     <string name="settings_region_language_id_id">印尼语（印度尼西亚）</string>
+    <string name="settings_region_language_ms_my">马来语（马来西亚）</string>
     <string name="settings_region_language_fil_ph">菲律宾语（菲律宾）</string>
     <string name="settings_region_language_vi_vn">越南语（越南）</string>
+    <string name="settings_region_language_th_th">泰语（泰国）</string>
     <string name="settings_region_language_hi_in">印地语（印度）</string>
     <string name="settings_region_language_bn_bd">孟加拉语（孟加拉国）</string>
     <string name="settings_region_language_ja_jp">日语（日本）</string>
@@ -189,27 +204,49 @@ label localizes.
     <string name="settings_tts_voice_locale_en_ca">英语（加拿大）</string>
     <string name="settings_tts_voice_locale_en_za">英语（南非）</string>
     <string name="settings_tts_voice_locale_de_de">德语（德国）</string>
+    <string name="settings_tts_voice_locale_de_at">德语（奥地利）</string>
+    <string name="settings_tts_voice_locale_de_ch">德语（瑞士）</string>
     <string name="settings_tts_voice_locale_fr_fr">法语（法国）</string>
     <string name="settings_tts_voice_locale_fr_ca">法语（加拿大）</string>
     <string name="settings_tts_voice_locale_it_it">意大利语（意大利）</string>
     <string name="settings_tts_voice_locale_es_es">西班牙语（西班牙）</string>
     <string name="settings_tts_voice_locale_es_mx">西班牙语（墨西哥）</string>
+    <string name="settings_tts_voice_locale_ca_es">加泰罗尼亚语（西班牙）</string>
     <string name="settings_tts_voice_locale_ru_ru">俄语（俄罗斯）</string>
     <string name="settings_tts_voice_locale_pl_pl">波兰语（波兰）</string>
     <string name="settings_tts_voice_locale_hr_hr">克罗地亚语（克罗地亚）</string>
+    <string name="settings_tts_voice_locale_sl_si">斯洛文尼亚语（斯洛文尼亚）</string>
+    <string name="settings_tts_voice_locale_sr_rs">塞尔维亚语（拉丁文）</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">塞尔维亚语（西里尔文）</string>
+    <string name="settings_tts_voice_locale_bg_bg">保加利亚语（保加利亚）</string>
+    <string name="settings_tts_voice_locale_cs_cz">捷克语（捷克）</string>
+    <string name="settings_tts_voice_locale_sk_sk">斯洛伐克语（斯洛伐克）</string>
+    <string name="settings_tts_voice_locale_hu_hu">匈牙利语（匈牙利）</string>
+    <string name="settings_tts_voice_locale_ro_ro">罗马尼亚语（罗马尼亚）</string>
+    <string name="settings_tts_voice_locale_el_gr">希腊语（希腊）</string>
     <string name="settings_tts_voice_locale_uk_ua">乌克兰语（乌克兰）</string>
     <string name="settings_tts_voice_locale_pt_br">葡萄牙语（巴西）</string>
+    <string name="settings_tts_voice_locale_pt_pt">葡萄牙语（葡萄牙）</string>
     <string name="settings_tts_voice_locale_nl_nl">荷兰语（荷兰）</string>
     <string name="settings_tts_voice_locale_sv_se">瑞典语（瑞典）</string>
+    <string name="settings_tts_voice_locale_fi_fi">芬兰语（芬兰）</string>
+    <string name="settings_tts_voice_locale_et_ee">爱沙尼亚语（爱沙尼亚）</string>
+    <string name="settings_tts_voice_locale_lv_lv">拉脱维亚语（拉脱维亚）</string>
+    <string name="settings_tts_voice_locale_lt_lt">立陶宛语（立陶宛）</string>
     <string name="settings_tts_voice_locale_tr_tr">土耳其语（土耳其）</string>
     <string name="settings_tts_voice_locale_id_id">印尼语（印度尼西亚）</string>
+    <string name="settings_tts_voice_locale_ms_my">马来语（马来西亚）</string>
     <string name="settings_tts_voice_locale_fil_ph">菲律宾语（菲律宾）</string>
     <string name="settings_tts_voice_locale_vi_vn">越南语（越南）</string>
+    <string name="settings_tts_voice_locale_th_th">泰语（泰国）</string>
     <string name="settings_tts_voice_locale_hi_in">印地语（印度）</string>
     <string name="settings_tts_voice_locale_bn_bd">孟加拉语（孟加拉国）</string>
     <string name="settings_tts_voice_locale_ja_jp">日语（日本）</string>
     <string name="settings_tts_voice_locale_ko_kr">韩语（韩国）</string>
     <string name="settings_tts_voice_locale_ar_sa">阿拉伯语（沙特阿拉伯）</string>
+    <string name="settings_tts_voice_locale_ar_eg">阿拉伯语（埃及）</string>
+    <string name="settings_tts_voice_locale_ar_ae">阿拉伯语（阿联酋）</string>
+    <string name="settings_tts_voice_locale_ar_ma">阿拉伯语（摩洛哥）</string>
     <string name="settings_tts_voice_locale_he_il">希伯来语（以色列）</string>
     <string name="settings_tts_voice_locale_fa_ir">波斯语（伊朗）</string>
 
@@ -219,8 +256,6 @@ label localizes.
     save / clear buttons. URLs stay verbatim with the conventional
     space-around-Latin spacing.
     -->
-    <string name="settings_api_keys_title">API 密钥</string>
-    <string name="settings_api_keys_description">配置你要使用的在线语音引擎的 API 密钥。密钥会使用 Android Keystore 加密存储。</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
@@ -250,7 +285,7 @@ label localizes.
     <string name="settings_location_title">位置</string>
     <string name="settings_location_use_device">使用设备位置</string>
     <string name="settings_location_grant_background">授予后台位置权限（系统设置）</string>
-    <string name="settings_location_unset">未设置位置 — 默认使用伦敦</string>
+    <string name="settings_location_unset">未设置位置</string>
     <string name="settings_location_description">天气预报是针对这个地点获取的。按城市名称搜索；结果来自 Open-Meteo 的免费地理编码服务。</string>
     <string name="settings_location_description_device_on">启用后，ClothesCast 在通知时会读取设备的大致位置（仅基站 / WiFi — 不使用 GPS 硬件定位）。如果设备读取失败，会使用下方的位置作为备用。后台位置权限必须在系统设置里授予，否则早晨的 Worker 无法读取。</string>
     <string name="settings_location_set">设置位置</string>
@@ -429,11 +464,10 @@ label localizes.
     <string name="insight_condition_thunderstorm">雷暴</string>
     <string name="insight_condition_unknown">未知</string>
     <!-- "为15点的会议带上雨伞。" — time before event name follows Chinese convention. -->
-    <string name="insight_calendar_tie_in">为%2$s的%3$s带上%1$s。</string>
     <string name="insight_tie_in">今晚带上%1$s。</string>
     <string name="insight_tie_in_with_rain">今晚带上%1$s，%2$s有雨。</string>
     <!-- "15点" / "15点30分" — Chinese spoken time. insight_precip_at_time is a passthrough. -->
     <string name="insight_time_hour">%1$d点</string>
-    <string name="insight_time_hour_minutes">%1$d点%2$d分</string>
+    <string name="insight_time_hour_minutes">%1$d点%2$02d分</string>
 
 </resources>

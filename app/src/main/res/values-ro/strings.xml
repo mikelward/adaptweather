@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Romanian translation. Tone is informal "tu"-form throughout ("Poartă …",
+"Ia …"). Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Other UI
+surfaces fall back to default English (matching values-pl / values-uk).
+-->
+<resources>
+    <string name="settings_region_language_ro_ro">Română (România)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Română (România)</string>
+    <string name="settings_tts_voice_locale_label">Accent</string>
+    <string name="settings_tts_voice_locale_system">Urmează setarea limbii</string>
+
+    <string name="garment_sweater">Pulover</string>
+    <string name="garment_jacket">Geacă</string>
+    <string name="garment_coat">Palton</string>
+    <string name="garment_tshirt">Tricou</string>
+    <string name="garment_shirt">Cămașă</string>
+    <string name="garment_shorts">Pantaloni scurți</string>
+    <string name="garment_pants">Pantaloni</string>
+    <string name="garment_jeans">Blugi</string>
+
+    <string name="settings_clothes_empty">Nicio regulă. Atinge Adaugă pentru a crea.</string>
+    <string name="settings_clothes_add">Adaugă</string>
+    <string name="settings_clothes_edit">Editează</string>
+    <string name="settings_clothes_delete">Șterge</string>
+    <string name="settings_clothes_dialog_add_title">Adaugă regulă de îmbrăcăminte</string>
+    <string name="settings_clothes_dialog_edit_title">Editează regula de îmbrăcăminte</string>
+    <string name="settings_clothes_item_label">Articol</string>
+    <string name="settings_clothes_condition_label">Condiție</string>
+    <string name="settings_clothes_value_label_temp_c">Prag (°C)</string>
+    <string name="settings_clothes_value_label_precip">Prag (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Când se simte mai rece de</string>
+    <string name="settings_clothes_cond_type_temp_above">Când se simte mai cald de</string>
+    <string name="settings_clothes_cond_type_precip_above">Când probabilitatea de ploaie depășește</string>
+    <string name="settings_clothes_cond_temp_below">când temperatura resimțită este sub %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">când temperatura resimțită este peste %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">când probabilitatea de ploaie depășește %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Tricou</string>
+    <string name="today_outfit_top_sweater">Pulover</string>
+    <string name="today_outfit_top_thick_jacket">Palton gros</string>
+    <string name="today_outfit_bottom_shorts">Pantaloni scurți</string>
+    <string name="today_outfit_bottom_long_pants">Pantaloni lungi</string>
+
+    <string name="insight_lead_today">Astăzi</string>
+    <string name="insight_lead_tonight">Diseară</string>
+    <string name="insight_band_single">%1$s va fi %2$s.</string>
+    <string name="insight_band_range">%1$s va fi între %2$s și %3$s.</string>
+    <string name="insight_band_freezing">geros</string>
+    <string name="insight_band_cold">frig</string>
+    <string name="insight_band_cool">răcoare</string>
+    <string name="insight_band_mild">blând</string>
+    <string name="insight_band_warm">cald</string>
+    <string name="insight_band_hot">cald tare</string>
+    <string name="insight_delta_warmer">Astăzi va fi cu %1$d° mai cald.</string>
+    <string name="insight_delta_cooler">Astăzi va fi cu %1$d° mai rece.</string>
+    <string name="insight_alert">Avertisment: %1$s.</string>
+    <string name="insight_clothes_wear">Poartă %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s și %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s și %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">la %1$s</string>
+    <string name="insight_precip_overnight">peste noapte</string>
+    <string name="insight_condition_clear">Senin</string>
+    <string name="insight_condition_partly_cloudy">Parțial înnorat</string>
+    <string name="insight_condition_cloudy">Înnorat</string>
+    <string name="insight_condition_fog">Ceață</string>
+    <string name="insight_condition_drizzle">Burniță</string>
+    <string name="insight_condition_rain">Ploaie</string>
+    <string name="insight_condition_snow">Ninsoare</string>
+    <string name="insight_condition_thunderstorm">Furtună</string>
+    <string name="insight_condition_unknown">Necunoscut</string>
+    <string name="insight_tie_in">Ia %1$s diseară.</string>
+    <string name="insight_tie_in_with_rain">Ia %1$s diseară, ploaie la %2$s.</string>
+    <!-- "15" — preposition "la" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

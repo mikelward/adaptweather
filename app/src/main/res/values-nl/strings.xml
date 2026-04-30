@@ -6,10 +6,10 @@ editor, outfit-card labels, and region/voice-locale picker names.
 <resources>
     <string name="settings_region_language_nl_nl">Nederlands (Nederland)</string>
     <string name="settings_tts_voice_locale_nl_nl">Nederlands (Nederland)</string>
-    <string name="settings_tts_voice_locale_label">Taal</string>
+    <string name="settings_tts_voice_locale_label">Accent</string>
+    <string name="settings_tts_voice_locale_system">Taalinstelling volgen</string>
 
     <string name="garment_sweater">Trui</string>
-    <string name="garment_hoodie">Hoodie</string>
     <string name="garment_jacket">Jas</string>
     <string name="garment_coat">Winterjas</string>
     <string name="garment_tshirt">T-shirt</string>
@@ -73,7 +73,6 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="insight_condition_snow">Sneeuw</string>
     <string name="insight_condition_thunderstorm">Onweer</string>
     <string name="insight_condition_unknown">Onbekend</string>
-    <string name="insight_calendar_tie_in">Neem %1$s mee voor je %3$s om %2$s.</string>
     <string name="insight_tie_in">Neem %1$s mee vanavond.</string>
     <string name="insight_tie_in_with_rain">Neem %1$s mee vanavond, regen om %2$s.</string>
     <!-- "15 uur" — preposition "om" comes from surrounding templates. -->

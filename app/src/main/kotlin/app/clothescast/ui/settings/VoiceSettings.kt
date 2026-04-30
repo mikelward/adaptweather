@@ -7,17 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,9 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.BandClause
@@ -45,9 +42,15 @@ import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.TemperatureBand
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.insight.InsightFormatter
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_FLASH_V2_5
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_MULTILINGUAL_V2
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_TURBO_V2_5
+import app.clothescast.core.data.tts.ELEVENLABS_MODEL_V3
+import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.tts.DeviceVoice
 import app.clothescast.tts.ELEVENLABS_VOICES
 import app.clothescast.tts.ElevenLabsTtsSpeaker
@@ -56,9 +59,12 @@ import app.clothescast.tts.GOOGLE_TTS_PACKAGE
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OPENAI_VOICES
 import app.clothescast.tts.OpenAITtsSpeaker
+import app.clothescast.tts.LocaleFallbackTier
 import app.clothescast.tts.TtsVoiceOption
 import app.clothescast.tts.filterByVariant
+import app.clothescast.tts.localeFallbackTier
 import app.clothescast.tts.resolve
+import app.clothescast.tts.toJavaLocale
 import app.clothescast.tts.withSpeechAudioFocus
 import java.text.Collator
 import java.util.Locale
@@ -79,17 +85,32 @@ internal fun VoiceContent(
     geminiKeyConfigured: Boolean,
     openAiKeyConfigured: Boolean,
     elevenLabsKeyConfigured: Boolean,
+    elevenLabsRefreshedVoices: List<TtsVoiceOption>?,
+    elevenLabsRefreshing: Boolean,
+    elevenLabsModel: String,
+    elevenLabsSpeed: Double,
+    elevenLabsStability: Double,
+    openAiSpeed: Double,
     voiceLocale: VoiceLocale,
+    region: Region,
     padding: PaddingValues,
     onSetTtsEngine: (TtsEngine) -> Unit,
     onSetGeminiVoice: (String) -> Unit,
     onSetOpenAiVoice: (String) -> Unit,
+    onSetOpenAiSpeed: (Double) -> Unit,
     onSetElevenLabsVoice: (String) -> Unit,
     onSetDeviceVoice: (String?) -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
     onSetGeminiKey: (String) -> Unit,
+    onClearGeminiKey: () -> Unit,
     onSetOpenAiKey: (String) -> Unit,
+    onClearOpenAiKey: () -> Unit,
     onSetElevenLabsKey: (String) -> Unit,
+    onClearElevenLabsKey: () -> Unit,
+    onRefreshElevenLabsVoices: () -> Unit,
+    onSetElevenLabsModel: (String) -> Unit,
+    onSetElevenLabsSpeed: (Double) -> Unit,
+    onSetElevenLabsStability: (Double) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -102,12 +123,42 @@ internal fun VoiceContent(
     // atomic with respect to other UI events.
     var isPreviewing by remember { mutableStateOf(false) }
 
-    fun preview(engine: TtsEngine, gVoice: String, oVoice: String, eVoice: String, dVoice: String?, locale: VoiceLocale) {
+    // Slider / picker callbacks need to pass the just-released value into
+    // `preview` directly: `onSet…` writes asynchronously through DataStore →
+    // StateFlow, so the prop hasn't caught up yet when we kick off the
+    // preview. Defaulting each override to the current prop means callers
+    // that aren't changing that knob can keep passing positional args as
+    // before; callers that *are* changing it pass the released value.
+    fun preview(
+        engine: TtsEngine,
+        gVoice: String,
+        oVoice: String,
+        eVoice: String,
+        dVoice: String?,
+        locale: VoiceLocale,
+        oSpeed: Double = openAiSpeed,
+        eSpeed: Double = elevenLabsSpeed,
+        eStability: Double = elevenLabsStability,
+        eModel: String = elevenLabsModel,
+    ) {
         if (isPreviewing) return
         isPreviewing = true
         coroutineScope.launch {
             try {
-                runTtsPreview(context, engine, gVoice, oVoice, eVoice, dVoice, locale)
+                runTtsPreview(
+                    context = context,
+                    engine = engine,
+                    geminiVoice = gVoice,
+                    openAiVoice = oVoice,
+                    openAiSpeed = oSpeed,
+                    elevenLabsVoice = eVoice,
+                    elevenLabsModel = eModel,
+                    elevenLabsSpeed = eSpeed,
+                    elevenLabsStability = eStability,
+                    deviceVoice = dVoice,
+                    voiceLocale = locale,
+                    region = region,
+                )
             } finally {
                 isPreviewing = false
             }
@@ -133,6 +184,7 @@ internal fun VoiceContent(
             )
             VoiceLocalePicker(
                 selected = voiceLocale,
+                region = region,
                 enabled = !isPreviewing,
                 onSelect = {
                     onSetVoiceLocale(it)
@@ -160,13 +212,18 @@ internal fun VoiceContent(
             }
             when (selected) {
                 TtsEngine.GEMINI -> {
-                    if (!geminiKeyConfigured) {
-                        MissingKeyHint(
-                            engineName = stringResource(R.string.settings_api_key_gemini_label),
-                            placeholder = stringResource(R.string.settings_api_key_placeholder),
-                            onSaveKey = onSetGeminiKey,
-                        )
-                    }
+                    KeyEntryFields(
+                        configured = geminiKeyConfigured,
+                        statusText = stringResource(
+                            if (geminiKeyConfigured) R.string.settings_api_key_status_set
+                            else R.string.settings_api_key_status_unset,
+                        ),
+                        placeholder = stringResource(R.string.settings_api_key_placeholder),
+                        saveLabel = stringResource(R.string.settings_api_key_save),
+                        clearLabel = stringResource(R.string.settings_api_key_clear),
+                        onSave = onSetGeminiKey,
+                        onClear = onClearGeminiKey,
+                    )
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
                         voices = GEMINI_VOICES,
@@ -182,13 +239,18 @@ internal fun VoiceContent(
                     }
                 }
                 TtsEngine.OPENAI -> {
-                    if (!openAiKeyConfigured) {
-                        MissingKeyHint(
-                            engineName = stringResource(R.string.settings_api_key_openai_label),
-                            placeholder = stringResource(R.string.settings_openai_key_placeholder),
-                            onSaveKey = onSetOpenAiKey,
-                        )
-                    }
+                    KeyEntryFields(
+                        configured = openAiKeyConfigured,
+                        statusText = stringResource(
+                            if (openAiKeyConfigured) R.string.settings_openai_key_status_set
+                            else R.string.settings_openai_key_status_unset,
+                        ),
+                        placeholder = stringResource(R.string.settings_openai_key_placeholder),
+                        saveLabel = stringResource(R.string.settings_openai_key_save),
+                        clearLabel = stringResource(R.string.settings_openai_key_clear),
+                        onSave = onSetOpenAiKey,
+                        onClear = onClearOpenAiKey,
+                    )
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
                         voices = OPENAI_VOICES.filterByVariant(voiceLocale, keepSelected = openAiVoice),
@@ -199,26 +261,159 @@ internal fun VoiceContent(
                             preview(TtsEngine.OPENAI, geminiVoice, it, elevenLabsVoice, deviceVoice, voiceLocale)
                         },
                     )
+                    LocaleFallbackCaption(
+                        source = OPENAI_VOICES,
+                        voiceLocale = voiceLocale,
+                    )
+                    TtsParameterSlider(
+                        labelRes = R.string.settings_openai_speed_label,
+                        persistedValue = openAiSpeed,
+                        min = UserPreferences.MIN_OPENAI_SPEED,
+                        max = UserPreferences.MAX_OPENAI_SPEED,
+                        step = 0.05,
+                        enabled = !isPreviewing,
+                        onValueChangeFinished = { released ->
+                            onSetOpenAiSpeed(released)
+                            preview(
+                                TtsEngine.OPENAI, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                oSpeed = released,
+                            )
+                        },
+                    )
                     TestVoiceButton(isPreviewing = isPreviewing) {
                         preview(selected, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale)
                     }
                 }
                 TtsEngine.ELEVENLABS -> {
-                    if (!elevenLabsKeyConfigured) {
-                        MissingKeyHint(
-                            engineName = stringResource(R.string.settings_api_key_elevenlabs_label),
-                            placeholder = stringResource(R.string.settings_elevenlabs_key_placeholder),
-                            onSaveKey = onSetElevenLabsKey,
-                        )
-                    }
+                    KeyEntryFields(
+                        configured = elevenLabsKeyConfigured,
+                        statusText = stringResource(
+                            if (elevenLabsKeyConfigured) R.string.settings_elevenlabs_key_status_set
+                            else R.string.settings_elevenlabs_key_status_unset,
+                        ),
+                        placeholder = stringResource(R.string.settings_elevenlabs_key_placeholder),
+                        saveLabel = stringResource(R.string.settings_elevenlabs_key_save),
+                        clearLabel = stringResource(R.string.settings_elevenlabs_key_clear),
+                        onSave = onSetElevenLabsKey,
+                        onClear = onClearElevenLabsKey,
+                    )
+                    // Use the user's account voices once they've refreshed,
+                    // else fall back to the curated en-US library list. Both
+                    // paths apply the same locale filter so the picker
+                    // behaves consistently whether the list is curated or
+                    // account-fetched. `keepSelected` keeps the user's
+                    // current voice visible if its mapped accent doesn't
+                    // match the chosen locale (otherwise the dialog would
+                    // omit it and the button label would fall back to the
+                    // raw voice ID). Empty refreshed list (exotic account
+                    // state) silently falls back to the curated list so the
+                    // picker is never empty.
+                    val elevenLabsSource = elevenLabsRefreshedVoices
+                        ?.takeIf { it.isNotEmpty() }
+                        ?: ELEVENLABS_VOICES
+                    val pickerVoices = elevenLabsSource
+                        .filterByVariant(voiceLocale, keepSelected = elevenLabsVoice)
                     VoicePicker(
                         title = stringResource(R.string.settings_tts_voice_label),
-                        voices = ELEVENLABS_VOICES.filterByVariant(voiceLocale),
+                        voices = pickerVoices,
                         selectedId = elevenLabsVoice,
                         enabled = !isPreviewing,
                         onSelect = {
                             onSetElevenLabsVoice(it)
                             preview(TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, it, deviceVoice, voiceLocale)
+                        },
+                    )
+                    LocaleFallbackCaption(
+                        source = elevenLabsSource,
+                        voiceLocale = voiceLocale,
+                    )
+                    // Caption only when we actually rendered the refreshed
+                    // list. An empty refresh result silently falls back to
+                    // the curated voices (above), so "Showing 0 voices …"
+                    // would be misleading.
+                    if (!elevenLabsRefreshedVoices.isNullOrEmpty()) {
+                        Text(
+                            text = stringResource(
+                                R.string.settings_elevenlabs_refresh_voices_loaded,
+                                elevenLabsRefreshedVoices.size,
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    // Refresh is gated on the key being configured — without
+                    // a key the API call would 401. Disabled while a preview
+                    // or another refresh is in flight to avoid stacking
+                    // requests against the user's quota.
+                    if (elevenLabsKeyConfigured) {
+                        OutlinedButton(
+                            onClick = onRefreshElevenLabsVoices,
+                            enabled = !isPreviewing && !elevenLabsRefreshing,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            // Always render the text label so TalkBack /
+                            // VoiceOver have something to announce (the
+                            // spinner alone is unlabeled). The spinner
+                            // sits to the left of the label while a
+                            // refresh is in flight.
+                            if (elevenLabsRefreshing) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp,
+                                )
+                                Spacer(modifier = Modifier.size(8.dp))
+                            }
+                            Text(stringResource(R.string.settings_elevenlabs_refresh_voices))
+                        }
+                    }
+                    ElevenLabsModelPicker(
+                        selected = elevenLabsModel,
+                        enabled = !isPreviewing,
+                        onSelect = { picked ->
+                            onSetElevenLabsModel(picked)
+                            preview(
+                                TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                eModel = picked,
+                            )
+                        },
+                    )
+                    TtsParameterSlider(
+                        labelRes = R.string.settings_elevenlabs_speed_label,
+                        persistedValue = elevenLabsSpeed,
+                        min = UserPreferences.MIN_ELEVENLABS_SPEED,
+                        max = UserPreferences.MAX_ELEVENLABS_SPEED,
+                        step = 0.05,
+                        enabled = !isPreviewing,
+                        // Persist + preview on slider release only. Every
+                        // drag tick would fire a DataStore write, a
+                        // preferences-flow emission, and (worse) a billed
+                        // synthesis call. The slider holds its dragged
+                        // value in local Compose state until release.
+                        onValueChangeFinished = { released ->
+                            onSetElevenLabsSpeed(released)
+                            preview(
+                                TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                eSpeed = released,
+                            )
+                        },
+                    )
+                    TtsParameterSlider(
+                        labelRes = R.string.settings_elevenlabs_stability_label,
+                        persistedValue = elevenLabsStability,
+                        min = UserPreferences.MIN_ELEVENLABS_STABILITY,
+                        max = UserPreferences.MAX_ELEVENLABS_STABILITY,
+                        // 0.05 increments give 21 selectable values across
+                        // 0.0–1.0 — fine enough that the user can audition
+                        // "expressive" (≤0.4), "default" (~0.65), and
+                        // "steady" (≥0.85) without overwhelming the picker.
+                        step = 0.05,
+                        enabled = !isPreviewing,
+                        onValueChangeFinished = { released ->
+                            onSetElevenLabsStability(released)
+                            preview(
+                                TtsEngine.ELEVENLABS, geminiVoice, openAiVoice, elevenLabsVoice, deviceVoice, voiceLocale,
+                                eStability = released,
+                            )
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
@@ -248,97 +443,27 @@ internal fun VoiceContent(
     }
 }
 
-/**
- * Inline hint shown next to the engine picker when the chosen engine's key isn't
- * configured. Tapping "Add API key" opens a paste dialog so the user can enter
- * the key without leaving the Voice screen — the same key that the API keys
- * page would store.
- */
-@Composable
-private fun MissingKeyHint(
-    engineName: String,
-    placeholder: String,
-    onSaveKey: (String) -> Unit,
-) {
-    var dialogOpen by remember { mutableStateOf(false) }
-    Text(
-        text = stringResource(R.string.settings_tts_no_key_hint, engineName),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.error,
-    )
-    Button(
-        onClick = { dialogOpen = true },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(stringResource(R.string.settings_tts_add_api_key))
-    }
-    if (dialogOpen) {
-        AddApiKeyDialog(
-            engineName = engineName,
-            placeholder = placeholder,
-            onSave = {
-                onSaveKey(it)
-                dialogOpen = false
-            },
-            onDismiss = { dialogOpen = false },
-        )
-    }
-}
-
-@Composable
-private fun AddApiKeyDialog(
-    engineName: String,
-    placeholder: String,
-    onSave: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    var input by remember { mutableStateOf("") }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.settings_tts_add_api_key_title, engineName)) },
-        text = {
-            OutlinedTextField(
-                value = input,
-                onValueChange = { input = it },
-                singleLine = true,
-                visualTransformation = if (input.isEmpty()) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                placeholder = { Text(placeholder) },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    val trimmed = input.trim()
-                    if (trimmed.isNotEmpty()) onSave(trimmed)
-                },
-                enabled = input.isNotBlank(),
-            ) {
-                Text(stringResource(R.string.settings_tts_add_api_key_save))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.settings_tts_add_api_key_cancel))
-            }
-        },
-    )
-}
-
 @Composable
 private fun VoiceLocalePicker(
     selected: VoiceLocale,
+    region: Region,
     onSelect: (VoiceLocale) -> Unit,
     enabled: Boolean = true,
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
     val title = stringResource(R.string.settings_tts_voice_locale_label)
-    // Show the actual runtime locale VoiceLocale.SYSTEM resolves to (device
-    // default), which can differ from the app UI language when the user sets
-    // an in-app language override.
+    // Show the locale that VoiceLocale.SYSTEM resolves to: the app's
+    // configured region language when the user has set one explicitly, or the
+    // device UI language otherwise. This is what the TTS engine actually uses,
+    // so the user can verify what accent they'll hear without leaving Settings.
     val uiLocale = LocalContext.current.resourcesLocale()
-    val systemTag = remember { VoiceLocale.SYSTEM.resolve().toLanguageTag() }
+    // Prefer the region-configured locale over the device default. Fall back
+    // to uiLocale (the context resources locale) when region is SYSTEM so the
+    // tag still updates with runtime app-language changes.
+    // Strip Unicode extensions (e.g. `-u-fw-mon` from a Monday-week device
+    // preference) — they're irrelevant to the spoken accent and just clutter
+    // the picker label.
+    val systemTag = VoiceLocale.SYSTEM.resolve(region.toJavaLocale() ?: uiLocale).stripExtensions().toLanguageTag()
     val labelFor: @Composable (VoiceLocale) -> String = { option ->
         val base = stringResource(voiceLocaleLabel(option))
         if (option == VoiceLocale.SYSTEM) "$base ($systemTag)" else base
@@ -393,31 +518,59 @@ private fun voiceLocaleLabel(locale: VoiceLocale): Int = when (locale) {
     VoiceLocale.EN_AU -> R.string.settings_tts_voice_locale_en_au
     VoiceLocale.EN_CA -> R.string.settings_tts_voice_locale_en_ca
     VoiceLocale.DE_DE -> R.string.settings_tts_voice_locale_de_de
+    VoiceLocale.DE_AT -> R.string.settings_tts_voice_locale_de_at
+    VoiceLocale.DE_CH -> R.string.settings_tts_voice_locale_de_ch
     VoiceLocale.FR_FR -> R.string.settings_tts_voice_locale_fr_fr
     VoiceLocale.FR_CA -> R.string.settings_tts_voice_locale_fr_ca
     VoiceLocale.IT_IT -> R.string.settings_tts_voice_locale_it_it
     VoiceLocale.ES_ES -> R.string.settings_tts_voice_locale_es_es
     VoiceLocale.ES_MX -> R.string.settings_tts_voice_locale_es_mx
+    VoiceLocale.CA_ES -> R.string.settings_tts_voice_locale_ca_es
     VoiceLocale.RU_RU -> R.string.settings_tts_voice_locale_ru_ru
     VoiceLocale.PL_PL -> R.string.settings_tts_voice_locale_pl_pl
     VoiceLocale.HR_HR -> R.string.settings_tts_voice_locale_hr_hr
+    VoiceLocale.SL_SI -> R.string.settings_tts_voice_locale_sl_si
+    VoiceLocale.SR_RS -> R.string.settings_tts_voice_locale_sr_rs
+    VoiceLocale.SR_CYRL_RS -> R.string.settings_tts_voice_locale_sr_cyrl_rs
+    VoiceLocale.BG_BG -> R.string.settings_tts_voice_locale_bg_bg
+    VoiceLocale.CS_CZ -> R.string.settings_tts_voice_locale_cs_cz
+    VoiceLocale.SK_SK -> R.string.settings_tts_voice_locale_sk_sk
+    VoiceLocale.HU_HU -> R.string.settings_tts_voice_locale_hu_hu
+    VoiceLocale.RO_RO -> R.string.settings_tts_voice_locale_ro_ro
+    VoiceLocale.EL_GR -> R.string.settings_tts_voice_locale_el_gr
     VoiceLocale.UK_UA -> R.string.settings_tts_voice_locale_uk_ua
     VoiceLocale.PT_BR -> R.string.settings_tts_voice_locale_pt_br
+    VoiceLocale.PT_PT -> R.string.settings_tts_voice_locale_pt_pt
     VoiceLocale.NL_NL -> R.string.settings_tts_voice_locale_nl_nl
     VoiceLocale.SV_SE -> R.string.settings_tts_voice_locale_sv_se
+    VoiceLocale.DA_DK -> R.string.settings_tts_voice_locale_da_dk
+    VoiceLocale.NB_NO -> R.string.settings_tts_voice_locale_nb_no
+    VoiceLocale.FI_FI -> R.string.settings_tts_voice_locale_fi_fi
+    VoiceLocale.ET_EE -> R.string.settings_tts_voice_locale_et_ee
+    VoiceLocale.LV_LV -> R.string.settings_tts_voice_locale_lv_lv
+    VoiceLocale.LT_LT -> R.string.settings_tts_voice_locale_lt_lt
     VoiceLocale.TR_TR -> R.string.settings_tts_voice_locale_tr_tr
     VoiceLocale.EN_ZA -> R.string.settings_tts_voice_locale_en_za
     VoiceLocale.ID_ID -> R.string.settings_tts_voice_locale_id_id
+    VoiceLocale.MS_MY -> R.string.settings_tts_voice_locale_ms_my
     VoiceLocale.FIL_PH -> R.string.settings_tts_voice_locale_fil_ph
+    VoiceLocale.SW_KE -> R.string.settings_tts_voice_locale_sw_ke
     VoiceLocale.VI_VN -> R.string.settings_tts_voice_locale_vi_vn
+    VoiceLocale.TH_TH -> R.string.settings_tts_voice_locale_th_th
     VoiceLocale.ZH_CN -> R.string.settings_tts_voice_locale_zh_cn
+    VoiceLocale.ZH_TW -> R.string.settings_tts_voice_locale_zh_tw
     VoiceLocale.HI_IN -> R.string.settings_tts_voice_locale_hi_in
     VoiceLocale.BN_BD -> R.string.settings_tts_voice_locale_bn_bd
     VoiceLocale.JA_JP -> R.string.settings_tts_voice_locale_ja_jp
     VoiceLocale.KO_KR -> R.string.settings_tts_voice_locale_ko_kr
     VoiceLocale.AR_SA -> R.string.settings_tts_voice_locale_ar_sa
+    VoiceLocale.AR_EG -> R.string.settings_tts_voice_locale_ar_eg
+    VoiceLocale.AR_AE -> R.string.settings_tts_voice_locale_ar_ae
+    VoiceLocale.AR_MA -> R.string.settings_tts_voice_locale_ar_ma
     VoiceLocale.HE_IL -> R.string.settings_tts_voice_locale_he_il
     VoiceLocale.FA_IR -> R.string.settings_tts_voice_locale_fa_ir
+    VoiceLocale.SQ_AL -> R.string.settings_tts_voice_locale_sq_al
+    VoiceLocale.AM_ET -> R.string.settings_tts_voice_locale_am_et
 }
 
 @Composable
@@ -514,6 +667,93 @@ private fun DeviceVoicePicker(
 private const val DEVICE_VOICE_AUTO_ID = "__auto__"
 
 /**
+ * Radio list for the four ElevenLabs models we expose: Turbo v2.5 (default,
+ * balanced), Multilingual v2 (legacy flagship — 2× the credit cost), Flash
+ * v2.5 (lowest latency), and v3 (alpha). Kept as a small fixed list rather
+ * than a `GET /v1/models` fetch — the cost / latency trade-offs of each are
+ * UX prose the user benefits from seeing inline, and the wire IDs don't
+ * change often. Add a new constant + entry here when ElevenLabs ships
+ * something worth surfacing.
+ */
+@Composable
+private fun ElevenLabsModelPicker(
+    selected: String,
+    onSelect: (String) -> Unit,
+    enabled: Boolean = true,
+) {
+    val models = listOf(
+        ELEVENLABS_MODEL_TURBO_V2_5 to R.string.settings_elevenlabs_model_turbo_v2_5,
+        ELEVENLABS_MODEL_MULTILINGUAL_V2 to R.string.settings_elevenlabs_model_multilingual_v2,
+        ELEVENLABS_MODEL_FLASH_V2_5 to R.string.settings_elevenlabs_model_flash_v2_5,
+        ELEVENLABS_MODEL_V3 to R.string.settings_elevenlabs_model_v3,
+    )
+    Text(
+        text = stringResource(R.string.settings_elevenlabs_model_label),
+        style = MaterialTheme.typography.titleSmall,
+    )
+    models.forEach { (id, labelRes) ->
+        RadioRow(
+            label = stringResource(labelRes),
+            selected = id == selected,
+            enabled = enabled,
+            onSelect = { onSelect(id) },
+        )
+    }
+}
+
+/**
+ * Slider for a per-clip TTS tuning parameter (currently used for ElevenLabs
+ * speed + stability and OpenAI speed). [labelRes] takes one `%1$s` formatted
+ * placeholder for the live numeric value (e.g. "Speed × %1$s" → "Speed × 0.95").
+ *
+ * The dragged value is held in local Compose state — only on release does
+ * [onValueChangeFinished] fire with the final value, which the caller
+ * persists and uses to trigger a billed synthesis preview. This avoids a
+ * burst of DataStore writes (one per drag tick) and keeps a single
+ * preview from stacking on top of itself if the user is still dragging.
+ *
+ * The label updates live during drag (off the local state), so the
+ * thumb-following number isn't laggy.
+ */
+@Composable
+private fun TtsParameterSlider(
+    @androidx.annotation.StringRes labelRes: Int,
+    persistedValue: Double,
+    min: Double,
+    max: Double,
+    step: Double,
+    onValueChangeFinished: (Double) -> Unit,
+    enabled: Boolean = true,
+) {
+    val minF = min.toFloat()
+    val maxF = max.toFloat()
+    // Slider's `steps` is the count of positions *between* the endpoints, so
+    // an N-step range uses (N - 1) here. round() guards against the floating
+    // tail of e.g. (1.0 - 0.0) / 0.05 producing 19.999…
+    val steps = (((max - min) / step).let { Math.round(it).toInt() } - 1).coerceAtLeast(0)
+    // `persistedValue` keys the remember so an external change (DataStore
+    // emission landing after `onValueChangeFinished` persists, or a future
+    // settings reset) overwrites the local-during-drag value.
+    var draggedValue by remember(persistedValue) {
+        mutableStateOf(persistedValue.toFloat().coerceIn(minF, maxF))
+    }
+    val displayValue = String.format(Locale.US, "%.2f", draggedValue)
+    Text(
+        text = stringResource(labelRes, displayValue),
+        style = MaterialTheme.typography.titleSmall,
+    )
+    Slider(
+        value = draggedValue,
+        onValueChange = { draggedValue = it },
+        onValueChangeFinished = { onValueChangeFinished(draggedValue.toDouble()) },
+        valueRange = minF..maxF,
+        steps = steps,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+/**
  * Tracks whether `com.google.android.tts` is currently installed, refreshing
  * on every `ON_RESUME`. Lives in the composable layer (rather than the
  * SettingsViewModel) because the ViewModel instance is reused across
@@ -577,6 +817,35 @@ private fun InstallGoogleTtsHint() {
     }
 }
 
+/**
+ * Caption rendered under a cloud-engine voice picker when [filterByVariant]
+ * fell back from an exact-accent match — `filterByVariant` silently falls
+ * back to a same-language list (or the full list) so the picker is never
+ * empty, and without context that looks like the engine ignored the
+ * locale setting. The caption names the locale so the user knows the
+ * fallback was deliberate, and tells them whether the visible voices are
+ * a same-language near-match or just "everything we have, try another
+ * accent".
+ *
+ * Renders nothing when [voiceLocale] is [VoiceLocale.SYSTEM] (no
+ * preference expressed) or when at least one voice in [source] matches it.
+ */
+@Composable
+private fun LocaleFallbackCaption(source: List<TtsVoiceOption>, voiceLocale: VoiceLocale) {
+    val tier = source.localeFallbackTier(voiceLocale)
+    val captionRes = when (tier) {
+        LocaleFallbackTier.Exact -> return
+        LocaleFallbackTier.SameLanguage -> R.string.settings_tts_voice_locale_language_fallback
+        LocaleFallbackTier.FullList -> R.string.settings_tts_voice_locale_no_match
+    }
+    val localeLabel = stringResource(voiceLocaleLabel(voiceLocale))
+    Text(
+        text = stringResource(captionRes, localeLabel),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
 @Composable
 private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
     // Disabled while previewing — billed cloud TTS calls can't be reliably
@@ -624,16 +893,21 @@ private suspend fun runTtsPreview(
     engine: TtsEngine,
     geminiVoice: String,
     openAiVoice: String,
+    openAiSpeed: Double,
     elevenLabsVoice: String,
+    elevenLabsModel: String,
+    elevenLabsSpeed: Double,
+    elevenLabsStability: Double,
     deviceVoice: String?,
     voiceLocale: VoiceLocale,
+    region: Region,
 ) {
     val app = context.applicationContext as app.clothescast.ClothesCastApplication
     // Network synthesis and AudioTrack write are both blocking-ish work — Ktor
     // suspends off-Main internally, but AudioTrack.write/play are JNI calls and
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
-        val locale = voiceLocale.resolve()
+        val locale = voiceLocale.resolve(region.toJavaLocale() ?: Locale.getDefault())
         // Render the canned sample in the *voice* locale, not the app's UI
         // locale — playing English prose through a Japanese voice is exactly
         // the mismatch the user picked the locale to avoid. The formatter
@@ -645,9 +919,19 @@ private suspend fun runTtsPreview(
                     TtsEngine.GEMINI ->
                         GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text, locale)
                     TtsEngine.OPENAI ->
-                        OpenAITtsSpeaker(app.openAiTtsClient, voice = openAiVoice).speak(text, locale)
+                        OpenAITtsSpeaker(
+                            client = app.openAiTtsClient,
+                            voice = openAiVoice,
+                            speed = openAiSpeed,
+                        ).speak(text, locale)
                     TtsEngine.ELEVENLABS ->
-                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = elevenLabsVoice).speak(text, locale)
+                        ElevenLabsTtsSpeaker(
+                            client = app.elevenLabsTtsClient,
+                            voiceId = elevenLabsVoice,
+                            model = elevenLabsModel,
+                            speed = elevenLabsSpeed,
+                            stability = elevenLabsStability,
+                        ).speak(text, locale)
                     TtsEngine.DEVICE ->
                         app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
                 }

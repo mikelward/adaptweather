@@ -12,7 +12,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -20,6 +22,7 @@ import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.tts.defaultOpenAiVoiceFor
+import app.clothescast.tts.toJavaLocale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -134,8 +137,40 @@ class SettingsRepository(
         dataStore.edit { it[OPENAI_VOICE] = voice }
     }
 
+    suspend fun setOpenAiSpeed(speed: Double) {
+        // Clamp on write so a misconfigured caller can't push out-of-range
+        // values into DataStore. Mirrors setElevenLabsSpeed.
+        val clamped = speed.coerceIn(
+            UserPreferences.MIN_OPENAI_SPEED,
+            UserPreferences.MAX_OPENAI_SPEED,
+        )
+        dataStore.edit { it[OPENAI_SPEED] = clamped }
+    }
+
     suspend fun setElevenLabsVoice(voice: String) {
         dataStore.edit { it[ELEVENLABS_VOICE] = voice }
+    }
+
+    suspend fun setElevenLabsModel(model: String) {
+        dataStore.edit { it[ELEVENLABS_MODEL] = model }
+    }
+
+    suspend fun setElevenLabsSpeed(speed: Double) {
+        // Clamp to ElevenLabs's documented range so a misconfigured caller
+        // can't push an out-of-range value into DataStore.
+        val clamped = speed.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_SPEED,
+            UserPreferences.MAX_ELEVENLABS_SPEED,
+        )
+        dataStore.edit { it[ELEVENLABS_SPEED] = clamped }
+    }
+
+    suspend fun setElevenLabsStability(stability: Double) {
+        val clamped = stability.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_STABILITY,
+            UserPreferences.MAX_ELEVENLABS_STABILITY,
+        )
+        dataStore.edit { it[ELEVENLABS_STABILITY] = clamped }
     }
 
     suspend fun setDeviceVoice(voice: String?) {
@@ -152,6 +187,63 @@ class SettingsRepository(
 
     suspend fun setUseCalendarEvents(enabled: Boolean) {
         dataStore.edit { it[USE_CALENDAR_EVENTS] = enabled }
+    }
+
+    suspend fun setOutfitThresholds(thresholds: OutfitSuggestion.Thresholds) {
+        // Clamp on write so a relentless tap-spam can't drive the cutoff into
+        // nonsense territory. The domain helper applies the same bounds — this
+        // is belt-and-braces.
+        dataStore.edit { prefs ->
+            prefs[OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN] = thresholds.sweaterMaxFeelsLikeMinC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+            prefs[OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN] = thresholds.tshirtMinFeelsLikeMinC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+            prefs[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX] = thresholds.shortsMinFeelsLikeMaxC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+            prefs[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN] = thresholds.shortsMinFeelsLikeMinC
+                .coerceIn(OutfitSuggestion.Thresholds.MIN_C, OutfitSuggestion.Thresholds.MAX_C)
+        }
+    }
+
+    suspend fun resetOutfitThresholds() {
+        dataStore.edit { prefs ->
+            prefs.remove(OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN)
+            prefs.remove(OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN)
+            prefs.remove(OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX)
+            prefs.remove(OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN)
+        }
+    }
+
+    /**
+     * Atomically nudges one threshold by [deltaC] degrees Celsius. The read of
+     * the current value, the addition, and the write all happen inside a single
+     * [dataStore.edit] transaction — DataStore Preferences serialises edits, so
+     * even if a user spams `−` ten times in 100ms each tap reads the latest
+     * persisted value rather than the same pre-update snapshot, and no taps
+     * collapse into one. Final value is clamped to the documented sanity range.
+     */
+    suspend fun adjustOutfitThreshold(kind: Fact.ThresholdKind, deltaC: Double) {
+        dataStore.edit { prefs ->
+            val key = keyForOutfitThreshold(kind)
+            val default = OutfitSuggestion.Thresholds.DEFAULT.valueOf(kind)
+            val current = prefs[key]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: default
+            prefs[key] = (current + deltaC).coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            )
+        }
+    }
+
+    private fun keyForOutfitThreshold(
+        kind: Fact.ThresholdKind,
+    ): androidx.datastore.preferences.core.Preferences.Key<Double> = when (kind) {
+        Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN -> OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN
+        Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN -> OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN
+        Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX -> OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX
+        Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN -> OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN
     }
 
     private fun Preferences.toUserPreferences(): UserPreferences {
@@ -188,11 +280,27 @@ class SettingsRepository(
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
         // OpenAI default depends on locale (en-GB → fable; everything else → nova).
+        // Resolve with regionLocale as fallback: a SYSTEM voiceLocale on an en-GB
+        // region should default to fable just as an explicit EN_GB voiceLocale does.
         // Resolve only after voiceLocale is known so the picked voice matches.
         val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
-            ?: defaultOpenAiVoiceFor(voiceLocale)
+            ?: defaultOpenAiVoiceFor(voiceLocale, regionLocale)
         val elevenLabsVoice = this[ELEVENLABS_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_ELEVENLABS_VOICE
+        val elevenLabsModel = this[ELEVENLABS_MODEL]?.takeIf { it.isNotBlank() }
+            ?: UserPreferences.DEFAULT_ELEVENLABS_MODEL
+        val elevenLabsSpeed = this[ELEVENLABS_SPEED]?.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_SPEED,
+            UserPreferences.MAX_ELEVENLABS_SPEED,
+        ) ?: UserPreferences.DEFAULT_ELEVENLABS_SPEED
+        val elevenLabsStability = this[ELEVENLABS_STABILITY]?.coerceIn(
+            UserPreferences.MIN_ELEVENLABS_STABILITY,
+            UserPreferences.MAX_ELEVENLABS_STABILITY,
+        ) ?: UserPreferences.DEFAULT_ELEVENLABS_STABILITY
+        val openAiSpeed = this[OPENAI_SPEED]?.coerceIn(
+            UserPreferences.MIN_OPENAI_SPEED,
+            UserPreferences.MAX_OPENAI_SPEED,
+        ) ?: UserPreferences.DEFAULT_OPENAI_SPEED
         val deviceVoice = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
         val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
         val tonightTime = this[TONIGHT_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
@@ -207,6 +315,26 @@ class SettingsRepository(
         val tonightEnabled = this[TONIGHT_ENABLED] != false
         val tonightNotifyOnlyOnEvents = this[TONIGHT_NOTIFY_ONLY_ON_EVENTS] == true
         val dailyMentionEveningEvents = this[DAILY_MENTION_EVENING_EVENTS] == true
+        // Each cutoff falls back independently to the matching DEFAULT field, so a user
+        // who only nudged the jacket cutoff still gets the default sweater/shorts cuts.
+        val outfitThresholds = OutfitSuggestion.Thresholds(
+            sweaterMaxFeelsLikeMinC = this[OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.sweaterMaxFeelsLikeMinC,
+            tshirtMinFeelsLikeMinC = this[OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.tshirtMinFeelsLikeMinC,
+            shortsMinFeelsLikeMaxC = this[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.shortsMinFeelsLikeMaxC,
+            shortsMinFeelsLikeMinC = this[OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN]?.coerceIn(
+                OutfitSuggestion.Thresholds.MIN_C,
+                OutfitSuggestion.Thresholds.MAX_C,
+            ) ?: OutfitSuggestion.Thresholds.DEFAULT.shortsMinFeelsLikeMinC,
+        )
         val zone = zoneIdProvider()
 
         return UserPreferences(
@@ -221,7 +349,11 @@ class SettingsRepository(
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
             openAiVoice = openAiVoice,
+            openAiSpeed = openAiSpeed,
             elevenLabsVoice = elevenLabsVoice,
+            elevenLabsModel = elevenLabsModel,
+            elevenLabsSpeed = elevenLabsSpeed,
+            elevenLabsStability = elevenLabsStability,
             deviceVoice = deviceVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
@@ -230,6 +362,7 @@ class SettingsRepository(
             tonightDeliveryMode = tonightDeliveryMode,
             tonightNotifyOnlyOnEvents = tonightNotifyOnlyOnEvents,
             dailyMentionEveningEvents = dailyMentionEveningEvents,
+            outfitThresholds = outfitThresholds,
         )
     }
 
@@ -274,6 +407,10 @@ class SettingsRepository(
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
         private val ELEVENLABS_VOICE = stringPreferencesKey("elevenlabs_voice")
+        private val ELEVENLABS_MODEL = stringPreferencesKey("elevenlabs_model")
+        private val ELEVENLABS_SPEED = doublePreferencesKey("elevenlabs_speed")
+        private val ELEVENLABS_STABILITY = doublePreferencesKey("elevenlabs_stability")
+        private val OPENAI_SPEED = doublePreferencesKey("openai_speed")
         private val DEVICE_VOICE = stringPreferencesKey("device_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")
@@ -283,6 +420,14 @@ class SettingsRepository(
         private val TONIGHT_DELIVERY_MODE = stringPreferencesKey("tonight_delivery_mode")
         private val TONIGHT_NOTIFY_ONLY_ON_EVENTS = booleanPreferencesKey("tonight_notify_only_on_events")
         private val DAILY_MENTION_EVENING_EVENTS = booleanPreferencesKey("daily_mention_evening_events")
+        private val OUTFIT_THRESHOLD_SWEATER_MAX_FEELS_LIKE_MIN =
+            doublePreferencesKey("outfit_threshold_sweater_max_feels_like_min_c")
+        private val OUTFIT_THRESHOLD_TSHIRT_MIN_FEELS_LIKE_MIN =
+            doublePreferencesKey("outfit_threshold_tshirt_min_feels_like_min_c")
+        private val OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MAX =
+            doublePreferencesKey("outfit_threshold_shorts_min_feels_like_max_c")
+        private val OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN =
+            doublePreferencesKey("outfit_threshold_shorts_min_feels_like_min_c")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)
@@ -294,8 +439,6 @@ class SettingsRepository(
 }
 
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
-private fun Region.toJavaLocale(): Locale? = bcp47?.let { Locale.forLanguageTag(it) }
 
 // Only the US uses Fahrenheit in everyday weather contexts. A handful of
 // dependencies (BS, BZ, KY, PW) also do, but they're rounding error and the

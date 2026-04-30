@@ -1,7 +1,9 @@
 package app.clothescast.work
 
 import android.content.Context
+import android.location.LocationManager
 import app.clothescast.diag.DiagLog
+import androidx.core.content.getSystemService
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -20,10 +22,13 @@ import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.insight.InsightFormatter
+import app.clothescast.location.hasBackgroundLocationPermission
+import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.tts.ElevenLabsTtsSpeaker
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.OpenAITtsSpeaker
 import app.clothescast.tts.resolve
+import app.clothescast.tts.toJavaLocale
 import app.clothescast.tts.withSpeechAudioFocus
 import app.clothescast.widget.OutfitWidget
 import io.ktor.client.call.NoTransformationFoundException
@@ -34,6 +39,7 @@ import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.flow.first
 import java.io.IOException
 import java.time.LocalDate
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
@@ -75,6 +81,45 @@ class FetchAndNotifyWorker(
         }
 
         val location = resolveLocation(prefs)
+            ?: run {
+                // Two distinct null cases land here, and they want different
+                // outcomes:
+                //
+                //   1. Misconfigured — useDeviceLocation off + no saved
+                //      fallback, OR useDeviceLocation on but the user hasn't
+                //      granted ACCESS_BACKGROUND_LOCATION (Q+) yet. The user
+                //      has to do something; retrying on backoff would just
+                //      hammer the system every 30s with no progress. Fail
+                //      with REASON_NO_LOCATION so the Today banner prompts
+                //      them to grant permission or pick a city.
+                //
+                //   2. Transient — useDeviceLocation on, both permissions
+                //      granted, location services enabled system-wide, no
+                //      saved fallback, but LocationResolver returned null
+                //      this time (NETWORK provider returned null, timeout,
+                //      momentary signal flake). A later attempt is likely
+                //      to succeed, so let WorkManager retry with
+                //      exponential backoff rather than burning the period's
+                //      forecast. Without a saved fallback this would
+                //      otherwise be the only path; with one, resolveLocation
+                //      would have used it and we wouldn't be in this branch.
+                //
+                // The provider-enabled check is what separates "Location
+                // services flipped off in system Settings" (user-actionable
+                // misconfig — would retry forever otherwise) from the
+                // genuinely-transient cases above.
+                val transientDeviceFailure = prefs.useDeviceLocation &&
+                    prefs.location == null &&
+                    hasCoarseLocationPermission(applicationContext) &&
+                    hasBackgroundLocationPermission(applicationContext) &&
+                    isLocationServicesEnabled(applicationContext)
+                if (transientDeviceFailure) {
+                    DiagLog.w(TAG, "Device location read failed transiently; retrying.")
+                    return Result.retry()
+                }
+                DiagLog.w(TAG, "No location available; failing run.")
+                return Result.failure(reason(REASON_NO_LOCATION))
+            }
         val today = LocalDate.now()
 
         // Honour force-refresh only when it's still the day the user tapped on. If
@@ -203,7 +248,7 @@ class FetchAndNotifyWorker(
         return if (joined.length <= MAX_DETAIL_LEN) joined else joined.take(MAX_DETAIL_LEN - 1) + "…"
     }
 
-    private suspend fun resolveLocation(prefs: UserPreferences): Location {
+    private suspend fun resolveLocation(prefs: UserPreferences): Location? {
         if (prefs.useDeviceLocation) {
             // resolve() catches and DiagLog-warns about the actual failures
             // (SecurityException from a missing background grant, disabled
@@ -215,7 +260,22 @@ class FetchAndNotifyWorker(
             }
             DiagLog.i(TAG, "Device location unavailable; falling back to settings location.")
         }
-        return prefs.location ?: DEFAULT_LOCATION
+        return prefs.location
+    }
+
+    // Mirrors the providers LocationResolver itself queries — NETWORK +
+    // PASSIVE only (no GPS hardware fix). When both are off system-wide the
+    // user has flipped Location services off in Settings; our retry path
+    // would then loop indefinitely with no chance of progress, so callers
+    // treat that as misconfiguration and fail visibly instead.
+    private fun isLocationServicesEnabled(context: Context): Boolean {
+        val manager = context.getSystemService<LocationManager>() ?: return false
+        return try {
+            manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+                manager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)
+        } catch (_: Throwable) {
+            false
+        }
     }
 
     private suspend fun deliver(insight: Insight, prefs: UserPreferences, prose: String) {
@@ -285,7 +345,8 @@ class FetchAndNotifyWorker(
      * path is the primary delivery channel and has already fired by this point.
      */
     private suspend fun speakWithFallback(text: String, prefs: UserPreferences) {
-        val locale = prefs.voiceLocale.resolve()
+        val regionLocale = prefs.region.toJavaLocale() ?: Locale.getDefault()
+        val locale = prefs.voiceLocale.resolve(regionLocale)
         withSpeechAudioFocus(applicationContext) {
             when (prefs.ttsEngine) {
                 TtsEngine.GEMINI -> {
@@ -298,7 +359,11 @@ class FetchAndNotifyWorker(
                 }
                 TtsEngine.OPENAI -> {
                     try {
-                        OpenAITtsSpeaker(app.openAiTtsClient, voice = prefs.openAiVoice).speak(text, locale)
+                        OpenAITtsSpeaker(
+                            client = app.openAiTtsClient,
+                            voice = prefs.openAiVoice,
+                            speed = prefs.openAiSpeed,
+                        ).speak(text, locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
                         DiagLog.w(TAG, "OpenAI TTS failed; falling back to device TTS.", t)
@@ -306,7 +371,13 @@ class FetchAndNotifyWorker(
                 }
                 TtsEngine.ELEVENLABS -> {
                     try {
-                        ElevenLabsTtsSpeaker(app.elevenLabsTtsClient, voiceId = prefs.elevenLabsVoice).speak(text, locale)
+                        ElevenLabsTtsSpeaker(
+                            client = app.elevenLabsTtsClient,
+                            voiceId = prefs.elevenLabsVoice,
+                            model = prefs.elevenLabsModel,
+                            speed = prefs.elevenLabsSpeed,
+                            stability = prefs.elevenLabsStability,
+                        ).speak(text, locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
                         DiagLog.w(TAG, "ElevenLabs TTS failed; falling back to device TTS.", t)
@@ -333,6 +404,7 @@ class FetchAndNotifyWorker(
 
         const val REASON_UNEXPECTED_HTTP = "unexpected_http"
         const val REASON_UNHANDLED = "unhandled"
+        const val REASON_NO_LOCATION = "no_location"
 
         // Cap unhandled-error detail so the "Show details" pane stays readable.
         private const val MAX_DETAIL_LEN = 240
@@ -349,15 +421,6 @@ class FetchAndNotifyWorker(
 
         /** Which slice of the day this run is for; defaults to TODAY when absent. */
         private const val KEY_PERIOD = "period"
-
-        // Fallback when the user hasn't set a location yet — the pipeline still runs and
-        // posts a (London) insight rather than silently failing. The Settings screen
-        // surfaces an empty-location card so the user can change it.
-        private val DEFAULT_LOCATION = Location(
-            latitude = 51.5074,
-            longitude = -0.1278,
-            displayName = "London (default)",
-        )
 
         fun enqueueOneShot(
             context: Context,

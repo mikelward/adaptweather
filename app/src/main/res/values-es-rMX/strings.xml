@@ -32,9 +32,6 @@ that a Mexican speaker would notice as wrong is overridden here.
     <!-- Mexican Spanish prefers "agregar" over the Spain-Spanish "añadir"
          for "Add" — mirrors the existing settings_clothes_add override
          a few lines up. -->
-    <string name="settings_tts_no_key_hint">No hay clave de %1$s configurada — agrega una para habilitar este motor.</string>
-    <string name="settings_tts_add_api_key">Agregar clave API</string>
-    <string name="settings_tts_add_api_key_title">Agregar clave API de %1$s</string>
 
     <!-- Mexican Spanish prefers "reportar" over "informar de" for
          bug reports / error reporting — both verb and noun forms. -->

@@ -87,7 +87,7 @@ object BugReport {
             appendLine("--- Device ---")
             appendLine("Model: ${Build.MANUFACTURER} ${Build.MODEL}")
             appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
-            appendLine("Locale: ${Locale.getDefault().toLanguageTag()}")
+            appendLine("Locale: ${Locale.getDefault().stripExtensions().toLanguageTag()}")
             appendLine()
             appendLine("--- Settings ---")
             if (prefs == null) {
@@ -133,7 +133,11 @@ object BugReport {
         appendLine("Voice locale: ${prefs.voiceLocale}")
         appendLine("Gemini voice: ${prefs.geminiVoice}")
         appendLine("OpenAI voice: ${prefs.openAiVoice}")
+        appendLine("OpenAI speed: ${prefs.openAiSpeed}")
         appendLine("ElevenLabs voice: ${prefs.elevenLabsVoice}")
+        appendLine("ElevenLabs model: ${prefs.elevenLabsModel}")
+        appendLine("ElevenLabs speed: ${prefs.elevenLabsSpeed}")
+        appendLine("ElevenLabs stability: ${prefs.elevenLabsStability}")
         appendLine("Device voice: ${prefs.deviceVoice ?: "(auto)"}")
         appendLine("Use device location: ${prefs.useDeviceLocation}")
         val locDesc = prefs.location?.let { loc ->

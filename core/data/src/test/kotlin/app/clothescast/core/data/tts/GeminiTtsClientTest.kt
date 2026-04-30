@@ -161,6 +161,190 @@ class GeminiTtsClientTest {
 
         val body = checkNotNull(capturedBody)
         body.shouldContain("Sprich auf Deutsch")
+        // de-DE gets the Hochdeutsch fallback, not an Austrian or Swiss directive
+        body.shouldNotContain("österreichischen")
+        body.shouldNotContain("deutschschweizerischen")
+    }
+
+    @Test
+    fun `request body includes an austrian accent directive for de-AT locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hallo", locale = Locale.forLanguageTag("de-AT"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("österreichischen")
+        body.shouldNotContain("hochdeutschen")
+    }
+
+    @Test
+    fun `request body includes a swiss german accent directive for de-CH locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hallo", locale = Locale.forLanguageTag("de-CH"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("deutschschweizerischen")
+        body.shouldNotContain("hochdeutschen")
+    }
+
+    @Test
+    fun `request body includes a european portuguese directive for pt-PT locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "olá", locale = Locale.forLanguageTag("pt-PT"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("português europeu")
+        // Must not pick up the Brazilian directive
+        body.shouldNotContain("brasileiro")
+    }
+
+    @Test
+    fun `request body includes a taiwanese mandarin directive for zh-TW locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "你好", locale = Locale.forLanguageTag("zh-TW"))
+
+        val body = checkNotNull(capturedBody)
+        // zh-TW uses the Traditional Chinese "國語" (guóyǔ) directive,
+        // not the Simplified Chinese "普通话" (pǔtōnghuà) fallback.
+        body.shouldContain("國語")
+        body.shouldNotContain("普通话")
+    }
+
+    @Test
+    fun `request body picks the saudi arabic directive for ar-SA locale`() = runTest {
+        // PR #218 split the previously-language-only `ar` directive into four
+        // country-specific entries so the picker variants we offer in
+        // Settings actually steer Gemini, not just label the picker. Pin on
+        // the country-distinct "بنطق سعودي" (Saudi pronunciation) so a swap
+        // to a different country's directive surfaces here.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-SA"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق سعودي")
+    }
+
+    @Test
+    fun `request body picks the egyptian arabic directive for ar-EG locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-EG"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق مصري")
+    }
+
+    @Test
+    fun `request body picks the emirati arabic directive for ar-AE locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-AE"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق إماراتي")
+    }
+
+    @Test
+    fun `request body picks the moroccan arabic directive for ar-MA locale`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-MA"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("بنطق مغربي")
+    }
+
+    @Test
+    fun `request body falls back to the bare ar directive for unrecognised arabic variants`() = runTest {
+        // ar-LB (Lebanon) isn't enumerated — fall through to the language-only
+        // `ar` entry so the model still gets a "read this in Arabic" nudge
+        // rather than no directive at all. Pinning on the bare `ar` directive
+        // (no country word) verifies the language-only fallback path.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-LB"))
+
+        val body = checkNotNull(capturedBody)
+        // Bare `ar` directive omits the country adjective.
+        body.shouldContain("اقرأ النص التالي بالعربية بنطق")
+        body.shouldNotContain("سعودي")
+        body.shouldNotContain("مصري")
     }
 
     @Test

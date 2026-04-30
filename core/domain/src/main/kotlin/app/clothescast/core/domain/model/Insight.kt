@@ -43,6 +43,14 @@ data class Insight(
      */
     val nextOutfit: OutfitSuggestion? = null,
     /**
+     * Why [outfit] was picked — the deciding facts (feels-like min/max + the hour they
+     * occurred + the threshold they crossed) shown on the "Why this outfit?" sheet.
+     * Null on insights from older caches; the next worker run repopulates it.
+     */
+    val outfitRationale: OutfitRationale? = null,
+    /** Companion to [nextOutfit]; same null-on-legacy-cache caveat as [outfitRationale]. */
+    val nextOutfitRationale: OutfitRationale? = null,
+    /**
      * Which slice of the day this insight is for. [ForecastPeriod.TODAY] is the
      * morning pass (covers 07:00–19:00); [ForecastPeriod.TONIGHT] is the evening
      * pass (covers 19:00–07:00). Defaults to TODAY so older cached insights from

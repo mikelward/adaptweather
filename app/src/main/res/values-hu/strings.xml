@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Hungarian translation. Tone is informal "te"-form throughout ("Vegyél fel …",
+"Vigyél …"). Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Other UI
+surfaces fall back to default English (matching values-pl / values-uk).
+-->
+<resources>
+    <string name="settings_region_language_hu_hu">Magyar (Magyarország)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Magyar (Magyarország)</string>
+    <string name="settings_tts_voice_locale_label">Akcentus</string>
+    <string name="settings_tts_voice_locale_system">Kövesse a nyelvbeállítást</string>
+
+    <string name="garment_sweater">Pulóver</string>
+    <string name="garment_hoodie">Kapucnis pulóver</string>
+    <string name="garment_jacket">Dzseki</string>
+    <string name="garment_coat">Kabát</string>
+    <string name="garment_tshirt">Póló</string>
+    <string name="garment_shirt">Ing</string>
+    <string name="garment_shorts">Rövidnadrág</string>
+    <string name="garment_pants">Nadrág</string>
+    <string name="garment_jeans">Farmer</string>
+
+    <string name="settings_clothes_empty">Nincsenek szabályok. Hozzáadáshoz koppints a Hozzáadás gombra.</string>
+    <string name="settings_clothes_add">Hozzáadás</string>
+    <string name="settings_clothes_edit">Szerkesztés</string>
+    <string name="settings_clothes_delete">Törlés</string>
+    <string name="settings_clothes_dialog_add_title">Öltözködési szabály hozzáadása</string>
+    <string name="settings_clothes_dialog_edit_title">Öltözködési szabály szerkesztése</string>
+    <string name="settings_clothes_item_label">Ruhadarab</string>
+    <string name="settings_clothes_condition_label">Feltétel</string>
+    <string name="settings_clothes_value_label_temp_c">Küszöb (°C)</string>
+    <string name="settings_clothes_value_label_precip">Küszöb (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Ha hidegebbnek érződik mint</string>
+    <string name="settings_clothes_cond_type_temp_above">Ha melegebbnek érződik mint</string>
+    <string name="settings_clothes_cond_type_precip_above">Ha az eső valószínűsége nagyobb mint</string>
+    <string name="settings_clothes_cond_temp_below">ha a hőérzet %.0f°C alatt van</string>
+    <string name="settings_clothes_cond_temp_above">ha a hőérzet %.0f°C felett van</string>
+    <string name="settings_clothes_cond_precip_above">ha az eső valószínűsége meghaladja a %.0f%%-ot</string>
+
+    <string name="today_outfit_top_tshirt">Póló</string>
+    <string name="today_outfit_top_sweater">Pulóver</string>
+    <string name="today_outfit_top_thick_jacket">Vastag kabát</string>
+    <string name="today_outfit_bottom_shorts">Rövidnadrág</string>
+    <string name="today_outfit_bottom_long_pants">Hosszú nadrág</string>
+
+    <string name="insight_lead_today">Ma</string>
+    <string name="insight_lead_tonight">Ma este</string>
+    <!-- "%1$s %2$s lesz." → "Ma hideg lesz." Lead first, then band, copula at end. -->
+    <string name="insight_band_single">%1$s %2$s lesz.</string>
+    <string name="insight_band_range">%1$s %2$s és %3$s között lesz.</string>
+    <string name="insight_band_freezing">fagyos</string>
+    <string name="insight_band_cold">hideg</string>
+    <string name="insight_band_cool">hűvös</string>
+    <string name="insight_band_mild">enyhe</string>
+    <string name="insight_band_warm">meleg</string>
+    <string name="insight_band_hot">forró</string>
+    <string name="insight_delta_warmer">Ma %1$d°-kal melegebb lesz.</string>
+    <string name="insight_delta_cooler">Ma %1$d°-kal hidegebb lesz.</string>
+    <string name="insight_alert">Figyelmeztetés: %1$s.</string>
+    <string name="insight_clothes_wear">Vegyél fel %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s és %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s és %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">%1$s órakor</string>
+    <string name="insight_precip_overnight">éjszaka</string>
+    <string name="insight_condition_clear">Tiszta</string>
+    <string name="insight_condition_partly_cloudy">Részben felhős</string>
+    <string name="insight_condition_cloudy">Felhős</string>
+    <string name="insight_condition_fog">Köd</string>
+    <string name="insight_condition_drizzle">Szitálás</string>
+    <string name="insight_condition_rain">Eső</string>
+    <string name="insight_condition_snow">Hó</string>
+    <string name="insight_condition_thunderstorm">Zivatar</string>
+    <string name="insight_condition_unknown">Ismeretlen</string>
+    <string name="insight_tie_in">Vigyél magaddal %1$s estére.</string>
+    <string name="insight_tie_in_with_rain">Vigyél magaddal %1$s estére, eső %2$s órakor.</string>
+    <!-- "15" — postposition "órakor" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

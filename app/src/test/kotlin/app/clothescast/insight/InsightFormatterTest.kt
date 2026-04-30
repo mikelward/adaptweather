@@ -233,6 +233,27 @@ class InsightFormatterTest {
         }
     }
 
+    @Test
+    fun `de-AT region on an en-GB base context produces fully German prose`() {
+        // Regression: device locale en-GB, Region set to DE_AT.
+        // On Android 13+ without android:localeConfig, createConfigurationContext()
+        // could fall back to the device locale instead of honouring the de-AT
+        // override, producing English sentence templates but German clothing names
+        // ("Tonight will be cold to cool. Wear Pullover and Jacke.").
+        val enGbConfig = Configuration(context.resources.configuration).apply {
+            setLocale(Locale.forLanguageTag("en-GB"))
+        }
+        val enGbContext = context.createConfigurationContext(enGbConfig)
+
+        InsightFormatter.forRegion(enGbContext, Region.DE_AT).format(
+            summary(
+                period = ForecastPeriod.TONIGHT,
+                band = BandClause(TemperatureBand.COLD, TemperatureBand.COOL),
+                clothes = ClothesClause(listOf("sweater", "jacket")),
+            ),
+        ) shouldBe "Heute Abend wird es kalt bis kühl. Trag Pullover und Jacke."
+    }
+
     // ---------------------------------------------------------------------
     // British / Australian English — picks up the en-rGB / en-rAU vocabulary
     // overrides on `garment_*` resources so the rendered prose matches the
@@ -387,5 +408,56 @@ class InsightFormatterTest {
             ),
         )
         out shouldBe "Hoy hará templado. Lleva paraguas esta noche, lluvia a las 21."
+    }
+
+    @Test
+    fun `es — catalog keys still translate when source casing and whitespace are messy`() {
+        val out = spanishSubject.format(
+            summary(
+                clothes = ClothesClause(listOf(" Sweater ", "JACKET")),
+            ),
+        )
+        out shouldBe "Hoy hará templado. Lleva jersey y chaqueta."
+    }
+
+    @Test
+    fun `clothes clause ignores blank entries instead of speaking empty nouns`() {
+        val out = subject.format(
+            summary(
+                clothes = ClothesClause(listOf(" ", "sweater", "")),
+            ),
+        )
+        out shouldBe "Today will be mild. Wear a sweater."
+    }
+
+    @Test
+    fun `clothes clause is omitted when all entries are blank`() {
+        val out = subject.format(
+            summary(
+                clothes = ClothesClause(listOf(" ", "\t", "")),
+            ),
+        )
+        out shouldBe "Today will be mild."
+    }
+
+    @Test
+    fun `calendar tie-in is omitted when item is blank`() {
+        val out = subject.format(
+            summary(
+                period = ForecastPeriod.TONIGHT,
+                calendarTieIn = CalendarTieInClause(" "),
+            ),
+        )
+        out shouldBe "Tonight will be mild."
+    }
+
+    @Test
+    fun `evening event tie-in is omitted when item is blank even when rain time exists`() {
+        val out = subject.format(
+            summary(
+                eveningEventTieIn = EveningEventTieInClause(" ", rainTime = LocalTime.of(21, 0)),
+            ),
+        )
+        out shouldBe "Today will be mild."
     }
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Slovenian translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Tone is
+informal "ti"-form throughout, mirroring the Croatian / Serbian pass.
+-->
+<resources>
+    <string name="settings_region_language_sl_si">Slovenščina (Slovenija)</string>
+    <string name="settings_tts_voice_locale_sl_si">Slovenščina (Slovenija)</string>
+    <string name="settings_tts_voice_locale_label">Naglas</string>
+    <string name="settings_tts_voice_locale_system">Sledi jezikovni nastavitvi</string>
+
+    <string name="garment_sweater">Pulover</string>
+    <string name="garment_hoodie">Pulover s kapuco</string>
+    <string name="garment_jacket">Jakna</string>
+    <string name="garment_coat">Plašč</string>
+    <string name="garment_tshirt">Majica</string>
+    <string name="garment_shirt">Srajca</string>
+    <string name="garment_shorts">Kratke hlače</string>
+    <string name="garment_pants">Hlače</string>
+    <string name="garment_jeans">Kavbojke</string>
+
+    <string name="settings_clothes_empty">Ni pravil. Pritisni Dodaj za novo.</string>
+    <string name="settings_clothes_add">Dodaj</string>
+    <string name="settings_clothes_edit">Uredi</string>
+    <string name="settings_clothes_delete">Izbriši</string>
+    <string name="settings_clothes_dialog_add_title">Dodaj pravilo oblačil</string>
+    <string name="settings_clothes_dialog_edit_title">Uredi pravilo oblačil</string>
+    <string name="settings_clothes_item_label">Oblačilo</string>
+    <string name="settings_clothes_condition_label">Pogoj</string>
+    <string name="settings_clothes_value_label_temp_c">Prag (°C)</string>
+    <string name="settings_clothes_value_label_precip">Prag (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Ko se občuti hladneje kot</string>
+    <string name="settings_clothes_cond_type_temp_above">Ko se občuti topleje kot</string>
+    <string name="settings_clothes_cond_type_precip_above">Ko je verjetnost dežja nad</string>
+    <string name="settings_clothes_cond_temp_below">ko je občutena temperatura pod %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">ko je občutena temperatura nad %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">ko je verjetnost dežja nad %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Majica</string>
+    <string name="today_outfit_top_sweater">Pulover</string>
+    <string name="today_outfit_top_thick_jacket">Debela jakna</string>
+    <string name="today_outfit_bottom_shorts">Kratke hlače</string>
+    <string name="today_outfit_bottom_long_pants">Dolge hlače</string>
+
+    <string name="insight_lead_today">Danes</string>
+    <string name="insight_lead_tonight">Nocoj</string>
+    <!-- "Danes bo mrzlo." — leading time adverb + "bo" + adjective. -->
+    <string name="insight_band_single">%1$s bo %2$s.</string>
+    <string name="insight_band_range">%1$s bo %2$s do %3$s.</string>
+    <string name="insight_band_freezing">ledeno</string>
+    <string name="insight_band_cold">mrzlo</string>
+    <string name="insight_band_cool">hladno</string>
+    <string name="insight_band_mild">mlačno</string>
+    <string name="insight_band_warm">toplo</string>
+    <string name="insight_band_hot">vroče</string>
+    <string name="insight_delta_warmer">Danes bo %1$d° topleje.</string>
+    <string name="insight_delta_cooler">Danes bo %1$d° hladneje.</string>
+    <string name="insight_alert">Opozorilo: %1$s.</string>
+    <!-- Informal "ti": "Obleci …", "Vzemi … s seboj". -->
+    <string name="insight_clothes_wear">Obleci %1$s.</string>
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s in %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s in %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">ob %1$s</string>
+    <string name="insight_precip_overnight">čez noč</string>
+    <string name="insight_condition_clear">Jasno</string>
+    <string name="insight_condition_partly_cloudy">Delno oblačno</string>
+    <string name="insight_condition_cloudy">Oblačno</string>
+    <string name="insight_condition_fog">Megla</string>
+    <string name="insight_condition_drizzle">Rosenje</string>
+    <string name="insight_condition_rain">Dež</string>
+    <string name="insight_condition_snow">Sneg</string>
+    <string name="insight_condition_thunderstorm">Nevihta</string>
+    <string name="insight_condition_unknown">Neznano</string>
+    <string name="insight_tie_in">Vzemi %1$s s seboj nocoj.</string>
+    <string name="insight_tie_in_with_rain">Vzemi %1$s s seboj nocoj, dež ob %2$s.</string>
+    <!-- Slovenian time format uses "." separator: "ob 15.30". -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d.%2$02d</string>
+
+</resources>

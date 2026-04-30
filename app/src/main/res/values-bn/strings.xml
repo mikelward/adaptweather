@@ -9,7 +9,8 @@ West Bengal vocabulary differences in a future PR.
 <resources>
     <string name="settings_region_language_bn_bd">বাংলা (বাংলাদেশ)</string>
     <string name="settings_tts_voice_locale_bn_bd">বাংলা (বাংলাদেশ)</string>
-    <string name="settings_tts_voice_locale_label">ভাষা</string>
+    <string name="settings_tts_voice_locale_label">উচ্চারণভঙ্গি</string>
+    <string name="settings_tts_voice_locale_system">ভাষা সেটিং অনুসরণ করুন</string>
 
     <string name="garment_sweater">সোয়েটার</string>
     <string name="garment_hoodie">হুডি</string>
@@ -77,7 +78,6 @@ West Bengal vocabulary differences in a future PR.
     <string name="insight_condition_thunderstorm">বজ্রপাত</string>
     <string name="insight_condition_unknown">অজানা</string>
     <!-- "মিটিং (15)-এর জন্য কোট নিন।" -->
-    <string name="insight_calendar_tie_in">%3$s (%2$s)-এর জন্য %1$s নিন।</string>
     <string name="insight_tie_in">আজ রাতে %1$s নিন।</string>
     <string name="insight_tie_in_with_rain">আজ রাতে %1$s নিন, %2$s-এ বৃষ্টি।</string>
     <!-- "15" — suffix "-এ" comes from insight_precip_at_time wrapper. -->

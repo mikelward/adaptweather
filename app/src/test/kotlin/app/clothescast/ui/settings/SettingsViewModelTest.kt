@@ -3,9 +3,12 @@ package app.clothescast.ui.settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import app.clothescast.core.data.insight.KeyProvider
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
+import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
@@ -23,7 +26,9 @@ import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.serialization.json.Json as KotlinxJson
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -189,6 +194,185 @@ class SettingsViewModelTest {
         }
         state.temperatureUnit shouldBe TemperatureUnit.FAHRENHEIT
         state.distanceUnit shouldBe DistanceUnit.MILES
+    }
+
+    @Test
+    fun `refreshElevenLabsVoices populates state from the API response`() = runTest {
+        val voicesJson = """
+            {"voices":[
+              {"voice_id":"v1","name":"Sarah","labels":{"description":"warm"}},
+              {"voice_id":"v2","name":"My Clone"}
+            ]}
+        """.trimIndent()
+        val client = ElevenLabsTtsClient(
+            httpClient = HttpClient(
+                MockEngine {
+                    respond(
+                        content = ByteReadChannel(voicesJson),
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                },
+            ) { install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) } },
+            keyProvider = object : KeyProvider {
+                override suspend fun get(): String = "test-key"
+            },
+        )
+        val refreshSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            elevenLabsTtsClient = client,
+        )
+        // refreshElevenLabsVoices early-returns when the key isn't
+        // configured (the UI also gates the button), so persist a key
+        // first and wait for the state flag to flip before triggering.
+        refreshSubject.setElevenLabsKey("test-key")
+        refreshSubject.state.first { it.elevenLabsKeyConfigured }
+
+        refreshSubject.refreshElevenLabsVoices()
+
+        val state = refreshSubject.state.first { it.elevenLabsRefreshedVoices != null }
+        state.elevenLabsRefreshing shouldBe false
+        val voices = checkNotNull(state.elevenLabsRefreshedVoices)
+        voices shouldHaveSize 2
+        voices[0].id shouldBe "v1"
+        voices[0].displayName shouldBe "Sarah — warm"
+        voices[1].id shouldBe "v2"
+        voices[1].displayName shouldBe "My Clone"
+    }
+
+    @Test
+    fun `refreshElevenLabsVoices reports failures via showError and leaves state untouched`() = runTest {
+        val client = ElevenLabsTtsClient(
+            httpClient = HttpClient(
+                MockEngine {
+                    respond(
+                        content = ByteReadChannel(
+                            """{"detail":{"status":"unauthorized","message":"Invalid API key"}}""",
+                        ),
+                        status = HttpStatusCode.Unauthorized,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                },
+            ) { install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) } },
+            keyProvider = object : KeyProvider {
+                override suspend fun get(): String = "bad-key"
+            },
+        )
+        var reported: String? = null
+        val refreshSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            elevenLabsTtsClient = client,
+            showError = { reported = it },
+        )
+        // The early-return covers "no key" so the 401 path needs a
+        // configured (but server-rejected) key. Setting a stored key
+        // flips the state flag; the request itself will still 401
+        // because the MockEngine returns Unauthorized regardless of
+        // what the key actually is.
+        refreshSubject.setElevenLabsKey("bad-key")
+        refreshSubject.state.first { it.elevenLabsKeyConfigured }
+
+        refreshSubject.refreshElevenLabsVoices()
+
+        refreshSubject.state.first { !it.elevenLabsRefreshing }
+        refreshSubject.state.value.elevenLabsRefreshedVoices shouldBe null
+        checkNotNull(reported).shouldContain("Invalid API key")
+    }
+
+    @Test
+    fun `refreshElevenLabsVoices no-ops when no ElevenLabs key is configured`() = runTest {
+        // The UI hides the Refresh button without a key, but a defensive
+        // early-return means even if it's invoked manually (e.g. test
+        // wiring) we don't fire a guaranteed-401 request.
+        var listVoicesCallCount = 0
+        val client = ElevenLabsTtsClient(
+            httpClient = HttpClient(
+                MockEngine {
+                    listVoicesCallCount++
+                    respond("""{"voices":[]}""")
+                },
+            ) { install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) } },
+            keyProvider = object : KeyProvider {
+                override suspend fun get(): String = ""
+            },
+        )
+        val refreshSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            elevenLabsTtsClient = client,
+        )
+        // Wait for the initial keystore probe to land — without it the
+        // state flag is still its default `false`, which would also
+        // short-circuit but for the wrong reason.
+        refreshSubject.state.first { !it.elevenLabsKeyConfigured }
+
+        refreshSubject.refreshElevenLabsVoices()
+
+        // No HTTP traffic, no state change.
+        listVoicesCallCount shouldBe 0
+        refreshSubject.state.value.elevenLabsRefreshedVoices shouldBe null
+        refreshSubject.state.value.elevenLabsRefreshing shouldBe false
+    }
+
+    @Test
+    fun `re-enumerates device voices when region changes while voiceLocale is SYSTEM`() = runTest {
+        var enumerationCount = 0
+        val countingEnumerator = object : TtsVoiceEnumerator {
+            override suspend fun listVoices(locale: Locale): List<DeviceVoice> {
+                enumerationCount++
+                return emptyList()
+            }
+            override suspend fun resolveAutoPick(locale: Locale): DeviceVoice? = null
+            override suspend fun findVoice(id: String): DeviceVoice? = null
+        }
+        val countingSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = countingEnumerator,
+        )
+        // Wait for the initial prefs emission so the first enumeration has fired.
+        countingSubject.state.first { it.region == Region.SYSTEM }
+        val afterInit = enumerationCount
+
+        // Changing region while voiceLocale stays SYSTEM changes the effective
+        // locale — the device-voice list should be refreshed for en-AU.
+        countingSubject.setRegion(Region.EN_AU)
+        countingSubject.state.first { it.region == Region.EN_AU }
+
+        enumerationCount shouldBe afterInit + 1
     }
 }
 

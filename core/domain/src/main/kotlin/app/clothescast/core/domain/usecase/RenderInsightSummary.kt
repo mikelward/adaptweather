@@ -63,6 +63,13 @@ class RenderInsightSummary {
         eveningEvents: List<CalendarEvent> = emptyList(),
         eveningTriggeredRules: List<ClothesRule> = emptyList(),
         eveningForecast: DailyForecast? = null,
+        // When [today] has been sliced to a daytime window its feelsLikeMinC
+        // reflects the morning start time rather than the overnight low, making
+        // a low-delta comparison against yesterday's full-day fields misleading.
+        // Pass the raw (un-sliced) today so both deltas use consistent 24h fields.
+        // Defaults to null, which falls back to [today] (correct when the caller
+        // hasn't sliced the forecast, e.g. in unit tests).
+        rawToday: DailyForecast? = null,
     ): InsightSummary {
         val items = todayTriggeredRules.map { it.item }
         val peak = peakPrecip(today)
@@ -83,7 +90,7 @@ class RenderInsightSummary {
             period = period,
             alert = alertClause(alerts),
             band = bandClause(today),
-            delta = if (period == ForecastPeriod.TODAY) deltaClause(today, yesterday) else null,
+            delta = if (period == ForecastPeriod.TODAY) deltaClause(rawToday ?: today, yesterday) else null,
             clothes = clothesClause(items),
             precip = peak?.let { PrecipClause(it.condition, it.time) },
             // Calendar tie-in only fires on TONIGHT — pairing the precip peak
@@ -94,7 +101,7 @@ class RenderInsightSummary {
             // enough; chaining "Bring an umbrella for your 3pm standup." after
             // it just repeats what the user already heard.
             calendarTieIn = if (period == ForecastPeriod.TONIGHT) calendarTieInClause(items, peak, events) else null,
-            eveningEventTieIn = eveningEventTieInClause(period, eveningEvents, eveningTriggeredRules, eveningPeak),
+            eveningEventTieIn = eveningEventTieInClause(period, eveningEvents, eveningTriggeredRules, eveningPeak, items),
         )
     }
 
@@ -136,6 +143,13 @@ class RenderInsightSummary {
      * (drizzle / rain / snow / thunderstorm). A cloudy or foggy day with a
      * 30%+ "precip" probability isn't worth a clause — the user wants the
      * spoken summary to mention precipitation, not haziness.
+     *
+     * When an hourly entry's condition is [WeatherCondition.UNKNOWN] (Open-Meteo
+     * omitted the weather code for that hour), the day-level condition is used as a
+     * fallback. If the day-level condition is also unknown or non-precipitating, the
+     * clause is suppressed. This is intentionally conservative — a missing code is
+     * ambiguous, and the day-level field will normally carry the right type when the
+     * API is healthy.
      */
     private fun peakPrecip(today: DailyForecast): PeakPrecip? {
         val peak = today.hourly.maxByOrNull { it.precipitationProbabilityPct }
@@ -190,20 +204,32 @@ class RenderInsightSummary {
      * first clothes item triggered by the evening forecast slice (umbrella first if
      * present). Caller is responsible for filtering [eveningEvents] to actually-evening
      * events and for evaluating clothes rules against the evening forecast.
+     *
+     * Suppressed when:
+     *  - No evening event has a location (location-less events don't imply outdoor
+     *    exposure where the weather matters).
+     *  - The evening clothes items are a subset of (or equal to) [todayItems] — the
+     *    morning insight already told the user every item; repeating a subset of them
+     *    for the evening adds no new information.
      */
     private fun eveningEventTieInClause(
         period: ForecastPeriod,
         eveningEvents: List<CalendarEvent>,
         eveningTriggeredRules: List<ClothesRule>,
         eveningPeak: PeakPrecip?,
+        todayItems: List<String>,
     ): EveningEventTieInClause? {
         if (period != ForecastPeriod.TODAY) return null
         if (eveningEvents.isEmpty() || eveningTriggeredRules.isEmpty()) return null
-        // Gate on at least one non-all-day evening event existing, but don't
-        // capture its title — the rendered prose only says "Bring a jacket
-        // tonight." Calendar event titles never flow to off-device TTS.
-        eveningEvents.firstOrNull { !it.allDay } ?: return null
+        // Gate on at least one non-all-day evening event that has a location.
+        // Events without a location don't imply outdoor exposure, so the
+        // weather-specific clothing tip isn't warranted. Calendar event titles
+        // never flow to off-device TTS.
+        eveningEvents.firstOrNull { !it.allDay && !it.location.isNullOrBlank() } ?: return null
         val items = eveningTriggeredRules.map { it.item }
+        // If the evening clothes are a subset of (or equal to) today's clothes,
+        // the morning insight already covered every item — no new information to add.
+        if (todayItems.toSet().containsAll(items.toSet())) return null
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return EveningEventTieInClause(item = item, rainTime = eveningPeak?.time)
     }

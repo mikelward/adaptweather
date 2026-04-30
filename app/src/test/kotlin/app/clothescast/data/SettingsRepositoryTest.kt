@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Fact
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -19,7 +21,9 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -289,6 +293,71 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `elevenLabs model and speed round-trip and default sensibly`() = runTest {
+        // Defaults match the constants exposed by core:domain so the picker
+        // shows the right initial selection on a fresh install.
+        val initial = subject.preferences.first()
+        initial.elevenLabsModel shouldBe "eleven_turbo_v2_5"
+        initial.elevenLabsSpeed shouldBe 1.0
+
+        subject.setElevenLabsModel("eleven_flash_v2_5")
+        subject.setElevenLabsSpeed(1.05)
+
+        val updated = subject.preferences.first()
+        updated.elevenLabsModel shouldBe "eleven_flash_v2_5"
+        updated.elevenLabsSpeed shouldBe 1.05
+    }
+
+    @Test
+    fun `elevenLabs speed setter clamps to the documented 0_7 to 1_2 range`() = runTest {
+        // Out-of-range values get clamped on write so a malformed prefs
+        // edit (or a future migration that bypasses the slider) can't
+        // push past what ElevenLabs actually accepts.
+        subject.setElevenLabsSpeed(2.0)
+        subject.preferences.first().elevenLabsSpeed shouldBe 1.2
+
+        subject.setElevenLabsSpeed(0.1)
+        subject.preferences.first().elevenLabsSpeed shouldBe 0.7
+    }
+
+    @Test
+    fun `elevenLabs stability defaults to 0_65 and round-trips`() = runTest {
+        // Default mirrors the previously-hardcoded value in
+        // ElevenLabsTtsClient so existing installs hear no change after the
+        // slider lands.
+        subject.preferences.first().elevenLabsStability shouldBe 0.65
+
+        subject.setElevenLabsStability(0.4)
+        subject.preferences.first().elevenLabsStability shouldBe 0.4
+    }
+
+    @Test
+    fun `elevenLabs stability setter clamps to the documented 0 to 1 range`() = runTest {
+        subject.setElevenLabsStability(2.0)
+        subject.preferences.first().elevenLabsStability shouldBe 1.0
+
+        subject.setElevenLabsStability(-0.5)
+        subject.preferences.first().elevenLabsStability shouldBe 0.0
+    }
+
+    @Test
+    fun `openAi speed defaults to 1_0 and round-trips`() = runTest {
+        subject.preferences.first().openAiSpeed shouldBe 1.0
+
+        subject.setOpenAiSpeed(0.85)
+        subject.preferences.first().openAiSpeed shouldBe 0.85
+    }
+
+    @Test
+    fun `openAi speed setter clamps to the picker range`() = runTest {
+        subject.setOpenAiSpeed(2.0)
+        subject.preferences.first().openAiSpeed shouldBe 1.2
+
+        subject.setOpenAiSpeed(0.1)
+        subject.preferences.first().openAiSpeed shouldBe 0.7
+    }
+
+    @Test
     fun `openAiVoice defaults to nova for non-British locale preferences`() = runTest {
         subject.setVoiceLocale(VoiceLocale.EN_US)
         subject.preferences.first().openAiVoice shouldBe "nova"
@@ -312,6 +381,26 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `openAiVoice defaults to fable when voiceLocale is SYSTEM and region is EN_GB`() = runTest {
+        // voiceLocale = SYSTEM → accent follows the app's region setting;
+        // region = EN_GB → effective locale is en-GB → fable.
+        subject.setRegion(Region.EN_GB)
+        subject.preferences.first().openAiVoice shouldBe "fable"
+    }
+
+    @Test
+    fun `openAiVoice defaults to nova when voiceLocale is SYSTEM and region is EN_US`() = runTest {
+        subject.setRegion(Region.EN_US)
+        subject.preferences.first().openAiVoice shouldBe "nova"
+    }
+
+    @Test
+    fun `openAiVoice defaults from system locale when both voiceLocale and region are SYSTEM`() = runTest {
+        // Both SYSTEM → falls back to systemLocaleProvider (Locale.UK = en-GB in tests) → fable.
+        subject.preferences.first().openAiVoice shouldBe "fable"
+    }
+
+    @Test
     fun `useCalendarEvents defaults to false and round-trips`() = runTest {
         subject.preferences.first().useCalendarEvents shouldBe false
 
@@ -320,6 +409,82 @@ class SettingsRepositoryTest {
 
         subject.setUseCalendarEvents(false)
         subject.preferences.first().useCalendarEvents shouldBe false
+    }
+
+    @Test
+    fun `outfitThresholds defaults to DEFAULT and round-trips`() = runTest {
+        subject.preferences.first().outfitThresholds shouldBe OutfitSuggestion.Thresholds.DEFAULT
+
+        val tuned = OutfitSuggestion.Thresholds.DEFAULT.copy(
+            sweaterMaxFeelsLikeMinC = 7.0,
+            tshirtMinFeelsLikeMinC = 17.0,
+        )
+        subject.setOutfitThresholds(tuned)
+        subject.preferences.first().outfitThresholds shouldBe tuned
+    }
+
+    @Test
+    fun `outfitThresholds setter clamps to MIN_C and MAX_C`() = runTest {
+        // Out-of-range values can't reach DataStore — even a runaway tap loop
+        // can't push past the documented bounds.
+        val absurd = OutfitSuggestion.Thresholds(
+            sweaterMaxFeelsLikeMinC = -200.0,
+            tshirtMinFeelsLikeMinC = 999.0,
+            shortsMinFeelsLikeMaxC = 999.0,
+            shortsMinFeelsLikeMinC = -200.0,
+        )
+        subject.setOutfitThresholds(absurd)
+
+        val read = subject.preferences.first().outfitThresholds
+        read.sweaterMaxFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MIN_C
+        read.tshirtMinFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MAX_C
+        read.shortsMinFeelsLikeMaxC shouldBe OutfitSuggestion.Thresholds.MAX_C
+        read.shortsMinFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MIN_C
+    }
+
+    @Test
+    fun `resetOutfitThresholds restores DEFAULT`() = runTest {
+        subject.setOutfitThresholds(
+            OutfitSuggestion.Thresholds.DEFAULT.with(
+                Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN,
+                4.0,
+            ),
+        )
+        subject.preferences.first().outfitThresholds.sweaterMaxFeelsLikeMinC shouldBe 4.0
+
+        subject.resetOutfitThresholds()
+        subject.preferences.first().outfitThresholds shouldBe OutfitSuggestion.Thresholds.DEFAULT
+    }
+
+    @Test
+    fun `adjustOutfitThreshold serialises rapid taps so none are dropped`() = runTest {
+        // Five concurrent `−1°` taps must each see the prior write — final
+        // value is the starting threshold minus 5°C, not a single 1°C step
+        // from the same pre-update snapshot. DataStore.edit serialises edits,
+        // so this exercises the atomic read-modify-write path that protects
+        // tap-spam from collapsing into one.
+        val starting = OutfitSuggestion.Thresholds.DEFAULT.tshirtMinFeelsLikeMinC
+        coroutineScope {
+            repeat(5) {
+                launch {
+                    subject.adjustOutfitThreshold(
+                        Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                        -1.0,
+                    )
+                }
+            }
+        }
+        subject.preferences.first().outfitThresholds.tshirtMinFeelsLikeMinC shouldBe (starting - 5.0)
+    }
+
+    @Test
+    fun `adjustOutfitThreshold clamps to MIN_C and MAX_C`() = runTest {
+        // Even a relentless tap-spam can't escape the documented bounds.
+        repeat(100) {
+            subject.adjustOutfitThreshold(Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN, -1.0)
+        }
+        subject.preferences.first().outfitThresholds.sweaterMaxFeelsLikeMinC shouldBe
+            OutfitSuggestion.Thresholds.MIN_C
     }
 
     @Test

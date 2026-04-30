@@ -12,7 +12,8 @@ standard in Israeli digital communication.
 <resources>
     <string name="settings_region_language_he_il">עברית (ישראל)</string>
     <string name="settings_tts_voice_locale_he_il">עברית (ישראל)</string>
-    <string name="settings_tts_voice_locale_label">שפה</string>
+    <string name="settings_tts_voice_locale_label">מבטא</string>
+    <string name="settings_tts_voice_locale_system">עקוב אחר הגדרת השפה</string>
 
     <string name="garment_sweater">סוודר</string>
     <string name="garment_hoodie">הודי</string>

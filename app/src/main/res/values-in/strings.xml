@@ -9,7 +9,8 @@ to values/strings.xml (English).
 <resources>
     <string name="settings_region_language_id_id">Indonesia</string>
     <string name="settings_tts_voice_locale_id_id">Indonesia</string>
-    <string name="settings_tts_voice_locale_label">Bahasa</string>
+    <string name="settings_tts_voice_locale_label">Aksen</string>
+    <string name="settings_tts_voice_locale_system">Ikuti pengaturan bahasa</string>
 
     <string name="garment_sweater">Sweater</string>
     <string name="garment_hoodie">Hoodie</string>
@@ -76,7 +77,6 @@ to values/strings.xml (English).
     <string name="insight_condition_snow">Salju</string>
     <string name="insight_condition_thunderstorm">Badai petir</string>
     <string name="insight_condition_unknown">Tidak diketahui</string>
-    <string name="insight_calendar_tie_in">Bawa %1$s untuk %3$s pukul %2$s.</string>
     <string name="insight_tie_in">Bawa %1$s malam ini.</string>
     <string name="insight_tie_in_with_rain">Bawa %1$s malam ini, hujan pukul %2$s.</string>
     <!-- "15" / "15.30" — "pukul" comes from surrounding templates. -->

@@ -11,10 +11,14 @@ import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.EveningEventTieInClause
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.OutfitRationale
+import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherCondition
@@ -113,16 +117,17 @@ class InsightCacheTest {
     @Test
     fun `corrupt JSON in the slot maps to null rather than crashing`() = runTest {
         dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v3")] = "{not valid json"
+            it[stringPreferencesKey("latest_insight_v4")] = "{not valid json"
         }
 
         subject.latest.first() shouldBe null
     }
 
     @Test
-    fun `pre-v3 prose-summary payloads are dropped rather than crashing the cache`() = runTest {
-        // Older app versions stored `summary` as a rendered string. The schema bump
-        // to v3 carries a structured InsightSummary instead, so a v2 payload no
+    fun `pre-v4 payloads are dropped rather than crashing the cache`() = runTest {
+        // Older app versions stored `summary` as a rendered string (v2) and
+        // later as a structured object without `Fact.thresholdKind` (v3). The
+        // current schema (v4) carries the kind tag, so a v2 / v3 payload no
         // longer deserialises and the slot drops to null. The next worker run
         // regenerates on the new key.
         val v2Json = """
@@ -134,9 +139,9 @@ class InsightCacheTest {
             }
         """.trimIndent()
         dataStore.edit {
-            // v3 key, v2-shaped payload — the decoder fails on the `summary` field
-            // and the runCatching in the cache returns null.
-            it[stringPreferencesKey("latest_insight_v3")] = v2Json
+            // v4 key, v2-shaped payload — the decoder fails on the `summary`
+            // field and the runCatching in the cache returns null.
+            it[stringPreferencesKey("latest_insight_v4")] = v2Json
         }
 
         subject.latest.first() shouldBe null
@@ -165,6 +170,44 @@ class InsightCacheTest {
         subject.store(withHourly)
 
         subject.latest.first() shouldBe withHourly
+    }
+
+    @Test
+    fun `outfit rationale round-trips through the cache`() = runTest {
+        val rationale = OutfitRationale(
+            top = GarmentReason(
+                facts = listOf(
+                    Fact(
+                        metric = Fact.Metric.FEELS_LIKE_MIN,
+                        observedC = 13.0,
+                        observedAt = LocalTime.of(7, 0),
+                        thresholdC = 18.0,
+                        thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                        comparison = Fact.Comparison.BELOW,
+                    ),
+                ),
+            ),
+            bottom = GarmentReason(
+                facts = listOf(
+                    Fact(
+                        metric = Fact.Metric.FEELS_LIKE_MAX,
+                        observedC = 19.0,
+                        observedAt = null,
+                        thresholdC = 22.0,
+                        thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX,
+                        comparison = Fact.Comparison.BELOW,
+                    ),
+                ),
+            ),
+        )
+        val withRationale = sample.copy(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            outfitRationale = rationale,
+        )
+
+        subject.store(withRationale)
+
+        subject.latest.first() shouldBe withRationale
     }
 
     @Test

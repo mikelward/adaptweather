@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -32,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.Location
+import app.clothescast.location.hasBackgroundLocationPermission
+import app.clothescast.location.hasCoarseLocationPermission
 import kotlinx.coroutines.launch
 
 @Composable
@@ -142,6 +145,10 @@ private fun DeviceLocationToggleRow(
     var backgroundGranted by remember {
         mutableStateOf(hasBackgroundLocationPermission(context))
     }
+    var rationaleOpen by remember { mutableStateOf(false) }
+    var backgroundRationaleOpen by remember { mutableStateOf(false) }
+    var backgroundDeniedOpen by remember { mutableStateOf(false) }
+
     val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
@@ -153,6 +160,17 @@ private fun DeviceLocationToggleRow(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    // Background launcher: on Android 11+ this auto-deep-links into the system
+    // Settings location picker; on Android 10 it shows the inline dialog. If the
+    // user ends up granting only foreground we surface a follow-up dialog so
+    // they understand the daily worker will fall back to the saved location.
+    val backgroundLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        backgroundGranted = granted
+        if (!granted) backgroundDeniedOpen = true
+    }
+
     val foregroundLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
     ) { granted ->
@@ -160,6 +178,11 @@ private fun DeviceLocationToggleRow(
         // hit our isPermissionGranted check, return null, and quietly fall through to
         // the settings location every day.
         onCheckedChange(granted)
+        if (granted && !hasBackgroundLocationPermission(context) &&
+            android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
+        ) {
+            backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }
     }
 
     Row(
@@ -178,35 +201,97 @@ private fun DeviceLocationToggleRow(
                     onCheckedChange(false)
                     return@Switch
                 }
-                if (hasCoarseLocationPermission(context)) {
-                    onCheckedChange(true)
-                } else {
-                    foregroundLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                when {
+                    !hasCoarseLocationPermission(context) -> {
+                        // Pre-Q has no separate "Allow all the time" choice — coarse
+                        // grant *is* always-on — so the rationale dialog's copy doesn't
+                        // apply. Skip straight to the foreground request there; the
+                        // background launcher + denied dialog also no-op on pre-Q
+                        // because hasBackgroundLocationPermission() returns true.
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                            rationaleOpen = true
+                        } else {
+                            foregroundLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                        }
+                    }
+                    !backgroundGranted -> {
+                        // Only reachable on Q+ — hasBackgroundLocationPermission()
+                        // returns true on pre-Q so backgroundGranted is always true
+                        // there. Foreground was granted in a previous attempt; show a
+                        // rationale before deep-linking into system Settings so the
+                        // user knows what they're being asked to select.
+                        onCheckedChange(true)
+                        backgroundRationaleOpen = true
+                    }
+                    else -> onCheckedChange(true)
                 }
             },
         )
     }
 
     if (checked && !backgroundGranted) {
-        TextButton(
-            onClick = { openAppDetails(context) },
+        OutlinedButton(
+            onClick = { backgroundRationaleOpen = true },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.settings_location_grant_background)) }
     }
-}
 
-private fun hasCoarseLocationPermission(context: android.content.Context): Boolean =
-    androidx.core.content.ContextCompat.checkSelfPermission(
-        context,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    if (rationaleOpen) {
+        AlertDialog(
+            onDismissRequest = { rationaleOpen = false },
+            title = { Text(stringResource(R.string.settings_location_rationale_title)) },
+            text = { Text(stringResource(R.string.settings_location_rationale_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    rationaleOpen = false
+                    foregroundLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                }) { Text(stringResource(R.string.settings_location_rationale_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { rationaleOpen = false }) {
+                    Text(stringResource(R.string.settings_location_rationale_dismiss))
+                }
+            },
+        )
+    }
 
-private fun hasBackgroundLocationPermission(context: android.content.Context): Boolean {
-    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) return true
-    return androidx.core.content.ContextCompat.checkSelfPermission(
-        context,
-        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    if (backgroundRationaleOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundRationaleOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_rationale_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_rationale_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundRationaleOpen = false
+                    openAppDetails(context)
+                }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundRationaleOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_rationale_dismiss))
+                }
+            },
+        )
+    }
+
+    if (backgroundDeniedOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundDeniedOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_denied_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_denied_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundDeniedOpen = false
+                    openAppDetails(context)
+                }) { Text(stringResource(R.string.settings_location_background_denied_open)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundDeniedOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_denied_keep))
+                }
+            },
+        )
+    }
 }
 
 /**

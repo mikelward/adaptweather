@@ -11,7 +11,8 @@ Western Arabic numerals (0-9) are used for TTS compatibility.
 <resources>
     <string name="settings_region_language_fa_ir">فارسی (ایران)</string>
     <string name="settings_tts_voice_locale_fa_ir">فارسی (ایران)</string>
-    <string name="settings_tts_voice_locale_label">زبان</string>
+    <string name="settings_tts_voice_locale_label">لهجه</string>
+    <string name="settings_tts_voice_locale_system">پیروی از تنظیم زبان</string>
 
     <string name="garment_sweater">پلیور</string>
     <string name="garment_hoodie">هودی</string>

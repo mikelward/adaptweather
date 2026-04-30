@@ -24,13 +24,24 @@ import kotlinx.serialization.json.JsonPrimitive
 // ClothesCast's two-clips-a-day usage that's ~$0.003/day, ~$0.09/month on
 // a BYOK key.
 //
-// Earlier work tried to steer accent via the `instructions` field on this
-// model, but field-testing confirmed the voice's baked-in accent dominates
-// regardless of how the directive is worded. Voice-list filtering in
-// `TtsVoices` is now the only mechanism for giving the user a non-American
-// OpenAI voice (just `fable`, the only British voice in the stock library).
+// The `instructions` field has a split personality on this model:
+//   - *accent* steering doesn't land — earlier field-testing confirmed the
+//     voice's baked-in accent dominates regardless of directive. Voice-list
+//     filtering in `TtsVoices` is the mechanism for giving the user a
+//     non-American voice (just `fable`, the only British in the stock list).
+//   - *pace* and *enunciation* steering does land — directives like "speak
+//     clearly at a measured pace" measurably slow the synthesis and reduce
+//     dropped consonants on field tests. We send the directive below for
+//     every clip; it's a constant, not locale-aware, since the goal is
+//     "clear and unrushed in any language" rather than accent-shaping.
 const val DEFAULT_OPENAI_TTS_MODEL: String = "gpt-4o-mini-tts"
 const val DEFAULT_OPENAI_TTS_VOICE: String = "alloy"
+// Mirrors `core:domain:UserPreferences.DEFAULT_OPENAI_SPEED` — the API's
+// stock 1.0× pace. Duplicated here so this layer can stay domain-free.
+const val DEFAULT_OPENAI_TTS_SPEED: Double = 1.0
+
+private const val PACE_AND_CLARITY_INSTRUCTIONS: String =
+    "Speak clearly at a measured, conversational pace, enunciating each word."
 
 /**
  * OpenAI text-to-speech via `https://api.openai.com/v1/audio/speech`.
@@ -51,6 +62,7 @@ class OpenAITtsClient(
     suspend fun synthesize(
         text: String,
         voice: String = DEFAULT_OPENAI_TTS_VOICE,
+        speed: Double = DEFAULT_OPENAI_TTS_SPEED,
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException("OpenAI")
@@ -65,6 +77,11 @@ class OpenAITtsClient(
                     input = text,
                     voice = voice,
                     responseFormat = "pcm",
+                    instructions = PACE_AND_CLARITY_INSTRUCTIONS,
+                    // Only send a non-default value to keep the request body
+                    // minimal and to avoid the (slim) chance that the field
+                    // changes the model's behaviour at exactly 1.0.
+                    speed = speed.takeIf { it != DEFAULT_OPENAI_TTS_SPEED },
                 ),
             )
         }

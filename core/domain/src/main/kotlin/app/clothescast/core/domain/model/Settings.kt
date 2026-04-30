@@ -53,31 +53,59 @@ enum class VoiceLocale(val bcp47: String?) {
     EN_AU("en-AU"),
     EN_CA("en-CA"),
     DE_DE("de-DE"),
+    DE_AT("de-AT"),
+    DE_CH("de-CH"),
     FR_FR("fr-FR"),
     FR_CA("fr-CA"),
     IT_IT("it-IT"),
     ES_ES("es-ES"),
     ES_MX("es-MX"),
+    CA_ES("ca-ES"),
     RU_RU("ru-RU"),
     PL_PL("pl-PL"),
     HR_HR("hr-HR"),
+    SL_SI("sl-SI"),
+    SR_RS("sr-Latn-RS"),
+    SR_CYRL_RS("sr-Cyrl-RS"),
+    BG_BG("bg-BG"),
+    CS_CZ("cs-CZ"),
+    SK_SK("sk-SK"),
+    HU_HU("hu-HU"),
+    RO_RO("ro-RO"),
+    EL_GR("el-GR"),
     UK_UA("uk-UA"),
     PT_BR("pt-BR"),
+    PT_PT("pt-PT"),
     NL_NL("nl-NL"),
     SV_SE("sv-SE"),
+    DA_DK("da-DK"),
+    NB_NO("nb-NO"),
+    FI_FI("fi-FI"),
+    ET_EE("et-EE"),
+    LV_LV("lv-LV"),
+    LT_LT("lt-LT"),
     TR_TR("tr-TR"),
     EN_ZA("en-ZA"),
     ID_ID("id-ID"),
+    MS_MY("ms-MY"),
     FIL_PH("fil-PH"),
+    SW_KE("sw-KE"),
     VI_VN("vi-VN"),
+    TH_TH("th-TH"),
     ZH_CN("zh-CN"),
+    ZH_TW("zh-TW"),
     HI_IN("hi-IN"),
     BN_BD("bn-BD"),
     JA_JP("ja-JP"),
     KO_KR("ko-KR"),
     AR_SA("ar-SA"),
+    AR_EG("ar-EG"),
+    AR_AE("ar-AE"),
+    AR_MA("ar-MA"),
     HE_IL("he-IL"),
     FA_IR("fa-IR"),
+    SQ_AL("sq-AL"),
+    AM_ET("am-ET"),
 }
 
 /**
@@ -101,24 +129,47 @@ enum class Region(val bcp47: String?) {
     EN_AU("en-AU"),
     EN_CA("en-CA"),
     DE_DE("de-DE"),
+    DE_AT("de-AT"),
+    DE_CH("de-CH"),
     FR_FR("fr-FR"),
     FR_CA("fr-CA"),
     IT_IT("it-IT"),
     ES_ES("es-ES"),
     ES_MX("es-MX"),
+    CA_ES("ca-ES"),
     RU_RU("ru-RU"),
     PL_PL("pl-PL"),
     HR_HR("hr-HR"),
+    SL_SI("sl-SI"),
+    SR_RS("sr-Latn-RS"),
+    SR_CYRL_RS("sr-Cyrl-RS"),
+    BG_BG("bg-BG"),
+    CS_CZ("cs-CZ"),
+    SK_SK("sk-SK"),
+    HU_HU("hu-HU"),
+    RO_RO("ro-RO"),
+    EL_GR("el-GR"),
     UK_UA("uk-UA"),
     PT_BR("pt-BR"),
+    PT_PT("pt-PT"),
     NL_NL("nl-NL"),
     SV_SE("sv-SE"),
+    DA_DK("da-DK"),
+    NB_NO("nb-NO"),
+    FI_FI("fi-FI"),
+    ET_EE("et-EE"),
+    LV_LV("lv-LV"),
+    LT_LT("lt-LT"),
     TR_TR("tr-TR"),
     EN_ZA("en-ZA"),
     ID_ID("id-ID"),
+    MS_MY("ms-MY"),
     FIL_PH("fil-PH"),
+    SW_KE("sw-KE"),
     VI_VN("vi-VN"),
+    TH_TH("th-TH"),
     ZH_CN("zh-CN"),
+    ZH_TW("zh-TW"),
     HI_IN("hi-IN"),
     BN_BD("bn-BD"),
     JA_JP("ja-JP"),
@@ -126,6 +177,8 @@ enum class Region(val bcp47: String?) {
     AR_SA("ar-SA"),
     HE_IL("he-IL"),
     FA_IR("fa-IR"),
+    SQ_AL("sq-AL"),
+    AM_ET("am-ET"),
 }
 
 data class UserPreferences(
@@ -160,11 +213,42 @@ data class UserPreferences(
      */
     val openAiVoice: String = DEFAULT_OPENAI_VOICE,
     /**
+     * Per-clip OpenAI playback rate (multiplier). Mirrors the ElevenLabs speed
+     * knob for consistency — same 0.7–1.2 range, same UI affordance. Sent as
+     * the `speed` field on the speech request. The active model
+     * (`gpt-4o-mini-tts`) currently steers pace primarily through the
+     * `instructions` field, but the wire parameter is harmless when ignored
+     * and forward-compatible with `tts-1` / `tts-1-hd`. Only consulted when
+     * [ttsEngine] == [TtsEngine.OPENAI].
+     */
+    val openAiSpeed: Double = DEFAULT_OPENAI_SPEED,
+    /**
      * ElevenLabs voice ID — the opaque library identifier (e.g.
      * "EXAVITQu4vr4xnSDxMaL" for Sarah). Only consulted when [ttsEngine]
      * == [TtsEngine.ELEVENLABS].
      */
     val elevenLabsVoice: String = DEFAULT_ELEVENLABS_VOICE,
+    /**
+     * ElevenLabs synthesis model ID (e.g. `eleven_turbo_v2_5`,
+     * `eleven_multilingual_v2`, `eleven_flash_v2_5`, `eleven_v3`). Stored
+     * as a free-form string so adding a new model doesn't need a domain
+     * enum migration. Only consulted when [ttsEngine] ==
+     * [TtsEngine.ELEVENLABS].
+     */
+    val elevenLabsModel: String = DEFAULT_ELEVENLABS_MODEL,
+    /**
+     * Per-clip ElevenLabs playback rate (multiplier, 0.7–1.2 per the
+     * documented range). Default 1.0 (vendor stock pace). Only consulted
+     * when [ttsEngine] == [TtsEngine.ELEVENLABS].
+     */
+    val elevenLabsSpeed: Double = DEFAULT_ELEVENLABS_SPEED,
+    /**
+     * Per-clip ElevenLabs `voice_settings.stability` (0.0–1.0). Higher =
+     * steadier pronunciation, lower = more expressive. Default 0.65 favours
+     * pronunciation consistency over expression for short weather briefings.
+     * Only consulted when [ttsEngine] == [TtsEngine.ELEVENLABS].
+     */
+    val elevenLabsStability: Double = DEFAULT_ELEVENLABS_STABILITY,
     /**
      * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
      * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)
@@ -222,11 +306,45 @@ data class UserPreferences(
      * one clothes rule triggers against the evening hourly slice. Off by default.
      */
     val dailyMentionEveningEvents: Boolean = false,
+    /**
+     * Feels-like cutoffs that decide which top + bottom the home screen renders
+     * as the glanceable outfit. Defaults match the previously-hardcoded values
+     * in [OutfitSuggestion.fromForecast] so a fresh install picks the same
+     * outfit as before. Adjusted from the rationale dialog's `−1°` / `+1°`
+     * controls when the user pushes back on a recommendation.
+     */
+    val outfitThresholds: OutfitSuggestion.Thresholds = OutfitSuggestion.Thresholds.DEFAULT,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Kore"
         const val DEFAULT_OPENAI_VOICE = "alloy"
         // Sarah — the most generally pleasant of ElevenLabs's stock library voices.
         const val DEFAULT_ELEVENLABS_VOICE = "EXAVITQu4vr4xnSDxMaL"
+        // Mirrors `core:data:ElevenLabsTtsClient.DEFAULT_ELEVENLABS_TTS_MODEL`
+        // — duplicated as a literal so domain stays Android- and data-layer-
+        // independent. Update both sides together if the default ever shifts.
+        const val DEFAULT_ELEVENLABS_MODEL = "eleven_turbo_v2_5"
+        // Playback-rate multiplier applied per request (clamped 0.7–1.2 by
+        // the picker UI; ElevenLabs documents the same range). Default 1.0
+        // matches the vendor's stock pace.
+        const val DEFAULT_ELEVENLABS_SPEED = 1.0
+        const val MIN_ELEVENLABS_SPEED = 0.7
+        const val MAX_ELEVENLABS_SPEED = 1.2
+        // Documented voice_settings.stability range is 0–1. Default mirrors
+        // the previously-hardcoded value in ElevenLabsTtsClient so existing
+        // installs hear no change after the slider lands.
+        const val DEFAULT_ELEVENLABS_STABILITY = 0.65
+        const val MIN_ELEVENLABS_STABILITY = 0.0
+        const val MAX_ELEVENLABS_STABILITY = 1.0
+
+        // Same range as ElevenLabs speed for UI parity. OpenAI's API
+        // accepts 0.25–4.0 but values outside ~0.7–1.2 sound robotic / silly
+        // for a weather briefing; matching the ElevenLabs slider keeps the
+        // UX consistent and prevents users from accidentally picking 4×.
+        // Default 1.0 because there are no field reports of OpenAI sounding
+        // "too fast" the way ElevenLabs has.
+        const val DEFAULT_OPENAI_SPEED = 1.0
+        const val MIN_OPENAI_SPEED = 0.7
+        const val MAX_OPENAI_SPEED = 1.2
     }
 }

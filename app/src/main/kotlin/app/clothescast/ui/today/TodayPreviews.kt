@@ -4,21 +4,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.DeltaClause
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.ForecastConfidence
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.GarmentReason
+import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureBand
+import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.WeatherCondition
 import app.clothescast.ui.theme.ClothesCastTheme
 import app.clothescast.work.FetchAndNotifyWorker
@@ -32,8 +42,8 @@ import java.time.LocalTime
 //   - Studio's design pane renders these via `@Preview` so designers/devs can
 //     eyeball each state without running the app.
 //   - The Roborazzi snapshot test in `app/src/test` invokes each function and
-//     captures it to PNGs under `app/build/outputs/roborazzi/`, which CI
-//     uploads as a workflow artifact for human review on every PR.
+//     captures it to PNGs under `app/snapshots/`, which CI commits back to the
+//     PR branch so GitHub renders image diffs inline in "Files changed".
 //
 // Adding a new screen state: add a `@Preview internal fun XxxPreview()` here,
 // and add a corresponding test method in `PreviewSnapshots` that calls it.
@@ -45,6 +55,27 @@ import java.time.LocalTime
 internal fun Frame(darkTheme: Boolean = false, content: @Composable () -> Unit) {
     ClothesCastTheme(darkTheme = darkTheme, dynamicColor = false) {
         Surface { Column(modifier = Modifier.padding(16.dp)) { content() } }
+    }
+}
+
+// `@Preview(fontScale = …)` is metadata Studio honours in its design pane but
+// that doesn't reach a snapshot test invoking the composable directly — the
+// override has to come through LocalDensity at composition time. Same shape
+// for layoutDirection: the @Preview attribute is design-pane-only.
+@Composable
+private fun ScaledFrame(
+    fontScale: Float = 1.0f,
+    layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+    darkTheme: Boolean = false,
+    content: @Composable () -> Unit,
+) {
+    val baseDensity = LocalDensity.current
+    val scaledDensity = Density(density = baseDensity.density, fontScale = fontScale)
+    CompositionLocalProvider(
+        LocalDensity provides scaledDensity,
+        LocalLayoutDirection provides layoutDirection,
+    ) {
+        Frame(darkTheme = darkTheme, content = content)
     }
 }
 
@@ -166,21 +197,109 @@ internal fun OutfitRowTonightTomorrowPreview() {
     }
 }
 
+@Preview(name = "Outfit rationale · sweater + pants", widthDp = 360)
+@Composable
+internal fun OutfitRationaleDialogPreview() {
+    Frame {
+        OutfitRationaleDialog(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            rationale = OutfitRationale(
+                top = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 18.0,
+                            thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+                bottom = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 15.0,
+                            thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+            ),
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            outfitThresholds = OutfitSuggestion.Thresholds.DEFAULT,
+            onAdjustThreshold = { _, _ -> },
+            onResetThresholds = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(name = "Outfit rationale · customised thresholds", widthDp = 360)
+@Composable
+internal fun OutfitRationaleDialogTunedPreview() {
+    Frame {
+        // Mid-tweak state: the t-shirt cutoff (`tshirtMinFeelsLikeMinC`) has been
+        // lowered from 18°C to 15°C, so observed 13°C is still BELOW the customised
+        // threshold and the comparison string stays "under". The Reset button
+        // surfaces because thresholds differ from DEFAULT.
+        OutfitRationaleDialog(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
+            rationale = OutfitRationale(
+                top = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 18.0,
+                            thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+                bottom = GarmentReason(
+                    facts = listOf(
+                        Fact(
+                            metric = Fact.Metric.FEELS_LIKE_MIN,
+                            observedC = 13.0,
+                            observedAt = LocalTime.of(7, 0),
+                            thresholdC = 15.0,
+                            thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN,
+                            comparison = Fact.Comparison.BELOW,
+                        ),
+                    ),
+                ),
+            ),
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            outfitThresholds = OutfitSuggestion.Thresholds.DEFAULT.copy(
+                tshirtMinFeelsLikeMinC = 15.0,
+            ),
+            onAdjustThreshold = { _, _ -> },
+            onResetThresholds = {},
+            onDismiss = {},
+        )
+    }
+}
+
 @Preview(name = "Today · empty state", widthDp = 360)
 @Composable
-internal fun EmptyStatePreview() {
+internal fun TodayEmptyStatePreview() {
     Frame { EmptyState(onRefresh = {}) }
 }
 
 @Preview(name = "Today · insight loaded", widthDp = 360)
 @Composable
-internal fun InsightCardPreview() {
+internal fun TodayInsightCardPreview() {
     Frame { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
 }
 
 @Preview(name = "Today · insight (dark)", widthDp = 360)
 @Composable
-internal fun InsightCardDarkPreview() {
+internal fun TodayInsightCardDarkPreview() {
     Frame(darkTheme = true) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
 }
 
@@ -258,6 +377,115 @@ internal fun WorkStatusFailedUnhandledPreview() {
                 detail = "NoTransformationFoundException: Expected response body of " +
                     "the type 'class app.clothescast.core.data.weather.OpenMeteoResponse'",
             ),
+        )
+    }
+}
+
+@Preview(name = "Banner · failed (no location)", widthDp = 360)
+@Composable
+internal fun WorkStatusFailedNoLocationPreview() {
+    Frame {
+        WorkStatusBanner(
+            WorkStatus.Failed(
+                reason = FetchAndNotifyWorker.REASON_NO_LOCATION,
+                detail = null,
+            ),
+        )
+    }
+}
+
+@Preview(name = "Banner · location action required", widthDp = 360)
+@Composable
+internal fun LocationActionRequiredBannerPreview() {
+    Frame { LocationActionRequiredBanner(onSetUpLocation = {}) }
+}
+
+// 24-hour curve loosely tracking a temperate spring day: cool overnight low,
+// warming through morning, peak around 15:00, then dropping back. Values are
+// in Celsius — the ForecastChart converts at the edge per temperatureUnit.
+private val SAMPLE_HOURLY: List<HourlyForecast> = run {
+    val tempsC = listOf(
+        9.0, 8.5, 8.0, 7.5, 7.5, 8.0,        // 00–05
+        9.0, 10.5, 12.0, 13.5, 15.0, 16.0,   // 06–11
+        17.0, 17.5, 18.0, 18.0, 17.5, 16.5,  // 12–17
+        15.0, 13.5, 12.5, 11.5, 10.5, 9.5,   // 18–23
+    )
+    tempsC.mapIndexed { hour, t ->
+        HourlyForecast(
+            time = LocalTime.of(hour, 0),
+            temperatureC = t,
+            // Feels-like 1–2°C below air through the cool hours, equal at the peak.
+            feelsLikeC = t - if (t < 14.0) 1.5 else 0.0,
+            precipitationProbabilityPct = 0.0,
+            condition = WeatherCondition.PARTLY_CLOUDY,
+        )
+    }
+}
+
+@Preview(name = "Forecast chart · 24h curve", widthDp = 360)
+@Composable
+internal fun ForecastChartPreview() {
+    Frame {
+        ForecastChart(
+            hourly = SAMPLE_HOURLY,
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            showFeelsLike = true,
+        )
+    }
+}
+
+@Preview(name = "Forecast chart · 24h curve (dark)", widthDp = 360)
+@Composable
+internal fun ForecastChartDarkPreview() {
+    Frame(darkTheme = true) {
+        ForecastChart(
+            hourly = SAMPLE_HOURLY,
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            showFeelsLike = true,
+        )
+    }
+}
+
+// Accessibility / i18n stress variants. Each picks the surface most likely to
+// regress under the relevant axis: `headlineSmall` prose + adjacent confidence
+// chip for fontScale (the chip's row crowds the text at the top of the card),
+// and the period-label / outfit-icon row for RTL (label-vs-icon ordering and
+// padding mirror together).
+@Preview(name = "Insight card · fontScale 1.5", widthDp = 360, fontScale = 1.5f)
+@Composable
+internal fun TodayInsightCardLargeFontPreview() {
+    ScaledFrame(fontScale = 1.5f) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
+}
+
+@Preview(name = "Outfit · t-shirt + shorts (RTL)", widthDp = 360, locale = "ar")
+@Composable
+internal fun OutfitTShirtShortsRtlPreview() {
+    ScaledFrame(layoutDirection = LayoutDirection.Rtl) {
+        OutfitPreviewCard(
+            outfit = OutfitSuggestion(OutfitSuggestion.Top.TSHIRT, OutfitSuggestion.Bottom.SHORTS),
+            label = "Today",
+        )
+    }
+}
+
+// Stress variant of the InsightCard: the structured InsightSummary's prose
+// length is dominated by the clothes clause's item count (the formatter joins
+// them into a comma list), so feeding it five items is what produces the
+// longest natural rendering. Catches wrapping / line-height regressions in
+// `headlineSmall` that the single-clause `TodayInsightCardPreview` would miss.
+@Preview(name = "Today · insight (long clothes list)", widthDp = 360)
+@Composable
+internal fun TodayInsightCardLongPreview() {
+    Frame {
+        InsightCard(
+            SAMPLE_INSIGHT.copy(
+                summary = SAMPLE_INSIGHT.summary.copy(
+                    clothes = ClothesClause(
+                        listOf("sweater", "jacket", "scarf", "gloves", "umbrella"),
+                    ),
+                ),
+            ),
+            Region.SYSTEM,
         )
     }
 }

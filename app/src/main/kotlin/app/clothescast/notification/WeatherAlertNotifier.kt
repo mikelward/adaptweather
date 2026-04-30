@@ -1,14 +1,10 @@
 package app.clothescast.notification
 
-import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import app.clothescast.MainActivity
 import app.clothescast.R
 import app.clothescast.core.domain.model.WeatherAlert
@@ -25,10 +21,11 @@ import app.clothescast.core.domain.model.WeatherAlert
 class WeatherAlertNotifier(private val context: Context) {
 
     fun notify(alert: WeatherAlert) {
-        if (!hasPostNotificationPermission()) return
+        if (!NotificationPermission.isGranted(context)) return
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(MainActivity.EXTRA_NAVIGATE_TO_TODAY, true)
         }
         val pendingIntent = PendingIntent.getActivity(
             context,
@@ -41,7 +38,7 @@ class WeatherAlertNotifier(private val context: Context) {
         val title = context.getString(R.string.notification_weather_alert_title, alert.event)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_WEATHER_ALERTS)
-            .setSmallIcon(R.drawable.ic_notification_insight)
+            .setSmallIcon(R.drawable.ic_notification_weather_alert)
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
@@ -53,14 +50,6 @@ class WeatherAlertNotifier(private val context: Context) {
             .build()
 
         NotificationManagerCompat.from(context).notify(notificationIdFor(alert), notification)
-    }
-
-    private fun hasPostNotificationPermission(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS,
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun notificationIdFor(alert: WeatherAlert): Int {

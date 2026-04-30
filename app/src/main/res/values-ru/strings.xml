@@ -33,7 +33,7 @@ only the displayed label localizes.
 <resources>
     <string name="settings_region_language_ru_ru">Русский (Россия)</string>
     <string name="settings_tts_voice_locale_ru_ru">Русский (Россия)</string>
-    <string name="settings_tts_voice_locale_label">Язык</string>
+    <string name="settings_tts_voice_locale_label">Акцент</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">Настройки</string>
@@ -43,7 +43,6 @@ only the displayed label localizes.
     <string name="settings_root_schedule">Расписание</string>
     <string name="settings_root_region">Регион</string>
     <string name="settings_root_clothes">Одежда</string>
-    <string name="settings_root_api_keys">Ключи API</string>
     <string name="settings_root_data_sources">Источники данных</string>
     <string name="settings_root_about">О приложении</string>
 
@@ -116,15 +115,10 @@ only the displayed label localizes.
     <string name="settings_tts_voice_label">Голос</string>
     <string name="settings_tts_voice_dismiss">Готово</string>
     <string name="settings_tts_voice_locale_description">Задаёт акцент озвучивания. Не меняет отображаемый текст.</string>
-    <string name="settings_tts_voice_locale_system">По языку телефона</string>
+    <string name="settings_tts_voice_locale_system">По настройке языка</string>
 
     <string name="settings_tts_test">Проверить голос</string>
     <string name="settings_tts_test_in_flight">Проверка — подожди…</string>
-    <string name="settings_tts_no_key_hint">Нет ключа %1$s — добавь, чтобы включить этот движок.</string>
-    <string name="settings_tts_add_api_key">Добавить ключ API</string>
-    <string name="settings_tts_add_api_key_title">Добавить ключ API %1$s</string>
-    <string name="settings_tts_add_api_key_save">Сохранить</string>
-    <string name="settings_tts_add_api_key_cancel">Отмена</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -144,22 +138,42 @@ only the displayed label localizes.
     <string name="settings_region_language_en_ca">Английский (Канада)</string>
     <string name="settings_region_language_en_za">Английский (Южная Африка)</string>
     <string name="settings_region_language_de_de">Немецкий (Германия)</string>
+    <string name="settings_region_language_de_at">Немецкий (Австрия)</string>
+    <string name="settings_region_language_de_ch">Немецкий (Швейцария)</string>
     <string name="settings_region_language_fr_fr">Французский (Франция)</string>
     <string name="settings_region_language_fr_ca">Французский (Канада)</string>
     <string name="settings_region_language_it_it">Итальянский (Италия)</string>
     <string name="settings_region_language_es_es">Испанский (Испания)</string>
     <string name="settings_region_language_es_mx">Испанский (Мексика)</string>
+    <string name="settings_region_language_ca_es">Каталанский (Испания)</string>
     <string name="settings_region_language_pl_pl">Польский (Польша)</string>
     <string name="settings_region_language_hr_hr">Хорватский (Хорватия)</string>
+    <string name="settings_region_language_sl_si">Словенский (Словения)</string>
+    <string name="settings_region_language_sr_rs">Сербский (латиница)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Сербский (кириллица)</string>
+    <string name="settings_region_language_bg_bg">Болгарский (Болгария)</string>
+    <string name="settings_region_language_cs_cz">Чешский (Чехия)</string>
+    <string name="settings_region_language_sk_sk">Словацкий (Словакия)</string>
+    <string name="settings_region_language_hu_hu">Венгерский (Венгрия)</string>
+    <string name="settings_region_language_ro_ro">Румынский (Румыния)</string>
+    <string name="settings_region_language_el_gr">Греческий (Греция)</string>
     <string name="settings_region_language_uk_ua">Украинский (Украина)</string>
     <string name="settings_region_language_pt_br">Португальский (Бразилия)</string>
+    <string name="settings_region_language_pt_pt">Португальский (Португалия)</string>
     <string name="settings_region_language_nl_nl">Нидерландский (Нидерланды)</string>
     <string name="settings_region_language_sv_se">Шведский (Швеция)</string>
+    <string name="settings_region_language_fi_fi">Финский (Финляндия)</string>
+    <string name="settings_region_language_et_ee">Эстонский (Эстония)</string>
+    <string name="settings_region_language_lv_lv">Латышский (Латвия)</string>
+    <string name="settings_region_language_lt_lt">Литовский (Литва)</string>
     <string name="settings_region_language_tr_tr">Турецкий (Турция)</string>
     <string name="settings_region_language_id_id">Индонезийский (Индонезия)</string>
+    <string name="settings_region_language_ms_my">Малайский (Малайзия)</string>
     <string name="settings_region_language_fil_ph">Филиппинский (Филиппины)</string>
     <string name="settings_region_language_vi_vn">Вьетнамский (Вьетнам)</string>
+    <string name="settings_region_language_th_th">Тайский (Таиланд)</string>
     <string name="settings_region_language_zh_cn">Китайский (упрощённый)</string>
+    <string name="settings_region_language_zh_tw">Китайский (традиционный)</string>
     <string name="settings_region_language_hi_in">Хинди (Индия)</string>
     <string name="settings_region_language_bn_bd">Бенгальский (Бангладеш)</string>
     <string name="settings_region_language_ja_jp">Японский (Япония)</string>
@@ -188,27 +202,50 @@ only the displayed label localizes.
     <string name="settings_tts_voice_locale_en_ca">Английский (Канада)</string>
     <string name="settings_tts_voice_locale_en_za">Английский (Южная Африка)</string>
     <string name="settings_tts_voice_locale_de_de">Немецкий (Германия)</string>
+    <string name="settings_tts_voice_locale_de_at">Немецкий (Австрия)</string>
+    <string name="settings_tts_voice_locale_de_ch">Немецкий (Швейцария)</string>
     <string name="settings_tts_voice_locale_fr_fr">Французский (Франция)</string>
     <string name="settings_tts_voice_locale_fr_ca">Французский (Канада)</string>
     <string name="settings_tts_voice_locale_it_it">Итальянский (Италия)</string>
     <string name="settings_tts_voice_locale_es_es">Испанский (Испания)</string>
     <string name="settings_tts_voice_locale_es_mx">Испанский (Мексика)</string>
+    <string name="settings_tts_voice_locale_ca_es">Каталанский (Испания)</string>
     <string name="settings_tts_voice_locale_pl_pl">Польский (Польша)</string>
     <string name="settings_tts_voice_locale_hr_hr">Хорватский (Хорватия)</string>
+    <string name="settings_tts_voice_locale_sl_si">Словенский (Словения)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Сербский (латиница)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Сербский (кириллица)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Болгарский (Болгария)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Чешский (Чехия)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Словацкий (Словакия)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Венгерский (Венгрия)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Румынский (Румыния)</string>
+    <string name="settings_tts_voice_locale_el_gr">Греческий (Греция)</string>
     <string name="settings_tts_voice_locale_uk_ua">Украинский (Украина)</string>
     <string name="settings_tts_voice_locale_pt_br">Португальский (Бразилия)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Португальский (Португалия)</string>
     <string name="settings_tts_voice_locale_nl_nl">Нидерландский (Нидерланды)</string>
     <string name="settings_tts_voice_locale_sv_se">Шведский (Швеция)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Финский (Финляндия)</string>
+    <string name="settings_tts_voice_locale_et_ee">Эстонский (Эстония)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Латышский (Латвия)</string>
+    <string name="settings_tts_voice_locale_lt_lt">Литовский (Литва)</string>
     <string name="settings_tts_voice_locale_tr_tr">Турецкий (Турция)</string>
     <string name="settings_tts_voice_locale_id_id">Индонезийский (Индонезия)</string>
+    <string name="settings_tts_voice_locale_ms_my">Малайский (Малайзия)</string>
     <string name="settings_tts_voice_locale_fil_ph">Филиппинский (Филиппины)</string>
     <string name="settings_tts_voice_locale_vi_vn">Вьетнамский (Вьетнам)</string>
+    <string name="settings_tts_voice_locale_th_th">Тайский (Таиланд)</string>
     <string name="settings_tts_voice_locale_zh_cn">Китайский (упрощённый)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Китайский (традиционный)</string>
     <string name="settings_tts_voice_locale_hi_in">Хинди (Индия)</string>
     <string name="settings_tts_voice_locale_bn_bd">Бенгальский (Бангладеш)</string>
     <string name="settings_tts_voice_locale_ja_jp">Японский (Япония)</string>
     <string name="settings_tts_voice_locale_ko_kr">Корейский (Южная Корея)</string>
     <string name="settings_tts_voice_locale_ar_sa">Арабский (Саудовская Аравия)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Арабский (Египет)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Арабский (Объединённые Арабские Эмираты)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Арабский (Марокко)</string>
     <string name="settings_tts_voice_locale_he_il">Иврит (Израиль)</string>
     <string name="settings_tts_voice_locale_fa_ir">Персидский (Иран)</string>
 
@@ -217,8 +254,6 @@ only the displayed label localizes.
     ElevenLabs), each with status copy, paste-key placeholder, and
     save / clear buttons. URLs stay verbatim.
     -->
-    <string name="settings_api_keys_title">Ключи API</string>
-    <string name="settings_api_keys_description">Настрой ключи API для онлайн-голосовых движков, которые ты хочешь использовать. Ключи зашифрованы с помощью Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
@@ -248,7 +283,7 @@ only the displayed label localizes.
     <string name="settings_location_title">Местоположение</string>
     <string name="settings_location_use_device">Использовать местоположение устройства</string>
     <string name="settings_location_grant_background">Разрешить фоновое местоположение (системные настройки)</string>
-    <string name="settings_location_unset">Местоположение не задано — по умолчанию используется Лондон</string>
+    <string name="settings_location_unset">Местоположение не задано</string>
     <string name="settings_location_description">Прогноз получается для этого места. Ищи по названию города; результаты приходят из бесплатной службы геокодирования Open-Meteo.</string>
     <string name="settings_location_description_device_on">Когда включено, ClothesCast при отправке уведомления читает примерное местоположение твоего устройства (только сота / WiFi — без GPS-аппаратной фиксации). Указанное ниже местоположение используется как запасное, если чтение с устройства не удаётся. Фоновое местоположение должно быть разрешено в системных настройках, иначе утренний Worker не сможет его прочитать.</string>
     <string name="settings_location_set">Задать местоположение</string>
@@ -420,7 +455,6 @@ only the displayed label localizes.
     <string name="insight_condition_snow">Снег</string>
     <string name="insight_condition_thunderstorm">Гроза</string>
     <string name="insight_condition_unknown">Неизвестно</string>
-    <string name="insight_calendar_tie_in">Возьми %1$s на %3$s в %2$s.</string>
     <string name="insight_tie_in">Возьми %1$s сегодня вечером.</string>
     <string name="insight_tie_in_with_rain">Возьми %1$s сегодня вечером, дождь в %2$s.</string>
     <!-- "15" — preposition "в" comes from surrounding templates. -->

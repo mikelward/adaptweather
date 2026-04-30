@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
+import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
@@ -16,8 +17,11 @@ import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
+import app.clothescast.diag.DiagLog
 import app.clothescast.tts.TtsVoiceEnumerator
 import app.clothescast.tts.resolve
+import app.clothescast.tts.toJavaLocale
+import app.clothescast.tts.toVoiceOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalTime
+import java.util.Locale
 
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
@@ -37,6 +42,13 @@ class SettingsViewModel(
     private val cancelAlarm: (ForecastPeriod) -> Unit,
     private val geocodingClient: OpenMeteoGeocodingClient,
     private val voiceEnumerator: TtsVoiceEnumerator,
+    private val elevenLabsTtsClient: ElevenLabsTtsClient? = null,
+    /**
+     * Surfaces refresh failures to the user. Defaulted to a no-op so existing
+     * tests that don't exercise refresh don't have to wire it up; the
+     * Activity passes a Toast-backed implementation.
+     */
+    private val showError: (String) -> Unit = {},
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -48,7 +60,15 @@ class SettingsViewModel(
      * after the user has already switched to en-GB.
      */
     private var deviceVoiceLoadJob: Job? = null
-    private var lastEnumeratedLocale: VoiceLocale? = null
+    /**
+     * The most recently enumerated effective locale, used to detect when
+     * re-enumeration is needed. Stored as a resolved [Locale] rather than
+     * the raw [VoiceLocale] enum so that a [VoiceLocale.SYSTEM] user who
+     * changes their [Region] also triggers a fresh enumeration (the
+     * effective locale changes even though the [VoiceLocale] enum value
+     * didn't).
+     */
+    private var lastEnumeratedLocale: Locale? = null
 
     init {
         viewModelScope.launch {
@@ -73,16 +93,24 @@ class SettingsViewModel(
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
                         openAiVoice = prefs.openAiVoice,
+                        openAiSpeed = prefs.openAiSpeed,
                         elevenLabsVoice = prefs.elevenLabsVoice,
+                        elevenLabsModel = prefs.elevenLabsModel,
+                        elevenLabsSpeed = prefs.elevenLabsSpeed,
+                        elevenLabsStability = prefs.elevenLabsStability,
                         deviceVoice = prefs.deviceVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
                     )
                 }
-                // Re-enumerate on first observation and any locale flip; the
-                // engine reports a different "exact match" set per locale.
-                if (lastEnumeratedLocale != prefs.voiceLocale) {
-                    lastEnumeratedLocale = prefs.voiceLocale
+                // Re-enumerate on first observation and whenever the effective
+                // voice locale changes — from a voiceLocale flip *or* (when
+                // voiceLocale is SYSTEM) a region change that shifts the
+                // fallback locale.
+                val regionLocale = prefs.region.toJavaLocale() ?: Locale.getDefault()
+                val effectiveLocale = prefs.voiceLocale.resolve(regionLocale)
+                if (lastEnumeratedLocale != effectiveLocale) {
+                    lastEnumeratedLocale = effectiveLocale
                     refreshDeviceVoices(prefs.voiceLocale)
                 }
             }
@@ -102,7 +130,7 @@ class SettingsViewModel(
         deviceVoiceLoadJob = viewModelScope.launch {
             // All three enumerator calls bind the engine, which is JNI work
             // — keep them off the main dispatcher.
-            val resolvedLocale = locale.resolve()
+            val resolvedLocale = locale.resolve(_state.value.region.toJavaLocale() ?: Locale.getDefault())
             val voices = withContext(Dispatchers.IO) {
                 runCatching { voiceEnumerator.listVoices(resolvedLocale) }.getOrDefault(emptyList())
             }
@@ -177,8 +205,64 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepository.setOpenAiVoice(voice) }
     }
 
+    fun setOpenAiSpeed(speed: Double) {
+        viewModelScope.launch { settingsRepository.setOpenAiSpeed(speed) }
+    }
+
     fun setElevenLabsVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setElevenLabsVoice(voice) }
+    }
+
+    fun setElevenLabsModel(model: String) {
+        viewModelScope.launch { settingsRepository.setElevenLabsModel(model) }
+    }
+
+    fun setElevenLabsSpeed(speed: Double) {
+        viewModelScope.launch { settingsRepository.setElevenLabsSpeed(speed) }
+    }
+
+    fun setElevenLabsStability(stability: Double) {
+        viewModelScope.launch { settingsRepository.setElevenLabsStability(stability) }
+    }
+
+    /**
+     * Hits `GET /v1/voices` with the stored ElevenLabs key and replaces the
+     * picker's voice list with whatever the user's account exposes —
+     * premade library plus their own clones / generated voices. No-ops if
+     * the key isn't configured (the UI also gates the button), if a refresh
+     * is already in flight, or if the client wasn't injected (test wiring).
+     *
+     * Failures surface through [showError] (the Activity wires a Toast)
+     * and leave the picker on whatever list it was already showing — we
+     * don't wipe a previous successful refresh because the network blipped.
+     * Coroutine cancellation (ViewModel cleared, navigation away) is *not*
+     * surfaced as a user-visible error — we re-throw so structured
+     * concurrency unwinds cleanly.
+     */
+    fun refreshElevenLabsVoices() {
+        val client = elevenLabsTtsClient ?: return
+        val current = _state.value
+        if (!current.elevenLabsKeyConfigured || current.elevenLabsRefreshing) return
+        viewModelScope.launch {
+            _state.update { it.copy(elevenLabsRefreshing = true) }
+            try {
+                val voices = withContext(Dispatchers.IO) { client.listVoices() }
+                _state.update { it.copy(elevenLabsRefreshedVoices = voices.toVoiceOptions()) }
+            } catch (t: Throwable) {
+                // Cancellation is a normal lifecycle signal (navigation
+                // away, ViewModel cleared) — re-throwing lets the
+                // coroutine machinery unwind without flashing a Toast at
+                // the user.
+                if (t is kotlinx.coroutines.CancellationException) throw t
+                DiagLog.w(TAG, "ElevenLabs voice refresh failed", t)
+                val message = t.message?.takeIf { it.isNotBlank() } ?: t.javaClass.simpleName
+                showError(message)
+            } finally {
+                // `finally` rather than per-branch updates so the spinner
+                // always clears, including on cancellation.
+                _state.update { it.copy(elevenLabsRefreshing = false) }
+            }
+        }
     }
 
     fun setDeviceVoice(voice: String?) {
@@ -326,6 +410,8 @@ class SettingsViewModel(
         private val cancelAlarm: (ForecastPeriod) -> Unit,
         private val geocodingClient: OpenMeteoGeocodingClient,
         private val voiceEnumerator: TtsVoiceEnumerator,
+        private val elevenLabsTtsClient: ElevenLabsTtsClient,
+        private val showError: (String) -> Unit,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -339,7 +425,13 @@ class SettingsViewModel(
                 cancelAlarm,
                 geocodingClient,
                 voiceEnumerator,
+                elevenLabsTtsClient,
+                showError,
             ) as T
         }
+    }
+
+    private companion object {
+        private const val TAG = "SettingsViewModel"
     }
 }

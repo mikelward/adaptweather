@@ -66,11 +66,14 @@ class GenerateDailyInsight(
         // both costs no extra API call. Null when the underlying data isn't
         // there (e.g. evening insight on a legacy bundle without tomorrow's
         // daily aggregates) — the screen falls back to a single card.
-        val nextOutfit = when (period) {
-            ForecastPeriod.TODAY -> tonightForecast
-                .takeIf { it.hourly.isNotEmpty() }
-                ?.let { OutfitSuggestion.fromForecast(it) }
-            ForecastPeriod.TONIGHT -> bundle.tomorrow?.let { OutfitSuggestion.fromForecast(it) }
+        val nextForecast = when (period) {
+            ForecastPeriod.TODAY -> tonightForecast.takeIf { it.hourly.isNotEmpty() }
+            ForecastPeriod.TONIGHT -> bundle.tomorrow
+        }
+        val thresholds = prefs.outfitThresholds
+        val nextOutfit = nextForecast?.let { OutfitSuggestion.fromForecast(it, thresholds) }
+        val nextOutfitRationale = nextForecast?.let {
+            OutfitSuggestion.explainFromForecast(it, thresholds)
         }
         val todayTriggered = evaluateClothesRules(periodForecast, prefs.clothesRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
@@ -114,6 +117,7 @@ class GenerateDailyInsight(
             eveningEvents = eveningEvents,
             eveningTriggeredRules = eveningTriggered,
             eveningForecast = if (period == ForecastPeriod.TODAY) tonightForecast else null,
+            rawToday = bundle.today,
         )
         val insight = Insight(
             summary = summary,
@@ -122,8 +126,10 @@ class GenerateDailyInsight(
             forDate = bundle.today.date,
             hourly = periodForecast.hourly,
             confidence = bundle.confidence,
-            outfit = OutfitSuggestion.fromForecast(periodForecast),
+            outfit = OutfitSuggestion.fromForecast(periodForecast, thresholds),
             nextOutfit = nextOutfit,
+            outfitRationale = OutfitSuggestion.explainFromForecast(periodForecast, thresholds),
+            nextOutfitRationale = nextOutfitRationale,
             period = period,
             hasEvents = periodEvents.isNotEmpty(),
         )
@@ -156,9 +162,10 @@ class GenerateDailyInsight(
  *    raw 24h day-level fields,
  *  - rewrites [DailyForecast.condition] to the wettest in-window hour (preventing
  *    the precip-peak fallback from naming a midday rain on a sunny afternoon),
- *  - falls back to the original [DailyForecast] when the slice would be empty
- *    (sparse fixtures, legacy day-level-only payloads, or a degenerate
- *    `morningStart >= eveningEnd` window) so the pipeline always emits something.
+ *  - falls back to the day-level aggregates with an empty hourly list when the
+ *    slice would be empty (sparse fixtures, legacy day-level-only payloads, or
+ *    a degenerate `morningStart >= eveningEnd` window) so the pipeline always
+ *    emits something even without in-window hourly data.
  */
 private fun DailyForecast.slicedForToday(
     morningStart: LocalTime,
@@ -209,14 +216,15 @@ private fun DailyForecast.slicedForToday(
  *    the daily fields) doesn't surface "Rain at 12:00" on a tonight insight
  *    after the morning rain has already passed.
  *
- * If [tonightStart] isn't strictly before [morningEnd] (e.g. the user set their
- * tonight time to 03:00) we treat tonight as today-only, no wrap — anything else
- * would either double-count hours or invert the window.
+ * If [tonightStart] IS strictly before [morningEnd] (e.g. the user set their
+ * tonight time to 03:00, which is before the morning's 07:00) we treat tonight
+ * as today-only, no wrap — anything else would either double-count hours or
+ * invert the window.
  *
- * Falls back to the original [DailyForecast] when the combined hourly is empty
- * (older cached payloads, sparse fixtures, or a tonight time after the last
- * available hour) so we still emit *something* rather than a forecast with
- * all-zero aggregates.
+ * Falls back to the day-level aggregates with an empty hourly list when the
+ * combined hourly is empty (older cached payloads, sparse fixtures, or a tonight
+ * time after the last available hour) so we still emit *something* rather than a
+ * forecast with all-zero aggregates.
  */
 private fun DailyForecast.slicedForTonight(
     tonightStart: LocalTime,

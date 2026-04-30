@@ -38,7 +38,7 @@ the displayed label localizes.
 <resources>
     <string name="settings_region_language_ja_jp">日本語（日本）</string>
     <string name="settings_tts_voice_locale_ja_jp">日本語（日本）</string>
-    <string name="settings_tts_voice_locale_label">言語</string>
+    <string name="settings_tts_voice_locale_label">アクセント</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">設定</string>
@@ -48,7 +48,6 @@ the displayed label localizes.
     <string name="settings_root_schedule">スケジュール</string>
     <string name="settings_root_region">地域</string>
     <string name="settings_root_clothes">服装</string>
-    <string name="settings_root_api_keys">API キー</string>
     <string name="settings_root_data_sources">データソース</string>
     <string name="settings_root_about">アプリについて</string>
 
@@ -122,15 +121,10 @@ the displayed label localizes.
     <string name="settings_tts_voice_label">音声</string>
     <string name="settings_tts_voice_dismiss">完了</string>
     <string name="settings_tts_voice_locale_description">読み上げ音声のアクセントを設定します。表示テキストは変更しません。</string>
-    <string name="settings_tts_voice_locale_system">端末の言語に従う</string>
+    <string name="settings_tts_voice_locale_system">言語設定に従う</string>
 
     <string name="settings_tts_test">音声をテスト</string>
     <string name="settings_tts_test_in_flight">テスト中 — お待ちください…</string>
-    <string name="settings_tts_no_key_hint">%1$s キーが未設定です — このエンジンを使用するには追加してください。</string>
-    <string name="settings_tts_add_api_key">API キーを追加</string>
-    <string name="settings_tts_add_api_key_title">%1$s API キーを追加</string>
-    <string name="settings_tts_add_api_key_save">保存</string>
-    <string name="settings_tts_add_api_key_cancel">キャンセル</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -150,23 +144,43 @@ the displayed label localizes.
     <string name="settings_region_language_en_ca">英語（カナダ）</string>
     <string name="settings_region_language_en_za">英語（南アフリカ）</string>
     <string name="settings_region_language_de_de">ドイツ語（ドイツ）</string>
+    <string name="settings_region_language_de_at">ドイツ語（オーストリア）</string>
+    <string name="settings_region_language_de_ch">ドイツ語（スイス）</string>
     <string name="settings_region_language_fr_fr">フランス語（フランス）</string>
     <string name="settings_region_language_fr_ca">フランス語（カナダ）</string>
     <string name="settings_region_language_it_it">イタリア語（イタリア）</string>
     <string name="settings_region_language_es_es">スペイン語（スペイン）</string>
     <string name="settings_region_language_es_mx">スペイン語（メキシコ）</string>
+    <string name="settings_region_language_ca_es">カタルーニャ語（スペイン）</string>
     <string name="settings_region_language_ru_ru">ロシア語（ロシア）</string>
     <string name="settings_region_language_pl_pl">ポーランド語（ポーランド）</string>
     <string name="settings_region_language_hr_hr">クロアチア語（クロアチア）</string>
+    <string name="settings_region_language_sl_si">スロベニア語（スロベニア）</string>
+    <string name="settings_region_language_sr_rs">セルビア語（ラテン文字）</string>
+    <string name="settings_region_language_sr_cyrl_rs">セルビア語（キリル文字）</string>
+    <string name="settings_region_language_bg_bg">ブルガリア語（ブルガリア）</string>
+    <string name="settings_region_language_cs_cz">チェコ語（チェコ）</string>
+    <string name="settings_region_language_sk_sk">スロバキア語（スロバキア）</string>
+    <string name="settings_region_language_hu_hu">ハンガリー語（ハンガリー）</string>
+    <string name="settings_region_language_ro_ro">ルーマニア語（ルーマニア）</string>
+    <string name="settings_region_language_el_gr">ギリシャ語（ギリシャ）</string>
     <string name="settings_region_language_uk_ua">ウクライナ語（ウクライナ）</string>
     <string name="settings_region_language_pt_br">ポルトガル語（ブラジル）</string>
+    <string name="settings_region_language_pt_pt">ポルトガル語（ポルトガル）</string>
     <string name="settings_region_language_nl_nl">オランダ語（オランダ）</string>
     <string name="settings_region_language_sv_se">スウェーデン語（スウェーデン）</string>
+    <string name="settings_region_language_fi_fi">フィンランド語（フィンランド）</string>
+    <string name="settings_region_language_et_ee">エストニア語（エストニア）</string>
+    <string name="settings_region_language_lv_lv">ラトビア語（ラトビア）</string>
+    <string name="settings_region_language_lt_lt">リトアニア語（リトアニア）</string>
     <string name="settings_region_language_tr_tr">トルコ語（トルコ）</string>
     <string name="settings_region_language_id_id">インドネシア語（インドネシア）</string>
+    <string name="settings_region_language_ms_my">マレー語（マレーシア）</string>
     <string name="settings_region_language_fil_ph">フィリピン語（フィリピン）</string>
     <string name="settings_region_language_vi_vn">ベトナム語（ベトナム）</string>
+    <string name="settings_region_language_th_th">タイ語（タイ）</string>
     <string name="settings_region_language_zh_cn">中国語（簡体字）</string>
+    <string name="settings_region_language_zh_tw">中国語（繁体字）</string>
     <string name="settings_region_language_hi_in">ヒンディー語（インド）</string>
     <string name="settings_region_language_bn_bd">ベンガル語（バングラデシュ）</string>
     <string name="settings_region_language_ko_kr">韓国語（韓国）</string>
@@ -194,27 +208,50 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_en_ca">英語（カナダ）</string>
     <string name="settings_tts_voice_locale_en_za">英語（南アフリカ）</string>
     <string name="settings_tts_voice_locale_de_de">ドイツ語（ドイツ）</string>
+    <string name="settings_tts_voice_locale_de_at">ドイツ語（オーストリア）</string>
+    <string name="settings_tts_voice_locale_de_ch">ドイツ語（スイス）</string>
     <string name="settings_tts_voice_locale_fr_fr">フランス語（フランス）</string>
     <string name="settings_tts_voice_locale_fr_ca">フランス語（カナダ）</string>
     <string name="settings_tts_voice_locale_it_it">イタリア語（イタリア）</string>
     <string name="settings_tts_voice_locale_es_es">スペイン語（スペイン）</string>
     <string name="settings_tts_voice_locale_es_mx">スペイン語（メキシコ）</string>
+    <string name="settings_tts_voice_locale_ca_es">カタルーニャ語（スペイン）</string>
     <string name="settings_tts_voice_locale_ru_ru">ロシア語（ロシア）</string>
     <string name="settings_tts_voice_locale_pl_pl">ポーランド語（ポーランド）</string>
     <string name="settings_tts_voice_locale_hr_hr">クロアチア語（クロアチア）</string>
+    <string name="settings_tts_voice_locale_sl_si">スロベニア語（スロベニア）</string>
+    <string name="settings_tts_voice_locale_sr_rs">セルビア語（ラテン文字）</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">セルビア語（キリル文字）</string>
+    <string name="settings_tts_voice_locale_bg_bg">ブルガリア語（ブルガリア）</string>
+    <string name="settings_tts_voice_locale_cs_cz">チェコ語（チェコ）</string>
+    <string name="settings_tts_voice_locale_sk_sk">スロバキア語（スロバキア）</string>
+    <string name="settings_tts_voice_locale_hu_hu">ハンガリー語（ハンガリー）</string>
+    <string name="settings_tts_voice_locale_ro_ro">ルーマニア語（ルーマニア）</string>
+    <string name="settings_tts_voice_locale_el_gr">ギリシャ語（ギリシャ）</string>
     <string name="settings_tts_voice_locale_uk_ua">ウクライナ語（ウクライナ）</string>
     <string name="settings_tts_voice_locale_pt_br">ポルトガル語（ブラジル）</string>
+    <string name="settings_tts_voice_locale_pt_pt">ポルトガル語（ポルトガル）</string>
     <string name="settings_tts_voice_locale_nl_nl">オランダ語（オランダ）</string>
     <string name="settings_tts_voice_locale_sv_se">スウェーデン語（スウェーデン）</string>
+    <string name="settings_tts_voice_locale_fi_fi">フィンランド語（フィンランド）</string>
+    <string name="settings_tts_voice_locale_et_ee">エストニア語（エストニア）</string>
+    <string name="settings_tts_voice_locale_lv_lv">ラトビア語（ラトビア）</string>
+    <string name="settings_tts_voice_locale_lt_lt">リトアニア語（リトアニア）</string>
     <string name="settings_tts_voice_locale_tr_tr">トルコ語（トルコ）</string>
     <string name="settings_tts_voice_locale_id_id">インドネシア語（インドネシア）</string>
+    <string name="settings_tts_voice_locale_ms_my">マレー語（マレーシア）</string>
     <string name="settings_tts_voice_locale_fil_ph">フィリピン語（フィリピン）</string>
     <string name="settings_tts_voice_locale_vi_vn">ベトナム語（ベトナム）</string>
+    <string name="settings_tts_voice_locale_th_th">タイ語（タイ）</string>
     <string name="settings_tts_voice_locale_zh_cn">中国語（簡体字）</string>
+    <string name="settings_tts_voice_locale_zh_tw">中国語（繁体字）</string>
     <string name="settings_tts_voice_locale_hi_in">ヒンディー語（インド）</string>
     <string name="settings_tts_voice_locale_bn_bd">ベンガル語（バングラデシュ）</string>
     <string name="settings_tts_voice_locale_ko_kr">韓国語（韓国）</string>
     <string name="settings_tts_voice_locale_ar_sa">アラビア語（サウジアラビア）</string>
+    <string name="settings_tts_voice_locale_ar_eg">アラビア語（エジプト）</string>
+    <string name="settings_tts_voice_locale_ar_ae">アラビア語（アラブ首長国連邦）</string>
+    <string name="settings_tts_voice_locale_ar_ma">アラビア語（モロッコ）</string>
     <string name="settings_tts_voice_locale_he_il">ヘブライ語（イスラエル）</string>
     <string name="settings_tts_voice_locale_fa_ir">ペルシャ語（イラン）</string>
 
@@ -224,8 +261,6 @@ the displayed label localizes.
     save / clear buttons. URLs stay verbatim with the conventional
     space-around-Latin spacing.
     -->
-    <string name="settings_api_keys_title">API キー</string>
-    <string name="settings_api_keys_description">使用したいオンライン音声エンジンの API キーを設定します。キーは Android Keystore で暗号化して保存されます。</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
@@ -255,7 +290,7 @@ the displayed label localizes.
     <string name="settings_location_title">位置情報</string>
     <string name="settings_location_use_device">端末の位置情報を使用</string>
     <string name="settings_location_grant_background">バックグラウンド位置情報を許可（システム設定）</string>
-    <string name="settings_location_unset">位置情報が未設定 — ロンドンを既定として使用</string>
+    <string name="settings_location_unset">位置情報が未設定</string>
     <string name="settings_location_description">予報はこの場所について取得されます。都市名で検索してください。結果は Open-Meteo の無料ジオコーディングサービスから取得されます。</string>
     <string name="settings_location_description_device_on">有効にすると、ClothesCast は通知時に端末のおおよその位置を読み取ります（基地局 / WiFi のみ — GPS ハードウェア測位は使用しません）。端末からの読み取りに失敗した場合、下の位置がフォールバックとして使用されます。バックグラウンド位置情報はシステム設定で許可する必要があり、許可がないと朝の Worker が読み取れません。</string>
     <string name="settings_location_set">位置を設定</string>
@@ -437,11 +472,10 @@ the displayed label localizes.
     <string name="insight_condition_thunderstorm">雷雨</string>
     <string name="insight_condition_unknown">不明</string>
     <!-- "会議（15時）のためにコートを持っていきましょう。" -->
-    <string name="insight_calendar_tie_in">%3$s（%2$s）のために%1$sを持っていきましょう。</string>
     <string name="insight_tie_in">今夜は%1$sを持っていきましょう。</string>
     <string name="insight_tie_in_with_rain">今夜は%1$sを持っていきましょう。%2$s頃に雨。</string>
     <!-- "15時" / "15時30分" — Japanese spoken time; postposition "頃" comes from insight_precip_at_time. -->
     <string name="insight_time_hour">%1$d時</string>
-    <string name="insight_time_hour_minutes">%1$d時%2$d分</string>
+    <string name="insight_time_hour_minutes">%1$d時%2$02d分</string>
 
 </resources>

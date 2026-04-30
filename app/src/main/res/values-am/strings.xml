@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Amharic (Ethiopia) translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+-->
+<resources>
+    <string name="settings_region_language_am_et">አማርኛ (ኢትዮጵያ)</string>
+    <string name="settings_tts_voice_locale_am_et">አማርኛ (ኢትዮጵያ)</string>
+    <string name="settings_tts_voice_locale_label">ዘዬ</string>
+    <string name="settings_tts_voice_locale_system">የቋንቋ ቅንብርን ተከተል</string>
+
+    <string name="garment_sweater">ስወተር</string>
+    <string name="garment_hoodie">ሁዲ</string>
+    <string name="garment_jacket">ጃኬት</string>
+    <string name="garment_coat">ኮት</string>
+    <string name="garment_tshirt">ቲሸርት</string>
+    <string name="garment_shirt">ሸሚዝ</string>
+    <string name="garment_shorts">ሹርቴ</string>
+    <string name="garment_pants">ሱሪ</string>
+    <string name="garment_jeans">ጂንስ</string>
+
+    <string name="settings_clothes_empty">ምንም ህግ የለም። ለመፍጠር ጨምር ን ይጫኑ።</string>
+    <string name="settings_clothes_add">ጨምር</string>
+    <string name="settings_clothes_edit">አርትዕ</string>
+    <string name="settings_clothes_delete">ሰርዝ</string>
+    <string name="settings_clothes_dialog_add_title">የልብስ ህግ ጨምር</string>
+    <string name="settings_clothes_dialog_edit_title">የልብስ ህግ አርትዕ</string>
+    <string name="settings_clothes_item_label">ልብስ</string>
+    <string name="settings_clothes_condition_label">ሁኔታ</string>
+    <string name="settings_clothes_value_label_temp_c">ደረጃ (°C)</string>
+    <string name="settings_clothes_value_label_precip">ደረጃ (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">ከሚሰማ ቀዝቃዛ ሲሆን</string>
+    <string name="settings_clothes_cond_type_temp_above">ከሚሰማ ሞቃት ሲሆን</string>
+    <string name="settings_clothes_cond_type_precip_above">የዝናብ ዕድል ሲጨምር</string>
+    <string name="settings_clothes_cond_temp_below">ዝቅተኛ ሙቀት %.0f°C ሲቀንስ</string>
+    <string name="settings_clothes_cond_temp_above">ከፍተኛ ሙቀት %.0f°C ሲጨምር</string>
+    <string name="settings_clothes_cond_precip_above">የዝናብ ዕድል %.0f%% ሲጨምር</string>
+
+    <string name="today_outfit_top_tshirt">ቲሸርት</string>
+    <string name="today_outfit_top_sweater">ስወተር</string>
+    <string name="today_outfit_top_thick_jacket">ወፍራም ጃኬት</string>
+    <string name="today_outfit_bottom_shorts">ሹርቴ</string>
+    <string name="today_outfit_bottom_long_pants">ሱሪ</string>
+
+    <string name="insight_lead_today">ዛሬ</string>
+    <string name="insight_lead_tonight">ዛሬ ምሽት</string>
+    <!-- Amharic: "ዛሬ ምቹ ይሆናል።" -->
+    <string name="insight_band_single">%1$s %2$s ይሆናል።</string>
+    <string name="insight_band_range">%1$s ከ%2$s እስከ %3$s ይሆናል።</string>
+    <string name="insight_band_freezing">በጣም ቀዝቃዛ</string>
+    <string name="insight_band_cold">ቀዝቃዛ</string>
+    <string name="insight_band_cool">ትንሽ ቀዝቃዛ</string>
+    <string name="insight_band_mild">ምቹ</string>
+    <string name="insight_band_warm">ሞቃት</string>
+    <string name="insight_band_hot">ሙቀታማ</string>
+    <string name="insight_delta_warmer">ከትናንት %1$d° ሙቀቱ ይጨምራል።</string>
+    <string name="insight_delta_cooler">ከትናንት %1$d° ቀዝቃዛ ይሆናል።</string>
+    <string name="insight_alert">ማስጠንቀቂያ: %1$s።</string>
+    <string name="insight_clothes_wear">%1$s ይልበሱ።</string>
+    <!-- Amharic has no grammatical articles; pass through bare. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s እና %2$s</string>
+    <string name="insight_clothes_join_many">%1$s፣ %2$s፣ እና %3$s</string>
+    <string name="insight_precip">%1$s %2$s።</string>
+    <string name="insight_precip_at_time">%1$s ሰዓት</string>
+    <string name="insight_precip_overnight">ሌሊት</string>
+    <string name="insight_condition_clear">ፀሃያማ</string>
+    <string name="insight_condition_partly_cloudy">ትንሽ ደመናማ</string>
+    <string name="insight_condition_cloudy">ደመናማ</string>
+    <string name="insight_condition_fog">ጭጋግ</string>
+    <string name="insight_condition_drizzle">ቀስ ያለ ዝናብ</string>
+    <string name="insight_condition_rain">ዝናብ</string>
+    <string name="insight_condition_snow">በረዶ</string>
+    <string name="insight_condition_thunderstorm">ነጎድጓዳ ዝናብ</string>
+    <string name="insight_condition_unknown">ያልታወቀ</string>
+    <string name="insight_tie_in">ዛሬ ምሽት %1$s ይዙ።</string>
+    <string name="insight_tie_in_with_rain">ዛሬ ምሽት %1$s ይዙ፣ ዝናብ %2$s ሰዓት።</string>
+    <!-- Amharic: bare digits for TTS-friendly 24h time. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

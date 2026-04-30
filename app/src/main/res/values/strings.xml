@@ -24,6 +24,31 @@
     <string name="today_outfit_bottom_shorts">Shorts</string>
     <string name="today_outfit_bottom_long_pants">Long pants</string>
 
+    <!-- "Why this outfit?" rationale dialog. Tapping the outfit card opens this.
+         Observed and threshold values come through as %s (not %d) so we can fall
+         back to one-decimal precision when integer rounding would make them
+         indistinguishable (e.g. an actual 17.6 < 18.0 must not render as
+         "18°C, under 18°C"). The `at least` wording matches the AT_OR_ABOVE
+         comparison's inclusive semantics — equality is honest, not a contradiction. -->
+    <string name="today_rationale_title">Why this outfit?</string>
+    <string name="today_rationale_show">Why?</string>
+    <string name="today_rationale_dismiss">Got it</string>
+    <string name="today_rationale_reset">Reset thresholds</string>
+    <string name="today_rationale_threshold_decrease">Lower threshold by 1 degree</string>
+    <string name="today_rationale_threshold_increase">Raise threshold by 1 degree</string>
+    <string name="today_rationale_threshold_changed_hint">Refresh to see the new outfit.</string>
+    <string name="today_rationale_unavailable">No rationale available — open the app after the next refresh.</string>
+    <!-- "Feels-like low 13°C at 6am, under 18°C" -->
+    <string name="today_rationale_min_below_with_time">Feels-like low %1$s%2$s at %3$s, under %4$s%2$s</string>
+    <!-- "Feels-like low 13°C, under 18°C" — when hourly data is missing -->
+    <string name="today_rationale_min_below">Feels-like low %1$s%2$s, under %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Feels-like low %1$s%2$s at %3$s, at least %4$s%2$s</string>
+    <string name="today_rationale_min_above">Feels-like low %1$s%2$s, at least %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Feels-like high only %1$s%2$s at %3$s, under %4$s%2$s</string>
+    <string name="today_rationale_max_below">Feels-like high only %1$s%2$s, under %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Feels-like high %1$s%2$s at %3$s, at least %4$s%2$s</string>
+    <string name="today_rationale_max_above">Feels-like high %1$s%2$s, at least %3$s%2$s</string>
+
     <!-- Home-screen App Widget. -->
     <string name="widget_label">Outfit</string>
     <string name="widget_description">The current period\'s outfit at a glance.</string>
@@ -44,8 +69,13 @@
     <string name="today_failed_title">Last attempt failed</string>
     <string name="today_failed_unexpected_http">Unexpected HTTP error from the forecast service.</string>
     <string name="today_failed_unhandled">An unexpected error occurred.</string>
+    <string name="today_failed_no_location">We couldn\'t get your location. Grant always-on location permission, or set a city in Settings.</string>
     <string name="today_failed_show_details">Show details</string>
     <string name="today_failed_hide_details">Hide details</string>
+
+    <string name="today_location_required_title">Set up your location</string>
+    <string name="today_location_required_body">ClothesCast needs to know where you are to fetch the forecast. Grant always-on location permission, or pick a city.</string>
+    <string name="today_location_required_action">Open location settings</string>
 
     <string name="onboarding_title">Welcome to ClothesCast</string>
     <string name="onboarding_subtitle">Two quick choices and you\'re set. Everything else has a sensible default you can tweak later in Settings.</string>
@@ -64,6 +94,20 @@
     <string name="onboarding_step_done">Done</string>
     <string name="onboarding_skip">Skip for now</string>
     <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_pair_from_phone">Pair from phone instead</string>
+
+    <!-- Phone-pairing screen: TV runs an HTTP server and shows a QR code; the user
+         scans it with their phone to open a web form where they paste their API key. -->
+    <string name="pairing_title">Scan to pair</string>
+    <string name="pairing_instructions">Scan this QR code with your phone, then paste your Gemini API key into the form that opens. The key will be sent directly to this TV over your home Wi-Fi — no cloud relay.</string>
+    <string name="pairing_qr_description">QR code linking to %1$s</string>
+    <string name="pairing_cancel">Cancel</string>
+    <string name="pairing_received">Key received — saving…</string>
+    <string name="pairing_timeout_title">Pairing window expired</string>
+    <string name="pairing_timeout_body">The 5-minute pairing window has closed. Tap Retry to open a new one.</string>
+    <string name="pairing_error_title">Could not start pairing</string>
+    <string name="pairing_error_body">Make sure the TV is connected to Wi-Fi, then try again.</string>
+    <string name="pairing_retry">Retry</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
@@ -72,12 +116,21 @@
     <string name="settings_root_schedule">Schedule</string>
     <string name="settings_root_region">Region</string>
     <string name="settings_root_clothes">Clothes</string>
-    <string name="settings_root_api_keys">API keys</string>
     <string name="settings_root_data_sources">Data sources</string>
     <string name="settings_root_about">About</string>
 
-    <string name="settings_api_keys_title">API keys</string>
-    <string name="settings_api_keys_description">Configure the API keys for the online voice engines you want to use. Keys are encrypted at rest using the Android Keystore.</string>
+    <string name="settings_root_schedule_subtitle">Notifications and Times</string>
+    <string name="settings_root_clothes_subtitle">Temperatures and Outfits</string>
+    <string name="settings_root_region_subtitle">Languages and Units</string>
+    <!-- TODO(voice-subtitle): decide final wording and reorder so the
+         per-locale "Accent" picker (now the topmost card on the Voice
+         sub-screen) reads first. Candidates: "Accents and engines",
+         "Accents and APIs", "Accents and providers". Once chosen,
+         update values-*/ translations to match (currently only el is
+         translated: "Πάροχοι και προφορές"). -->
+    <string name="settings_root_voice_subtitle">Providers and Accents</string>
+    <string name="settings_root_data_sources_subtitle">Location and Calendar</string>
+
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
@@ -91,7 +144,7 @@
     <string name="settings_location_title">Location</string>
     <string name="settings_location_use_device">Use device location</string>
     <string name="settings_location_grant_background">Grant background location (system Settings)</string>
-    <string name="settings_location_unset">No location set — defaulting to London</string>
+    <string name="settings_location_unset">No location set</string>
     <string name="settings_location_description">The forecast is fetched for this place. Search by city name; results come from Open-Meteo\'s free geocoding service.</string>
     <string name="settings_location_description_device_on">When enabled, ClothesCast reads the device\'s coarse location at notify time (cell-tower / WiFi only — no GPS hardware fix). The location below is used as a fallback if the device read fails. Background location must be granted in system Settings or the morning Worker can\'t read it.</string>
     <string name="settings_location_set">Set location</string>
@@ -102,6 +155,18 @@
     <string name="settings_location_search">Search</string>
     <string name="settings_location_searching">Searching…</string>
     <string name="settings_location_no_results">No matches.</string>
+    <string name="settings_location_rationale_title">Always-on location</string>
+    <string name="settings_location_rationale_body">ClothesCast updates your forecast in the background to deliver it on time, so it needs \'Allow all the time\' location permission.</string>
+    <string name="settings_location_rationale_continue">Continue</string>
+    <string name="settings_location_rationale_dismiss">Not now</string>
+    <string name="settings_location_background_rationale_title">Allow all the time</string>
+    <string name="settings_location_background_rationale_body">ClothesCast fetches your forecast in the background each morning, so it needs \'Allow all the time\' location access. You\'ll be taken to system Settings to grant it.</string>
+    <string name="settings_location_background_rationale_continue">Open Settings</string>
+    <string name="settings_location_background_rationale_dismiss">Not now</string>
+    <string name="settings_location_background_denied_title">Always-on not granted</string>
+    <string name="settings_location_background_denied_body">Without \'Allow all the time\', the morning forecast falls back to your saved location. Open system Settings to grant it?</string>
+    <string name="settings_location_background_denied_open">Open Settings</string>
+    <string name="settings_location_background_denied_keep">Keep using saved location</string>
 
     <string name="settings_schedule_title">Daily ClothesCast</string>
     <string name="settings_schedule_time_label">Time</string>
@@ -138,51 +203,74 @@
     <string name="settings_tts_device_voice_offline">Offline</string>
     <string name="settings_tts_install_google_hint">Install Google\'s text-to-speech engine for higher-quality voices.</string>
     <string name="settings_tts_install_google_button">Install Google TTS</string>
-    <string name="settings_tts_voice_locale_label">Language</string>
-    <!-- Caption under Voice > Language: only the spoken accent, not the on-screen
+    <string name="settings_tts_voice_locale_label">Accent</string>
+    <!-- Caption under Voice > Accent: only the spoken accent, not the on-screen
          text. Pairs with settings_region_language_description. -->
     <string name="settings_tts_voice_locale_description">Sets the accent of the spoken voice. Doesn\'t change the displayed text.</string>
-    <string name="settings_tts_voice_locale_system">Follow phone language</string>
+    <string name="settings_tts_voice_locale_system">Follow language setting</string>
     <string name="settings_tts_voice_locale_en_us">English (United States)</string>
     <string name="settings_tts_voice_locale_en_gb">English (United Kingdom)</string>
     <string name="settings_tts_voice_locale_en_au">English (Australia)</string>
     <string name="settings_tts_voice_locale_en_ca">English (Canada)</string>
     <string name="settings_tts_voice_locale_de_de">German (Germany)</string>
+    <string name="settings_tts_voice_locale_de_at">German (Austria)</string>
+    <string name="settings_tts_voice_locale_de_ch">German (Switzerland)</string>
     <string name="settings_tts_voice_locale_fr_fr">French (France)</string>
     <string name="settings_tts_voice_locale_fr_ca">French (Canada)</string>
     <string name="settings_tts_voice_locale_it_it">Italian (Italy)</string>
     <string name="settings_tts_voice_locale_es_es">Spanish (Spain)</string>
     <string name="settings_tts_voice_locale_es_mx">Spanish (Mexico)</string>
+    <string name="settings_tts_voice_locale_ca_es">Catalan (Spain)</string>
     <string name="settings_tts_voice_locale_ru_ru">Russian (Russia)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polish (Poland)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croatian (Croatia)</string>
+    <string name="settings_tts_voice_locale_sl_si">Slovenian (Slovenia)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Serbian (Latin)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Serbian (Cyrillic)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Bulgarian (Bulgaria)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Czech (Czechia)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Slovak (Slovakia)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Hungarian (Hungary)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Romanian (Romania)</string>
+    <string name="settings_tts_voice_locale_el_gr">Greek (Greece)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ukrainian (Ukraine)</string>
     <string name="settings_tts_voice_locale_pt_br">Portuguese (Brazil)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Portuguese (Portugal)</string>
     <string name="settings_tts_voice_locale_nl_nl">Dutch (Netherlands)</string>
     <string name="settings_tts_voice_locale_sv_se">Swedish (Sweden)</string>
+    <string name="settings_tts_voice_locale_da_dk">Danish (Denmark)</string>
+    <string name="settings_tts_voice_locale_nb_no">Norwegian Bokmål (Norway)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Finnish (Finland)</string>
+    <string name="settings_tts_voice_locale_et_ee">Estonian (Estonia)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Latvian (Latvia)</string>
+    <string name="settings_tts_voice_locale_lt_lt">Lithuanian (Lithuania)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turkish (Turkey)</string>
     <string name="settings_tts_voice_locale_en_za">English (South Africa)</string>
     <string name="settings_tts_voice_locale_id_id">Indonesian (Indonesia)</string>
+    <string name="settings_tts_voice_locale_ms_my">Malay (Malaysia)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filipino (Philippines)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Swahili (Kenya)</string>
     <string name="settings_tts_voice_locale_vi_vn">Vietnamese (Vietnam)</string>
+    <string name="settings_tts_voice_locale_th_th">Thai (Thailand)</string>
     <string name="settings_tts_voice_locale_zh_cn">Chinese (Simplified)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Chinese (Traditional)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindi (India)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_tts_voice_locale_ja_jp">Japanese (Japan)</string>
     <string name="settings_tts_voice_locale_ko_kr">Korean (South Korea)</string>
     <string name="settings_tts_voice_locale_ar_sa">Arabic (Saudi Arabia)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Arabic (Egypt)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Arabic (United Arab Emirates)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Arabic (Morocco)</string>
     <string name="settings_tts_voice_locale_he_il">Hebrew (Israel)</string>
     <string name="settings_tts_voice_locale_fa_ir">Persian (Iran)</string>
+    <string name="settings_tts_voice_locale_sq_al">Albanian (Albania)</string>
+    <string name="settings_tts_voice_locale_am_et">Amharic (Ethiopia)</string>
     <string name="settings_tts_test">Test voice</string>
     <!-- Shown next to the engine picker when the chosen engine's API key isn't
          configured. %1$s is the engine name ("Gemini" / "OpenAI" / "ElevenLabs"). -->
-    <string name="settings_tts_no_key_hint">No %1$s key configured — add one to enable this engine.</string>
     <!-- Button next to the missing-key hint that opens a paste-key dialog. -->
-    <string name="settings_tts_add_api_key">Add API key</string>
     <!-- Title of the paste-key dialog. %1$s is the engine name. -->
-    <string name="settings_tts_add_api_key_title">Add %1$s API key</string>
-    <string name="settings_tts_add_api_key_save">Save</string>
-    <string name="settings_tts_add_api_key_cancel">Cancel</string>
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
 
     <string name="settings_openai_key_status_set">An OpenAI key is configured.</string>
@@ -196,6 +284,46 @@
     <string name="settings_elevenlabs_key_placeholder">Paste your ElevenLabs API key</string>
     <string name="settings_elevenlabs_key_save">Save ElevenLabs key</string>
     <string name="settings_elevenlabs_key_clear">Clear stored ElevenLabs key</string>
+    <!-- TODO(translations): the ElevenLabs refresh / model / speed strings
+         below are en-only for now. Localised values-*/strings.xml files
+         already translate the rest of the ElevenLabs settings keys, so
+         non-English users will see these specific controls in English
+         until translations land in a follow-up. -->
+    <!-- Button shown only when an ElevenLabs key is set; fetches the
+         account's voice library (premade + cloned) so the picker shows
+         exactly what the user has access to. -->
+    <string name="settings_elevenlabs_refresh_voices">Refresh voices</string>
+    <!-- Caption under the picker after a successful refresh. %1$d is the
+         number of voices loaded from the user's account. -->
+    <string name="settings_elevenlabs_refresh_voices_loaded">Showing %1$d voices from your ElevenLabs account.</string>
+
+    <!-- Section heading above the four-radio model picker. -->
+    <string name="settings_elevenlabs_model_label">Model</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — balanced (default, 0.5 credits/char)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — flagship quality (1.0 credits/char)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — fastest (0.5 credits/char)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — audio-tag aware (experimental)</string>
+    <!-- Heading above the speed slider; %1$s is the current value formatted
+         as e.g. "0.90". -->
+    <string name="settings_elevenlabs_speed_label">Speed × %1$s</string>
+    <!-- Heading above the stability slider; %1$s is the current value
+         formatted as e.g. "0.65". Higher = steadier pronunciation, lower =
+         more expressive. -->
+    <string name="settings_elevenlabs_stability_label">Stability %1$s</string>
+    <!-- Heading above the OpenAI speed slider; %1$s is the current value
+         formatted as e.g. "1.00". Mirrors the ElevenLabs speed slider for
+         consistency. -->
+    <string name="settings_openai_speed_label">Speed × %1$s</string>
+
+    <!-- Captions under the cloud voice pickers when the user's chosen voice
+         locale has no exact-accent match. %1$s is the human-readable locale
+         label (e.g. "English (Australia)", "Japanese (Japan)"). The
+         "language fallback" variant fires when there's at least one voice
+         in the same language but a different accent — e.g. en-AU user with
+         only en-US/en-GB voices. The "no match" variant fires when nothing
+         in this engine speaks the requested language at all. -->
+    <string name="settings_tts_voice_locale_language_fallback">No %1$s voices in this engine — showing voices in the same language.</string>
+    <string name="settings_tts_voice_locale_no_match">No %1$s voices in this engine — try another accent.</string>
 
     <string name="settings_region_language_title">Language</string>
     <!-- Caption rendered under the Region > Language title, pairing with
@@ -209,24 +337,47 @@
     <string name="settings_region_language_en_au">English (Australia)</string>
     <string name="settings_region_language_en_ca">English (Canada)</string>
     <string name="settings_region_language_de_de">German (Germany)</string>
+    <string name="settings_region_language_de_at">German (Austria)</string>
+    <string name="settings_region_language_de_ch">German (Switzerland)</string>
     <string name="settings_region_language_fr_fr">French (France)</string>
     <string name="settings_region_language_fr_ca">French (Canada)</string>
     <string name="settings_region_language_it_it">Italian (Italy)</string>
     <string name="settings_region_language_es_es">Spanish (Spain)</string>
     <string name="settings_region_language_es_mx">Spanish (Mexico)</string>
+    <string name="settings_region_language_ca_es">Catalan (Spain)</string>
     <string name="settings_region_language_ru_ru">Russian (Russia)</string>
     <string name="settings_region_language_pl_pl">Polish (Poland)</string>
     <string name="settings_region_language_hr_hr">Croatian (Croatia)</string>
+    <string name="settings_region_language_sl_si">Slovenian (Slovenia)</string>
+    <string name="settings_region_language_sr_rs">Serbian (Latin)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Serbian (Cyrillic)</string>
+    <string name="settings_region_language_bg_bg">Bulgarian (Bulgaria)</string>
+    <string name="settings_region_language_cs_cz">Czech (Czechia)</string>
+    <string name="settings_region_language_sk_sk">Slovak (Slovakia)</string>
+    <string name="settings_region_language_hu_hu">Hungarian (Hungary)</string>
+    <string name="settings_region_language_ro_ro">Romanian (Romania)</string>
+    <string name="settings_region_language_el_gr">Greek (Greece)</string>
     <string name="settings_region_language_uk_ua">Ukrainian (Ukraine)</string>
     <string name="settings_region_language_pt_br">Portuguese (Brazil)</string>
+    <string name="settings_region_language_pt_pt">Portuguese (Portugal)</string>
     <string name="settings_region_language_nl_nl">Dutch (Netherlands)</string>
     <string name="settings_region_language_sv_se">Swedish (Sweden)</string>
+    <string name="settings_region_language_da_dk">Danish (Denmark)</string>
+    <string name="settings_region_language_nb_no">Norwegian Bokmål (Norway)</string>
+    <string name="settings_region_language_fi_fi">Finnish (Finland)</string>
+    <string name="settings_region_language_et_ee">Estonian (Estonia)</string>
+    <string name="settings_region_language_lv_lv">Latvian (Latvia)</string>
+    <string name="settings_region_language_lt_lt">Lithuanian (Lithuania)</string>
     <string name="settings_region_language_tr_tr">Turkish (Turkey)</string>
     <string name="settings_region_language_en_za">English (South Africa)</string>
     <string name="settings_region_language_id_id">Indonesian (Indonesia)</string>
+    <string name="settings_region_language_ms_my">Malay (Malaysia)</string>
     <string name="settings_region_language_fil_ph">Filipino (Philippines)</string>
+    <string name="settings_region_language_sw_ke">Swahili (Kenya)</string>
     <string name="settings_region_language_vi_vn">Vietnamese (Vietnam)</string>
+    <string name="settings_region_language_th_th">Thai (Thailand)</string>
     <string name="settings_region_language_zh_cn">Chinese (Simplified)</string>
+    <string name="settings_region_language_zh_tw">Chinese (Traditional)</string>
     <string name="settings_region_language_hi_in">Hindi (India)</string>
     <string name="settings_region_language_bn_bd">Bengali (Bangladesh)</string>
     <string name="settings_region_language_ja_jp">Japanese (Japan)</string>
@@ -234,6 +385,8 @@
     <string name="settings_region_language_ar_sa">Arabic (Saudi Arabia)</string>
     <string name="settings_region_language_he_il">Hebrew (Israel)</string>
     <string name="settings_region_language_fa_ir">Persian (Iran)</string>
+    <string name="settings_region_language_sq_al">Albanian (Albania)</string>
+    <string name="settings_region_language_am_et">Amharic (Ethiopia)</string>
 
     <string name="settings_temperature_unit_title">Temperature unit</string>
     <string name="settings_temperature_unit_celsius">Celsius (°C)</string>

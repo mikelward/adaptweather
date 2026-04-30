@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Swahili (Kiswahili) translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+-->
+<resources>
+    <string name="settings_region_language_sw_ke">Kiswahili (Kenya)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Kiswahili (Kenya)</string>
+    <string name="settings_tts_voice_locale_label">Lafudhi</string>
+    <string name="settings_tts_voice_locale_system">Fuata mpangilio wa lugha</string>
+
+    <string name="garment_sweater">Sweta</string>
+    <string name="garment_hoodie">Hudii</string>
+    <string name="garment_jacket">Jaketi</string>
+    <string name="garment_coat">Koti</string>
+    <string name="garment_tshirt">T-shati</string>
+    <string name="garment_shirt">Shati</string>
+    <string name="garment_shorts">Suruali fupi</string>
+    <string name="garment_pants">Suruali ndefu</string>
+    <string name="garment_jeans">Jins</string>
+
+    <string name="settings_clothes_empty">Hakuna sheria bado. Gonga Ongeza ili kuunda.</string>
+    <string name="settings_clothes_add">Ongeza</string>
+    <string name="settings_clothes_edit">Hariri</string>
+    <string name="settings_clothes_delete">Futa</string>
+    <string name="settings_clothes_dialog_add_title">Ongeza sheria ya mavazi</string>
+    <string name="settings_clothes_dialog_edit_title">Hariri sheria ya mavazi</string>
+    <string name="settings_clothes_item_label">Vazi</string>
+    <string name="settings_clothes_condition_label">Hali</string>
+    <string name="settings_clothes_value_label_temp_c">Kiwango (°C)</string>
+    <string name="settings_clothes_value_label_precip">Kiwango (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Inapohisi baridi zaidi ya</string>
+    <string name="settings_clothes_cond_type_temp_above">Inapohisi joto zaidi ya</string>
+    <string name="settings_clothes_cond_type_precip_above">Uwezekano wa mvua ni zaidi ya</string>
+    <string name="settings_clothes_cond_temp_below">wakati joto la chini ni chini ya %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">wakati joto la juu ni zaidi ya %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">wakati uwezekano wa mvua ni zaidi ya %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">T-shati</string>
+    <string name="today_outfit_top_sweater">Sweta</string>
+    <string name="today_outfit_top_thick_jacket">Jaketi nzito</string>
+    <string name="today_outfit_bottom_shorts">Suruali fupi</string>
+    <string name="today_outfit_bottom_long_pants">Suruali ndefu</string>
+
+    <string name="insight_lead_today">Leo</string>
+    <string name="insight_lead_tonight">Usiku huu</string>
+    <!-- Swahili: "Leo itakuwa baridi." -->
+    <string name="insight_band_single">%1$s itakuwa %2$s.</string>
+    <string name="insight_band_range">%1$s itakuwa %2$s hadi %3$s.</string>
+    <string name="insight_band_freezing">baridi kali sana</string>
+    <string name="insight_band_cold">baridi</string>
+    <string name="insight_band_cool">baridi kidogo</string>
+    <string name="insight_band_mild">ya wastani</string>
+    <string name="insight_band_warm">joto kidogo</string>
+    <string name="insight_band_hot">joto</string>
+    <string name="insight_delta_warmer">Itakuwa %1$d° ya joto zaidi kuliko jana.</string>
+    <string name="insight_delta_cooler">Itakuwa %1$d° baridi zaidi kuliko jana.</string>
+    <string name="insight_alert">Tahadhari: %1$s.</string>
+    <string name="insight_clothes_wear">Vaa %1$s.</string>
+    <!-- Swahili has no articles; pass through bare. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s na %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s, na %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">saa %1$s</string>
+    <string name="insight_precip_overnight">usiku</string>
+    <string name="insight_condition_clear">Angavu</string>
+    <string name="insight_condition_partly_cloudy">Na mawingu kidogo</string>
+    <string name="insight_condition_cloudy">Mawingu</string>
+    <string name="insight_condition_fog">Ukungu</string>
+    <string name="insight_condition_drizzle">Mvua nyepesi</string>
+    <string name="insight_condition_rain">Mvua</string>
+    <string name="insight_condition_snow">Theluji</string>
+    <string name="insight_condition_thunderstorm">Dhoruba ya radi</string>
+    <string name="insight_condition_unknown">Haijulikana</string>
+    <string name="insight_tie_in">Chukua %1$s usiku huu.</string>
+    <string name="insight_tie_in_with_rain">Chukua %1$s usiku huu, mvua saa %2$s.</string>
+    <!-- Swahili: bare digits for TTS-friendly 24h time. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

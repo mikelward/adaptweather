@@ -265,6 +265,46 @@ class OpenMeteoMapperTest {
     }
 
     @Test
+    fun `mismatched-length hourly parallel arrays are tolerated without throwing`() {
+        // Open-Meteo always sends matching arrays, but a buggy proxy or a future
+        // field-by-field rollout could produce shorter temperature/feelsLike/etc.
+        // arrays than `time`. The hourly mapper must degrade gracefully (using
+        // 0.0 / UNKNOWN defaults) rather than throwing IndexOutOfBoundsException.
+        val mismatched = OpenMeteoResponse(
+            timezone = "UTC",
+            daily = DailyData(
+                time = listOf("2026-04-24", "2026-04-25"),
+                temperatureMin = listOf(12.0, 16.0),
+                temperatureMax = listOf(18.0, 24.0),
+                feelsLikeMin = listOf(10.0, 15.0),
+                feelsLikeMax = listOf(17.0, 23.0),
+                precipitationProbabilityMax = listOf(5, 60),
+                precipitationSum = listOf(0.0, 4.5),
+                weatherCode = listOf(2, 63),
+            ),
+            hourly = HourlyData(
+                // Three timestamps but only one entry in each value array.
+                time = listOf("2026-04-25T09:00", "2026-04-25T15:00", "2026-04-25T21:00"),
+                temperature = listOf(18.0),
+                feelsLike = listOf(17.0),
+                precipitationProbability = listOf(20),
+                weatherCode = listOf(63),
+            ),
+        )
+
+        val today = OpenMeteoMapper.toBundle(mismatched).today
+
+        // First hour is fully mapped; the other two fall back to zero / UNKNOWN.
+        today.hourly shouldHaveSize 3
+        today.hourly[0].temperatureC shouldBe 18.0
+        today.hourly[0].feelsLikeC shouldBe 17.0
+        today.hourly[1].temperatureC shouldBe 0.0
+        today.hourly[1].feelsLikeC shouldBe 0.0
+        today.hourly[1].condition shouldBe WeatherCondition.UNKNOWN
+        today.hourly[2].temperatureC shouldBe 0.0
+    }
+
+    @Test
     fun `rejects responses missing two daily entries`() {
         val short = OpenMeteoResponse(
             timezone = "UTC",

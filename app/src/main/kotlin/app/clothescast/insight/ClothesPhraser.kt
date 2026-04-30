@@ -49,7 +49,10 @@ internal class EnglishClothesPhraser(private val resources: Resources) : Clothes
     override fun withArticle(item: String): String = prefixArticle(translate(item))
 
     override fun joinItems(items: List<String>): String {
-        val translated = items.map(::translate)
+        val translated = items.asSequence()
+            .map(::translate)
+            .filter { it.isNotBlank() }
+            .toList()
         return when (translated.size) {
             0 -> ""
             1 -> prefixArticle(translated[0])
@@ -100,7 +103,10 @@ internal class GermanClothesPhraser(private val resources: Resources) : ClothesP
     override fun withArticle(item: String): String = translate(item)
 
     override fun joinItems(items: List<String>): String {
-        val translated = items.map(::translate)
+        val translated = items.asSequence()
+            .map(::translate)
+            .filter { it.isNotBlank() }
+            .toList()
         return when (translated.size) {
             0 -> ""
             1 -> translated[0]
@@ -121,7 +127,7 @@ internal class GermanClothesPhraser(private val resources: Resources) : ClothesP
      * the table falls through unchanged.
      */
     private fun translate(item: String): String =
-        EN_TO_DE[item.trim().lowercase(Locale.ROOT)] ?: item
+        EN_TO_DE[item.trim().lowercase(Locale.ROOT)] ?: item.trim()
 
     private companion object {
         // Defaults shipped in ClothesRule.DEFAULTS plus the obvious extras a user
@@ -181,7 +187,10 @@ internal class ResourceClothesPhraser(private val resources: Resources) : Clothe
         resources.getString(R.string.insight_clothes_article_a, translate(item))
 
     override fun joinItems(items: List<String>): String {
-        val translated = items.map(::translate)
+        val translated = items.asSequence()
+            .map(::translate)
+            .filter { it.isNotBlank() }
+            .toList()
         return when (translated.size) {
             0 -> ""
             1 -> translated[0]
@@ -196,7 +205,7 @@ internal class ResourceClothesPhraser(private val resources: Resources) : Clothe
     }
 
     private fun translate(item: String): String =
-        resources.localizedGarmentLabel(item) ?: item
+        resources.localizedGarmentLabel(item)?.lowercase(resources.currentLocale()) ?: item.trim()
 }
 
 /**
@@ -232,4 +241,11 @@ internal fun Resources.localizedGarmentLabel(item: String): String? {
     val garment = Garment.fromKey(item) ?: return null
     val resId = GARMENT_RES_IDS[garment] ?: return null
     return getString(resId)
+}
+
+private fun Resources.currentLocale(): Locale {
+    val locales = configuration.locales
+    if (!locales.isEmpty) return locales[0]
+    @Suppress("DEPRECATION")
+    return configuration.locale
 }

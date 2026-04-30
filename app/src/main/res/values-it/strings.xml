@@ -28,7 +28,7 @@ zh-CN) is unchanged; only the displayed label localizes.
 <resources>
     <string name="settings_region_language_it_it">Italiano (Italia)</string>
     <string name="settings_tts_voice_locale_it_it">Italiano (Italia)</string>
-    <string name="settings_tts_voice_locale_label">Lingua</string>
+    <string name="settings_tts_voice_locale_label">Accento</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">Impostazioni</string>
@@ -38,7 +38,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_root_schedule">Programmazione</string>
     <string name="settings_root_region">Regione</string>
     <string name="settings_root_clothes">Abbigliamento</string>
-    <string name="settings_root_api_keys">Chiavi API</string>
     <string name="settings_root_data_sources">Fonti dati</string>
     <string name="settings_root_about">Informazioni</string>
 
@@ -112,15 +111,10 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_label">Voce</string>
     <string name="settings_tts_voice_dismiss">Fatto</string>
     <string name="settings_tts_voice_locale_description">Imposta l\'accento della voce parlata. Non modifica il testo visualizzato.</string>
-    <string name="settings_tts_voice_locale_system">Segui la lingua del telefono</string>
+    <string name="settings_tts_voice_locale_system">Segui l\'impostazione della lingua</string>
 
     <string name="settings_tts_test">Prova la voce</string>
     <string name="settings_tts_test_in_flight">Test in corso — attendi…</string>
-    <string name="settings_tts_no_key_hint">Nessuna chiave %1$s configurata — aggiungine una per attivare questo motore.</string>
-    <string name="settings_tts_add_api_key">Aggiungi chiave API</string>
-    <string name="settings_tts_add_api_key_title">Aggiungi chiave API %1$s</string>
-    <string name="settings_tts_add_api_key_save">Salva</string>
-    <string name="settings_tts_add_api_key_cancel">Annulla</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -140,22 +134,42 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_region_language_en_ca">Inglese (Canada)</string>
     <string name="settings_region_language_en_za">Inglese (Sudafrica)</string>
     <string name="settings_region_language_de_de">Tedesco (Germania)</string>
+    <string name="settings_region_language_de_at">Tedesco (Austria)</string>
+    <string name="settings_region_language_de_ch">Tedesco (Svizzera)</string>
     <string name="settings_region_language_fr_fr">Francese (Francia)</string>
     <string name="settings_region_language_fr_ca">Francese (Canada)</string>
     <string name="settings_region_language_es_es">Spagnolo (Spagna)</string>
     <string name="settings_region_language_es_mx">Spagnolo (Messico)</string>
+    <string name="settings_region_language_ca_es">Catalano (Spagna)</string>
     <string name="settings_region_language_ru_ru">Russo (Russia)</string>
     <string name="settings_region_language_pl_pl">Polacco (Polonia)</string>
     <string name="settings_region_language_hr_hr">Croato (Croazia)</string>
+    <string name="settings_region_language_sl_si">Sloveno (Slovenia)</string>
+    <string name="settings_region_language_sr_rs">Serbo (latino)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Serbo (cirillico)</string>
+    <string name="settings_region_language_bg_bg">Bulgaro (Bulgaria)</string>
+    <string name="settings_region_language_cs_cz">Ceco (Cechia)</string>
+    <string name="settings_region_language_sk_sk">Slovacco (Slovacchia)</string>
+    <string name="settings_region_language_hu_hu">Ungherese (Ungheria)</string>
+    <string name="settings_region_language_ro_ro">Rumeno (Romania)</string>
+    <string name="settings_region_language_el_gr">Greco (Grecia)</string>
     <string name="settings_region_language_uk_ua">Ucraino (Ucraina)</string>
     <string name="settings_region_language_pt_br">Portoghese (Brasile)</string>
+    <string name="settings_region_language_pt_pt">Portoghese (Portogallo)</string>
     <string name="settings_region_language_nl_nl">Olandese (Paesi Bassi)</string>
     <string name="settings_region_language_sv_se">Svedese (Svezia)</string>
+    <string name="settings_region_language_fi_fi">Finlandese (Finlandia)</string>
+    <string name="settings_region_language_et_ee">Estone (Estonia)</string>
+    <string name="settings_region_language_lv_lv">Lettone (Lettonia)</string>
+    <string name="settings_region_language_lt_lt">Lituano (Lituania)</string>
     <string name="settings_region_language_tr_tr">Turco (Turchia)</string>
     <string name="settings_region_language_id_id">Indonesiano (Indonesia)</string>
+    <string name="settings_region_language_ms_my">Malese (Malesia)</string>
     <string name="settings_region_language_fil_ph">Filippino (Filippine)</string>
     <string name="settings_region_language_vi_vn">Vietnamita (Vietnam)</string>
+    <string name="settings_region_language_th_th">Tailandese (Thailandia)</string>
     <string name="settings_region_language_zh_cn">Cinese (semplificato)</string>
+    <string name="settings_region_language_zh_tw">Cinese (tradizionale)</string>
     <string name="settings_region_language_hi_in">Hindi (India)</string>
     <string name="settings_region_language_bn_bd">Bengalese (Bangladesh)</string>
     <string name="settings_region_language_ja_jp">Giapponese (Giappone)</string>
@@ -188,27 +202,50 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_en_ca">Inglese (Canada)</string>
     <string name="settings_tts_voice_locale_en_za">Inglese (Sudafrica)</string>
     <string name="settings_tts_voice_locale_de_de">Tedesco (Germania)</string>
+    <string name="settings_tts_voice_locale_de_at">Tedesco (Austria)</string>
+    <string name="settings_tts_voice_locale_de_ch">Tedesco (Svizzera)</string>
     <string name="settings_tts_voice_locale_fr_fr">Francese (Francia)</string>
     <string name="settings_tts_voice_locale_fr_ca">Francese (Canada)</string>
     <string name="settings_tts_voice_locale_es_es">Spagnolo (Spagna)</string>
     <string name="settings_tts_voice_locale_es_mx">Spagnolo (Messico)</string>
+    <string name="settings_tts_voice_locale_ca_es">Catalano (Spagna)</string>
     <string name="settings_tts_voice_locale_ru_ru">Russo (Russia)</string>
     <string name="settings_tts_voice_locale_pl_pl">Polacco (Polonia)</string>
     <string name="settings_tts_voice_locale_hr_hr">Croato (Croazia)</string>
+    <string name="settings_tts_voice_locale_sl_si">Sloveno (Slovenia)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Serbo (latino)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Serbo (cirillico)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Bulgaro (Bulgaria)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Ceco (Cechia)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Slovacco (Slovacchia)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Ungherese (Ungheria)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Rumeno (Romania)</string>
+    <string name="settings_tts_voice_locale_el_gr">Greco (Grecia)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ucraino (Ucraina)</string>
     <string name="settings_tts_voice_locale_pt_br">Portoghese (Brasile)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Portoghese (Portogallo)</string>
     <string name="settings_tts_voice_locale_nl_nl">Olandese (Paesi Bassi)</string>
     <string name="settings_tts_voice_locale_sv_se">Svedese (Svezia)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Finlandese (Finlandia)</string>
+    <string name="settings_tts_voice_locale_et_ee">Estone (Estonia)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Lettone (Lettonia)</string>
+    <string name="settings_tts_voice_locale_lt_lt">Lituano (Lituania)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turco (Turchia)</string>
     <string name="settings_tts_voice_locale_id_id">Indonesiano (Indonesia)</string>
+    <string name="settings_tts_voice_locale_ms_my">Malese (Malesia)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filippino (Filippine)</string>
     <string name="settings_tts_voice_locale_vi_vn">Vietnamita (Vietnam)</string>
+    <string name="settings_tts_voice_locale_th_th">Tailandese (Thailandia)</string>
     <string name="settings_tts_voice_locale_zh_cn">Cinese (semplificato)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Cinese (tradizionale)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindi (India)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengalese (Bangladesh)</string>
     <string name="settings_tts_voice_locale_ja_jp">Giapponese (Giappone)</string>
     <string name="settings_tts_voice_locale_ko_kr">Coreano (Corea del Sud)</string>
     <string name="settings_tts_voice_locale_ar_sa">Arabo (Arabia Saudita)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Arabo (Egitto)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Arabo (Emirati Arabi Uniti)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Arabo (Marocco)</string>
     <string name="settings_tts_voice_locale_he_il">Ebraico (Israele)</string>
     <string name="settings_tts_voice_locale_fa_ir">Persiano (Iran)</string>
 
@@ -218,8 +255,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
     elevenlabs.io) stay verbatim.
     -->
-    <string name="settings_api_keys_title">Chiavi API</string>
-    <string name="settings_api_keys_description">Configura le chiavi API per i motori vocali online che vuoi usare. Le chiavi sono cifrate a riposo nell\'Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
@@ -249,7 +284,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_title">Posizione</string>
     <string name="settings_location_use_device">Usa la posizione del dispositivo</string>
     <string name="settings_location_grant_background">Concedi la posizione in background (impostazioni di sistema)</string>
-    <string name="settings_location_unset">Posizione non impostata — uso Londra come predefinita</string>
+    <string name="settings_location_unset">Posizione non impostata</string>
     <string name="settings_location_description">La previsione viene recuperata per questa località. Cerca per nome di città; i risultati provengono dal servizio gratuito di geocoding di Open-Meteo.</string>
     <string name="settings_location_description_device_on">Quando attivo, al momento della notifica ClothesCast legge la posizione approssimativa del tuo dispositivo (solo cella / WiFi — niente GPS hardware). La posizione qui sotto fa da riserva se la lettura dal dispositivo fallisce. La posizione in background deve essere concessa nelle impostazioni di sistema, altrimenti il Worker mattutino non può leggerla.</string>
     <string name="settings_location_set">Imposta posizione</string>
@@ -422,11 +457,10 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_condition_snow">Neve</string>
     <string name="insight_condition_thunderstorm">Temporale</string>
     <string name="insight_condition_unknown">Sconosciuto</string>
-    <string name="insight_calendar_tie_in">Porta %1$s per il tuo %3$s alle %2$s.</string>
     <string name="insight_tie_in">Porta %1$s stasera.</string>
     <string name="insight_tie_in_with_rain">Porta %1$s stasera, pioggia alle %2$s.</string>
     <!-- "15" / "15 e 30" — preposition "alle" comes from surrounding templates. -->
     <string name="insight_time_hour">%1$d</string>
-    <string name="insight_time_hour_minutes">%1$d e %2$d</string>
+    <string name="insight_time_hour_minutes">%1$d e %2$02d</string>
 
 </resources>

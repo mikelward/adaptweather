@@ -22,8 +22,9 @@ calendar tie-in), runtime permission UX, boot/timezone/locale alarm
 re-arm, and a debug "Fire insight now" button for testing without waiting
 until the scheduled time.
 
-Distribution is currently sideload-only — install the debug APK from the
-CI artifact (see below). Play-Store-ready release plumbing lands later.
+Distribution: every push to `main` ships a signed AAB to the Play Store
+internal track for testers, and a debug APK is also available from the CI
+artifact (see below) for sideload installs.
 
 ## Tech stack
 
@@ -62,14 +63,22 @@ CI artifact (see below). Play-Store-ready release plumbing lands later.
 
 ## Installing on a phone
 
-The release pipeline is still being wired up. Until then:
+Three options, in roughly increasing order of friction:
 
-1. Push your work or open a PR. CI builds a debug APK on every commit (see
-   `.github/workflows/ci.yml`).
-2. From the GitHub Actions run, download the `app-debug-apk` artifact.
-3. Unzip it; transfer `app-debug.apk` to the phone (Drive, USB, etc.).
-4. Tap to install. Android will prompt about installing from unknown
-   sources — accept once for your file manager / browser.
+- **Play Store internal track** (testers): added in the Play Console, you
+  get the latest `main` build automatically. Every push to `main` ships a
+  signed AAB to this track.
+- **Firebase App Distribution** (testers): added to the `testers` group in
+  the FAD console, you get the debug APK from every push to `main` with a
+  one-tap install link.
+- **Sideload from CI artifact** (anyone with repo read access): for any
+  branch or PR, not just `main`.
+  1. Push your work or open a PR. CI builds a debug APK on every commit
+     (see `.github/workflows/ci.yml`).
+  2. From the GitHub Actions run, download the `app-debug-apk` artifact.
+  3. Unzip it; transfer `app-debug.apk` to the phone (Drive, USB, etc.).
+  4. Tap to install. Android will prompt about installing from unknown
+     sources — accept once for your file manager / browser.
 
 ## First-run setup
 
@@ -121,9 +130,10 @@ suppresses it is a vendor-side override.
 
 - **v0.x** _(now)_: daily insight notification + TTS (device / Gemini /
   OpenAI / ElevenLabs), full Settings UI, optional calendar tie-in and
-  device location, sideload via CI artifacts.
-- **v1.0**: Play Store internal track; Firebase App Distribution; 24-hour
-  cost cap on online TTS calls.
+  device location, sideload via CI artifacts, Firebase App Distribution
+  for testers, Play Store internal track for testers.
+- **v1.0**: Play Store listing + public release (production track);
+  24-hour cost cap on online TTS calls.
 - **v2.0**: hourly / 3-hourly forecast UI, Google Home integration.
 - **iOS**: deferred until a Mac is available _and_ a small APNs backend
   is in place — iOS cannot self-wake at a precise local time.

@@ -12,10 +12,13 @@ import app.clothescast.core.domain.model.CalendarTieInClause
 import app.clothescast.core.domain.model.ClothesClause
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.EveningEventTieInClause
+import app.clothescast.core.domain.model.Fact
 import app.clothescast.core.domain.model.ForecastPeriod
+import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
 import app.clothescast.core.domain.model.TemperatureBand
@@ -104,6 +107,8 @@ class InsightCache(
         val hourly: List<HourlyDto> = emptyList(),
         val outfit: OutfitDto? = null,
         val nextOutfit: OutfitDto? = null,
+        val outfitRationale: OutfitRationaleDto? = null,
+        val nextOutfitRationale: OutfitRationaleDto? = null,
         val period: String = ForecastPeriod.TODAY.name,
         val hasEvents: Boolean = false,
     ) {
@@ -115,6 +120,8 @@ class InsightCache(
             hourly = hourly.map { it.toDomain() },
             outfit = outfit?.toDomain(),
             nextOutfit = nextOutfit?.toDomain(),
+            outfitRationale = outfitRationale?.toDomain(),
+            nextOutfitRationale = nextOutfitRationale?.toDomain(),
             period = runCatching { ForecastPeriod.valueOf(period) }.getOrDefault(ForecastPeriod.TODAY),
             hasEvents = hasEvents,
         )
@@ -205,6 +212,50 @@ class InsightCache(
     }
 
     @Serializable
+    private data class OutfitRationaleDto(
+        val top: GarmentReasonDto,
+        val bottom: GarmentReasonDto,
+    ) {
+        fun toDomain(): OutfitRationale = OutfitRationale(
+            top = top.toDomain(),
+            bottom = bottom.toDomain(),
+        )
+    }
+
+    @Serializable
+    private data class GarmentReasonDto(val facts: List<FactDto>) {
+        fun toDomain(): GarmentReason = GarmentReason(facts = facts.map { it.toDomain() })
+    }
+
+    @Serializable
+    private data class FactDto(
+        val metric: String,
+        val observedC: Double,
+        val observedAtSecondOfDay: Int? = null,
+        val thresholdC: Double,
+        val thresholdKind: String,
+        val comparison: String,
+    ) {
+        fun toDomain(): Fact = Fact(
+            metric = runCatching { Fact.Metric.valueOf(metric) }
+                .getOrDefault(Fact.Metric.FEELS_LIKE_MIN),
+            observedC = observedC,
+            observedAt = observedAtSecondOfDay?.let { LocalTime.ofSecondOfDay(it.toLong()) },
+            thresholdC = thresholdC,
+            // Throw on an unknown kind rather than fall back — `thresholdKind`
+            // identifies *which* preference the rationale dialog's `−1°` / `+1°`
+            // controls bind to, so silently aliasing it to a different knob
+            // would adjust the wrong threshold on the user's behalf. The
+            // runCatching at [readSlot] turns this into a dropped cache entry;
+            // the next worker run regenerates it cleanly. Cache entries are
+            // regeneratable, so discarding is preferable to mis-association.
+            thresholdKind = Fact.ThresholdKind.valueOf(thresholdKind),
+            comparison = runCatching { Fact.Comparison.valueOf(comparison) }
+                .getOrDefault(Fact.Comparison.AT_OR_ABOVE),
+        )
+    }
+
+    @Serializable
     private data class HourlyDto(
         val secondOfDay: Int,
         val temperatureC: Double,
@@ -230,8 +281,27 @@ class InsightCache(
         hourly = hourly.map { it.toDto() },
         outfit = outfit?.let { OutfitDto(it.top.name, it.bottom.name) },
         nextOutfit = nextOutfit?.let { OutfitDto(it.top.name, it.bottom.name) },
+        outfitRationale = outfitRationale?.toDto(),
+        nextOutfitRationale = nextOutfitRationale?.toDto(),
         period = period.name,
         hasEvents = hasEvents,
+    )
+
+    private fun OutfitRationale.toDto(): OutfitRationaleDto = OutfitRationaleDto(
+        top = top.toDto(),
+        bottom = bottom.toDto(),
+    )
+
+    private fun GarmentReason.toDto(): GarmentReasonDto =
+        GarmentReasonDto(facts = facts.map { it.toDto() })
+
+    private fun Fact.toDto(): FactDto = FactDto(
+        metric = metric.name,
+        observedC = observedC,
+        observedAtSecondOfDay = observedAt?.toSecondOfDay(),
+        thresholdC = thresholdC,
+        thresholdKind = thresholdKind.name,
+        comparison = comparison.name,
     )
 
     private fun InsightSummary.toDto(): InsightSummaryDto = InsightSummaryDto(
@@ -256,13 +326,14 @@ class InsightCache(
     )
 
     companion object {
-        // Bumped from `latest_insight_v2` when the cached `summary` flipped from a
-        // rendered prose string to a structured [InsightSummary]. Old prose-summary
-        // payloads can't deserialize against the new schema and are dropped on first
-        // read, regenerating on the next worker run.
-        // Tonight is bumped from `latest_tonight_insight_v1` for the same reason.
-        private val TODAY_INSIGHT_JSON = stringPreferencesKey("latest_insight_v3")
-        private val TONIGHT_INSIGHT_JSON = stringPreferencesKey("latest_tonight_insight_v2")
+        // Bumped from `latest_insight_v3` / `latest_tonight_insight_v2` when [Fact]
+        // grew a non-null [Fact.thresholdKind] tag — old payloads omit it and the
+        // serializer can't fill in a sensible default since we'd have to guess
+        // *which* knob a given threshold value referred to. Old payloads are
+        // dropped on first read; the next worker run repopulates with the new
+        // schema.
+        private val TODAY_INSIGHT_JSON = stringPreferencesKey("latest_insight_v4")
+        private val TONIGHT_INSIGHT_JSON = stringPreferencesKey("latest_tonight_insight_v3")
 
         fun create(context: Context): InsightCache = InsightCache(context.insightDataStore)
     }

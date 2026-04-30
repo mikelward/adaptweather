@@ -7,8 +7,10 @@ spousal register), matching the existing insight prose ("Ponesi …",
 -->
 <resources>
     <string name="settings_region_language_hr_hr">Hrvatski (Hrvatska)</string>
+    <string name="settings_region_language_sl_si">Slovenski (Slovenija)</string>
     <string name="settings_tts_voice_locale_hr_hr">Hrvatski (Hrvatska)</string>
-    <string name="settings_tts_voice_locale_label">Jezik</string>
+    <string name="settings_tts_voice_locale_sl_si">Slovenski (Slovenija)</string>
+    <string name="settings_tts_voice_locale_label">Naglasak</string>
 
     <!-- Settings — top bar + root navigation list. -->
     <string name="settings_title">Postavke</string>
@@ -18,7 +20,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_root_schedule">Raspored</string>
     <string name="settings_root_region">Regija</string>
     <string name="settings_root_clothes">Odjeća</string>
-    <string name="settings_root_api_keys">API ključevi</string>
     <string name="settings_root_data_sources">Izvori podataka</string>
     <string name="settings_root_about">O aplikaciji</string>
 
@@ -93,15 +94,10 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_label">Glas</string>
     <string name="settings_tts_voice_dismiss">Gotovo</string>
     <string name="settings_tts_voice_locale_description">Postavlja naglasak izgovorenog glasa. Ne mijenja prikazani tekst.</string>
-    <string name="settings_tts_voice_locale_system">Koristi jezik telefona</string>
+    <string name="settings_tts_voice_locale_system">Koristi postavku jezika</string>
 
     <string name="settings_tts_test">Testiraj glas</string>
     <string name="settings_tts_test_in_flight">Testiranje — pričekaj…</string>
-    <string name="settings_tts_no_key_hint">Nije postavljen %1$s ključ — dodaj ga za korištenje ovog mehanizma.</string>
-    <string name="settings_tts_add_api_key">Dodaj API ključ</string>
-    <string name="settings_tts_add_api_key_title">Dodaj %1$s API ključ</string>
-    <string name="settings_tts_add_api_key_save">Spremi</string>
-    <string name="settings_tts_add_api_key_cancel">Odustani</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -121,22 +117,41 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_region_language_en_ca">Engleski (Kanada)</string>
     <string name="settings_region_language_en_za">Engleski (Južna Afrika)</string>
     <string name="settings_region_language_de_de">Njemački (Njemačka)</string>
+    <string name="settings_region_language_de_at">Njemački (Austrija)</string>
+    <string name="settings_region_language_de_ch">Njemački (Švicarska)</string>
     <string name="settings_region_language_fr_fr">Francuski (Francuska)</string>
     <string name="settings_region_language_fr_ca">Francuski (Kanada)</string>
     <string name="settings_region_language_it_it">Talijanski (Italija)</string>
     <string name="settings_region_language_es_es">Španjolski (Španjolska)</string>
     <string name="settings_region_language_es_mx">Španjolski (Meksiko)</string>
+    <string name="settings_region_language_ca_es">Katalonski (Španjolska)</string>
     <string name="settings_region_language_ru_ru">Ruski (Rusija)</string>
     <string name="settings_region_language_pl_pl">Poljski (Poljska)</string>
+    <string name="settings_region_language_sr_rs">Srpski (latinica)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Srpski (ćirilica)</string>
+    <string name="settings_region_language_bg_bg">Bugarski (Bugarska)</string>
+    <string name="settings_region_language_cs_cz">Češki (Češka)</string>
+    <string name="settings_region_language_sk_sk">Slovački (Slovačka)</string>
+    <string name="settings_region_language_hu_hu">Mađarski (Mađarska)</string>
+    <string name="settings_region_language_ro_ro">Rumunjski (Rumunjska)</string>
+    <string name="settings_region_language_el_gr">Grčki (Grčka)</string>
     <string name="settings_region_language_uk_ua">Ukrajinski (Ukrajina)</string>
     <string name="settings_region_language_pt_br">Portugalski (Brazil)</string>
+    <string name="settings_region_language_pt_pt">Portugalski (Portugal)</string>
     <string name="settings_region_language_nl_nl">Nizozemski (Nizozemska)</string>
     <string name="settings_region_language_sv_se">Švedski (Švedska)</string>
+    <string name="settings_region_language_fi_fi">Finski (Finska)</string>
+    <string name="settings_region_language_et_ee">Estonski (Estonija)</string>
+    <string name="settings_region_language_lv_lv">Latvijski (Latvija)</string>
+    <string name="settings_region_language_lt_lt">Litavski (Litva)</string>
     <string name="settings_region_language_tr_tr">Turski (Turska)</string>
     <string name="settings_region_language_id_id">Indonezijski (Indonezija)</string>
+    <string name="settings_region_language_ms_my">Malajski (Malezija)</string>
     <string name="settings_region_language_fil_ph">Filipinski (Filipini)</string>
     <string name="settings_region_language_vi_vn">Vijetnamski (Vijetnam)</string>
+    <string name="settings_region_language_th_th">Tajski (Tajland)</string>
     <string name="settings_region_language_zh_cn">Kineski (pojednostavljeni)</string>
+    <string name="settings_region_language_zh_tw">Kineski (tradicionalni)</string>
     <string name="settings_region_language_hi_in">Hindski (Indija)</string>
     <string name="settings_region_language_bn_bd">Bengalski (Bangladeš)</string>
     <string name="settings_region_language_ja_jp">Japanski (Japan)</string>
@@ -169,27 +184,49 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_en_ca">Engleski (Kanada)</string>
     <string name="settings_tts_voice_locale_en_za">Engleski (Južna Afrika)</string>
     <string name="settings_tts_voice_locale_de_de">Njemački (Njemačka)</string>
+    <string name="settings_tts_voice_locale_de_at">Njemački (Austrija)</string>
+    <string name="settings_tts_voice_locale_de_ch">Njemački (Švicarska)</string>
     <string name="settings_tts_voice_locale_fr_fr">Francuski (Francuska)</string>
     <string name="settings_tts_voice_locale_fr_ca">Francuski (Kanada)</string>
     <string name="settings_tts_voice_locale_it_it">Talijanski (Italija)</string>
     <string name="settings_tts_voice_locale_es_es">Španjolski (Španjolska)</string>
     <string name="settings_tts_voice_locale_es_mx">Španjolski (Meksiko)</string>
+    <string name="settings_tts_voice_locale_ca_es">Katalonski (Španjolska)</string>
     <string name="settings_tts_voice_locale_ru_ru">Ruski (Rusija)</string>
     <string name="settings_tts_voice_locale_pl_pl">Poljski (Poljska)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Srpski (latinica)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Srpski (ćirilica)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Bugarski (Bugarska)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Češki (Češka)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Slovački (Slovačka)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Mađarski (Mađarska)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Rumunjski (Rumunjska)</string>
+    <string name="settings_tts_voice_locale_el_gr">Grčki (Grčka)</string>
     <string name="settings_tts_voice_locale_uk_ua">Ukrajinski (Ukrajina)</string>
     <string name="settings_tts_voice_locale_pt_br">Portugalski (Brazil)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Portugalski (Portugal)</string>
     <string name="settings_tts_voice_locale_nl_nl">Nizozemski (Nizozemska)</string>
     <string name="settings_tts_voice_locale_sv_se">Švedski (Švedska)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Finski (Finska)</string>
+    <string name="settings_tts_voice_locale_et_ee">Estonski (Estonija)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Latvijski (Latvija)</string>
+    <string name="settings_tts_voice_locale_lt_lt">Litavski (Litva)</string>
     <string name="settings_tts_voice_locale_tr_tr">Turski (Turska)</string>
     <string name="settings_tts_voice_locale_id_id">Indonezijski (Indonezija)</string>
+    <string name="settings_tts_voice_locale_ms_my">Malajski (Malezija)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filipinski (Filipini)</string>
     <string name="settings_tts_voice_locale_vi_vn">Vijetnamski (Vijetnam)</string>
+    <string name="settings_tts_voice_locale_th_th">Tajski (Tajland)</string>
     <string name="settings_tts_voice_locale_zh_cn">Kineski (pojednostavljeni)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Kineski (tradicionalni)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindski (Indija)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengalski (Bangladeš)</string>
     <string name="settings_tts_voice_locale_ja_jp">Japanski (Japan)</string>
     <string name="settings_tts_voice_locale_ko_kr">Korejski (Južna Koreja)</string>
     <string name="settings_tts_voice_locale_ar_sa">Arapski (Saudijska Arabija)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Arapski (Egipat)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Arapski (Ujedinjeni Arapski Emirati)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Arapski (Maroko)</string>
     <string name="settings_tts_voice_locale_he_il">Hebrejski (Izrael)</string>
     <string name="settings_tts_voice_locale_fa_ir">Perzijski (Iran)</string>
 
@@ -199,8 +236,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
     elevenlabs.io) stay verbatim.
     -->
-    <string name="settings_api_keys_title">API ključevi</string>
-    <string name="settings_api_keys_description">Postavi API ključeve za online glasovne mehanizme koje želiš koristiti. Ključevi su šifrirani u Android Keystore.</string>
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
@@ -230,7 +265,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_location_title">Lokacija</string>
     <string name="settings_location_use_device">Koristi lokaciju uređaja</string>
     <string name="settings_location_grant_background">Dopusti pozadinsku lokaciju (postavke sustava)</string>
-    <string name="settings_location_unset">Lokacija nije postavljena — koristi se London</string>
+    <string name="settings_location_unset">Lokacija nije postavljena</string>
     <string name="settings_location_description">Prognoza se dohvaća za ovu lokaciju. Pretraži po imenu grada; rezultati dolaze iz Open-Meteovog besplatnog servisa za geokodiranje.</string>
     <string name="settings_location_description_device_on">Kada je uključeno, ClothesCast pri vremenu obavijesti čita približnu lokaciju tvog uređaja (samo mobilni odašiljač / WiFi — bez GPS-a). Lokacija ispod služi kao rezerva ako čitanje uređaja zakaže. Pozadinska lokacija mora biti dopuštena u postavkama sustava, inače je jutarnji Worker ne može pročitati.</string>
     <string name="settings_location_set">Postavi lokaciju</string>
@@ -404,7 +439,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="insight_condition_snow">Snijeg</string>
     <string name="insight_condition_thunderstorm">Grmljavina</string>
     <string name="insight_condition_unknown">Nepoznato</string>
-    <string name="insight_calendar_tie_in">Ponesi %1$s na %3$s u %2$s.</string>
     <string name="insight_tie_in">Ponesi %1$s večeras.</string>
     <string name="insight_tie_in_with_rain">Ponesi %1$s večeras, kiša u %2$s.</string>
     <!-- "15" — preposition "u" comes from surrounding templates. -->

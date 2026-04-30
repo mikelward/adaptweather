@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Greek (Greece) translation — full UI coverage. εσύ-form (2nd-person
+singular familiar) throughout: "Πάτησε", "Όρισε", "Φόρεσε", "Πάρε".
+That's the standard Greek app register for a casual / spousal-tone
+brand. The plural / formal-polite εσείς-form ("Πατήστε", "Ορίστε")
+isn't used here — it reads as institutional in modern Android UI and
+doesn't fit the existing prose voice ("Δικός σου ClothesCast", "Τι
+να φορέσεις σήμερα").
+
+Brand name "ClothesCast" stays in Latin script, as do all third-party
+brand names (Gemini, OpenAI, ElevenLabs, Open-Meteo, Android Keystore,
+GitHub, dontkillmyapp.com) and the URLs.
+
+Quotation marks around nested toggle / event labels use Greek
+guillemets «…» — locale-native style, the same convention Greek
+publications and apps follow (NOT the German „…" low-high pair the
+Romance / Germanic locales use here).
+
+What is NOT overridden, by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am` / `_pm` / `_midnight` / `_noon` (and *_minutes
+  variants) — English-only spoken-time formatter helpers. Greek uses
+  `insight_time_hour` / `_hour_minutes` ("15:00" / "15:30") which are
+  translated below; the AM/PM keys exist for the
+  `Locale.language == "en"` path only and would never be read in an
+  el-GR runtime.
+
+Picker labels under `settings_region_language_*` and
+`settings_tts_voice_locale_*` give the Greek names for every offered
+locale (Αγγλικά (Ηνωμένες Πολιτείες), Γαλλικά (Καναδάς), Κινέζικα
+(απλοποιημένα), …). The locale tag stored on disk (en-US / fr-CA /
+zh-CN) is unchanged; only the displayed label localizes.
+-->
+<resources>
+    <string name="settings_region_language_el_gr">Ελληνικά (Ελλάδα)</string>
+    <string name="settings_tts_voice_locale_el_gr">Ελληνικά (Ελλάδα)</string>
+    <string name="settings_tts_voice_locale_label">Προφορά</string>
+
+    <!-- Settings — top bar + root navigation list. -->
+    <string name="settings_title">Ρυθμίσεις</string>
+    <string name="settings_back">Πίσω</string>
+
+    <string name="settings_root_voice">Φωνή</string>
+    <string name="settings_root_schedule">Πρόγραμμα</string>
+    <string name="settings_root_region">Περιοχή</string>
+    <string name="settings_root_clothes">Ρούχα</string>
+    <string name="settings_root_data_sources">Πηγές δεδομένων</string>
+    <string name="settings_root_about">Σχετικά</string>
+
+    <string name="settings_root_schedule_subtitle">Ειδοποιήσεις και ώρες</string>
+    <string name="settings_root_clothes_subtitle">Θερμοκρασίες και σύνολα</string>
+    <string name="settings_root_region_subtitle">Γλώσσες και μονάδες</string>
+    <string name="settings_root_voice_subtitle">Πάροχοι και προφορές</string>
+    <string name="settings_root_data_sources_subtitle">Τοποθεσία και ημερολόγιο</string>
+
+    <!-- Garment dropdown labels — translated names for the picker on
+         the Ρούχα settings page. The stored key on disk is the en-US
+         form ("sweater" / "pants" / …); these strings only change the
+         display. "Μπουφάν" (jacket) and "Παλτό" (coat) are the
+         standard Greek pair for the BR jaqueta / casaco distinction.
+         "Σορτς" and "Τζιν" are the everyday loanword forms (Greek
+         doesn't tend to retranslate fashion-vocab loanwords once they
+         settle). -->
+    <string name="garment_sweater">Πουλόβερ</string>
+    <string name="garment_hoodie">Φούτερ με κουκούλα</string>
+    <string name="garment_jacket">Μπουφάν</string>
+    <string name="garment_coat">Παλτό</string>
+    <string name="garment_tshirt">Μπλουζάκι</string>
+    <string name="garment_shirt">Πουκάμισο</string>
+    <string name="garment_shorts">Σορτς</string>
+    <string name="garment_pants">Παντελόνι</string>
+    <string name="garment_jeans">Τζιν</string>
+
+    <!-- Clothes settings — top of the screen. εσύ-form imperatives
+         throughout ("Πάτησε Προσθήκη για να δημιουργήσεις"). The
+         destructive action uses "Διαγραφή" (deletion noun) rather
+         than the verb "Διέγραψε" — Android Greek convention is to
+         label destructive buttons with the noun form. -->
+    <string name="settings_clothes_title">Κανόνες ένδυσης</string>
+    <string name="settings_clothes_description">Αν μια πρόβλεψη ξεπεράσει κάποιο από αυτά τα όρια, το ρούχο εμφανίζεται στον καθημερινό σου ClothesCast.</string>
+
+    <string name="settings_clothes_empty">Δεν υπάρχουν κανόνες ακόμη. Πάτησε Προσθήκη για να δημιουργήσεις έναν.</string>
+    <string name="settings_clothes_add">Προσθήκη</string>
+    <string name="settings_clothes_edit">Επεξεργασία</string>
+    <string name="settings_clothes_delete">Διαγραφή</string>
+    <string name="settings_clothes_dialog_add_title">Προσθήκη κανόνα ένδυσης</string>
+    <string name="settings_clothes_dialog_edit_title">Επεξεργασία κανόνα ένδυσης</string>
+    <string name="settings_clothes_item_label">Ρούχο</string>
+    <string name="settings_clothes_condition_label">Συνθήκη</string>
+    <string name="settings_clothes_value_label_temp_c">Όριο (°C)</string>
+    <string name="settings_clothes_value_label_precip">Όριο (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Όταν η αισθητή θερμοκρασία είναι κάτω από</string>
+    <string name="settings_clothes_cond_type_temp_above">Όταν η αισθητή θερμοκρασία είναι πάνω από</string>
+    <string name="settings_clothes_cond_type_precip_above">Όταν η πιθανότητα βροχής ξεπερνά</string>
+    <string name="settings_clothes_cond_temp_below">όταν η ελάχιστη αισθητή θερμοκρασία είναι κάτω από %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">όταν η μέγιστη αισθητή θερμοκρασία είναι πάνω από %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">όταν η πιθανότητα βροχής ξεπερνά %.0f%%</string>
+
+    <!--
+    Schedule screen — daily and nightly ClothesCast cards, delivery
+    picker, "Αναφορά βραδινών συμβάντων" toggle, and the nightly-only
+    "notify only on events" toggle. Description uses Greek guillemets
+    «…» around the nested toggle label — locale-native style, NOT
+    the German „…" form used in the Romance / Germanic locales here.
+    "Συμβάντα" (rather than "γεγονότα") is the conventional Greek term
+    for calendar events — Google Calendar in Greek uses "συμβάντα", and
+    matching that reads as native.
+    -->
+    <string name="settings_schedule_title">Καθημερινός ClothesCast</string>
+    <string name="settings_schedule_time_label">Ώρα</string>
+    <string name="settings_schedule_days_label">Ημέρες της εβδομάδας</string>
+    <string name="settings_daily_mention_evening_events">Αναφορά βραδινών συμβάντων</string>
+
+    <string name="settings_tonight_title">Νυχτερινός ClothesCast</string>
+    <string name="settings_tonight_description">Ένας δεύτερος ClothesCast το βράδυ που καλύπτει τον καιρό για απόψε. Σε ήσυχα βράδια παραμένει σιωπηλός, ή δεν εμφανίζεται καθόλου αν είναι ενεργό το «Ειδοποίηση μόνο όταν υπάρχουν βραδινά συμβάντα»· σε βράδια με συμβάντα παίζει έναν ήχο και (αν έχεις ενεργοποιήσει την ανάγνωση φωνητικά) διαβάζεται μόνος του.</string>
+    <string name="settings_tonight_enabled">Εμφάνιση νυχτερινού ClothesCast</string>
+    <string name="settings_tonight_time_label">Ώρα</string>
+    <string name="settings_tonight_days_label">Ημέρες της εβδομάδας</string>
+    <string name="settings_tonight_notify_only_on_events">Ειδοποίηση μόνο όταν υπάρχουν βραδινά συμβάντα</string>
+
+    <string name="settings_delivery_label">Παράδοση</string>
+    <string name="settings_delivery_notification_only">Μόνο ειδοποίηση</string>
+    <string name="settings_delivery_tts_only">Μόνο φωνητική ανάγνωση</string>
+    <string name="settings_delivery_notification_and_tts">Ειδοποίηση και φωνητική ανάγνωση</string>
+
+    <!--
+    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    voice + language sub-pickers, device-voice picker, install-Google-TTS
+    hint, ElevenLabs model + speed, refresh-voices button, test-voice
+    button. Tu-form imperatives ("Πάτησε", "Δοκίμασε"). The "API key"
+    loanword stays unchanged — modern Greek tech vocab keeps the Latin
+    abbreviation, the same way it does for "URL", "JSON", "TTS".
+    -->
+    <string name="settings_tts_engine_title">Μηχανή φωνής</string>
+    <string name="settings_tts_engine_description">Οι online μηχανές (Gemini, OpenAI, ElevenLabs) ακούγονται πολύ πιο φυσικές αλλά απαιτούν κλήση δικτύου τη στιγμή της εκφώνησης και χρησιμοποιούν το API key σου για τη σύνθεση (μία σύντομη κλήση ανά ClothesCast που εκφωνείται). Επιστρέφει στη φωνή της συσκευής αν αποτύχει η επιλεγμένη μηχανή.</string>
+    <string name="settings_tts_engine_device">Συσκευή (offline, δωρεάν)</string>
+    <string name="settings_tts_engine_gemini">Gemini (υψηλή ποιότητα, online)</string>
+    <string name="settings_tts_engine_openai">OpenAI (υψηλή ποιότητα, online)</string>
+    <string name="settings_tts_engine_elevenlabs">ElevenLabs (κορυφαία ποιότητα, online)</string>
+
+    <string name="settings_tts_voice_label">Φωνή</string>
+    <string name="settings_tts_voice_dismiss">Έγινε</string>
+    <string name="settings_tts_voice_locale_description">Ορίζει την προφορά της φωνής εκφώνησης. Δεν αλλάζει το εμφανιζόμενο κείμενο.</string>
+    <string name="settings_tts_voice_locale_system">Ακολούθησε τη ρύθμιση γλώσσας</string>
+
+    <!-- Device-voice sub-picker (Android system TTS voices) and the
+         inline Google-TTS install hint shown when no Google network
+         voice is available. -->
+    <string name="settings_tts_device_voice_label">Φωνή συσκευής</string>
+    <string name="settings_tts_device_voice_auto">Αυτόματα (καλύτερη για την προφορά)</string>
+    <string name="settings_tts_device_voice_currently">Τρέχουσα: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">Φόρτωση…</string>
+    <string name="settings_tts_device_voice_network">Δικτυακή</string>
+    <string name="settings_tts_device_voice_offline">Εκτός σύνδεσης</string>
+    <string name="settings_tts_install_google_hint">Εγκατέστησε τη μηχανή κειμένου σε ομιλία της Google για φωνές υψηλότερης ποιότητας.</string>
+    <string name="settings_tts_install_google_button">Εγκατάσταση Google TTS</string>
+
+    <string name="settings_tts_test">Δοκιμή φωνής</string>
+    <string name="settings_tts_test_in_flight">Δοκιμή — περίμενε…</string>
+
+    <!-- ElevenLabs refresh-voices button + voice-count toast, model
+         picker, and per-clip speed slider. The model labels keep the
+         credit-cost annotation in Greek: "0,5 πιστώσεις/χαρακτήρα" with
+         comma decimal separator (the Greek convention). -->
+    <string name="settings_elevenlabs_refresh_voices">Ανανέωση φωνών</string>
+    <string name="settings_elevenlabs_refresh_voices_loaded">Εμφάνιση %1$d φωνών από τον λογαριασμό σου ElevenLabs.</string>
+    <string name="settings_elevenlabs_model_label">Μοντέλο</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — ισορροπημένο (προεπιλογή, 0,5 πιστώσεις/χαρακτήρα)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — κορυφαία ποιότητα (1,0 πιστώσεις/χαρακτήρα)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — το πιο γρήγορο (0,5 πιστώσεις/χαρακτήρα)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — με αναγνώριση audio tags (πειραματικό)</string>
+    <string name="settings_elevenlabs_speed_label">Ταχύτητα × %1$s</string>
+
+    <!--
+    Region screen — language picker title + caption (the disambiguation
+    copy explaining that this knob is the *displayed text*, not the
+    spoken accent), the system-default option, and the per-locale
+    labels in Greek style. Language names use the Greek nominative
+    neuter plural ("Αγγλικά", "Γαλλικά", "Ιαπωνικά", "Κινέζικα") — the
+    standard Greek pattern for naming languages. Country names follow
+    everyday Greek usage ("Ηνωμένες Πολιτείες" / "Ηνωμένο Βασίλειο"
+    over the formal periphrastic forms). The locale tag stored on disk
+    (en-US / fr-CA / zh-CN) is unchanged; only the displayed label
+    localizes.
+    -->
+    <string name="settings_region_language_title">Γλώσσα</string>
+    <string name="settings_region_language_description">Ορίζει τη γλώσσα του εμφανιζόμενου κειμένου και των ειδοποιήσεων.</string>
+    <string name="settings_region_language_system">Ακολούθησε τις τοπικές ρυθμίσεις του συστήματος</string>
+    <string name="settings_region_language_en_us">Αγγλικά (Ηνωμένες Πολιτείες)</string>
+    <string name="settings_region_language_en_gb">Αγγλικά (Ηνωμένο Βασίλειο)</string>
+    <string name="settings_region_language_en_au">Αγγλικά (Αυστραλία)</string>
+    <string name="settings_region_language_en_ca">Αγγλικά (Καναδάς)</string>
+    <string name="settings_region_language_en_za">Αγγλικά (Νότια Αφρική)</string>
+    <string name="settings_region_language_de_de">Γερμανικά (Γερμανία)</string>
+    <string name="settings_region_language_de_at">Γερμανικά (Αυστρία)</string>
+    <string name="settings_region_language_de_ch">Γερμανικά (Ελβετία)</string>
+    <string name="settings_region_language_fr_fr">Γαλλικά (Γαλλία)</string>
+    <string name="settings_region_language_fr_ca">Γαλλικά (Καναδάς)</string>
+    <string name="settings_region_language_it_it">Ιταλικά (Ιταλία)</string>
+    <string name="settings_region_language_es_es">Ισπανικά (Ισπανία)</string>
+    <string name="settings_region_language_es_mx">Ισπανικά (Μεξικό)</string>
+    <string name="settings_region_language_ca_es">Καταλανικά (Ισπανία)</string>
+    <string name="settings_region_language_ru_ru">Ρωσικά (Ρωσία)</string>
+    <string name="settings_region_language_pl_pl">Πολωνικά (Πολωνία)</string>
+    <string name="settings_region_language_hr_hr">Κροατικά (Κροατία)</string>
+    <string name="settings_region_language_sl_si">Σλοβενικά (Σλοβενία)</string>
+    <string name="settings_region_language_sr_rs">Σερβικά (Λατινικά)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Σερβικά (Κυριλλικά)</string>
+    <string name="settings_region_language_bg_bg">Βουλγαρικά (Βουλγαρία)</string>
+    <string name="settings_region_language_cs_cz">Τσεχικά (Τσεχία)</string>
+    <string name="settings_region_language_sk_sk">Σλοβακικά (Σλοβακία)</string>
+    <string name="settings_region_language_hu_hu">Ουγγρικά (Ουγγαρία)</string>
+    <string name="settings_region_language_ro_ro">Ρουμανικά (Ρουμανία)</string>
+    <string name="settings_region_language_uk_ua">Ουκρανικά (Ουκρανία)</string>
+    <string name="settings_region_language_pt_br">Πορτογαλικά (Βραζιλία)</string>
+    <string name="settings_region_language_pt_pt">Πορτογαλικά (Πορτογαλία)</string>
+    <string name="settings_region_language_nl_nl">Ολλανδικά (Ολλανδία)</string>
+    <string name="settings_region_language_sv_se">Σουηδικά (Σουηδία)</string>
+    <string name="settings_region_language_fi_fi">Φινλανδικά (Φινλανδία)</string>
+    <string name="settings_region_language_et_ee">Εσθονικά (Εσθονία)</string>
+    <string name="settings_region_language_lv_lv">Λετονικά (Λετονία)</string>
+    <string name="settings_region_language_lt_lt">Λιθουανικά (Λιθουανία)</string>
+    <string name="settings_region_language_tr_tr">Τουρκικά (Τουρκία)</string>
+    <string name="settings_region_language_id_id">Ινδονησιακά (Ινδονησία)</string>
+    <string name="settings_region_language_ms_my">Μαλαισιανά (Μαλαισία)</string>
+    <string name="settings_region_language_fil_ph">Φιλιππινέζικα (Φιλιππίνες)</string>
+    <string name="settings_region_language_vi_vn">Βιετναμέζικα (Βιετνάμ)</string>
+    <string name="settings_region_language_zh_cn">Κινέζικα (απλοποιημένα)</string>
+    <string name="settings_region_language_hi_in">Χίντι (Ινδία)</string>
+    <string name="settings_region_language_bn_bd">Μπενγκάλι (Μπανγκλαντές)</string>
+    <string name="settings_region_language_ja_jp">Ιαπωνικά (Ιαπωνία)</string>
+    <string name="settings_region_language_ko_kr">Κορεατικά (Νότια Κορέα)</string>
+    <string name="settings_region_language_ar_sa">Αραβικά (Σαουδική Αραβία)</string>
+    <string name="settings_region_language_he_il">Εβραϊκά (Ισραήλ)</string>
+    <string name="settings_region_language_fa_ir">Περσικά (Ιράν)</string>
+
+    <!-- Region screen — units pickers. "Κελσίου" / "Φαρενάιτ" are the
+         standard Greek transliterations of Celsius / Fahrenheit; the
+         unit symbols (°C, °F) stay unchanged across locales. -->
+    <string name="settings_temperature_unit_title">Μονάδα θερμοκρασίας</string>
+    <string name="settings_temperature_unit_celsius">Κελσίου (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">Φαρενάιτ (°F)</string>
+    <string name="settings_distance_unit_title">Μονάδα απόστασης</string>
+    <string name="settings_distance_unit_kilometers">Χιλιόμετρα</string>
+    <string name="settings_distance_unit_miles">Μίλια</string>
+
+    <!--
+    Voice locale picker labels — same Greek language-name translations
+    as the Region picker above, just keyed under
+    `settings_tts_voice_locale_*` because the Voice screen's language
+    sub-picker is a separate UI surface. Includes three Arabic voice
+    variants (Egypt / UAE / Morocco) that the Region picker doesn't
+    expose — they live only in the Voice locale namespace.
+    -->
+    <string name="settings_tts_voice_locale_en_us">Αγγλικά (Ηνωμένες Πολιτείες)</string>
+    <string name="settings_tts_voice_locale_en_gb">Αγγλικά (Ηνωμένο Βασίλειο)</string>
+    <string name="settings_tts_voice_locale_en_au">Αγγλικά (Αυστραλία)</string>
+    <string name="settings_tts_voice_locale_en_ca">Αγγλικά (Καναδάς)</string>
+    <string name="settings_tts_voice_locale_en_za">Αγγλικά (Νότια Αφρική)</string>
+    <string name="settings_tts_voice_locale_de_de">Γερμανικά (Γερμανία)</string>
+    <string name="settings_tts_voice_locale_de_at">Γερμανικά (Αυστρία)</string>
+    <string name="settings_tts_voice_locale_de_ch">Γερμανικά (Ελβετία)</string>
+    <string name="settings_tts_voice_locale_fr_fr">Γαλλικά (Γαλλία)</string>
+    <string name="settings_tts_voice_locale_fr_ca">Γαλλικά (Καναδάς)</string>
+    <string name="settings_tts_voice_locale_it_it">Ιταλικά (Ιταλία)</string>
+    <string name="settings_tts_voice_locale_es_es">Ισπανικά (Ισπανία)</string>
+    <string name="settings_tts_voice_locale_es_mx">Ισπανικά (Μεξικό)</string>
+    <string name="settings_tts_voice_locale_ca_es">Καταλανικά (Ισπανία)</string>
+    <string name="settings_tts_voice_locale_ru_ru">Ρωσικά (Ρωσία)</string>
+    <string name="settings_tts_voice_locale_pl_pl">Πολωνικά (Πολωνία)</string>
+    <string name="settings_tts_voice_locale_hr_hr">Κροατικά (Κροατία)</string>
+    <string name="settings_tts_voice_locale_sl_si">Σλοβενικά (Σλοβενία)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Σερβικά (Λατινικά)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Σερβικά (Κυριλλικά)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Βουλγαρικά (Βουλγαρία)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Τσεχικά (Τσεχία)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Σλοβακικά (Σλοβακία)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Ουγγρικά (Ουγγαρία)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Ρουμανικά (Ρουμανία)</string>
+    <string name="settings_tts_voice_locale_uk_ua">Ουκρανικά (Ουκρανία)</string>
+    <string name="settings_tts_voice_locale_pt_br">Πορτογαλικά (Βραζιλία)</string>
+    <string name="settings_tts_voice_locale_pt_pt">Πορτογαλικά (Πορτογαλία)</string>
+    <string name="settings_tts_voice_locale_nl_nl">Ολλανδικά (Ολλανδία)</string>
+    <string name="settings_tts_voice_locale_sv_se">Σουηδικά (Σουηδία)</string>
+    <string name="settings_tts_voice_locale_fi_fi">Φινλανδικά (Φινλανδία)</string>
+    <string name="settings_tts_voice_locale_et_ee">Εσθονικά (Εσθονία)</string>
+    <string name="settings_tts_voice_locale_lv_lv">Λετονικά (Λετονία)</string>
+    <string name="settings_tts_voice_locale_lt_lt">Λιθουανικά (Λιθουανία)</string>
+    <string name="settings_tts_voice_locale_tr_tr">Τουρκικά (Τουρκία)</string>
+    <string name="settings_tts_voice_locale_id_id">Ινδονησιακά (Ινδονησία)</string>
+    <string name="settings_tts_voice_locale_ms_my">Μαλαισιανά (Μαλαισία)</string>
+    <string name="settings_tts_voice_locale_fil_ph">Φιλιππινέζικα (Φιλιππίνες)</string>
+    <string name="settings_tts_voice_locale_vi_vn">Βιετναμέζικα (Βιετνάμ)</string>
+    <string name="settings_tts_voice_locale_zh_cn">Κινέζικα (απλοποιημένα)</string>
+    <string name="settings_tts_voice_locale_hi_in">Χίντι (Ινδία)</string>
+    <string name="settings_tts_voice_locale_bn_bd">Μπενγκάλι (Μπανγκλαντές)</string>
+    <string name="settings_tts_voice_locale_ja_jp">Ιαπωνικά (Ιαπωνία)</string>
+    <string name="settings_tts_voice_locale_ko_kr">Κορεατικά (Νότια Κορέα)</string>
+    <string name="settings_tts_voice_locale_ar_sa">Αραβικά (Σαουδική Αραβία)</string>
+    <string name="settings_tts_voice_locale_ar_eg">Αραβικά (Αίγυπτος)</string>
+    <string name="settings_tts_voice_locale_ar_ae">Αραβικά (Ηνωμένα Αραβικά Εμιράτα)</string>
+    <string name="settings_tts_voice_locale_ar_ma">Αραβικά (Μαρόκο)</string>
+    <string name="settings_tts_voice_locale_he_il">Εβραϊκά (Ισραήλ)</string>
+    <string name="settings_tts_voice_locale_fa_ir">Περσικά (Ιράν)</string>
+
+    <!--
+    API keys screen — three identical-shape blocks (Gemini, OpenAI,
+    ElevenLabs), each with status copy, paste-key placeholder, and
+    save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
+    elevenlabs.io) stay verbatim. "API key" / "key" stay as Latin
+    loanwords — modern Greek tech vocab keeps them unchanged.
+    -->
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_openai_label">OpenAI</string>
+    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
+
+    <string name="settings_api_key_status_set">Έχει ρυθμιστεί ένα Gemini key.</string>
+    <string name="settings_api_key_status_unset">Δεν έχει ρυθμιστεί Gemini key. Πάρε ένα από το aistudio.google.com για να χρησιμοποιήσεις τις φωνές Gemini.</string>
+    <string name="settings_api_key_placeholder">Επικόλλησε το Gemini API key σου</string>
+    <string name="settings_api_key_save">Αποθήκευση Gemini key</string>
+    <string name="settings_api_key_clear">Διαγραφή αποθηκευμένου Gemini key</string>
+
+    <string name="settings_openai_key_status_set">Έχει ρυθμιστεί ένα OpenAI key.</string>
+    <string name="settings_openai_key_status_unset">Δεν έχει ρυθμιστεί OpenAI key. Πάρε ένα από το platform.openai.com για να χρησιμοποιήσεις τις φωνές OpenAI.</string>
+    <string name="settings_openai_key_placeholder">Επικόλλησε το OpenAI API key σου</string>
+    <string name="settings_openai_key_save">Αποθήκευση OpenAI key</string>
+    <string name="settings_openai_key_clear">Διαγραφή αποθηκευμένου OpenAI key</string>
+
+    <string name="settings_elevenlabs_key_status_set">Έχει ρυθμιστεί ένα ElevenLabs key.</string>
+    <string name="settings_elevenlabs_key_status_unset">Δεν έχει ρυθμιστεί ElevenLabs key. Πάρε ένα από το elevenlabs.io για να χρησιμοποιήσεις τις φωνές ElevenLabs.</string>
+    <string name="settings_elevenlabs_key_placeholder">Επικόλλησε το ElevenLabs API key σου</string>
+    <string name="settings_elevenlabs_key_save">Αποθήκευση ElevenLabs key</string>
+    <string name="settings_elevenlabs_key_clear">Διαγραφή αποθηκευμένου ElevenLabs key</string>
+
+    <!--
+    Location screen — device-location toggle, manual city search +
+    selection, "no location set" empty state, and the two new dialogs:
+    the always-on rationale (shown before requesting background
+    location) and the background-denied recovery dialog. "Tοποθεσία"
+    is the standard Greek word for location across Android UI.
+    -->
+    <string name="settings_location_title">Τοποθεσία</string>
+    <string name="settings_location_use_device">Χρήση τοποθεσίας συσκευής</string>
+    <string name="settings_location_grant_background">Παραχώρηση τοποθεσίας στο παρασκήνιο (Ρυθμίσεις συστήματος)</string>
+    <string name="settings_location_unset">Δεν έχει οριστεί τοποθεσία</string>
+    <string name="settings_location_description">Η πρόβλεψη ανακτάται για αυτή την τοποθεσία. Αναζήτησε με όνομα πόλης· τα αποτελέσματα προέρχονται από τη δωρεάν υπηρεσία γεωκωδικοποίησης του Open-Meteo.</string>
+    <string name="settings_location_description_device_on">Όταν είναι ενεργή, ο ClothesCast διαβάζει την κατά προσέγγιση τοποθεσία της συσκευής σου τη στιγμή της ειδοποίησης (μόνο πύργος κινητής τηλεφωνίας / Wi-Fi — χωρίς εντοπισμό GPS από hardware). Η τοποθεσία παρακάτω χρησιμοποιείται ως εφεδρεία αν αποτύχει η ανάγνωση από τη συσκευή. Η τοποθεσία στο παρασκήνιο πρέπει να έχει παραχωρηθεί στις Ρυθμίσεις συστήματος, αλλιώς ο πρωινός Worker δεν μπορεί να τη διαβάσει.</string>
+    <string name="settings_location_set">Όρισε τοποθεσία</string>
+    <string name="settings_location_change">Άλλαξε τοποθεσία</string>
+    <string name="settings_location_clear">Καθάρισε τοποθεσία</string>
+    <string name="settings_location_search_title">Αναζήτηση τοποθεσίας</string>
+    <string name="settings_location_query_label">Πόλη ή τόπος</string>
+    <string name="settings_location_search">Αναζήτηση</string>
+    <string name="settings_location_searching">Αναζήτηση…</string>
+    <string name="settings_location_no_results">Δεν βρέθηκαν αποτελέσματα.</string>
+    <string name="settings_location_rationale_title">Τοποθεσία πάντα ενεργή</string>
+    <string name="settings_location_rationale_body">Ο ClothesCast ενημερώνει την πρόβλεψή σου στο παρασκήνιο για να την παραδώσει εγκαίρως, οπότε χρειάζεται την άδεια τοποθεσίας «Να επιτρέπεται όλη την ώρα».</string>
+    <string name="settings_location_rationale_continue">Συνέχεια</string>
+    <string name="settings_location_rationale_dismiss">Όχι τώρα</string>
+    <string name="settings_location_background_denied_title">Δεν παραχωρήθηκε «πάντα ενεργή»</string>
+    <string name="settings_location_background_denied_body">Χωρίς «Να επιτρέπεται όλη την ώρα», η πρωινή πρόβλεψη επιστρέφει στην αποθηκευμένη σου τοποθεσία. Άνοιγμα Ρυθμίσεων συστήματος για παραχώρηση;</string>
+    <string name="settings_location_background_denied_open">Άνοιγμα Ρυθμίσεων</string>
+    <string name="settings_location_background_denied_keep">Διατήρηση αποθηκευμένης τοποθεσίας</string>
+
+    <!--
+    Notification channels (system Ρυθμίσεις → Εφαρμογή → Ειδοποιήσεις)
+    and the per-channel notification titles. Three channels: daily,
+    nightly (default + silent variants), severe-weather alerts.
+    -->
+    <string name="notification_channel_daily_insight_name">Καθημερινός ClothesCast</string>
+    <string name="notification_channel_daily_insight_description">Η πρωινή σύνοψη καιρού στην οποία επέλεξες να συμμετέχεις.</string>
+    <string name="notification_daily_insight_title">Καιρός σήμερα</string>
+
+    <string name="notification_channel_tonight_insight_default_name">Νυχτερινός ClothesCast (με συμβάντα)</string>
+    <string name="notification_channel_tonight_insight_default_description">Η βραδινή σύνοψη καιρού όταν έχεις συμβάντα ημερολογίου απόψε. Παίζει τον προεπιλεγμένο ήχο ειδοποιήσεών σου.</string>
+    <string name="notification_channel_tonight_insight_silent_name">Νυχτερινός ClothesCast (σιωπηλός)</string>
+    <string name="notification_channel_tonight_insight_silent_description">Η βραδινή σύνοψη καιρού όταν το βράδυ σου είναι ελεύθερο. Παραδίδεται σιωπηλά — μπορείς να τη δεις στην οθόνη κλειδώματος, αλλά δεν παράγει ήχο.</string>
+    <string name="notification_tonight_insight_title">Καιρός απόψε</string>
+
+    <string name="notification_channel_weather_alerts_name">Ειδοποιήσεις ακραίων καιρικών φαινομένων</string>
+    <string name="notification_channel_weather_alerts_description">Ειδοποιήσεις υψηλής προτεραιότητας για σοβαρά ή ακραία καιρικά φαινόμενα στην περιοχή σου. Παραδίδονται μόλις η καθημερινή ανάκτηση τα εντοπίσει.</string>
+    <string name="notification_weather_alert_title">Ειδοποίηση καιρού: %1$s</string>
+
+    <!-- Notification-permission card. -->
+    <string name="settings_notification_permission_title">Οι ειδοποιήσεις είναι αποκλεισμένες</string>
+    <string name="settings_notification_permission_description">Χωρίς άδεια ειδοποιήσεων, ο καθημερινός σου ClothesCast δεν έχει πού να πάει. Παραχώρησέ την ώστε ο ClothesCast να μπορεί να εμφανιστεί αύριο το πρωί.</string>
+    <string name="settings_notification_permission_grant">Παραχώρηση ειδοποιήσεων</string>
+
+    <!-- Calendar opt-in card. Description preserves the privacy
+         disclosure ("περιγραφές, συμμετέχοντες και τοποθεσίες … δεν
+         φεύγουν ποτέ από τη συσκευή"). Quotes around the nested
+         example follow Greek «…» guillemets house style. -->
+    <string name="settings_calendar_title">Ημερολόγιο</string>
+    <string name="settings_calendar_use_events">Χρήση συμβάντων ημερολογίου σήμερα</string>
+    <string name="settings_calendar_description_off">Όταν είναι ενεργή, ο ClothesCast διαβάζει τα σημερινά συμβάντα από το ημερολόγιο της συσκευής σου, ώστε ο πρωινός σου ClothesCast να μπορεί να προτείνει ρούχα συνδεδεμένα με συγκεκριμένα συμβάντα — για παράδειγμα «πάρε ομπρέλα για το τρέξιμό σου στο πάρκο στις 15:00». Χρησιμοποιούνται μόνο οι τίτλοι και οι ώρες των συμβάντων· οι περιγραφές, οι συμμετέχοντες και οι τοποθεσίες διαβάζονται αλλά δεν φεύγουν ποτέ από τη συσκευή.</string>
+    <string name="settings_calendar_description_on">Διαβάζονται τα σημερινά συμβάντα από το ημερολόγιο της συσκευής σου για να εμπλουτίσουν τον πρωινό σου ClothesCast. Στη σύνοψη χρησιμοποιούνται μόνο τίτλοι και ώρες· περιγραφές και συμμετέχοντες όχι. Όλα παραμένουν στη συσκευή.</string>
+    <string name="settings_calendar_grant_permission">Παραχώρηση πρόσβασης ημερολογίου</string>
+    <string name="settings_calendar_open_settings">Πρόσβαση στο ημερολόγιο απορρίφθηκε. Παραχώρησέ την από τις Ρυθμίσεις συστήματος.</string>
+
+    <!-- Debug screen — visible only on debug builds. "Worker" stays in
+         Latin since it's the Android-platform term Greek devs reference. -->
+    <string name="settings_debug_title">Αποσφαλμάτωση (μόνο σε debug builds)</string>
+    <string name="settings_debug_description">Πυροδοτεί άμεσα τη ροή του καθημερινού ClothesCast. Χρήσιμο για επαλήθευση χωρίς να περιμένεις την προγραμματισμένη ώρα.</string>
+    <string name="settings_debug_fire_now">Πυροδότηση ClothesCast τώρα</string>
+    <string name="settings_debug_fire_toast">Ο Worker του ClothesCast μπήκε σε ουρά</string>
+
+    <!-- About screen — version line, build-type suffix, privacy
+         summary, outbound links / actions. "Encrypted at rest" /
+         "backend" / "Android Keystore" stay close to the source
+         technical phrasing — the Greek dev / power-user audience
+         reads these terms in English daily. -->
+    <string name="settings_about_title">Σχετικά</string>
+    <string name="settings_about_version">Έκδοση %1$s (%2$d)</string>
+    <string name="settings_about_build_type_suffix"> · build %1$s</string>
+    <string name="settings_about_privacy">Το Gemini API key σου (που χρησιμοποιείται για την ανάγνωση φωνητικά μέσω TTS) είναι κρυπτογραφημένο σε ηρεμία με κλειδί συνδεδεμένο στο Android Keystore. Οι προβλέψεις προέρχονται από το Open-Meteo (χωρίς key, χωρίς λογαριασμό)· το κείμενο της καθημερινής σύνοψης παράγεται τοπικά στη συσκευή. Ο ClothesCast δεν έχει backend — τίποτα δεν αποστέλλεται σε διακομιστή που ελέγχουμε.</string>
+    <string name="settings_about_privacy_policy">Πολιτική απορρήτου</string>
+    <string name="settings_about_source">Πηγαίος κώδικας στο GitHub</string>
+    <string name="settings_about_dontkillmyapp">Περιορισμοί παρασκηνίου (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">Κοινοποίηση αναφοράς σφαλμάτων</string>
+    <string name="settings_about_version_copied">Η έκδοση αντιγράφηκε στο πρόχειρο</string>
+
+    <!--
+    Today screen — top bar, refresh toasts, empty state, generated-at
+    timestamp, outfit card, hourly chart, confidence chip, work-status
+    banner, and the location-required setup prompt. Tu-form imperatives
+    ("Όρισε", "Πάτησε") match the rest of the file.
+    -->
+    <string name="today_title">Σήμερα</string>
+    <string name="today_open_settings">Άνοιγμα Ρυθμίσεων</string>
+    <string name="today_more_options">Περισσότερες επιλογές</string>
+    <string name="today_report_a_bug">Αναφορά σφάλματος</string>
+    <string name="today_refresh">Ανανέωση</string>
+    <string name="today_refresh_toast_daily">Ανανέωση του καθημερινού σου ClothesCast — θα εμφανιστεί σύντομα.</string>
+    <string name="today_refresh_toast_nightly">Ανανέωση του νυχτερινού σου ClothesCast — θα εμφανιστεί σύντομα.</string>
+    <string name="today_empty_title">Δεν υπάρχει ακόμη ClothesCast</string>
+    <string name="today_empty_subtitle">Ο πρωινός σου ClothesCast θα εμφανιστεί εδώ μόλις δημιουργηθεί. Όρισε την τοποθεσία σου στις Ρυθμίσεις και μετά πάτησε Ανάκτηση τώρα.</string>
+    <string name="today_fetch_now">Ανάκτηση τώρα</string>
+    <string name="today_generated_at">Δημιουργήθηκε στις %1$s</string>
+
+    <string name="today_outfit_title">Τι να φορέσεις</string>
+    <string name="today_outfit_label_today">Σήμερα</string>
+    <string name="today_outfit_label_tonight">Απόψε</string>
+    <string name="today_outfit_label_tomorrow">Αύριο</string>
+
+    <string name="today_outfit_top_tshirt">Μπλουζάκι</string>
+    <string name="today_outfit_top_sweater">Πουλόβερ</string>
+    <string name="today_outfit_top_thick_jacket">Χοντρό μπουφάν</string>
+    <string name="today_outfit_bottom_shorts">Σορτς</string>
+    <string name="today_outfit_bottom_long_pants">Μακρύ παντελόνι</string>
+
+    <string name="today_forecast_title">Ωριαία πρόβλεψη</string>
+    <string name="today_forecast_min_max">Αίσθηση %1$d – %2$d%3$s · Αέρας %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">Αισθητή θερμοκρασία (%1$s) ανά ώρα · πάτησε για θερμοκρασία αέρα</string>
+    <string name="today_forecast_legend_air">Θερμοκρασία αέρα (%1$s) ανά ώρα · πάτησε για αισθητή θερμοκρασία</string>
+
+    <string name="today_confidence_high">Υψηλή αξιοπιστία — τα κύρια μοντέλα συμφωνούν</string>
+    <string name="today_confidence_medium">Μέτρια αξιοπιστία</string>
+    <string name="today_confidence_low">Χαμηλή αξιοπιστία — οι προβλέψεις διαφωνούν</string>
+    <string name="today_confidence_spread">Διασπορά: %1$.1f°C, %2$.0fpp υετός σε %3$d μοντέλα</string>
+
+    <string name="today_working">Σε εξέλιξη — ανάκτηση του ClothesCast σου…</string>
+    <string name="today_failed_title">Η τελευταία προσπάθεια απέτυχε</string>
+    <string name="today_failed_unexpected_http">Μη αναμενόμενο σφάλμα HTTP από την υπηρεσία πρόβλεψης.</string>
+    <string name="today_failed_unhandled">Παρουσιάστηκε ένα μη αναμενόμενο σφάλμα.</string>
+    <string name="today_failed_no_location">Δεν μπορέσαμε να βρούμε την τοποθεσία σου. Παραχώρησε άδεια τοποθεσίας πάντα ενεργής, ή όρισε μια πόλη στις Ρυθμίσεις.</string>
+    <string name="today_failed_show_details">Εμφάνιση λεπτομερειών</string>
+    <string name="today_failed_hide_details">Απόκρυψη λεπτομερειών</string>
+
+    <string name="today_location_required_title">Όρισε την τοποθεσία σου</string>
+    <string name="today_location_required_body">Ο ClothesCast πρέπει να γνωρίζει πού βρίσκεσαι για να ανακτήσει την πρόβλεψη. Παραχώρησε άδεια τοποθεσίας πάντα ενεργής, ή επίλεξε μια πόλη.</string>
+    <string name="today_location_required_action">Άνοιγμα ρυθμίσεων τοποθεσίας</string>
+
+    <!-- Home-screen App Widget. "Σύνολο" (set / outfit-as-a-whole) is
+         the standard Greek fashion-vocab word for an outfit; reads
+         natively next to the BR "Look", PT "Visual", DE "Outfit". -->
+    <string name="widget_label">Σύνολο</string>
+    <string name="widget_description">Το σύνολο της τρέχουσας περιόδου με μια ματιά.</string>
+    <string name="widget_empty_title">Δεν υπάρχει ακόμη σύνολο</string>
+    <string name="widget_empty_subtitle">Πάτησε για άνοιγμα του ClothesCast</string>
+
+    <!--
+    Onboarding flow — first-run welcome, two permission steps (notifs +
+    location), Gemini API-key step. "Καλώς όρισες" is the εσύ-form of
+    the Greek welcome (vs the εσείς-form "Καλώς ήρθατε") — matches the
+    casual register used elsewhere. Greek welcomes don't carry gender
+    agreement on the verb form, so no need for a gender-neutral
+    workaround like the Romance / Slavic locales use.
+    -->
+    <string name="onboarding_title">Καλώς όρισες στον ClothesCast</string>
+    <string name="onboarding_subtitle">Δύο γρήγορες επιλογές και είσαι έτοιμος. Όλα τα υπόλοιπα έχουν λογική προεπιλογή που μπορείς να αλλάξεις αργότερα στις Ρυθμίσεις.</string>
+    <string name="onboarding_notifications_title">Ειδοποιήσεις</string>
+    <string name="onboarding_notifications_description">Απαραίτητες για να παραδίδεται ο καθημερινός σου ClothesCast. Παραχώρησέ τες μία φορά και ο ClothesCast θα εμφανιστεί αύριο το πρωί.</string>
+    <string name="onboarding_notifications_grant">Παραχώρηση ειδοποιήσεων</string>
+    <string name="onboarding_location_title">Τοποθεσία</string>
+    <string name="onboarding_location_description">Χρησιμοποιείται για την ανάκτηση της σωστής πρόβλεψης. Παραχωρώντας την τοποθεσία, ο ClothesCast μπορεί να διαβάζει την κατά προσέγγιση τοποθεσία της συσκευής σου κάθε πρωί· διαφορετικά επίλεξε μια πόλη χειροκίνητα.</string>
+    <string name="onboarding_location_grant">Παραχώρηση πρόσβασης τοποθεσίας</string>
+    <string name="onboarding_location_denied_hint">Η πρόσβαση τοποθεσίας απορρίφθηκε. Μπορείς να επιλέξεις μια πόλη χειροκίνητα.</string>
+    <string name="onboarding_location_enter_manual">Εισαγωγή τοποθεσίας χειροκίνητα</string>
+    <string name="onboarding_location_using_device">Χρησιμοποιείται η τοποθεσία της συσκευής σου κάθε πρωί.</string>
+
+    <string name="onboarding_gemini_title">Gemini API key</string>
+    <string name="onboarding_gemini_description">Χρησιμοποιείται από τον ClothesCast για φωνές εκφώνησης και παραγωγή πρόβλεψης. Πάρε ένα δωρεάν από το aistudio.google.com. Το key είναι κρυπτογραφημένο σε ηρεμία με το Android Keystore.</string>
+    <string name="onboarding_step_done">Έγινε</string>
+    <string name="onboarding_skip">Παράκαμψη προς το παρόν</string>
+    <string name="onboarding_continue">Συνέχεια</string>
+
+    <!-- Insight prose templates — Greek equivalents of the keys in
+         values/strings.xml. εσύ-form imperatives ("Φόρεσε", "Πάρε") for
+         clothes / bring-an-umbrella prose. The temperature bands use
+         Greek nominative-neuter adjectives because the lead noun
+         ("Σήμερα" / "Απόψε") works as a neuter-singular subject in the
+         "%1$s θα είναι %2$s" template. Time format uses the standard
+         Greek 24-hour colon notation ("15:00" / "15:30"). -->
+    <string name="insight_lead_today">Σήμερα</string>
+    <string name="insight_lead_tonight">Απόψε</string>
+    <string name="insight_band_single">%1$s θα κάνει %2$s.</string>
+    <string name="insight_band_range">%1$s θα έχει %2$s έως %3$s.</string>
+    <string name="insight_band_freezing">παγωνιά</string>
+    <string name="insight_band_cold">κρύο</string>
+    <string name="insight_band_cool">δροσιά</string>
+    <string name="insight_band_mild">ήπιος καιρός</string>
+    <string name="insight_band_warm">ζέστη</string>
+    <string name="insight_band_hot">καύσωνας</string>
+    <string name="insight_delta_warmer">Σήμερα θα είναι %1$d° πιο ζεστό από χθες.</string>
+    <string name="insight_delta_cooler">Σήμερα θα είναι %1$d° πιο κρύο από χθες.</string>
+    <string name="insight_alert">Ειδοποίηση: %1$s.</string>
+    <string name="insight_clothes_wear">Φόρεσε %1$s.</string>
+    <!-- Articles omitted — Greek garments carry grammatical gender
+         (το πουλόβερ neuter, η μπλούζα feminine, το παντελόνι neuter,
+         τα τζιν neuter plural) which would require per-rule metadata
+         to render correctly. A flat comma-separated list reads fine. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s και %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s και %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">στις %1$s</string>
+    <string name="insight_precip_overnight">τη νύχτα</string>
+    <string name="insight_condition_clear">Αίθριος</string>
+    <string name="insight_condition_partly_cloudy">Μερική συννεφιά</string>
+    <string name="insight_condition_cloudy">Συννεφιά</string>
+    <string name="insight_condition_fog">Ομίχλη</string>
+    <string name="insight_condition_drizzle">Ψιλόβροχο</string>
+    <string name="insight_condition_rain">Βροχή</string>
+    <string name="insight_condition_snow">Χιόνι</string>
+    <string name="insight_condition_thunderstorm">Καταιγίδα</string>
+    <string name="insight_condition_unknown">Άγνωστος</string>
+    <string name="insight_tie_in">Πάρε %1$s απόψε.</string>
+    <string name="insight_tie_in_with_rain">Πάρε %1$s απόψε, βροχή στις %2$s.</string>
+    <!-- "15:00" / "15:30" — standard Greek 24-hour colon notation,
+         TTS reads naturally. -->
+    <string name="insight_time_hour">%1$d:00</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>

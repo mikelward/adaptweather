@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Thai translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+-->
+<resources>
+    <string name="settings_region_language_th_th">ไทย (ประเทศไทย)</string>
+    <string name="settings_tts_voice_locale_th_th">ไทย (ประเทศไทย)</string>
+    <string name="settings_tts_voice_locale_label">สำเนียง</string>
+    <string name="settings_tts_voice_locale_system">ตามการตั้งค่าภาษา</string>
+
+    <string name="garment_sweater">เสื้อกันหนาว</string>
+    <string name="garment_hoodie">เสื้อฮู้ด</string>
+    <string name="garment_jacket">แจ็คเก็ต</string>
+    <string name="garment_coat">เสื้อโค้ท</string>
+    <string name="garment_tshirt">เสื้อยืด</string>
+    <string name="garment_shirt">เสื้อเชิ้ต</string>
+    <string name="garment_shorts">กางเกงขาสั้น</string>
+    <string name="garment_pants">กางเกงขายาว</string>
+    <string name="garment_jeans">กางเกงยีนส์</string>
+
+    <string name="settings_clothes_empty">ยังไม่มีกฎ แตะ เพิ่ม เพื่อสร้างใหม่</string>
+    <string name="settings_clothes_add">เพิ่ม</string>
+    <string name="settings_clothes_edit">แก้ไข</string>
+    <string name="settings_clothes_delete">ลบ</string>
+    <string name="settings_clothes_dialog_add_title">เพิ่มกฎเสื้อผ้า</string>
+    <string name="settings_clothes_dialog_edit_title">แก้ไขกฎเสื้อผ้า</string>
+    <string name="settings_clothes_item_label">เสื้อผ้า</string>
+    <string name="settings_clothes_condition_label">เงื่อนไข</string>
+    <string name="settings_clothes_value_label_temp_c">ค่าเกณฑ์ (°C)</string>
+    <string name="settings_clothes_value_label_precip">ค่าเกณฑ์ (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">เมื่ออากาศรู้สึกหนาวกว่า</string>
+    <string name="settings_clothes_cond_type_temp_above">เมื่ออากาศรู้สึกร้อนกว่า</string>
+    <string name="settings_clothes_cond_type_precip_above">เมื่อโอกาสฝนตกเกิน</string>
+    <string name="settings_clothes_cond_temp_below">เมื่ออุณหภูมิที่รู้สึกต่ำกว่า %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">เมื่ออุณหภูมิที่รู้สึกสูงกว่า %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">เมื่อโอกาสฝนตกเกิน %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">เสื้อยืด</string>
+    <string name="today_outfit_top_sweater">เสื้อกันหนาว</string>
+    <string name="today_outfit_top_thick_jacket">แจ็คเก็ตหนา</string>
+    <string name="today_outfit_bottom_shorts">กางเกงขาสั้น</string>
+    <string name="today_outfit_bottom_long_pants">กางเกงขายาว</string>
+
+    <string name="insight_lead_today">วันนี้</string>
+    <string name="insight_lead_tonight">คืนนี้</string>
+    <!-- Thai: "วันนี้อากาศเย็น" (time + topic + predicate, no copula). -->
+    <string name="insight_band_single">%1$sอากาศ%2$s</string>
+    <string name="insight_band_range">%1$sอากาศ%2$sถึง%3$s</string>
+    <string name="insight_band_freezing">หนาวจัด</string>
+    <string name="insight_band_cold">หนาว</string>
+    <string name="insight_band_cool">เย็น</string>
+    <string name="insight_band_mild">สบาย</string>
+    <string name="insight_band_warm">อุ่น</string>
+    <string name="insight_band_hot">ร้อน</string>
+    <string name="insight_delta_warmer">วันนี้อุ่นกว่าเมื่อวาน %1$d°</string>
+    <string name="insight_delta_cooler">วันนี้หนาวกว่าเมื่อวาน %1$d°</string>
+    <string name="insight_alert">เตือน: %1$s</string>
+    <string name="insight_clothes_wear">สวม%1$s</string>
+    <!-- Thai has no grammatical articles. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$sและ%2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s และ%3$s</string>
+    <string name="insight_precip">%1$s%2$s</string>
+    <string name="insight_precip_at_time">เวลา %1$s</string>
+    <string name="insight_precip_overnight">ตลอดทั้งคืน</string>
+    <string name="insight_condition_clear">ท้องฟ้าแจ่มใส</string>
+    <string name="insight_condition_partly_cloudy">มีเมฆบางส่วน</string>
+    <string name="insight_condition_cloudy">มีเมฆมาก</string>
+    <string name="insight_condition_fog">หมอก</string>
+    <string name="insight_condition_drizzle">ฝนปรอย</string>
+    <string name="insight_condition_rain">ฝนตก</string>
+    <string name="insight_condition_snow">หิมะ</string>
+    <string name="insight_condition_thunderstorm">พายุฝนฟ้าคะนอง</string>
+    <string name="insight_condition_unknown">ไม่ทราบ</string>
+    <string name="insight_tie_in">พก%1$sไปคืนนี้</string>
+    <string name="insight_tie_in_with_rain">พก%1$sไปคืนนี้, ฝนตกเวลา %2$s</string>
+    <!-- "15 นาฬิกา" / "15 นาฬิกา 30 นาที" — preposition "เวลา" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d นาฬิกา</string>
+    <string name="insight_time_hour_minutes">%1$d นาฬิกา %2$02d นาที</string>
+
+</resources>

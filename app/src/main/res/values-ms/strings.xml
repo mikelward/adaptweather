@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Malay translation. Scope: insight-prose templates, garment labels, clothes-rule
+editor, outfit-card labels, and region/voice-locale picker names. Mirrors the
+Indonesian (values-in/) scope; vocabulary swaps reflect Malaysian rather than
+Indonesian usage ("seluar" vs "celana", "sejuk" vs "dingin", "kebarangkalian"
+vs "kemungkinan", "padam" vs "hapus").
+-->
+<resources>
+    <string name="settings_region_language_ms_my">Bahasa Melayu (Malaysia)</string>
+    <string name="settings_tts_voice_locale_ms_my">Bahasa Melayu (Malaysia)</string>
+    <string name="settings_tts_voice_locale_label">Loghat</string>
+    <string name="settings_tts_voice_locale_system">Ikut tetapan bahasa</string>
+
+    <string name="garment_sweater">Baju panas</string>
+    <string name="garment_hoodie">Baju berhud</string>
+    <string name="garment_jacket">Jaket</string>
+    <string name="garment_coat">Kot</string>
+    <string name="garment_tshirt">Kemeja-T</string>
+    <string name="garment_shirt">Kemeja</string>
+    <string name="garment_shorts">Seluar pendek</string>
+    <string name="garment_pants">Seluar panjang</string>
+    <string name="garment_jeans">Seluar jean</string>
+
+    <string name="settings_clothes_empty">Belum ada peraturan. Ketik Tambah untuk membuat satu.</string>
+    <string name="settings_clothes_add">Tambah</string>
+    <string name="settings_clothes_edit">Sunting</string>
+    <string name="settings_clothes_delete">Padam</string>
+    <string name="settings_clothes_dialog_add_title">Tambah peraturan pakaian</string>
+    <string name="settings_clothes_dialog_edit_title">Sunting peraturan pakaian</string>
+    <string name="settings_clothes_item_label">Pakaian</string>
+    <string name="settings_clothes_condition_label">Pencetus</string>
+    <string name="settings_clothes_value_label_temp_c">Ambang (°C)</string>
+    <string name="settings_clothes_value_label_precip">Ambang (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">Apabila terasa lebih sejuk daripada</string>
+    <string name="settings_clothes_cond_type_temp_above">Apabila terasa lebih panas daripada</string>
+    <string name="settings_clothes_cond_type_precip_above">Apabila kebarangkalian hujan melebihi</string>
+    <string name="settings_clothes_cond_temp_below">apabila suhu terasa di bawah %.0f°C</string>
+    <string name="settings_clothes_cond_temp_above">apabila suhu terasa di atas %.0f°C</string>
+    <string name="settings_clothes_cond_precip_above">apabila kebarangkalian hujan melebihi %.0f%%</string>
+
+    <string name="today_outfit_top_tshirt">Kemeja-T</string>
+    <string name="today_outfit_top_sweater">Baju panas</string>
+    <string name="today_outfit_top_thick_jacket">Jaket tebal</string>
+    <string name="today_outfit_bottom_shorts">Seluar pendek</string>
+    <string name="today_outfit_bottom_long_pants">Seluar panjang</string>
+
+    <string name="insight_lead_today">Hari ini</string>
+    <string name="insight_lead_tonight">Malam ini</string>
+    <!-- Malay topic-comment shape: "Hari ini cuacanya sejuk." -->
+    <string name="insight_band_single">%1$s cuacanya %2$s.</string>
+    <string name="insight_band_range">%1$s cuacanya antara %2$s hingga %3$s.</string>
+    <string name="insight_band_freezing">amat sejuk</string>
+    <string name="insight_band_cold">sejuk</string>
+    <string name="insight_band_cool">nyaman</string>
+    <string name="insight_band_mild">sederhana</string>
+    <string name="insight_band_warm">hangat</string>
+    <string name="insight_band_hot">panas</string>
+    <string name="insight_delta_warmer">Hari ini %1$d° lebih panas.</string>
+    <string name="insight_delta_cooler">Hari ini %1$d° lebih sejuk.</string>
+    <string name="insight_alert">Amaran: %1$s.</string>
+    <string name="insight_clothes_wear">Pakai %1$s.</string>
+    <!-- Malay has no grammatical articles. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s dan %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s, dan %3$s</string>
+    <string name="insight_precip">%1$s %2$s.</string>
+    <string name="insight_precip_at_time">pada pukul %1$s</string>
+    <string name="insight_precip_overnight">semalaman</string>
+    <string name="insight_condition_clear">Cerah</string>
+    <string name="insight_condition_partly_cloudy">Sebahagian berawan</string>
+    <string name="insight_condition_cloudy">Berawan</string>
+    <string name="insight_condition_fog">Berkabus</string>
+    <string name="insight_condition_drizzle">Hujan renyai</string>
+    <string name="insight_condition_rain">Hujan</string>
+    <string name="insight_condition_snow">Salji</string>
+    <string name="insight_condition_thunderstorm">Ribut petir</string>
+    <string name="insight_condition_unknown">Tidak diketahui</string>
+    <string name="insight_tie_in">Bawa %1$s malam ini.</string>
+    <string name="insight_tie_in_with_rain">Bawa %1$s malam ini, hujan pada pukul %2$s.</string>
+    <!-- "15" / "15.30" — "pukul" comes from surrounding templates. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d.%2$02d</string>
+
+</resources>

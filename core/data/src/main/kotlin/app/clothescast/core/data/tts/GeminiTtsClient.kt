@@ -60,9 +60,9 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
  *
  * Lookup is two-step: an exact `language-COUNTRY` match wins (so variants like
  * en-GB / en-AU / en-US can carry their own directive), otherwise a
- * language-only key. Today the table holds only `language-COUNTRY` entries —
- * the language-only branch exists for a future `de` / `fr` / etc. directive
- * that follows the same shape. Adding a new locale is a one-line entry in
+ * language-only key. The table mixes both shapes — most non-English entries
+ * are language-only (`de`, `fr`, `vi`, …), while English and Arabic
+ * enumerate per-country variants. Adding a new locale is a one-line entry in
  * [ACCENT_DIRECTIVES].
  */
 internal fun geminiAccentDirectiveFor(locale: Locale): String? {
@@ -78,39 +78,78 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "en-AU" to "Speak with a General Australian accent.",
     "en-US" to "Speak with a General American accent.",
     "en-CA" to "Speak with a Canadian English accent.",
-    // Language-only entry — Gemini follows the directive *language* even though
-    // the prompt itself is English, so the synthesised audio is in German. The
-    // German prose comes from the `:app` formatter once the user's Region is
-    // set to DE_DE; this directive just nudges the model to read it as German
-    // rather than mangling it through an English phoneme pipeline.
+    // Language-only fallback for Standard German (de-DE) and any de-* variant
+    // not explicitly enumerated. Austrian (de-AT) and Swiss German (de-CH) have
+    // their own entries below so the audio sounds like those regions rather than
+    // the Hochdeutsch that the language-only fallback would give them.
     "de" to "Sprich auf Deutsch in einem klaren, hochdeutschen Akzent.",
+    "de-AT" to "Sprich auf Deutsch mit einem klaren österreichischen Akzent.",
+    "de-CH" to "Sprich auf Deutsch mit einem klaren deutschschweizerischen Akzent.",
     "fr-FR" to "Parle en français de France avec un accent parisien clair.",
     "fr-CA" to "Parle en français québécois avec un accent canadien-français.",
     "it" to "Parla in italiano con un accento italiano chiaro e naturale.",
     "es-ES" to "Habla en español de España con un acento castellano claro.",
     "es-MX" to "Habla en español mexicano con un acento neutro y claro.",
+    "ca" to "Parla en català amb una pronunciació clara i natural.",
     "ru" to "Говори по-русски с чётким литературным произношением.",
     "pl" to "Mów po polsku z wyraźną i naturalną wymową.",
     "hr" to "Govori na hrvatskom jeziku s jasnim i prirodnim izgovorom.",
+    "sl" to "Govori v slovenščini z jasnim in naravnim izgovorom.",
+    "sr" to "Govori srpskim jezikom s jasnim i prirodnim izgovorom.",
+    "bg" to "Говори на български с ясно и естествено произношение.",
+    "cs" to "Mluvte česky s jasnou a přirozenou výslovností.",
+    "sk" to "Hovorte po slovensky s jasnou a prirodzenou výslovnosťou.",
+    "hu" to "Beszélj magyarul tiszta és természetes kiejtéssel.",
+    "ro" to "Vorbiți în română cu o pronunție clară și naturală.",
+    "el" to "Μίλα στα ελληνικά με καθαρή και φυσική προφορά.",
     "uk" to "Говори українською мовою з чітким літературним вимовленням.",
     "pt-BR" to "Fale em português brasileiro com sotaque neutro e claro.",
+    "pt-PT" to "Fale em português europeu com um sotaque de Portugal claro e natural.",
+    // Language-only fallback covers any pt-* variant not explicitly listed.
+    "pt" to "Fale em português com pronúncia clara e natural.",
     "nl" to "Spreek in het Nederlands met een duidelijk en natuurlijk accent.",
     "sv" to "Tala på svenska med ett tydligt och naturligt uttal.",
+    "da" to "Tal på dansk med en tydelig og naturlig udtale.",
+    "nb" to "Snakk på norsk bokmål med tydelig og naturlig uttale.",
+    "fi" to "Puhu suomea selkeällä ja luonnollisella ääntämyksellä.",
+    "et" to "Räägi eesti keelt selge ja loomuliku hääldusega.",
+    "lv" to "Runā latviski ar skaidru un dabīgu izrunu.",
+    "lt" to "Kalbėk lietuviškai aiškiai ir natūraliai tariant.",
     "tr" to "Türkçe konuş, net ve doğal bir Türkçe aksanıyla.",
     "en-ZA" to "Speak with a South African English accent.",
     "id" to "Bicara dalam bahasa Indonesia dengan aksen yang jelas dan alami.",
+    "ms" to "Bertutur dalam bahasa Melayu dengan sebutan yang jelas dan semula jadi.",
     "fil" to "Magsalita sa Filipino na may malinaw at natural na diin.",
+    "sw" to "Soma maandishi yafuatayo kwa Kiswahili fasaha na matamshi wazi na ya asili.",
     "vi" to "Nói tiếng Việt với giọng điệu rõ ràng và tự nhiên.",
+    "th" to "กรุณาอ่านเป็นภาษาไทยด้วยน้ำเสียงที่ชัดเจนและเป็นธรรมชาติ",
     "zh-CN" to "请用标准普通话朗读，发音清晰自然。",
+    "zh-TW" to "請用標準國語朗讀，發音清晰自然。",
     // Language-only fallback covers generic zh locale and any zh-* variant
-    // not explicitly listed (zh-TW, zh-HK, etc.) — all are Mandarin-readable.
+    // not explicitly listed (zh-HK, etc.) — all are Mandarin-readable.
     "zh" to "请用标准普通话朗读，发音清晰自然。",
     "hi" to "कृपया हिंदी में स्पष्ट और प्राकृतिक उच्चारण के साथ पढ़ें।",
     "bn" to "অনুগ্রহ করে বাংলায় স্পষ্ট ও প্রাকৃতিক উচ্চারণে পড়ুন।",
     "ja" to "はっきりと自然な発音で日本語で読んでください。",
     "ko" to "명확하고 자연스러운 발음으로 한국어로 읽어주세요。",
-    // Language-only entries cover all regional Arabic/Persian variants.
+    // Arabic: directives nudge the model to read MSA prose with the named
+    // country's accent (Egyptian / Saudi / Emirati / Moroccan), not to
+    // code-switch to the colloquial dialect — the :app formatter produces
+    // MSA, so a code-switch instruction would mismatch the input. The bare
+    // `ar` entry stays as the fallback for any future ar-* locale we don't
+    // explicitly enumerate. Whether Gemini's audio model reliably produces
+    // a recognisably-different accent per country for Arabic is empirical
+    // and worth a listening test (it does so well for English / Spanish /
+    // Mandarin variants; community reports for Arabic are mixed). Worst
+    // case it ignores the country qualifier and we get generic MSA — same
+    // as before the split, no regression.
+    "ar-SA" to "اقرأ النص التالي بالعربية الفصحى بنطق سعودي واضح وطبيعي.",
+    "ar-EG" to "اقرأ النص التالي بالعربية الفصحى بنطق مصري واضح وطبيعي.",
+    "ar-AE" to "اقرأ النص التالي بالعربية الفصحى بنطق إماراتي واضح وطبيعي.",
+    "ar-MA" to "اقرأ النص التالي بالعربية الفصحى بنطق مغربي واضح وطبيعي.",
     "ar" to "اقرأ النص التالي بالعربية بنطق واضح وطبيعي.",
+    // Hebrew / Persian remain language-only — only he-IL / fa-IR are offered
+    // in the picker, so there's nothing to disambiguate.
     "he" to "קרא/י את הטקסט הבא בעברית בהגייה ברורה וטבעית.",
     "fa" to "متن زیر را به فارسی با تلفظ واضح و طبیعی بخوانید.",
 )
