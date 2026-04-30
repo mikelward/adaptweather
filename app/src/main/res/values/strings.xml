@@ -245,6 +245,7 @@
     <string name="settings_tts_voice_locale_id_id">Indonesian (Indonesia)</string>
     <string name="settings_tts_voice_locale_ms_my">Malay (Malaysia)</string>
     <string name="settings_tts_voice_locale_fil_ph">Filipino (Philippines)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Swahili (Kenya)</string>
     <string name="settings_tts_voice_locale_vi_vn">Vietnamese (Vietnam)</string>
     <string name="settings_tts_voice_locale_th_th">Thai (Thailand)</string>
     <string name="settings_tts_voice_locale_zh_cn">Chinese (Simplified)</string>
@@ -368,6 +369,7 @@
     <string name="settings_region_language_id_id">Indonesian (Indonesia)</string>
     <string name="settings_region_language_ms_my">Malay (Malaysia)</string>
     <string name="settings_region_language_fil_ph">Filipino (Philippines)</string>
+    <string name="settings_region_language_sw_ke">Swahili (Kenya)</string>
     <string name="settings_region_language_vi_vn">Vietnamese (Vietnam)</string>
     <string name="settings_region_language_th_th">Thai (Thailand)</string>
     <string name="settings_region_language_zh_cn">Chinese (Simplified)</string>
