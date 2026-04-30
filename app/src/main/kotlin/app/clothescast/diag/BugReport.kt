@@ -133,7 +133,11 @@ object BugReport {
         appendLine("Voice locale: ${prefs.voiceLocale}")
         appendLine("Gemini voice: ${prefs.geminiVoice}")
         appendLine("OpenAI voice: ${prefs.openAiVoice}")
+        appendLine("OpenAI speed: ${prefs.openAiSpeed}")
         appendLine("ElevenLabs voice: ${prefs.elevenLabsVoice}")
+        appendLine("ElevenLabs model: ${prefs.elevenLabsModel}")
+        appendLine("ElevenLabs speed: ${prefs.elevenLabsSpeed}")
+        appendLine("ElevenLabs stability: ${prefs.elevenLabsStability}")
         appendLine("Device voice: ${prefs.deviceVoice ?: "(auto)"}")
         appendLine("Use device location: ${prefs.useDeviceLocation}")
         val locDesc = prefs.location?.let { loc ->
