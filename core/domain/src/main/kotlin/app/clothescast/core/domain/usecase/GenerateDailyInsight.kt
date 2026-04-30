@@ -117,6 +117,7 @@ class GenerateDailyInsight(
             eveningEvents = eveningEvents,
             eveningTriggeredRules = eveningTriggered,
             eveningForecast = if (period == ForecastPeriod.TODAY) tonightForecast else null,
+            rawToday = bundle.today,
         )
         val insight = Insight(
             summary = summary,
@@ -161,9 +162,10 @@ class GenerateDailyInsight(
  *    raw 24h day-level fields,
  *  - rewrites [DailyForecast.condition] to the wettest in-window hour (preventing
  *    the precip-peak fallback from naming a midday rain on a sunny afternoon),
- *  - falls back to the original [DailyForecast] when the slice would be empty
- *    (sparse fixtures, legacy day-level-only payloads, or a degenerate
- *    `morningStart >= eveningEnd` window) so the pipeline always emits something.
+ *  - falls back to the day-level aggregates with an empty hourly list when the
+ *    slice would be empty (sparse fixtures, legacy day-level-only payloads, or
+ *    a degenerate `morningStart >= eveningEnd` window) so the pipeline always
+ *    emits something even without in-window hourly data.
  */
 private fun DailyForecast.slicedForToday(
     morningStart: LocalTime,
@@ -214,14 +216,15 @@ private fun DailyForecast.slicedForToday(
  *    the daily fields) doesn't surface "Rain at 12:00" on a tonight insight
  *    after the morning rain has already passed.
  *
- * If [tonightStart] isn't strictly before [morningEnd] (e.g. the user set their
- * tonight time to 03:00) we treat tonight as today-only, no wrap — anything else
- * would either double-count hours or invert the window.
+ * If [tonightStart] IS strictly before [morningEnd] (e.g. the user set their
+ * tonight time to 03:00, which is before the morning's 07:00) we treat tonight
+ * as today-only, no wrap — anything else would either double-count hours or
+ * invert the window.
  *
- * Falls back to the original [DailyForecast] when the combined hourly is empty
- * (older cached payloads, sparse fixtures, or a tonight time after the last
- * available hour) so we still emit *something* rather than a forecast with
- * all-zero aggregates.
+ * Falls back to the day-level aggregates with an empty hourly list when the
+ * combined hourly is empty (older cached payloads, sparse fixtures, or a tonight
+ * time after the last available hour) so we still emit *something* rather than a
+ * forecast with all-zero aggregates.
  */
 private fun DailyForecast.slicedForTonight(
     tonightStart: LocalTime,

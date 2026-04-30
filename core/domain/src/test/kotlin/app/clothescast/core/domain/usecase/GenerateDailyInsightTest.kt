@@ -315,6 +315,39 @@ class GenerateDailyInsightTest {
     }
 
     @Test
+    fun `delta clause uses raw day-level fields, not the sliced daytime window`() = runTest {
+        // Scenario: yesterday and today share the same overnight low (4°C) and
+        // afternoon high (20°C) — no meaningful change. But today has an early-dawn
+        // hour at 4°C that falls outside the default daytime window (07:00–19:00).
+        // Before the fix, the sliced today had feelsLikeMinC = 12°C (the 09:00 in-
+        // window low) while yesterday's feelsLikeMinC was still 4°C, producing a
+        // spurious "+8° warmer" report. With the fix, the delta uses bundle.today's
+        // raw 24h fields (4°C min, 20°C max) vs yesterday's (4°C min, 20°C max) —
+        // delta ≈ 0 on both dimensions → no delta clause emitted.
+        val sameDayHourly = listOf(
+            HourlyForecast(LocalTime.of(4, 0), 6.0, 4.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val sameDayToday = today.copy(
+            feelsLikeMinC = 4.0,
+            feelsLikeMaxC = 20.0,
+            hourly = sameDayHourly,
+        )
+        val sameDayYesterday = yesterday.copy(
+            feelsLikeMinC = 4.0,
+            feelsLikeMaxC = 20.0,
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(sameDayToday, sameDayYesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs)
+
+        // Raw delta: high = 20 - 20 = 0, low = 4 - 4 = 0 → both under 3°, no clause.
+        result.insight.summary.delta.shouldBeNull()
+    }
+
+    @Test
     fun `tonight period leads with TONIGHT and skips the yesterday delta clause`() = runTest {
         val weather = FakeWeatherRepository(ForecastBundle(today, yesterday))
         val subject = GenerateDailyInsight(weather, clock = clock)

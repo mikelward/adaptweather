@@ -80,13 +80,13 @@ internal object OpenMeteoMapper {
         for (i in time.indices) {
             val ts = LocalDateTime.parse(time[i])
             if (ts.toLocalDate() != date) continue
-            val raw = temperature[i] ?: 0.0
+            val raw = temperature.getOrNull(i) ?: 0.0
             out += HourlyForecast(
                 time = LocalTime.of(ts.hour, ts.minute),
                 temperatureC = raw,
-                feelsLikeC = feelsLike[i] ?: raw,
-                precipitationProbabilityPct = (precipitationProbability[i] ?: 0).toDouble(),
-                condition = WmoCodeMapper.map(weatherCode[i]),
+                feelsLikeC = feelsLike.getOrNull(i) ?: raw,
+                precipitationProbabilityPct = (precipitationProbability.getOrNull(i) ?: 0).toDouble(),
+                condition = WmoCodeMapper.map(weatherCode.getOrNull(i)),
             )
         }
         return out
