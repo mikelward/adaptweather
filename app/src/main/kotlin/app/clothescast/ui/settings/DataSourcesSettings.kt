@@ -263,7 +263,15 @@ private fun DeviceLocationToggleRow(
             confirmButton = {
                 TextButton(onClick = {
                     backgroundRationaleOpen = false
-                    openAppDetails(context)
+                    // On Android 10 (API 29), ACCESS_BACKGROUND_LOCATION is grantable
+                    // through the inline runtime-permission prompt; only API 30+
+                    // forces the system Settings deep-link. Match the platform
+                    // affordance instead of always sending the user to Settings.
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                        openAppDetails(context)
+                    } else {
+                        backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    }
                 }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
             },
             dismissButton = {
