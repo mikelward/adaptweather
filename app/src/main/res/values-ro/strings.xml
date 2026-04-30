@@ -9,9 +9,9 @@ surfaces fall back to default English (matching values-pl / values-uk).
     <string name="settings_region_language_ro_ro">Română (România)</string>
     <string name="settings_tts_voice_locale_ro_ro">Română (România)</string>
     <string name="settings_tts_voice_locale_label">Accent</string>
+    <string name="settings_tts_voice_locale_system">Urmează setarea limbii</string>
 
     <string name="garment_sweater">Pulover</string>
-    <string name="garment_hoodie">Hanorac</string>
     <string name="garment_jacket">Geacă</string>
     <string name="garment_coat">Palton</string>
     <string name="garment_tshirt">Tricou</string>

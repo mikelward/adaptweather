@@ -121,7 +121,7 @@ the displayed label localizes.
     <string name="settings_tts_voice_label">音声</string>
     <string name="settings_tts_voice_dismiss">完了</string>
     <string name="settings_tts_voice_locale_description">読み上げ音声のアクセントを設定します。表示テキストは変更しません。</string>
-    <string name="settings_tts_voice_locale_system">端末の言語に従う</string>
+    <string name="settings_tts_voice_locale_system">言語設定に従う</string>
 
     <string name="settings_tts_test">音声をテスト</string>
     <string name="settings_tts_test_in_flight">テスト中 — お待ちください…</string>

@@ -8,6 +8,7 @@ informal "ti"-form throughout, mirroring the Croatian / Serbian pass.
     <string name="settings_region_language_sl_si">Slovenščina (Slovenija)</string>
     <string name="settings_tts_voice_locale_sl_si">Slovenščina (Slovenija)</string>
     <string name="settings_tts_voice_locale_label">Naglas</string>
+    <string name="settings_tts_voice_locale_system">Sledi jezikovni nastavitvi</string>
 
     <string name="garment_sweater">Pulover</string>
     <string name="garment_hoodie">Pulover s kapuco</string>

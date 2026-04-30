@@ -8,6 +8,7 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="settings_region_language_am_et">አማርኛ (ኢትዮጵያ)</string>
     <string name="settings_tts_voice_locale_am_et">አማርኛ (ኢትዮጵያ)</string>
     <string name="settings_tts_voice_locale_label">ዘዬ</string>
+    <string name="settings_tts_voice_locale_system">የቋንቋ ቅንብርን ተከተል</string>
 
     <string name="garment_sweater">ስወተር</string>
     <string name="garment_hoodie">ሁዲ</string>

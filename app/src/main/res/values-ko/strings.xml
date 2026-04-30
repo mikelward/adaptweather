@@ -125,7 +125,7 @@ displayed label localizes.
     <string name="settings_tts_voice_label">음성</string>
     <string name="settings_tts_voice_dismiss">완료</string>
     <string name="settings_tts_voice_locale_description">음성의 억양을 설정해요. 표시되는 텍스트는 변경하지 않아요.</string>
-    <string name="settings_tts_voice_locale_system">휴대폰 언어 따라가기</string>
+    <string name="settings_tts_voice_locale_system">언어 설정 따라가기</string>
 
     <string name="settings_tts_test">음성 테스트</string>
     <string name="settings_tts_test_in_flight">테스트 중 — 잠시만요…</string>

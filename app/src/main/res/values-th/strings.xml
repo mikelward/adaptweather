@@ -8,6 +8,7 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="settings_region_language_th_th">ไทย (ประเทศไทย)</string>
     <string name="settings_tts_voice_locale_th_th">ไทย (ประเทศไทย)</string>
     <string name="settings_tts_voice_locale_label">สำเนียง</string>
+    <string name="settings_tts_voice_locale_system">ตามการตั้งค่าภาษา</string>
 
     <string name="garment_sweater">เสื้อกันหนาว</string>
     <string name="garment_hoodie">เสื้อฮู้ด</string>

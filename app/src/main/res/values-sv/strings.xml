@@ -7,6 +7,7 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_region_language_sv_se">Svenska (Sverige)</string>
     <string name="settings_tts_voice_locale_sv_se">Svenska (Sverige)</string>
     <string name="settings_tts_voice_locale_label">Brytning</string>
+    <string name="settings_tts_voice_locale_system">Följ språkinställning</string>
 
     <string name="garment_sweater">Tröja</string>
     <string name="garment_hoodie">Huvtröja</string>

@@ -10,6 +10,7 @@ to values/strings.xml (English).
     <string name="settings_region_language_id_id">Indonesia</string>
     <string name="settings_tts_voice_locale_id_id">Indonesia</string>
     <string name="settings_tts_voice_locale_label">Aksen</string>
+    <string name="settings_tts_voice_locale_system">Ikuti pengaturan bahasa</string>
 
     <string name="garment_sweater">Sweater</string>
     <string name="garment_hoodie">Hoodie</string>

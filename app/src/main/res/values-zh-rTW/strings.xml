@@ -127,7 +127,7 @@ label localises.
     <string name="settings_tts_voice_label">語音</string>
     <string name="settings_tts_voice_dismiss">完成</string>
     <string name="settings_tts_voice_locale_description">設定朗讀語音的口音。不會改變顯示文字。</string>
-    <string name="settings_tts_voice_locale_system">跟隨手機語言</string>
+    <string name="settings_tts_voice_locale_system">跟隨語言設定</string>
 
     <string name="settings_tts_test">測試語音</string>
     <string name="settings_tts_test_in_flight">測試中 — 請稍候…</string>

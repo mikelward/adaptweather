@@ -128,7 +128,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_label">Voz</string>
     <string name="settings_tts_voice_dismiss">Concluído</string>
     <string name="settings_tts_voice_locale_description">Define o sotaque da voz falada. Não altera o texto exibido.</string>
-    <string name="settings_tts_voice_locale_system">Seguir o idioma do telefone</string>
+    <string name="settings_tts_voice_locale_system">Seguir a configuração de idioma</string>
 
     <string name="settings_tts_test">Testar voz</string>
     <string name="settings_tts_test_in_flight">Testando — aguarde…</string>

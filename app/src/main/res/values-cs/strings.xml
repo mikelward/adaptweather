@@ -9,6 +9,7 @@ surfaces fall back to default English (matching values-pl / values-uk).
     <string name="settings_region_language_cs_cz">Čeština (Česko)</string>
     <string name="settings_tts_voice_locale_cs_cz">Čeština (Česko)</string>
     <string name="settings_tts_voice_locale_label">Přízvuk</string>
+    <string name="settings_tts_voice_locale_system">Sledovat nastavení jazyka</string>
 
     <string name="garment_sweater">Svetr</string>
     <string name="garment_hoodie">Mikina s kapucí</string>

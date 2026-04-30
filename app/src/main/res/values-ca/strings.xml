@@ -10,6 +10,7 @@ the in-app clock is digit-driven and reads consistently across locales.
     <string name="settings_region_language_ca_es">Català (Espanya)</string>
     <string name="settings_tts_voice_locale_ca_es">Català (Espanya)</string>
     <string name="settings_tts_voice_locale_label">Accent</string>
+    <string name="settings_tts_voice_locale_system">Segueix la configuració d\'idioma</string>
 
     <string name="garment_sweater">Jersei</string>
     <string name="garment_hoodie">Dessuadora amb caputxa</string>

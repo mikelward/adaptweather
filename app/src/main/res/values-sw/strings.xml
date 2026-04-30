@@ -8,6 +8,7 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="settings_region_language_sw_ke">Kiswahili (Kenya)</string>
     <string name="settings_tts_voice_locale_sw_ke">Kiswahili (Kenya)</string>
     <string name="settings_tts_voice_locale_label">Lafudhi</string>
+    <string name="settings_tts_voice_locale_system">Fuata mpangilio wa lugha</string>
 
     <string name="garment_sweater">Sweta</string>
     <string name="garment_hoodie">Hudii</string>
