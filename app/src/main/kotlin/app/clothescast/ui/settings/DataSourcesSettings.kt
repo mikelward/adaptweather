@@ -263,7 +263,7 @@ private fun DeviceLocationToggleRow(
             confirmButton = {
                 TextButton(onClick = {
                     backgroundRationaleOpen = false
-                    backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    openAppDetails(context)
                 }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
             },
             dismissButton = {
