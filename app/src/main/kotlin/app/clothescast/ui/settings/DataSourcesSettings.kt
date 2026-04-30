@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -145,6 +146,7 @@ private fun DeviceLocationToggleRow(
         mutableStateOf(hasBackgroundLocationPermission(context))
     }
     var rationaleOpen by remember { mutableStateOf(false) }
+    var backgroundRationaleOpen by remember { mutableStateOf(false) }
     var backgroundDeniedOpen by remember { mutableStateOf(false) }
 
     val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
@@ -215,10 +217,11 @@ private fun DeviceLocationToggleRow(
                     !backgroundGranted -> {
                         // Only reachable on Q+ — hasBackgroundLocationPermission()
                         // returns true on pre-Q so backgroundGranted is always true
-                        // there. Foreground was granted in a previous attempt; chase
-                        // the missing background grant directly.
+                        // there. Foreground was granted in a previous attempt; show a
+                        // rationale before deep-linking into system Settings so the
+                        // user knows what they're being asked to select.
                         onCheckedChange(true)
-                        backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        backgroundRationaleOpen = true
                     }
                     else -> onCheckedChange(true)
                 }
@@ -227,8 +230,8 @@ private fun DeviceLocationToggleRow(
     }
 
     if (checked && !backgroundGranted) {
-        TextButton(
-            onClick = { openAppDetails(context) },
+        OutlinedButton(
+            onClick = { backgroundRationaleOpen = true },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.settings_location_grant_background)) }
     }
@@ -247,6 +250,25 @@ private fun DeviceLocationToggleRow(
             dismissButton = {
                 TextButton(onClick = { rationaleOpen = false }) {
                     Text(stringResource(R.string.settings_location_rationale_dismiss))
+                }
+            },
+        )
+    }
+
+    if (backgroundRationaleOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundRationaleOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_rationale_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_rationale_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundRationaleOpen = false
+                    backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundRationaleOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_rationale_dismiss))
                 }
             },
         )
