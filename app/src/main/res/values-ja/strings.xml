@@ -187,6 +187,8 @@ the displayed label localizes.
     <string name="settings_region_language_ar_sa">アラビア語（サウジアラビア）</string>
     <string name="settings_region_language_he_il">ヘブライ語（イスラエル）</string>
     <string name="settings_region_language_fa_ir">ペルシャ語（イラン）</string>
+    <string name="settings_region_language_sq_al">アルバニア語（アルバニア）</string>
+    <string name="settings_region_language_ur_pk">ウルドゥー語（パキスタン）</string>
 
     <!-- Region screen — units pickers. -->
     <string name="settings_temperature_unit_title">温度単位</string>
@@ -254,6 +256,8 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_ar_ma">アラビア語（モロッコ）</string>
     <string name="settings_tts_voice_locale_he_il">ヘブライ語（イスラエル）</string>
     <string name="settings_tts_voice_locale_fa_ir">ペルシャ語（イラン）</string>
+    <string name="settings_tts_voice_locale_sq_al">アルバニア語（アルバニア）</string>
+    <string name="settings_tts_voice_locale_ur_pk">ウルドゥー語（パキスタン）</string>
 
     <!--
     API keys screen — three identical-shape blocks (Gemini, OpenAI,

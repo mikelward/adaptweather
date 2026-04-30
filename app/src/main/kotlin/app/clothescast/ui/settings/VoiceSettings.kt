@@ -571,6 +571,7 @@ private fun voiceLocaleLabel(locale: VoiceLocale): Int = when (locale) {
     VoiceLocale.FA_IR -> R.string.settings_tts_voice_locale_fa_ir
     VoiceLocale.SQ_AL -> R.string.settings_tts_voice_locale_sq_al
     VoiceLocale.AM_ET -> R.string.settings_tts_voice_locale_am_et
+    VoiceLocale.UR_PK -> R.string.settings_tts_voice_locale_ur_pk
 }
 
 @Composable

@@ -204,6 +204,8 @@ displayed label localizes.
     <string name="settings_region_language_ar_sa">아랍어 (사우디아라비아)</string>
     <string name="settings_region_language_he_il">히브리어 (이스라엘)</string>
     <string name="settings_region_language_fa_ir">페르시아어 (이란)</string>
+    <string name="settings_region_language_sq_al">알바니아어 (알바니아)</string>
+    <string name="settings_region_language_ur_pk">우르두어 (파키스탄)</string>
 
     <!-- Region screen — units pickers. -->
     <string name="settings_temperature_unit_title">온도 단위</string>
@@ -271,6 +273,8 @@ displayed label localizes.
     <string name="settings_tts_voice_locale_ar_ma">아랍어 (모로코)</string>
     <string name="settings_tts_voice_locale_he_il">히브리어 (이스라엘)</string>
     <string name="settings_tts_voice_locale_fa_ir">페르시아어 (이란)</string>
+    <string name="settings_tts_voice_locale_sq_al">알바니아어 (알바니아)</string>
+    <string name="settings_tts_voice_locale_ur_pk">우르두어 (파키스탄)</string>
 
     <!--
     API keys screen — three identical-shape blocks (Gemini, OpenAI,
