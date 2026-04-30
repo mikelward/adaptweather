@@ -470,4 +470,95 @@ label localizes.
     <string name="insight_time_hour">%1$d点</string>
     <string name="insight_time_hour_minutes">%1$d点%2$02d分</string>
 
+
+    <string name="onboarding_pair_from_phone">通过手机配对</string>
+
+    <string name="pairing_title">扫描配对</string>
+    <string name="pairing_instructions">用手机扫描此二维码，然后将您的 Gemini API 密钥粘贴到弹出的表单中。密钥将通过您的家庭 Wi-Fi 直接发送到此电视，无需云端中转。</string>
+    <string name="pairing_qr_description">链接到 %1$s 的二维码</string>
+    <string name="pairing_cancel">取消</string>
+    <string name="pairing_received">已收到密钥 — 保存中…</string>
+    <string name="pairing_timeout_title">配对窗口已过期</string>
+    <string name="pairing_timeout_body">5 分钟配对窗口已关闭。点击重试以打开新窗口。</string>
+    <string name="pairing_error_title">无法启动配对</string>
+    <string name="pairing_error_body">请确保电视已连接到 Wi-Fi，然后重试。</string>
+    <string name="pairing_retry">重试</string>
+
+    <string name="settings_elevenlabs_model_label">模型</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — 均衡（默认，0.5 积分/字符）</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — 旗舰品质（1.0 积分/字符）</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — 最快（0.5 积分/字符）</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — 支持音频标签（实验性）</string>
+    <string name="settings_elevenlabs_refresh_voices">刷新语音</string>
+    <string name="settings_elevenlabs_refresh_voices_loaded">正在显示您 ElevenLabs 账户中的 %1$d 个语音。</string>
+    <string name="settings_elevenlabs_speed_label">速度 × %1$s</string>
+    <string name="settings_elevenlabs_stability_label">稳定性 %1$s</string>
+
+    <string name="settings_location_background_rationale_title">始终允许</string>
+    <string name="settings_location_background_rationale_body">ClothesCast 每天早晨在后台获取您的天气预报，因此需要"始终允许"位置访问权限。您将被带到系统设置以授予该权限。</string>
+    <string name="settings_location_background_rationale_continue">打开设置</string>
+    <string name="settings_location_background_rationale_dismiss">暂不</string>
+
+    <string name="settings_location_background_denied_title">未授予始终开启权限</string>
+    <string name="settings_location_background_denied_body">没有"始终允许"，早晨预报将使用您保存的位置。打开系统设置以授予权限？</string>
+    <string name="settings_location_background_denied_open">打开设置</string>
+    <string name="settings_location_background_denied_keep">继续使用保存的位置</string>
+
+    <string name="settings_location_rationale_title">始终开启位置</string>
+    <string name="settings_location_rationale_body">ClothesCast 在后台更新您的预报以准时送达，因此需要"始终允许"位置权限。</string>
+    <string name="settings_location_rationale_continue">继续</string>
+    <string name="settings_location_rationale_dismiss">暂不</string>
+
+    <string name="settings_openai_speed_label">速度 × %1$s</string>
+
+    <string name="settings_region_language_am_et">阿姆哈拉语（埃塞俄比亚）</string>
+    <string name="settings_region_language_da_dk">丹麦语（丹麦）</string>
+    <string name="settings_region_language_nb_no">挪威语（书面挪威语）</string>
+    <string name="settings_region_language_sq_al">阿尔巴尼亚语（阿尔巴尼亚）</string>
+    <string name="settings_region_language_sw_ke">斯瓦希里语（肯尼亚）</string>
+
+    <string name="settings_root_schedule_subtitle">通知与时间</string>
+    <string name="settings_root_clothes_subtitle">温度与穿搭</string>
+    <string name="settings_root_region_subtitle">语言与单位</string>
+    <string name="settings_root_voice_subtitle">提供商与口音</string>
+    <string name="settings_root_data_sources_subtitle">位置与日历</string>
+
+    <string name="settings_tts_device_voice_label">设备语音</string>
+    <string name="settings_tts_device_voice_auto">自动（最适合口音）</string>
+    <string name="settings_tts_device_voice_currently">当前：%1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">加载中…</string>
+    <string name="settings_tts_device_voice_network">网络</string>
+    <string name="settings_tts_device_voice_offline">离线</string>
+    <string name="settings_tts_install_google_hint">安装 Google 文字转语音引擎以获得更高质量的语音。</string>
+    <string name="settings_tts_install_google_button">安装 Google TTS</string>
+
+    <string name="settings_tts_voice_locale_am_et">阿姆哈拉语（埃塞俄比亚）</string>
+    <string name="settings_tts_voice_locale_da_dk">丹麦语（丹麦）</string>
+    <string name="settings_tts_voice_locale_nb_no">挪威语（书面挪威语）</string>
+    <string name="settings_tts_voice_locale_sq_al">阿尔巴尼亚语（阿尔巴尼亚）</string>
+    <string name="settings_tts_voice_locale_sw_ke">斯瓦希里语（肯尼亚）</string>
+    <string name="settings_tts_voice_locale_language_fallback">此引擎中没有 %1$s 语音 — 正在显示相同语言的语音。</string>
+    <string name="settings_tts_voice_locale_no_match">此引擎中没有 %1$s 语音 — 请尝试其他口音。</string>
+
+    <string name="today_failed_no_location">无法获取您的位置。请授予始终开启位置权限，或在设置中设置城市。</string>
+    <string name="today_location_required_title">设置您的位置</string>
+    <string name="today_location_required_body">ClothesCast 需要知道您的位置才能获取天气预报。请授予始终开启位置权限，或选择一个城市。</string>
+    <string name="today_location_required_action">打开位置设置</string>
+
+    <string name="today_rationale_title">为什么是这套穿搭？</string>
+    <string name="today_rationale_show">为什么？</string>
+    <string name="today_rationale_dismiss">明白了</string>
+    <string name="today_rationale_reset">重置阈值</string>
+    <string name="today_rationale_threshold_decrease">将阈值降低 1 度</string>
+    <string name="today_rationale_threshold_increase">将阈值提高 1 度</string>
+    <string name="today_rationale_threshold_changed_hint">刷新以查看新穿搭。</string>
+    <string name="today_rationale_unavailable">暂无说明 — 下次刷新后打开应用查看。</string>
+    <string name="today_rationale_min_below_with_time">体感最低气温 %1$s%2$s（%3$s点），低于 %4$s%2$s</string>
+    <string name="today_rationale_min_below">体感最低气温 %1$s%2$s，低于 %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">体感最低气温 %1$s%2$s（%3$s点），至少 %4$s%2$s</string>
+    <string name="today_rationale_min_above">体感最低气温 %1$s%2$s，至少 %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">体感最高气温仅 %1$s%2$s（%3$s点），低于 %4$s%2$s</string>
+    <string name="today_rationale_max_below">体感最高气温仅 %1$s%2$s，低于 %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">体感最高气温 %1$s%2$s（%3$s点），至少 %4$s%2$s</string>
+    <string name="today_rationale_max_above">体感最高气温 %1$s%2$s，至少 %3$s%2$s</string>
 </resources>

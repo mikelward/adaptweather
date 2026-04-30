@@ -476,4 +476,95 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
 
+
+    <string name="onboarding_pair_from_phone">Vincular desde el teléfono</string>
+
+    <string name="pairing_title">Escanear para vincular</string>
+    <string name="pairing_instructions">Escanea este código QR con tu teléfono y luego pega tu clave de API de Gemini en el formulario que se abre. La clave se enviará directamente a este televisor a través de tu red Wi-Fi doméstica — sin retransmisión en la nube.</string>
+    <string name="pairing_qr_description">Código QR con enlace a %1$s</string>
+    <string name="pairing_cancel">Cancelar</string>
+    <string name="pairing_received">Clave recibida — guardando…</string>
+    <string name="pairing_timeout_title">Ventana de vinculación expirada</string>
+    <string name="pairing_timeout_body">La ventana de vinculación de 5 minutos se ha cerrado. Toca Reintentar para abrir una nueva.</string>
+    <string name="pairing_error_title">No se pudo iniciar la vinculación</string>
+    <string name="pairing_error_body">Asegúrate de que el televisor esté conectado a la red Wi-Fi y vuelve a intentarlo.</string>
+    <string name="pairing_retry">Reintentar</string>
+
+    <string name="settings_elevenlabs_model_label">Modelo</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — equilibrado (predeterminado, 0,5 créditos/car.)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — calidad premium (1,0 créditos/car.)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — más rápido (0,5 créditos/car.)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — compatible con etiquetas de audio (experimental)</string>
+    <string name="settings_elevenlabs_refresh_voices">Actualizar voces</string>
+    <string name="settings_elevenlabs_refresh_voices_loaded">Mostrando %1$d voces de tu cuenta de ElevenLabs.</string>
+    <string name="settings_elevenlabs_speed_label">Velocidad × %1$s</string>
+    <string name="settings_elevenlabs_stability_label">Estabilidad %1$s</string>
+
+    <string name="settings_location_background_rationale_title">Permitir siempre</string>
+    <string name="settings_location_background_rationale_body">ClothesCast obtiene tu pronóstico en segundo plano cada mañana, por lo que necesita acceso a la ubicación \'Permitir siempre\'. Serás redirigido a los Ajustes del sistema para concederlo.</string>
+    <string name="settings_location_background_rationale_continue">Abrir Ajustes</string>
+    <string name="settings_location_background_rationale_dismiss">Ahora no</string>
+
+    <string name="settings_location_background_denied_title">Acceso permanente no concedido</string>
+    <string name="settings_location_background_denied_body">Sin \'Permitir siempre\', el pronóstico matutino usará tu ubicación guardada. ¿Abrir los Ajustes del sistema para concederlo?</string>
+    <string name="settings_location_background_denied_open">Abrir Ajustes</string>
+    <string name="settings_location_background_denied_keep">Seguir usando la ubicación guardada</string>
+
+    <string name="settings_location_rationale_title">Ubicación permanente</string>
+    <string name="settings_location_rationale_body">ClothesCast actualiza tu pronóstico en segundo plano para entregarlo a tiempo, por lo que necesita el permiso de ubicación \'Permitir siempre\'.</string>
+    <string name="settings_location_rationale_continue">Continuar</string>
+    <string name="settings_location_rationale_dismiss">Ahora no</string>
+
+    <string name="settings_openai_speed_label">Velocidad × %1$s</string>
+
+    <string name="settings_region_language_am_et">Amhárico (Etiopía)</string>
+    <string name="settings_region_language_da_dk">Danés (Dinamarca)</string>
+    <string name="settings_region_language_nb_no">Noruego Bokmål (Noruega)</string>
+    <string name="settings_region_language_sq_al">Albanés (Albania)</string>
+    <string name="settings_region_language_sw_ke">Suajili (Kenia)</string>
+
+    <string name="settings_root_schedule_subtitle">Notificaciones y horarios</string>
+    <string name="settings_root_clothes_subtitle">Temperaturas y conjuntos</string>
+    <string name="settings_root_region_subtitle">Idiomas y unidades</string>
+    <string name="settings_root_voice_subtitle">Proveedores y acentos</string>
+    <string name="settings_root_data_sources_subtitle">Ubicación y calendario</string>
+
+    <string name="settings_tts_device_voice_label">Voz del dispositivo</string>
+    <string name="settings_tts_device_voice_auto">Automática (mejor para el acento)</string>
+    <string name="settings_tts_device_voice_currently">Actualmente: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">Cargando…</string>
+    <string name="settings_tts_device_voice_network">Red</string>
+    <string name="settings_tts_device_voice_offline">Sin conexión</string>
+    <string name="settings_tts_install_google_hint">Instala el motor de síntesis de voz de Google para obtener voces de mayor calidad.</string>
+    <string name="settings_tts_install_google_button">Instalar Google TTS</string>
+
+    <string name="settings_tts_voice_locale_am_et">Amhárico (Etiopía)</string>
+    <string name="settings_tts_voice_locale_da_dk">Danés (Dinamarca)</string>
+    <string name="settings_tts_voice_locale_nb_no">Noruego Bokmål (Noruega)</string>
+    <string name="settings_tts_voice_locale_sq_al">Albanés (Albania)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Suajili (Kenia)</string>
+    <string name="settings_tts_voice_locale_language_fallback">No hay voces de %1$s en este motor — se muestran voces en el mismo idioma.</string>
+    <string name="settings_tts_voice_locale_no_match">No hay voces de %1$s en este motor — prueba otro acento.</string>
+
+    <string name="today_failed_no_location">No se pudo obtener tu ubicación. Concede permiso de ubicación permanente o establece una ciudad en Ajustes.</string>
+    <string name="today_location_required_title">Configura tu ubicación</string>
+    <string name="today_location_required_body">ClothesCast necesita saber dónde estás para obtener el pronóstico. Concede permiso de ubicación permanente o elige una ciudad.</string>
+    <string name="today_location_required_action">Abrir ajustes de ubicación</string>
+
+    <string name="today_rationale_title">¿Por qué este conjunto?</string>
+    <string name="today_rationale_show">¿Por qué?</string>
+    <string name="today_rationale_dismiss">Entendido</string>
+    <string name="today_rationale_reset">Restablecer umbrales</string>
+    <string name="today_rationale_threshold_decrease">Bajar umbral 1 grado</string>
+    <string name="today_rationale_threshold_increase">Subir umbral 1 grado</string>
+    <string name="today_rationale_threshold_changed_hint">Actualiza para ver el nuevo conjunto.</string>
+    <string name="today_rationale_unavailable">No hay justificación disponible — abre la app después de la próxima actualización.</string>
+    <string name="today_rationale_min_below_with_time">Sensación mínima de %1$s%2$s a las %3$s, por debajo de %4$s%2$s</string>
+    <string name="today_rationale_min_below">Sensación mínima de %1$s%2$s, por debajo de %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Sensación mínima de %1$s%2$s a las %3$s, al menos %4$s%2$s</string>
+    <string name="today_rationale_min_above">Sensación mínima de %1$s%2$s, al menos %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Sensación máxima de solo %1$s%2$s a las %3$s, por debajo de %4$s%2$s</string>
+    <string name="today_rationale_max_below">Sensación máxima de solo %1$s%2$s, por debajo de %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Sensación máxima de %1$s%2$s a las %3$s, al menos %4$s%2$s</string>
+    <string name="today_rationale_max_above">Sensación máxima de %1$s%2$s, al menos %3$s%2$s</string>
 </resources>

@@ -553,4 +553,61 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="insight_time_hour">%1$d:00</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
 
+
+    <string name="onboarding_pair_from_phone">Σύζευξη από το τηλέφωνο</string>
+
+    <string name="pairing_title">Σάρωσε για σύζευξη</string>
+    <string name="pairing_instructions">Σάρωσε αυτόν τον κωδικό QR με το τηλέφωνό σου, μετά επικόλλησε το κλειδί Gemini API στη φόρμα που ανοίγει. Το κλειδί θα σταλεί απευθείας σε αυτή την τηλεόραση μέσω του οικιακού Wi-Fi — χωρίς ενδιάμεσο cloud.</string>
+    <string name="pairing_qr_description">Κωδικός QR που συνδέει με %1$s</string>
+    <string name="pairing_cancel">Άκυρο</string>
+    <string name="pairing_received">Το κλειδί ελήφθη — αποθήκευση…</string>
+    <string name="pairing_timeout_title">Το παράθυρο σύζευξης έληξε</string>
+    <string name="pairing_timeout_body">Το 5λεπτο παράθυρο σύζευξης έκλεισε. Πάτα Επανάληψη για να ανοίξεις νέο.</string>
+    <string name="pairing_error_title">Δεν ήταν δυνατή η εκκίνηση της σύζευξης</string>
+    <string name="pairing_error_body">Βεβαιώσου ότι η τηλεόραση είναι συνδεδεμένη στο Wi-Fi και δοκίμασε ξανά.</string>
+    <string name="pairing_retry">Επανάληψη</string>
+
+    <string name="settings_elevenlabs_stability_label">Σταθερότητα %1$s</string>
+
+    <string name="settings_location_background_rationale_title">Να επιτρέπεται πάντα</string>
+    <string name="settings_location_background_rationale_body">Το ClothesCast λαμβάνει την πρόγνωση στο παρασκήνιο κάθε πρωί και χρειάζεται πρόσβαση τοποθεσίας \'Να επιτρέπεται πάντα\'. Θα μεταφερθείς στις Ρυθμίσεις συστήματος για να την παραχωρήσεις.</string>
+    <string name="settings_location_background_rationale_continue">Άνοιγμα Ρυθμίσεων</string>
+    <string name="settings_location_background_rationale_dismiss">Όχι τώρα</string>
+
+    <string name="settings_openai_speed_label">Ταχύτητα × %1$s</string>
+
+    <string name="settings_region_language_am_et">Αμχαρικά (Αιθιοπία)</string>
+    <string name="settings_region_language_da_dk">Δανικά (Δανία)</string>
+    <string name="settings_region_language_nb_no">Νορβηγικά Bokmål (Νορβηγία)</string>
+    <string name="settings_region_language_sq_al">Αλβανικά (Αλβανία)</string>
+    <string name="settings_region_language_sw_ke">Σουαχίλι (Κένυα)</string>
+    <string name="settings_region_language_th_th">Ταϊλανδικά (Ταϊλάνδη)</string>
+    <string name="settings_region_language_zh_tw">Κινεζικά (Παραδοσιακά)</string>
+
+    <string name="settings_tts_voice_locale_am_et">Αμχαρικά (Αιθιοπία)</string>
+    <string name="settings_tts_voice_locale_da_dk">Δανικά (Δανία)</string>
+    <string name="settings_tts_voice_locale_nb_no">Νορβηγικά Bokmål (Νορβηγία)</string>
+    <string name="settings_tts_voice_locale_sq_al">Αλβανικά (Αλβανία)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Σουαχίλι (Κένυα)</string>
+    <string name="settings_tts_voice_locale_th_th">Ταϊλανδικά (Ταϊλάνδη)</string>
+    <string name="settings_tts_voice_locale_zh_tw">Κινεζικά (Παραδοσιακά)</string>
+    <string name="settings_tts_voice_locale_language_fallback">Δεν υπάρχουν φωνές %1$s σε αυτή τη μηχανή — εμφάνιση φωνών στην ίδια γλώσσα.</string>
+    <string name="settings_tts_voice_locale_no_match">Δεν υπάρχουν φωνές %1$s σε αυτή τη μηχανή — δοκίμασε άλλη προφορά.</string>
+
+    <string name="today_rationale_title">Γιατί αυτή η ένδυση;</string>
+    <string name="today_rationale_show">Γιατί;</string>
+    <string name="today_rationale_dismiss">Κατάλαβα</string>
+    <string name="today_rationale_reset">Επαναφορά ορίων</string>
+    <string name="today_rationale_threshold_decrease">Μείωση ορίου κατά 1 βαθμό</string>
+    <string name="today_rationale_threshold_increase">Αύξηση ορίου κατά 1 βαθμό</string>
+    <string name="today_rationale_threshold_changed_hint">Ανανέωσε για να δεις τη νέα ένδυση.</string>
+    <string name="today_rationale_unavailable">Δεν υπάρχει διαθέσιμη αιτιολογία — άνοιξε την εφαρμογή μετά την επόμενη ανανέωση.</string>
+    <string name="today_rationale_min_below_with_time">Αίσθηση ελάχιστης %1$s%2$s στις %3$s, κάτω από %4$s%2$s</string>
+    <string name="today_rationale_min_below">Αίσθηση ελάχιστης %1$s%2$s, κάτω από %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Αίσθηση ελάχιστης %1$s%2$s στις %3$s, τουλάχιστον %4$s%2$s</string>
+    <string name="today_rationale_min_above">Αίσθηση ελάχιστης %1$s%2$s, τουλάχιστον %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Αίσθηση μέγιστης μόνο %1$s%2$s στις %3$s, κάτω από %4$s%2$s</string>
+    <string name="today_rationale_max_below">Αίσθηση μέγιστης μόνο %1$s%2$s, κάτω από %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Αίσθηση μέγιστης %1$s%2$s στις %3$s, τουλάχιστον %4$s%2$s</string>
+    <string name="today_rationale_max_above">Αίσθηση μέγιστης %1$s%2$s, τουλάχιστον %3$s%2$s</string>
 </resources>

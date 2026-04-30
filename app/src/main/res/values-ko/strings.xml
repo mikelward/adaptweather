@@ -491,4 +491,86 @@ displayed label localizes.
     <string name="insight_time_hour">%1$d시</string>
     <string name="insight_time_hour_minutes">%1$d시 %2$02d분</string>
 
+
+    <string name="onboarding_pair_from_phone">전화기로 페어링하기</string>
+
+    <string name="pairing_title">스캔하여 페어링</string>
+    <string name="pairing_instructions">스마트폰으로 이 QR 코드를 스캔한 다음 열리는 양식에 Gemini API 키를 붙여넣기 하세요. 키는 클라우드 릴레이 없이 홈 Wi-Fi를 통해 이 TV로 직접 전송됩니다.</string>
+    <string name="pairing_qr_description">%1$s로 연결되는 QR 코드</string>
+    <string name="pairing_cancel">취소</string>
+    <string name="pairing_received">키 수신됨 — 저장 중…</string>
+    <string name="pairing_timeout_title">페어링 창이 만료되었습니다</string>
+    <string name="pairing_timeout_body">5분 페어링 창이 닫혔습니다. 새 창을 열려면 재시도를 탭하세요.</string>
+    <string name="pairing_error_title">페어링을 시작할 수 없습니다</string>
+    <string name="pairing_error_body">TV가 Wi-Fi에 연결되어 있는지 확인한 후 다시 시도하세요.</string>
+    <string name="pairing_retry">재시도</string>
+
+    <string name="settings_elevenlabs_model_label">모델</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — 균형 잡힌 (기본값, 0.5 크레딧/자)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — 플래그십 품질 (1.0 크레딧/자)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — 가장 빠름 (0.5 크레딧/자)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — 오디오 태그 지원 (실험적)</string>
+    <string name="settings_elevenlabs_refresh_voices">음성 새로고침</string>
+    <string name="settings_elevenlabs_refresh_voices_loaded">ElevenLabs 계정에서 %1$d개의 음성을 표시하고 있습니다.</string>
+    <string name="settings_elevenlabs_speed_label">속도 × %1$s</string>
+    <string name="settings_elevenlabs_stability_label">안정성 %1$s</string>
+
+    <string name="settings_location_background_rationale_title">항상 허용</string>
+    <string name="settings_location_background_rationale_body">ClothesCast는 매일 아침 백그라운드에서 예보를 가져오므로 \'항상 허용\' 위치 액세스가 필요합니다. 시스템 설정으로 이동하여 허용해 주세요.</string>
+    <string name="settings_location_background_rationale_continue">설정 열기</string>
+    <string name="settings_location_background_rationale_dismiss">나중에</string>
+
+    <string name="settings_location_background_denied_title">상시 액세스가 허용되지 않았습니다</string>
+    <string name="settings_location_background_denied_body">\'항상 허용\' 없이는 아침 예보가 저장된 위치를 사용합니다. 시스템 설정을 열어 허용하시겠습니까?</string>
+    <string name="settings_location_background_denied_open">설정 열기</string>
+    <string name="settings_location_background_denied_keep">저장된 위치 계속 사용</string>
+
+    <string name="settings_location_rationale_title">상시 위치</string>
+    <string name="settings_location_rationale_body">ClothesCast는 예보를 제때 전달하기 위해 백그라운드에서 업데이트하므로 \'항상 허용\' 위치 권한이 필요합니다.</string>
+    <string name="settings_location_rationale_continue">계속</string>
+    <string name="settings_location_rationale_dismiss">나중에</string>
+
+    <string name="settings_openai_speed_label">속도 × %1$s</string>
+
+    <string name="settings_region_language_am_et">암하라어 (에티오피아)</string>
+    <string name="settings_region_language_da_dk">덴마크어 (덴마크)</string>
+    <string name="settings_region_language_nb_no">노르웨이어 Bokmål (노르웨이)</string>
+    <string name="settings_region_language_sq_al">알바니아어 (알바니아)</string>
+    <string name="settings_region_language_sw_ke">스와힐리어 (케냐)</string>
+
+    <string name="settings_root_schedule_subtitle">알림 및 시간</string>
+    <string name="settings_root_clothes_subtitle">온도 및 의상</string>
+    <string name="settings_root_region_subtitle">언어 및 단위</string>
+    <string name="settings_root_voice_subtitle">공급자 및 억양</string>
+    <string name="settings_root_data_sources_subtitle">위치 및 캘린더</string>
+
+    <string name="settings_tts_voice_locale_am_et">암하라어 (에티오피아)</string>
+    <string name="settings_tts_voice_locale_da_dk">덴마크어 (덴마크)</string>
+    <string name="settings_tts_voice_locale_nb_no">노르웨이어 Bokmål (노르웨이)</string>
+    <string name="settings_tts_voice_locale_sq_al">알바니아어 (알바니아)</string>
+    <string name="settings_tts_voice_locale_sw_ke">스와힐리어 (케냐)</string>
+    <string name="settings_tts_voice_locale_language_fallback">이 엔진에 %1$s 음성이 없습니다 — 같은 언어의 음성을 표시합니다.</string>
+    <string name="settings_tts_voice_locale_no_match">이 엔진에 %1$s 음성이 없습니다 — 다른 억양을 시도해 보세요.</string>
+
+    <string name="today_failed_no_location">위치를 가져올 수 없습니다. 상시 위치 권한을 허용하거나 설정에서 도시를 설정하세요.</string>
+    <string name="today_location_required_title">위치를 설정하세요</string>
+    <string name="today_location_required_body">ClothesCast가 예보를 가져오려면 현재 위치가 필요합니다. 상시 위치 권한을 허용하거나 도시를 선택하세요.</string>
+    <string name="today_location_required_action">위치 설정 열기</string>
+
+    <string name="today_rationale_title">왜 이 의상인가요?</string>
+    <string name="today_rationale_show">왜요?</string>
+    <string name="today_rationale_dismiss">알겠습니다</string>
+    <string name="today_rationale_reset">임계값 재설정</string>
+    <string name="today_rationale_threshold_decrease">임계값 1도 낮추기</string>
+    <string name="today_rationale_threshold_increase">임계값 1도 높이기</string>
+    <string name="today_rationale_threshold_changed_hint">새 의상을 보려면 새로고침하세요.</string>
+    <string name="today_rationale_unavailable">사용 가능한 근거가 없습니다 — 다음 새로고침 후 앱을 열어보세요.</string>
+    <string name="today_rationale_min_below_with_time">체감 최저 %1$s%2$s(%3$s시), %4$s%2$s 미만</string>
+    <string name="today_rationale_min_below">체감 최저 %1$s%2$s, %3$s%2$s 미만</string>
+    <string name="today_rationale_min_above_with_time">체감 최저 %1$s%2$s(%3$s시), 최소 %4$s%2$s</string>
+    <string name="today_rationale_min_above">체감 최저 %1$s%2$s, 최소 %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">체감 최고 %1$s%2$s(%3$s시)에 불과, %4$s%2$s 미만</string>
+    <string name="today_rationale_max_below">체감 최고 %1$s%2$s에 불과, %3$s%2$s 미만</string>
+    <string name="today_rationale_max_above_with_time">체감 최고 %1$s%2$s(%3$s시), 최소 %4$s%2$s</string>
+    <string name="today_rationale_max_above">체감 최고 %1$s%2$s, 최소 %3$s%2$s</string>
 </resources>

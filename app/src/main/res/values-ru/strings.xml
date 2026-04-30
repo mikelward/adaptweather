@@ -461,4 +461,95 @@ only the displayed label localizes.
     <string name="insight_time_hour">%1$d</string>
     <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
 
+
+    <string name="onboarding_pair_from_phone">Связать с телефона</string>
+
+    <string name="pairing_title">Сканировать для сопряжения</string>
+    <string name="pairing_instructions">Отсканируй этот QR-код телефоном, затем вставь свой API-ключ Gemini в открывшуюся форму. Ключ будет отправлен напрямую на этот телевизор через домашнюю сеть Wi-Fi — без облачного ретранслятора.</string>
+    <string name="pairing_qr_description">QR-код со ссылкой на %1$s</string>
+    <string name="pairing_cancel">Отмена</string>
+    <string name="pairing_received">Ключ получен — сохранение…</string>
+    <string name="pairing_timeout_title">Окно сопряжения истекло</string>
+    <string name="pairing_timeout_body">5-минутное окно сопряжения закрыто. Нажми «Повторить», чтобы открыть новое.</string>
+    <string name="pairing_error_title">Не удалось запустить сопряжение</string>
+    <string name="pairing_error_body">Убедись, что телевизор подключён к Wi-Fi, и попробуй снова.</string>
+    <string name="pairing_retry">Повторить</string>
+
+    <string name="settings_elevenlabs_model_label">Модель</string>
+    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — сбалансированный (по умолчанию, 0,5 кредита/символ)</string>
+    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — флагманское качество (1,0 кредит/символ)</string>
+    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — самый быстрый (0,5 кредита/символ)</string>
+    <string name="settings_elevenlabs_model_v3">v3 alpha — поддержка аудиотегов (экспериментальный)</string>
+    <string name="settings_elevenlabs_refresh_voices">Обновить голоса</string>
+    <string name="settings_elevenlabs_refresh_voices_loaded">Показано %1$d голосов из твоего аккаунта ElevenLabs.</string>
+    <string name="settings_elevenlabs_speed_label">Скорость × %1$s</string>
+    <string name="settings_elevenlabs_stability_label">Стабильность %1$s</string>
+
+    <string name="settings_location_background_rationale_title">Разрешить всегда</string>
+    <string name="settings_location_background_rationale_body">ClothesCast получает прогноз в фоновом режиме каждое утро, поэтому требуется доступ к местоположению «Разрешить всегда». Ты будешь перенаправлен в системные Настройки для его предоставления.</string>
+    <string name="settings_location_background_rationale_continue">Открыть настройки</string>
+    <string name="settings_location_background_rationale_dismiss">Не сейчас</string>
+
+    <string name="settings_location_background_denied_title">Постоянный доступ не предоставлен</string>
+    <string name="settings_location_background_denied_body">Без «Разрешить всегда» утренний прогноз будет использовать сохранённое местоположение. Открыть системные Настройки для предоставления доступа?</string>
+    <string name="settings_location_background_denied_open">Открыть настройки</string>
+    <string name="settings_location_background_denied_keep">Продолжить использовать сохранённое местоположение</string>
+
+    <string name="settings_location_rationale_title">Постоянное местоположение</string>
+    <string name="settings_location_rationale_body">ClothesCast обновляет прогноз в фоновом режиме, чтобы доставить его вовремя. Для этого требуется разрешение на местоположение «Разрешить всегда».</string>
+    <string name="settings_location_rationale_continue">Продолжить</string>
+    <string name="settings_location_rationale_dismiss">Не сейчас</string>
+
+    <string name="settings_openai_speed_label">Скорость × %1$s</string>
+
+    <string name="settings_region_language_am_et">Амхарский (Эфиопия)</string>
+    <string name="settings_region_language_da_dk">Датский (Дания)</string>
+    <string name="settings_region_language_nb_no">Норвежский букмол (Норвегия)</string>
+    <string name="settings_region_language_sq_al">Албанский (Албания)</string>
+    <string name="settings_region_language_sw_ke">Суахили (Кения)</string>
+
+    <string name="settings_root_schedule_subtitle">Уведомления и время</string>
+    <string name="settings_root_clothes_subtitle">Температуры и наряды</string>
+    <string name="settings_root_region_subtitle">Языки и единицы</string>
+    <string name="settings_root_voice_subtitle">Провайдеры и акценты</string>
+    <string name="settings_root_data_sources_subtitle">Местоположение и календарь</string>
+
+    <string name="settings_tts_device_voice_label">Голос устройства</string>
+    <string name="settings_tts_device_voice_auto">Авто (лучший для акцента)</string>
+    <string name="settings_tts_device_voice_currently">Сейчас: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">Загрузка…</string>
+    <string name="settings_tts_device_voice_network">Сеть</string>
+    <string name="settings_tts_device_voice_offline">Офлайн</string>
+    <string name="settings_tts_install_google_hint">Установи движок Google для синтеза речи, чтобы получить голоса более высокого качества.</string>
+    <string name="settings_tts_install_google_button">Установить Google TTS</string>
+
+    <string name="settings_tts_voice_locale_am_et">Амхарский (Эфиопия)</string>
+    <string name="settings_tts_voice_locale_da_dk">Датский (Дания)</string>
+    <string name="settings_tts_voice_locale_nb_no">Норвежский букмол (Норвегия)</string>
+    <string name="settings_tts_voice_locale_sq_al">Албанский (Албания)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Суахили (Кения)</string>
+    <string name="settings_tts_voice_locale_language_fallback">Голосов %1$s в этом движке нет — показываются голоса на том же языке.</string>
+    <string name="settings_tts_voice_locale_no_match">Голосов %1$s в этом движке нет — попробуй другой акцент.</string>
+
+    <string name="today_failed_no_location">Не удалось определить твоё местоположение. Предоставь постоянный доступ к местоположению или укажи город в Настройках.</string>
+    <string name="today_location_required_title">Настрой своё местоположение</string>
+    <string name="today_location_required_body">ClothesCast должен знать, где ты находишься, чтобы получить прогноз. Предоставь постоянный доступ к местоположению или выбери город.</string>
+    <string name="today_location_required_action">Открыть настройки местоположения</string>
+
+    <string name="today_rationale_title">Почему этот наряд?</string>
+    <string name="today_rationale_show">Почему?</string>
+    <string name="today_rationale_dismiss">Понятно</string>
+    <string name="today_rationale_reset">Сбросить пороги</string>
+    <string name="today_rationale_threshold_decrease">Снизить порог на 1 градус</string>
+    <string name="today_rationale_threshold_increase">Повысить порог на 1 градус</string>
+    <string name="today_rationale_threshold_changed_hint">Обновить, чтобы увидеть новый наряд.</string>
+    <string name="today_rationale_unavailable">Объяснение недоступно — открой приложение после следующего обновления.</string>
+    <string name="today_rationale_min_below_with_time">Ощущается минимум %1$s%2$s в %3$s, ниже %4$s%2$s</string>
+    <string name="today_rationale_min_below">Ощущается минимум %1$s%2$s, ниже %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Ощущается минимум %1$s%2$s в %3$s, не менее %4$s%2$s</string>
+    <string name="today_rationale_min_above">Ощущается минимум %1$s%2$s, не менее %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Ощущается максимум всего %1$s%2$s в %3$s, ниже %4$s%2$s</string>
+    <string name="today_rationale_max_below">Ощущается максимум всего %1$s%2$s, ниже %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Ощущается максимум %1$s%2$s в %3$s, не менее %4$s%2$s</string>
+    <string name="today_rationale_max_above">Ощущается максимум %1$s%2$s, не менее %3$s%2$s</string>
 </resources>
