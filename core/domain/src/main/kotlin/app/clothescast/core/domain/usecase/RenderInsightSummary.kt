@@ -208,9 +208,9 @@ class RenderInsightSummary {
      * Suppressed when:
      *  - No evening event has a location (location-less events don't imply outdoor
      *    exposure where the weather matters).
-     *  - The evening clothes items are the same set as [todayItems] — the morning
-     *    insight already told the user what to wear; repeating it for the evening
-     *    adds no new information.
+     *  - The evening clothes items are a subset of (or equal to) [todayItems] — the
+     *    morning insight already told the user every item; repeating a subset of them
+     *    for the evening adds no new information.
      */
     private fun eveningEventTieInClause(
         period: ForecastPeriod,
@@ -227,9 +227,9 @@ class RenderInsightSummary {
         // never flow to off-device TTS.
         eveningEvents.firstOrNull { !it.allDay && !it.location.isNullOrBlank() } ?: return null
         val items = eveningTriggeredRules.map { it.item }
-        // If the evening calls for the same clothing as today, the morning
-        // insight already covered it — no new information to add.
-        if (items.toSet() == todayItems.toSet()) return null
+        // If the evening clothes are a subset of (or equal to) today's clothes,
+        // the morning insight already covered every item — no new information to add.
+        if (todayItems.toSet().containsAll(items.toSet())) return null
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return EveningEventTieInClause(item = item, rainTime = eveningPeak?.time)
     }

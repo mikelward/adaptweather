@@ -330,6 +330,21 @@ class RenderInsightSummaryTest {
     }
 
     @Test
+    fun `evening event tie-in is omitted when evening clothes are a strict subset of today`() {
+        // Today triggered sweater + jacket; evening only needs jacket — already
+        // mentioned in the morning, so nothing new to add.
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0), location = "Restaurant")
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = listOf(sweaterRule, jacketRule),
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = listOf(jacketRule),
+        )
+        out.eveningEventTieIn.shouldBeNull()
+    }
+
+    @Test
     fun `calendar tie-in is suppressed on the today period`() {
         // The morning insight no longer chains a "Bring an umbrella for your 3pm
         // standup" sentence after "Rain at 3pm." — the listener already knows
