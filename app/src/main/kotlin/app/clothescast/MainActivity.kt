@@ -1,5 +1,6 @@
 package app.clothescast
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,6 +38,12 @@ import kotlinx.coroutines.runBlocking
 private enum class Screen { Today, Settings, Onboarding, Pairing }
 
 class MainActivity : ComponentActivity() {
+    // Incremented each time a notification tap arrives via onNewIntent while the
+    // activity is already running. ClothesCastNav observes this counter and snaps
+    // back to Today whenever it ticks — so e.g. a Settings-screen user who taps the
+    // morning notification lands on Today, not the Settings screen they left open.
+    private var navigateToTodayVersion by mutableIntStateOf(0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val app = application as ClothesCastApplication
@@ -44,15 +53,28 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    ClothesCastNav(app)
+                    ClothesCastNav(app, navigateToTodayVersion)
                 }
             }
         }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_TODAY, false)) {
+            navigateToTodayVersion++
+        }
+    }
+
+    companion object {
+        /** Extra set by all notification tap intents. MainActivity increments its
+         *  navigation counter when this is present so ClothesCastNav snaps to Today. */
+        const val EXTRA_NAVIGATE_TO_TODAY = "navigate_to_today"
+    }
 }
 
 @Composable
-private fun ClothesCastNav(app: ClothesCastApplication) {
+private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: Int) {
     val context = LocalContext.current
 
     // Decide initial screen once on first composition. Permission checks are sync;
@@ -86,6 +108,16 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
     // (e.g. from onboarding's "Continue"). Saved as a name string so rememberSaveable
     // doesn't need a custom Saver. Consumed once and reset to null on the way out.
     var settingsInitialRoute by rememberSaveable { mutableStateOf<String?>(null) }
+
+    // When the user taps a notification while the app is already running, MainActivity
+    // increments navigateToTodayVersion via onNewIntent. Snap back to Today so the
+    // user always lands on the screen that actually shows the insight/alert they tapped.
+    LaunchedEffect(navigateToTodayVersion) {
+        if (navigateToTodayVersion > 0) {
+            screen = Screen.Today
+            settingsInitialRoute = null
+        }
+    }
 
     BackHandler(enabled = screen == Screen.Settings) {
         screen = Screen.Today

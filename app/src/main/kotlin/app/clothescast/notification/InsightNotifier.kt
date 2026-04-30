@@ -27,8 +27,8 @@ class InsightNotifier(private val context: Context) {
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-        val pendingIntent = PendingIntent.getActivity(
+            putExtra(MainActivity.EXTRA_NAVIGATE_TO_TODAY, true)
+        }        val pendingIntent = PendingIntent.getActivity(
             context,
             REQUEST_OPEN_APP,
             tapIntent,
@@ -62,12 +62,14 @@ class InsightNotifier(private val context: Context) {
         // The status-bar silhouette mirrors the recommended top so a glance at the
         // notification shade already says "sweater day" / "jacket day" before the
         // user reads anything. ic_notification_insight is itself a t-shirt silhouette,
-        // so it doubles as both the TSHIRT case and the null fallback (older cached
-        // insights without an outfit, weather alerts).
+        // so it doubles as both the TSHIRT icon and the null fallback (older cached
+        // insights without an outfit). Each variant is an explicit branch so adding a
+        // new Top to the enum is a compile error here, not a silent fall-through.
         internal fun smallIconFor(top: OutfitSuggestion.Top?): Int = when (top) {
             OutfitSuggestion.Top.SWEATER -> R.drawable.ic_notification_top_sweater
             OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_notification_top_thick_jacket
-            OutfitSuggestion.Top.TSHIRT, null -> R.drawable.ic_notification_insight
+            OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_notification_insight
+            null -> R.drawable.ic_notification_insight
         }
 
         /**
