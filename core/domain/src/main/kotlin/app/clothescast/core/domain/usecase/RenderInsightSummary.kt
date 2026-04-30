@@ -233,8 +233,9 @@ class RenderInsightSummary {
         // the morning insight already covered every item — no new information to add.
         // Normalise both sides to handle casing / spacing differences in legacy
         // free-form ClothesRule.item values (e.g. "Jacket" vs "jacket").
-        if (todayItems.map { it.trim().lowercase(Locale.ROOT) }.toSet()
-                .containsAll(items.map { it.trim().lowercase(Locale.ROOT) }.toSet())) return null
+        fun String.normalizeItem() = trim().lowercase(Locale.ROOT)
+        if (todayItems.map { it.normalizeItem() }.toSet()
+                .containsAll(items.map { it.normalizeItem() }.toSet())) return null
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return EveningEventTieInClause(item = item, rainTime = eveningPeak?.time)
     }
