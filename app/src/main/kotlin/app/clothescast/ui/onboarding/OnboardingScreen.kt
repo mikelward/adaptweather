@@ -38,7 +38,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.R
 import app.clothescast.core.domain.model.Location
-import app.clothescast.location.hasBackgroundLocationPermission
 import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.notification.NotificationPermission
 import app.clothescast.ui.settings.KeyEntryFields
@@ -193,17 +192,8 @@ private fun LocationStep(
     var permissionGranted by remember {
         mutableStateOf(hasCoarseLocationPermission(context))
     }
-    var backgroundGranted by remember {
-        mutableStateOf(hasBackgroundLocationPermission(context))
-    }
     var permissionAsked by remember { mutableStateOf(false) }
     var searchOpen by remember { mutableStateOf(false) }
-
-    val backgroundLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-    ) { granted ->
-        backgroundGranted = granted
-    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -213,17 +203,7 @@ private fun LocationStep(
         // Mirrors LocationEditor: only flip the toggle on if foreground was granted,
         // otherwise the worker would consult the reader and silently fall through to
         // the configured fallback location every day.
-        if (granted) {
-            onSetUseDeviceLocation(true)
-            // On Android 10+ the background worker also needs ACCESS_BACKGROUND_LOCATION.
-            // Chain the request immediately after foreground so users aren't left in the
-            // "foreground granted, background missing" state after onboarding.
-            if (!hasBackgroundLocationPermission(context) &&
-                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
-            ) {
-                backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-            }
-        }
+        if (granted) onSetUseDeviceLocation(true)
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -233,7 +213,6 @@ private fun LocationStep(
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 permissionGranted = hasCoarseLocationPermission(context)
-                backgroundGranted = hasBackgroundLocationPermission(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
