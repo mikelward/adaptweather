@@ -63,6 +63,13 @@ class RenderInsightSummary {
         eveningEvents: List<CalendarEvent> = emptyList(),
         eveningTriggeredRules: List<ClothesRule> = emptyList(),
         eveningForecast: DailyForecast? = null,
+        // When [today] has been sliced to a daytime window its feelsLikeMinC
+        // reflects the morning start time rather than the overnight low, making
+        // a low-delta comparison against yesterday's full-day fields misleading.
+        // Pass the raw (un-sliced) today so both deltas use consistent 24h fields.
+        // Defaults to null, which falls back to [today] (correct when the caller
+        // hasn't sliced the forecast, e.g. in unit tests).
+        rawToday: DailyForecast? = null,
     ): InsightSummary {
         val items = todayTriggeredRules.map { it.item }
         val peak = peakPrecip(today)
@@ -83,7 +90,7 @@ class RenderInsightSummary {
             period = period,
             alert = alertClause(alerts),
             band = bandClause(today),
-            delta = if (period == ForecastPeriod.TODAY) deltaClause(today, yesterday) else null,
+            delta = if (period == ForecastPeriod.TODAY) deltaClause(rawToday ?: today, yesterday) else null,
             clothes = clothesClause(items),
             precip = peak?.let { PrecipClause(it.condition, it.time) },
             // Calendar tie-in only fires on TONIGHT — pairing the precip peak
@@ -136,6 +143,13 @@ class RenderInsightSummary {
      * (drizzle / rain / snow / thunderstorm). A cloudy or foggy day with a
      * 30%+ "precip" probability isn't worth a clause — the user wants the
      * spoken summary to mention precipitation, not haziness.
+     *
+     * When an hourly entry's condition is [WeatherCondition.UNKNOWN] (Open-Meteo
+     * omitted the weather code for that hour), the day-level condition is used as a
+     * fallback. If the day-level condition is also unknown or non-precipitating, the
+     * clause is suppressed. This is intentionally conservative — a missing code is
+     * ambiguous, and the day-level field will normally carry the right type when the
+     * API is healthy.
      */
     private fun peakPrecip(today: DailyForecast): PeakPrecip? {
         val peak = today.hourly.maxByOrNull { it.precipitationProbabilityPct }
