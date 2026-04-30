@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.WorkManager
 import app.clothescast.notification.NotificationPermission
+import app.clothescast.ui.isTelevision
 import app.clothescast.ui.onboarding.OnboardingScreen
 import app.clothescast.ui.onboarding.OnboardingViewModel
 import app.clothescast.ui.pairing.PairingScreen
@@ -59,16 +60,24 @@ private fun ClothesCastNav(app: ClothesCastApplication) {
     // each, microseconds in practice — runBlocking here keeps the UX flicker-free
     // (no flash of Today before snapping to Onboarding) at a negligible startup cost.
     val initialScreen = remember {
-        val notificationOk = NotificationPermission.isGranted(context)
+        val tv = isTelevision(context)
+        // TV OS does not expose POST_NOTIFICATIONS or GPS-based location; skip
+        // both checks so a configured-key + city TV install goes straight to Today.
+        val notificationOk = tv || NotificationPermission.isGranted(context)
         val keyOk = runBlocking { app.secureKeyStore.geminiKeyConfiguredFlow.first() }
         val prefs = runBlocking { app.settingsRepository.preferences.first() }
-        // Location is "configured" if either branch is filled in — device-location
-        // toggle on (with permission) or a manual city stored.
-        val coarseGranted = androidx.core.content.ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        val locationOk = (prefs.useDeviceLocation && coarseGranted) || prefs.location != null
+        val locationOk = if (tv) {
+            // On TV only a manually picked city counts — device location is unavailable.
+            prefs.location != null
+        } else {
+            // Location is "configured" if either branch is filled in — device-location
+            // toggle on (with permission) or a manual city stored.
+            val coarseGranted = androidx.core.content.ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            (prefs.useDeviceLocation && coarseGranted) || prefs.location != null
+        }
         if (notificationOk && keyOk && locationOk) Screen.Today else Screen.Onboarding
     }
 
