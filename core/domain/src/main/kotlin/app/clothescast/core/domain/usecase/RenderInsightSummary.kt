@@ -17,6 +17,7 @@ import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherAlert
 import app.clothescast.core.domain.model.WeatherCondition
 import java.time.LocalTime
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -200,10 +201,12 @@ class RenderInsightSummary {
     /**
      * Evening-event tie-in for the morning insight. Only emits on [ForecastPeriod.TODAY]
      * — the tonight pass already covers evening events via [calendarTieInClause].
-     * Picks the first evening event with a known start time and pairs it with the
-     * first clothes item triggered by the evening forecast slice (umbrella first if
-     * present). Caller is responsible for filtering [eveningEvents] to actually-evening
-     * events and for evaluating clothes rules against the evening forecast.
+     * Pairs the evening forecast slice with the first triggered clothes item (umbrella
+     * first if present) and the evening precip-peak time, gated on the existence of at
+     * least one located evening event. Caller is responsible for filtering [eveningEvents]
+     * to actually-evening events and for evaluating clothes rules against the evening
+     * forecast. Calendar event titles, locations, and start times are never captured
+     * into the returned clause.
      *
      * Suppressed when:
      *  - No evening event has a location (location-less events don't imply outdoor
@@ -229,7 +232,11 @@ class RenderInsightSummary {
         val items = eveningTriggeredRules.map { it.item }
         // If the evening clothes are a subset of (or equal to) today's clothes,
         // the morning insight already covered every item — no new information to add.
-        if (todayItems.toSet().containsAll(items.toSet())) return null
+        // Compare normalized (trim + lowercase) so legacy free-form ClothesRule.item
+        // values don't fail to suppress on a casing/whitespace mismatch ("Jacket" vs
+        // "jacket"); matches the case-insensitive umbrella check below.
+        val normalize: (String) -> String = { it.trim().lowercase(Locale.ROOT) }
+        if (todayItems.map(normalize).toSet().containsAll(items.map(normalize).toSet())) return null
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return EveningEventTieInClause(item = item, rainTime = eveningPeak?.time)
     }
