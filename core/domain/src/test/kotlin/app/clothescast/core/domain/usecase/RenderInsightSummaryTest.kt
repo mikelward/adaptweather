@@ -185,7 +185,7 @@ class RenderInsightSummaryTest {
 
     @Test
     fun `evening event tie-in pairs first evening event with first triggered evening item`() {
-        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0), location = "Restaurant")
         val out = subject(
             today = mildToday,
             yesterday = yesterday,
@@ -203,7 +203,7 @@ class RenderInsightSummaryTest {
 
     @Test
     fun `evening event tie-in carries rain time when evening forecast peaks above 30 percent`() {
-        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0), location = "Restaurant")
         val rainyEvening = mildToday.copy(
             precipitationProbabilityMaxPct = 60.0,
             condition = WeatherCondition.RAIN,
@@ -225,7 +225,7 @@ class RenderInsightSummaryTest {
 
     @Test
     fun `evening event tie-in omits rain time when evening peak is below threshold`() {
-        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0), location = "Restaurant")
         val dryEvening = mildToday.copy(
             precipitationProbabilityMaxPct = 5.0,
             condition = WeatherCondition.PARTLY_CLOUDY,
@@ -247,7 +247,7 @@ class RenderInsightSummaryTest {
 
     @Test
     fun `evening event tie-in prefers umbrella when on the triggered list`() {
-        val event = CalendarEvent("show", LocalTime.of(20, 0), LocalTime.of(22, 0))
+        val event = CalendarEvent("show", LocalTime.of(20, 0), LocalTime.of(22, 0), location = "Theatre")
         val out = subject(
             today = mildToday,
             yesterday = yesterday,
@@ -294,6 +294,36 @@ class RenderInsightSummaryTest {
             yesterday = yesterday,
             todayTriggeredRules = emptyList(),
             eveningEvents = listOf(allDay),
+            eveningTriggeredRules = listOf(jacketRule),
+        )
+        out.eveningEventTieIn.shouldBeNull()
+    }
+
+    @Test
+    fun `evening event tie-in is omitted when no evening event has a location`() {
+        // Events without a location don't imply outdoor exposure, so a
+        // weather-specific clothing tip isn't warranted.
+        val noLocation = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0))
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(noLocation),
+            eveningTriggeredRules = listOf(jacketRule),
+        )
+        out.eveningEventTieIn.shouldBeNull()
+    }
+
+    @Test
+    fun `evening event tie-in is omitted when evening clothes are the same as today`() {
+        // If the morning insight already mentions the same items, repeating them
+        // for the evening adds no new information.
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0), location = "Restaurant")
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = listOf(jacketRule),
+            eveningEvents = listOf(event),
             eveningTriggeredRules = listOf(jacketRule),
         )
         out.eveningEventTieIn.shouldBeNull()
