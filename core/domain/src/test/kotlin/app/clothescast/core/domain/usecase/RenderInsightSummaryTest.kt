@@ -345,6 +345,40 @@ class RenderInsightSummaryTest {
     }
 
     @Test
+    fun `evening event tie-in is omitted when evening clothes match today by casing only`() {
+        // "Jacket" (today) vs "jacket" (evening) — same item, different casing from
+        // a legacy free-form ClothesRule. Should be treated as a subset and suppressed.
+        val event = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0), location = "Restaurant")
+        val todayJacket = ClothesRule("Jacket", ClothesRule.TemperatureBelow(12.0))
+        val eveningJacket = ClothesRule("jacket", ClothesRule.TemperatureBelow(12.0))
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = listOf(todayJacket),
+            eveningEvents = listOf(event),
+            eveningTriggeredRules = listOf(eveningJacket),
+        )
+        out.eveningEventTieIn.shouldBeNull()
+    }
+
+    @Test
+    fun `evening event tie-in fires when first event lacks location but a later one has one`() {
+        // All events in the range are checked — not just the first. Even though the
+        // first event has no location, the second does, so the tie-in should emit.
+        val noLocation = CalendarEvent("call", LocalTime.of(19, 0), LocalTime.of(20, 0))
+        val withLocation = CalendarEvent("dinner", LocalTime.of(21, 0), LocalTime.of(23, 0), location = "Restaurant")
+        val out = subject(
+            today = mildToday,
+            yesterday = yesterday,
+            todayTriggeredRules = emptyList(),
+            eveningEvents = listOf(noLocation, withLocation),
+            eveningTriggeredRules = listOf(jacketRule),
+        )
+        out.eveningEventTieIn.shouldNotBeNull()
+        out.eveningEventTieIn!!.item shouldBe "jacket"
+    }
+
+    @Test
     fun `calendar tie-in is suppressed on the today period`() {
         // The morning insight no longer chains a "Bring an umbrella for your 3pm
         // standup" sentence after "Rain at 3pm." — the listener already knows

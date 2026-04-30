@@ -17,6 +17,7 @@ import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.WeatherAlert
 import app.clothescast.core.domain.model.WeatherCondition
 import java.time.LocalTime
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -79,7 +80,7 @@ class RenderInsightSummary {
         // keeps the result strictly scoped to the tie-in clause.
         val eveningPeak = if (
             period == ForecastPeriod.TODAY &&
-            eveningEvents.isNotEmpty() &&
+            eveningEvents.any { !it.allDay && !it.location.isNullOrBlank() } &&
             eveningTriggeredRules.isNotEmpty()
         ) {
             eveningForecast?.let { peakPrecip(it) }
@@ -207,10 +208,11 @@ class RenderInsightSummary {
      *
      * Suppressed when:
      *  - No evening event has a location (location-less events don't imply outdoor
-     *    exposure where the weather matters).
+     *    exposure where the weather matters). Checked across all events in the range.
      *  - The evening clothes items are a subset of (or equal to) [todayItems] — the
      *    morning insight already told the user every item; repeating a subset of them
-     *    for the evening adds no new information.
+     *    for the evening adds no new information. Comparison is case-insensitive to
+     *    handle legacy free-form [ClothesRule.item] values (e.g. "Jacket" vs "jacket").
      */
     private fun eveningEventTieInClause(
         period: ForecastPeriod,
@@ -220,16 +222,19 @@ class RenderInsightSummary {
         todayItems: List<String>,
     ): EveningEventTieInClause? {
         if (period != ForecastPeriod.TODAY) return null
-        if (eveningEvents.isEmpty() || eveningTriggeredRules.isEmpty()) return null
-        // Gate on at least one non-all-day evening event that has a location.
-        // Events without a location don't imply outdoor exposure, so the
-        // weather-specific clothing tip isn't warranted. Calendar event titles
-        // never flow to off-device TTS.
-        eveningEvents.firstOrNull { !it.allDay && !it.location.isNullOrBlank() } ?: return null
+        if (eveningTriggeredRules.isEmpty()) return null
+        // Gate on at least one non-all-day evening event that has a location —
+        // check all events in the range (not just the first). Events without a
+        // location don't imply outdoor exposure, so the weather-specific clothing
+        // tip isn't warranted. Calendar event titles never flow to off-device TTS.
+        if (eveningEvents.none { !it.allDay && !it.location.isNullOrBlank() }) return null
         val items = eveningTriggeredRules.map { it.item }
         // If the evening clothes are a subset of (or equal to) today's clothes,
         // the morning insight already covered every item — no new information to add.
-        if (todayItems.toSet().containsAll(items.toSet())) return null
+        // Normalise both sides to handle casing / spacing differences in legacy
+        // free-form ClothesRule.item values (e.g. "Jacket" vs "jacket").
+        if (todayItems.map { it.trim().lowercase(Locale.ROOT) }.toSet()
+                .containsAll(items.map { it.trim().lowercase(Locale.ROOT) }.toSet())) return null
         val item = items.firstOrNull { it.equals("umbrella", ignoreCase = true) } ?: items.first()
         return EveningEventTieInClause(item = item, rainTime = eveningPeak?.time)
     }
