@@ -120,6 +120,7 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "id" to "Bicara dalam bahasa Indonesia dengan aksen yang jelas dan alami.",
     "ms" to "Bertutur dalam bahasa Melayu dengan sebutan yang jelas dan semula jadi.",
     "fil" to "Magsalita sa Filipino na may malinaw at natural na diin.",
+    "sw" to "Soma maandishi yafuatayo kwa Kiswahili fasaha na matamshi wazi na ya asili.",
     "vi" to "Nói tiếng Việt với giọng điệu rõ ràng và tự nhiên.",
     "th" to "กรุณาอ่านเป็นภาษาไทยด้วยน้ำเสียงที่ชัดเจนและเป็นธรรมชาติ",
     "zh-CN" to "请用标准普通话朗读，发音清晰自然。",
