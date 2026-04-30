@@ -129,6 +129,7 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "zh" to "请用标准普通话朗读，发音清晰自然。",
     "hi" to "कृपया हिंदी में स्पष्ट और प्राकृतिक उच्चारण के साथ पढ़ें।",
     "bn" to "অনুগ্রহ করে বাংলায় স্পষ্ট ও প্রাকৃতিক উচ্চারণে পড়ুন।",
+    "pa" to "ਕਿਰਪਾ ਕਰਕੇ ਪੰਜਾਬੀ ਵਿੱਚ ਸਪਸ਼ਟ ਅਤੇ ਕੁਦਰਤੀ ਉਚਾਰਨ ਨਾਲ ਪੜ੍ਹੋ।",
     "ja" to "はっきりと自然な発音で日本語で読んでください。",
     "ko" to "명확하고 자연스러운 발음으로 한국어로 읽어주세요。",
     // Arabic: directives nudge the model to read MSA prose with the named

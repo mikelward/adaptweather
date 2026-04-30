@@ -250,6 +250,7 @@
     <string name="settings_tts_voice_locale_zh_tw">Chinese (Traditional)</string>
     <string name="settings_tts_voice_locale_hi_in">Hindi (India)</string>
     <string name="settings_tts_voice_locale_bn_bd">Bengali (Bangladesh)</string>
+    <string name="settings_tts_voice_locale_pa_in">Punjabi (India)</string>
     <string name="settings_tts_voice_locale_ja_jp">Japanese (Japan)</string>
     <string name="settings_tts_voice_locale_ko_kr">Korean (South Korea)</string>
     <string name="settings_tts_voice_locale_ar_sa">Arabic (Saudi Arabia)</string>
@@ -370,6 +371,7 @@
     <string name="settings_region_language_zh_tw">Chinese (Traditional)</string>
     <string name="settings_region_language_hi_in">Hindi (India)</string>
     <string name="settings_region_language_bn_bd">Bengali (Bangladesh)</string>
+    <string name="settings_region_language_pa_in">Punjabi (India)</string>
     <string name="settings_region_language_ja_jp">Japanese (Japan)</string>
     <string name="settings_region_language_ko_kr">Korean (South Korea)</string>
     <string name="settings_region_language_ar_sa">Arabic (Saudi Arabia)</string>

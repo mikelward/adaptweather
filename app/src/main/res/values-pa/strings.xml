@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Punjabi (India) translation. Scope: insight-prose templates, garment labels,
+clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
+The rest of the UI falls through to values/strings.xml (English).
+-->
+<resources>
+    <string name="settings_region_language_pa_in">ਪੰਜਾਬੀ (ਭਾਰਤ)</string>
+    <string name="settings_tts_voice_locale_pa_in">ਪੰਜਾਬੀ (ਭਾਰਤ)</string>
+    <string name="settings_tts_voice_locale_label">ਲਹਿਜ਼ਾ</string>
+
+    <string name="garment_sweater">ਸਵੈਟਰ</string>
+    <string name="garment_hoodie">ਹੁੱਡੀ</string>
+    <string name="garment_jacket">ਜੈਕਟ</string>
+    <string name="garment_coat">ਕੋਟ</string>
+    <string name="garment_tshirt">ਟੀ-ਸ਼ਰਟ</string>
+    <string name="garment_shirt">ਕਮੀਜ਼</string>
+    <string name="garment_shorts">ਸ਼ਾਰਟਸ</string>
+    <string name="garment_pants">ਪੈਂਟ</string>
+    <string name="garment_jeans">ਜੀਨਸ</string>
+
+    <string name="settings_clothes_empty">ਕੋਈ ਨਿਯਮ ਨਹੀਂ। ਜੋੜੋ ਦਬਾ ਕੇ ਇੱਕ ਬਣਾਓ।</string>
+    <string name="settings_clothes_add">ਜੋੜੋ</string>
+    <string name="settings_clothes_edit">ਸੰਪਾਦਿਤ ਕਰੋ</string>
+    <string name="settings_clothes_delete">ਹਟਾਓ</string>
+    <string name="settings_clothes_dialog_add_title">ਕੱਪੜੇ ਦਾ ਨਿਯਮ ਜੋੜੋ</string>
+    <string name="settings_clothes_dialog_edit_title">ਕੱਪੜੇ ਦਾ ਨਿਯਮ ਸੰਪਾਦਿਤ ਕਰੋ</string>
+    <string name="settings_clothes_item_label">ਕੱਪੜਾ</string>
+    <string name="settings_clothes_condition_label">ਸ਼ਰਤ</string>
+    <string name="settings_clothes_value_label_temp_c">ਸੀਮਾ (°C)</string>
+    <string name="settings_clothes_value_label_precip">ਸੀਮਾ (%%)</string>
+    <string name="settings_clothes_cond_type_temp_below">ਜਦੋਂ ਮਹਿਸੂਸ ਠੰਡਾ ਹੋਵੇ</string>
+    <string name="settings_clothes_cond_type_temp_above">ਜਦੋਂ ਮਹਿਸੂਸ ਗਰਮ ਹੋਵੇ</string>
+    <string name="settings_clothes_cond_type_precip_above">ਜਦੋਂ ਵਰਖਾ ਦੀ ਸੰਭਾਵਨਾ ਤੋਂ ਵੱਧ</string>
+    <string name="settings_clothes_cond_temp_below">ਜਦੋਂ ਘੱਟੋ-ਘੱਟ ਮਹਿਸੂਸ ਤਾਪਮਾਨ %.0f°C ਤੋਂ ਘੱਟ ਹੋਵੇ</string>
+    <string name="settings_clothes_cond_temp_above">ਜਦੋਂ ਵੱਧ ਤੋਂ ਵੱਧ ਮਹਿਸੂਸ ਤਾਪਮਾਨ %.0f°C ਤੋਂ ਵੱਧ ਹੋਵੇ</string>
+    <string name="settings_clothes_cond_precip_above">ਜਦੋਂ ਵਰਖਾ ਦੀ ਸੰਭਾਵਨਾ %.0f%% ਤੋਂ ਵੱਧ ਹੋਵੇ</string>
+
+    <string name="today_outfit_top_tshirt">ਟੀ-ਸ਼ਰਟ</string>
+    <string name="today_outfit_top_sweater">ਸਵੈਟਰ</string>
+    <string name="today_outfit_top_thick_jacket">ਮੋਟੀ ਜੈਕਟ</string>
+    <string name="today_outfit_bottom_shorts">ਸ਼ਾਰਟਸ</string>
+    <string name="today_outfit_bottom_long_pants">ਪੈਂਟ</string>
+
+    <string name="insight_lead_today">ਅੱਜ</string>
+    <string name="insight_lead_tonight">ਅੱਜ ਰਾਤ</string>
+    <!-- "ਅੱਜ ਮੌਸਮ ਸੁਹਾਵਣਾ ਰਹੇਗਾ।" -->
+    <string name="insight_band_single">%1$s ਮੌਸਮ %2$s ਰਹੇਗਾ।</string>
+    <string name="insight_band_range">%1$s ਮੌਸਮ %2$s ਤੋਂ %3$s ਰਹੇਗਾ।</string>
+    <string name="insight_band_freezing">ਬਹੁਤ ਠੰਡਾ</string>
+    <string name="insight_band_cold">ਠੰਡਾ</string>
+    <string name="insight_band_cool">ਕੁਝ ਠੰਡਾ</string>
+    <string name="insight_band_mild">ਸੁਹਾਵਣਾ</string>
+    <string name="insight_band_warm">ਗਰਮ</string>
+    <string name="insight_band_hot">ਬਹੁਤ ਗਰਮ</string>
+    <string name="insight_delta_warmer">ਅੱਜ %1$d° ਜ਼ਿਆਦਾ ਗਰਮ।</string>
+    <string name="insight_delta_cooler">ਅੱਜ %1$d° ਜ਼ਿਆਦਾ ਠੰਡਾ।</string>
+    <string name="insight_alert">ਚੇਤਾਵਨੀ: %1$s।</string>
+    <string name="insight_clothes_wear">%1$s ਪਾਓ।</string>
+    <!-- Punjabi has no grammatical articles. -->
+    <string name="insight_clothes_article_a">%1$s</string>
+    <string name="insight_clothes_article_an">%1$s</string>
+    <string name="insight_clothes_join_two">%1$s ਅਤੇ %2$s</string>
+    <string name="insight_clothes_join_many">%1$s, %2$s ਅਤੇ %3$s</string>
+    <string name="insight_precip">%1$s %2$s।</string>
+    <string name="insight_precip_at_time">%1$s ਵਜੇ</string>
+    <string name="insight_precip_overnight">ਰਾਤ ਭਰ</string>
+    <string name="insight_condition_clear">ਸਾਫ਼</string>
+    <string name="insight_condition_partly_cloudy">ਕੁਝ ਬੱਦਲ</string>
+    <string name="insight_condition_cloudy">ਬੱਦਲ</string>
+    <string name="insight_condition_fog">ਧੁੰਦ</string>
+    <string name="insight_condition_drizzle">ਕਣੀਆਂ</string>
+    <string name="insight_condition_rain">ਮੀਂਹ</string>
+    <string name="insight_condition_snow">ਬਰਫ਼</string>
+    <string name="insight_condition_thunderstorm">ਤੂਫ਼ਾਨ</string>
+    <string name="insight_condition_unknown">ਅਣਜਾਣ</string>
+    <!-- "ਅੱਜ ਰਾਤ ਕੋਟ ਨਾਲ ਲਓ।" -->
+    <string name="insight_tie_in">ਅੱਜ ਰਾਤ %1$s ਨਾਲ ਲਓ।</string>
+    <string name="insight_tie_in_with_rain">ਅੱਜ ਰਾਤ %1$s ਨਾਲ ਲਓ, %2$s ਵਜੇ ਮੀਂਹ।</string>
+    <!-- "15" — postposition "ਵਜੇ" comes from insight_precip_at_time wrapper. -->
+    <string name="insight_time_hour">%1$d</string>
+    <string name="insight_time_hour_minutes">%1$d:%2$02d</string>
+
+</resources>
