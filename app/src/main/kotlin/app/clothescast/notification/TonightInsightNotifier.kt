@@ -30,8 +30,8 @@ class TonightInsightNotifier(private val context: Context) {
 
         val tapIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-        val pendingIntent = PendingIntent.getActivity(
+            putExtra(MainActivity.EXTRA_NAVIGATE_TO_TODAY, true)
+        }        val pendingIntent = PendingIntent.getActivity(
             context,
             REQUEST_OPEN_APP,
             tapIntent,

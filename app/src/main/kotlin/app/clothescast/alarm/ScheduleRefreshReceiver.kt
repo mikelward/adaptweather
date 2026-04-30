@@ -9,6 +9,7 @@ import app.clothescast.core.domain.model.ForecastPeriod
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -44,6 +45,7 @@ class ScheduleRefreshReceiver : BroadcastReceiver() {
                 DiagLog.e(TAG, "Re-arm failed", t)
             } finally {
                 pending.finish()
+                scope.cancel()
             }
         }
     }
