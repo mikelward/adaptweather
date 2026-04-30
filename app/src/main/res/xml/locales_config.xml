@@ -8,6 +8,12 @@
     the user picks a Region whose language differs from their device locale
     (e.g. device=en-GB, Region=DE_AT → prose renders in English).
 
+    Note: this list uses canonical BCP-47 language tags (id, he), while the
+    matching Android resource directories still use the legacy ISO-639-1
+    codes the framework froze in 1989 — values-in/ for Indonesian and
+    values-iw/ for Hebrew. The runtime resource resolver maps the canonical
+    tag here to the legacy directory automatically.
+
     This file also enables per-app language preferences in system Settings
     on Android 13+ (users can override the app's display language
     independently of the system locale).
