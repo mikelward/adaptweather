@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -342,37 +343,53 @@ class SettingsViewModelTest {
 
     @Test
     fun `re-enumerates device voices when region changes while voiceLocale is SYSTEM`() = runTest {
-        var enumerationCount = 0
-        val countingEnumerator = object : TtsVoiceEnumerator {
-            override suspend fun listVoices(locale: Locale): List<DeviceVoice> {
-                enumerationCount++
-                return emptyList()
+        // Pin the JVM default so the SYSTEM-fallback locale on the initial
+        // enumeration is guaranteed to differ from en-AU below — without this,
+        // a CI runner that happened to report en-AU as its default would short
+        // the second emission's "effective locale changed" check.
+        val originalDefault = Locale.getDefault()
+        Locale.setDefault(Locale.US)
+        try {
+            // A Channel rather than a plain counter: receive() suspends until
+            // an enumeration actually fires, which dodges the race where
+            // state.first matches the MutableStateFlow's seed value (region is
+            // SYSTEM by default in SettingsState) before the preferences flow
+            // has emitted and triggered the first enumeration.
+            val enumerated = Channel<Locale>(capacity = Channel.UNLIMITED)
+            val countingEnumerator = object : TtsVoiceEnumerator {
+                override suspend fun listVoices(locale: Locale): List<DeviceVoice> {
+                    enumerated.send(locale)
+                    return emptyList()
+                }
+                override suspend fun resolveAutoPick(locale: Locale): DeviceVoice? = null
+                override suspend fun findVoice(id: String): DeviceVoice? = null
             }
-            override suspend fun resolveAutoPick(locale: Locale): DeviceVoice? = null
-            override suspend fun findVoice(id: String): DeviceVoice? = null
+            val countingSubject = SettingsViewModel(
+                settingsRepository = settingsRepository,
+                keyStore = keyStore,
+                rearmAlarm = { _, _ -> },
+                cancelAlarm = { _ -> },
+                geocodingClient = OpenMeteoGeocodingClient(
+                    HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                        install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                    },
+                ),
+                voiceEnumerator = countingEnumerator,
+            )
+            // Drain the initial enumeration triggered by the first prefs
+            // emission (effective locale is the JVM default while region is
+            // SYSTEM).
+            enumerated.receive() shouldBe Locale.US
+
+            // Changing region while voiceLocale stays SYSTEM changes the
+            // effective locale — the device-voice list should be refreshed
+            // for en-AU.
+            countingSubject.setRegion(Region.EN_AU)
+
+            enumerated.receive() shouldBe Locale.forLanguageTag("en-AU")
+        } finally {
+            Locale.setDefault(originalDefault)
         }
-        val countingSubject = SettingsViewModel(
-            settingsRepository = settingsRepository,
-            keyStore = keyStore,
-            rearmAlarm = { _, _ -> },
-            cancelAlarm = { _ -> },
-            geocodingClient = OpenMeteoGeocodingClient(
-                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
-                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
-                },
-            ),
-            voiceEnumerator = countingEnumerator,
-        )
-        // Wait for the initial prefs emission so the first enumeration has fired.
-        countingSubject.state.first { it.region == Region.SYSTEM }
-        val afterInit = enumerationCount
-
-        // Changing region while voiceLocale stays SYSTEM changes the effective
-        // locale — the device-voice list should be refreshed for en-AU.
-        countingSubject.setRegion(Region.EN_AU)
-        countingSubject.state.first { it.region == Region.EN_AU }
-
-        enumerationCount shouldBe afterInit + 1
     }
 }
 
