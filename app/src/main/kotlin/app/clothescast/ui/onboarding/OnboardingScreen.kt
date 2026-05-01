@@ -284,7 +284,7 @@ private fun LocationStep(
                 text = stringResource(R.string.onboarding_location_using_device),
                 style = MaterialTheme.typography.bodyMedium,
             )
-        } else if (location != null && !needsBackgroundPrompt) {
+        } else if (location != null) {
             Text(
                 text = location.displayName ?: "${location.latitude}, ${location.longitude}",
                 style = MaterialTheme.typography.bodyMedium,
@@ -304,9 +304,14 @@ private fun LocationStep(
                 onClick = { backgroundRationaleOpen = true },
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.onboarding_location_grant_background)) }
-        } else if (!configured) {
-            // On TV, device location is not available — go straight to manual entry.
-            if (!isTelevision) {
+        }
+
+        if (!configured) {
+            // Once useDeviceLocation is on, the always-on prompt above takes over and
+            // this grant-foreground button is redundant. Hide it then but keep the
+            // manual fallback reachable below so the user can still finish onboarding
+            // with a valid configuration if they skip always-on.
+            if (!isTelevision && !useDeviceLocation) {
                 Button(
                     onClick = {
                         if (permissionGranted) {
@@ -324,9 +329,9 @@ private fun LocationStep(
                 ) { Text(stringResource(R.string.onboarding_location_grant)) }
 
                 // Once the user has been asked once and denied, surface the manual
-                // fallback as a primary path. Showing it from the start would compete
-                // with the permission button; showing it only on denial keeps the
-                // happier path uncluttered.
+                // fallback hint as a primary path. Showing it from the start would
+                // compete with the permission button; showing it only on denial keeps
+                // the happier path uncluttered.
                 if (permissionAsked && !permissionGranted) {
                     Text(
                         text = stringResource(R.string.onboarding_location_denied_hint),
