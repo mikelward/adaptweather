@@ -4,6 +4,7 @@ import android.app.LocaleManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import android.os.LocaleList
 import app.clothescast.core.domain.model.Region
@@ -57,12 +58,28 @@ object AppLocale {
 
     /** Drop the per-app override so the device locale takes effect. */
     fun clear(context: Context) {
+        // Reset the JVM default to the device locale; otherwise switching from
+        // a non-system region back to SYSTEM in the same process leaves
+        // Locale.getDefault() stuck on the previous app locale (formatting,
+        // TTS fallbacks, etc. would keep behaving as the old region until
+        // process restart).
+        Locale.setDefault(systemLocale())
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.getSystemService(LocaleManager::class.java)
                 ?.applicationLocales = LocaleList.getEmptyLocaleList()
         } else {
             context.prefs().edit().remove(KEY_TAG).apply()
         }
+    }
+
+    /**
+     * The device-level locale, ignoring any per-app override we've installed.
+     * Read from system Resources rather than [Locale.getDefault] because the
+     * latter has already been polluted by [apply] in the same process.
+     */
+    private fun systemLocale(): Locale {
+        val locales = Resources.getSystem().configuration.locales
+        return if (!locales.isEmpty) locales[0] else Locale.ROOT
     }
 
     /**
