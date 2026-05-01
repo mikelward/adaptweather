@@ -86,12 +86,6 @@ new rule the first time something bites you, not the third.
   reported number lower than the real APK's. Run `git fetch --unshallow origin
   main` once at the start of any session that will report versionCodes — the
   user has been bitten by an under-by-15 count.
-- **Report session cost after every merge.** Once a PR merges, surface the
-  running session cost from `/cost`, computed as if **all** usage were
-  billed as extra usage (i.e. ignore any included plan credits — quote the
-  full API-rate figure). One line is enough, e.g. `Session cost so far:
-  $4.72 (extra-usage rate)`. The user uses this to keep a feel for what
-  a merge actually cost to land.
 - **Keep watching merged PRs for late review comments.** Reviewers and
   bots routinely comment *after* merge (Copilot review, human follow-up).
   Stay subscribed to the PR's activity after the merge and handle each
