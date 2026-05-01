@@ -60,6 +60,22 @@ class GenerateDailyInsight(
             ForecastPeriod.TODAY -> todayForecast
             ForecastPeriod.TONIGHT -> tonightForecast
         }
+        // Slice yesterday to the same daytime window as today so the delta clause
+        // compares apples to apples — daytime feels-like high/low on both sides
+        // rather than 24h aggregates that fold in overnight extremes the listener
+        // doesn't care about. Falls back to 24h-vs-24h when either side lacks
+        // daytime hourly entries (legacy cached payloads, sparse fixtures), to
+        // keep the comparison symmetric in the absence of hourly data.
+        val yesterdayDaytime = bundle.yesterday.slicedForToday(
+            morningStart = morningStart,
+            eveningEnd = tonightStart,
+        )
+        val (deltaToday, deltaYesterday) =
+            if (todayForecast.hourly.isNotEmpty() && yesterdayDaytime.hourly.isNotEmpty()) {
+                todayForecast to yesterdayDaytime
+            } else {
+                bundle.today to bundle.yesterday
+            }
         // The home screen wants a side-by-side preview pair: "Today + Tonight"
         // on a morning insight, "Tonight + Tomorrow" on an evening one. We
         // compute the second outfit from the same forecast bundle so showing
@@ -109,7 +125,7 @@ class GenerateDailyInsight(
         }
         val summary = renderInsightSummary(
             today = periodForecast,
-            yesterday = bundle.yesterday,
+            yesterday = deltaYesterday,
             todayTriggeredRules = todayTriggered,
             alerts = activeAlerts,
             events = periodEvents,
@@ -117,7 +133,7 @@ class GenerateDailyInsight(
             eveningEvents = eveningEvents,
             eveningTriggeredRules = eveningTriggered,
             eveningForecast = if (period == ForecastPeriod.TODAY) tonightForecast else null,
-            rawToday = bundle.today,
+            todayForDelta = deltaToday,
         )
         val insight = Insight(
             summary = summary,

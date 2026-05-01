@@ -19,7 +19,8 @@ import java.time.LocalTime
  * The hourly stream covers all three days. We split it by date: today's hours
  * attach to the today forecast, tomorrow's hours attach to the tomorrow forecast
  * (and are also exposed via `tomorrowHourly` for the tonight slice). Yesterday's
- * hourlies are not needed downstream.
+ * hourlies attach to the yesterday forecast so the delta clause can slice both
+ * sides to the same daytime window for a symmetric comparison.
  *
  * Tolerates 2-entry responses (forecast_days=1) for backwards compatibility with
  * older fixtures and any caller that downgrades the request — tomorrow comes
@@ -34,7 +35,8 @@ internal object OpenMeteoMapper {
         val yesterdayDate = LocalDate.parse(response.daily.time[0])
         val todayDate = LocalDate.parse(response.daily.time[1])
 
-        val yesterday = response.daily.toForecast(index = 0, date = yesterdayDate, hourly = emptyList())
+        val yesterdayHourly = response.hourly.forDate(yesterdayDate)
+        val yesterday = response.daily.toForecast(index = 0, date = yesterdayDate, hourly = yesterdayHourly)
         val todayHourly = response.hourly.forDate(todayDate)
         val today = response.daily.toForecast(index = 1, date = todayDate, hourly = todayHourly)
 

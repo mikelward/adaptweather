@@ -64,13 +64,13 @@ class RenderInsightSummary {
         eveningEvents: List<CalendarEvent> = emptyList(),
         eveningTriggeredRules: List<ClothesRule> = emptyList(),
         eveningForecast: DailyForecast? = null,
-        // When [today] has been sliced to a daytime window its feelsLikeMinC
-        // reflects the morning start time rather than the overnight low, making
-        // a low-delta comparison against yesterday's full-day fields misleading.
-        // Pass the raw (un-sliced) today so both deltas use consistent 24h fields.
-        // Defaults to null, which falls back to [today] (correct when the caller
-        // hasn't sliced the forecast, e.g. in unit tests).
-        rawToday: DailyForecast? = null,
+        // The today side of the delta comparison, paired with [yesterday]. The
+        // caller picks the pair so today and yesterday cover the same time range
+        // — typically daytime-vs-daytime when both have hourly entries in the
+        // window, falling back to 24h-vs-24h when either side lacks them.
+        // Defaults to [today], which is correct when the caller hasn't sliced
+        // the forecast (e.g. in unit tests that pass raw 24h fields on both sides).
+        todayForDelta: DailyForecast = today,
     ): InsightSummary {
         val items = todayTriggeredRules.map { it.item }
         val peak = peakPrecip(today)
@@ -91,7 +91,7 @@ class RenderInsightSummary {
             period = period,
             alert = alertClause(alerts),
             band = bandClause(today),
-            delta = if (period == ForecastPeriod.TODAY) deltaClause(rawToday ?: today, yesterday) else null,
+            delta = if (period == ForecastPeriod.TODAY) deltaClause(todayForDelta, yesterday) else null,
             clothes = clothesClause(items),
             precip = peak?.let { PrecipClause(it.condition, it.time) },
             // Calendar tie-in only fires on TONIGHT — pairing the precip peak
