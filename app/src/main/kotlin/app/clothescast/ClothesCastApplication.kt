@@ -1,6 +1,7 @@
 package app.clothescast
 
 import android.app.Application
+import android.content.Context
 import app.clothescast.alarm.DailyAlarmScheduler
 import app.clothescast.calendar.CalendarContractEventReader
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
@@ -16,6 +17,7 @@ import app.clothescast.data.InsightCache
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
 import app.clothescast.diag.DiagLog
+import app.clothescast.locale.AppLocale
 import app.clothescast.location.LocationResolver
 import app.clothescast.notification.InsightNotifier
 import app.clothescast.notification.NotificationChannelRegistrar
@@ -97,6 +99,14 @@ class ClothesCastApplication : Application() {
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    override fun attachBaseContext(base: Context) {
+        // Re-apply the persisted per-app locale before the framework caches a
+        // Resources reference for the Application context (used by the worker
+        // and any non-Activity component). On API 33+ this is a no-op — the
+        // system honours LocaleManager.setApplicationLocales without our help.
+        super.attachBaseContext(AppLocale.wrap(base))
+    }
+
     override fun onCreate() {
         super.onCreate()
         DiagLog.install(this)
@@ -104,6 +114,11 @@ class ClothesCastApplication : Application() {
         applicationScope.launch {
             try {
                 val prefs = settingsRepository.preferences.first()
+                // Reconcile Locale.setDefault (process-scoped, lost on cold
+                // start) and the API 33+ LocaleManager state with the
+                // persisted Region. The pre-API-33 SharedPreferences cache is
+                // already consulted by attachBaseContext above.
+                AppLocale.apply(this@ClothesCastApplication, prefs.region)
                 dailyAlarmScheduler.schedule(prefs.schedule, ForecastPeriod.TODAY)
                 if (prefs.tonightEnabled) {
                     dailyAlarmScheduler.schedule(prefs.tonightSchedule, ForecastPeriod.TONIGHT)

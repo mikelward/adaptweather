@@ -1,5 +1,6 @@
 package app.clothescast
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.WorkManager
+import app.clothescast.locale.AppLocale
 import app.clothescast.notification.NotificationPermission
 import app.clothescast.ui.isTelevision
 import app.clothescast.ui.onboarding.OnboardingScreen
@@ -46,6 +48,13 @@ class MainActivity : ComponentActivity() {
     // whenever it ticks, so a notification tap reliably lands the user on Today
     // regardless of cold/warm start.
     private var navigateToTodayVersion by mutableIntStateOf(0)
+
+    override fun attachBaseContext(newBase: Context) {
+        // Wrap with the persisted per-app locale so Activity Resources render
+        // in the user's chosen Region. No-op on API 33+ where the framework
+        // routes the LocaleManager-supplied locale through automatically.
+        super.attachBaseContext(AppLocale.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -179,6 +188,7 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
                             .makeText(context, message, android.widget.Toast.LENGTH_LONG)
                             .show()
                     },
+                    applyAppLocale = { region -> AppLocale.apply(app, region) },
                 ),
             )
             SettingsScreen(

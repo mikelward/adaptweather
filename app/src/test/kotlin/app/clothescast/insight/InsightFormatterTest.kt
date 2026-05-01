@@ -235,11 +235,14 @@ class InsightFormatterTest {
 
     @Test
     fun `de-AT region on an en-GB base context produces fully German prose`() {
-        // Regression: device locale en-GB, Region set to DE_AT.
-        // On Android 13+ without android:localeConfig, createConfigurationContext()
-        // could fall back to the device locale instead of honouring the de-AT
-        // override, producing English sentence templates but German clothing names
-        // ("Tonight will be cold to cool. Wear Pullover and Jacke.").
+        // Regression: device locale en-GB, Region set to DE_AT used to render
+        // "Tonight will be cold to cool. Wear Pullover and Jacke." on Android
+        // 13+ — the InsightFormatter's locale-bound Locale picked German for
+        // the phraser while createConfigurationContext silently fell back to
+        // the device locale for the templates. The runtime fix lives in
+        // AppLocale (Locale.setDefault + LocaleManager.setApplicationLocales /
+        // attachBaseContext wrap); this test pins the formatter's own
+        // forRegion path as a belt-and-suspenders unit check.
         val enGbConfig = Configuration(context.resources.configuration).apply {
             setLocale(Locale.forLanguageTag("en-GB"))
         }
