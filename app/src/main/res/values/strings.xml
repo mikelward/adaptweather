@@ -77,6 +77,16 @@
     <string name="today_location_required_body">ClothesCast needs to know where you are to fetch the forecast. Grant always-on location permission, or pick a city.</string>
     <string name="today_location_required_action">Open location settings</string>
 
+    <!-- Banner surfaced on the Today screen when the previous run died. The crash
+         trace + recent log lines + your settings are saved on your device under
+         cacheDir/last-crash.txt; tapping Share opens the system share sheet so
+         you can hand the report to whichever app you choose (email, Slack, etc).
+         Nothing is sent automatically. -->
+    <string name="today_crash_banner_title">Last run crashed</string>
+    <string name="today_crash_banner_body">A crash report was saved on your device. Share it so the bug can be fixed? Nothing is sent until you choose where.</string>
+    <string name="today_crash_banner_share">Share report</string>
+    <string name="today_crash_banner_dismiss">Dismiss</string>
+
     <string name="onboarding_title">Welcome to ClothesCast</string>
     <string name="onboarding_subtitle">Two quick choices and you\'re set. Everything else has a sensible default you can tweak later in Settings.</string>
     <string name="onboarding_notifications_title">Notifications</string>
