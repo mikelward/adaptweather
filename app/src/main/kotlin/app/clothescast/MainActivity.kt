@@ -1,7 +1,9 @@
 package app.clothescast
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -188,7 +190,17 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
                             .makeText(context, message, android.widget.Toast.LENGTH_LONG)
                             .show()
                     },
-                    applyAppLocale = { region -> AppLocale.apply(app, region) },
+                    applyAppLocale = { region ->
+                        AppLocale.apply(app, region)
+                        // API 33+ recreates Activities automatically when
+                        // applicationLocales changes; below that we have to
+                        // do it ourselves so the currently visible screen
+                        // re-renders in the new language instead of waiting
+                        // until the user navigates away and back.
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                            (context as? Activity)?.recreate()
+                        }
+                    },
                 ),
             )
             SettingsScreen(
