@@ -10,8 +10,9 @@ import java.nio.file.Path
  * Validates the file-based ack tracking that backs the post-crash banner on
  * the Today screen — see [DiagLog.hasUnacknowledgedCrash] and
  * [DiagLog.acknowledgePersistedCrash]. Identity of "the current crash" is
- * the crash file's last-modified time, so a fresh crash bumps mtime and the
- * banner re-surfaces even when an older crash was already acked.
+ * a content hash of the crash file, so a fresh crash hashes differently and
+ * the banner re-surfaces even when filesystem mtime resolution (1s on ext4)
+ * would have collided with the previously-acked crash.
  */
 class CrashAckTest {
 
@@ -50,22 +51,43 @@ class CrashAckTest {
         DiagLog.writeCrashAcknowledgement(crash, ack)
         DiagLog.isCrashUnacknowledged(crash, ack) shouldBe false
 
-        // Force a different last-modified time. Filesystem mtime resolution
-        // varies (1s on ext4 by default) so explicit setLastModified rather
-        // than relying on a sleep + write keeps the test fast and robust.
         crash.writeText("second")
-        crash.setLastModified(crash.lastModified() + 5_000)
+        DiagLog.isCrashUnacknowledged(crash, ack) shouldBe true
+    }
+
+    @Test
+    fun `mtime collision with new content still re-surfaces`(@TempDir dir: Path) {
+        // Filesystem mtime can tick at 1s granularity (ext4 default) so a
+        // fast crash / restart loop can produce two different crash logs that
+        // share an mtime. Identity must be content, not mtime, or the second
+        // crash would be silently swallowed as already-acked.
+        val (crash, ack) = files(dir)
+        crash.writeText("first")
+        val sharedMtime = crash.lastModified()
+        DiagLog.writeCrashAcknowledgement(crash, ack)
+        DiagLog.isCrashUnacknowledged(crash, ack) shouldBe false
+
+        crash.writeText("second")
+        crash.setLastModified(sharedMtime)
         DiagLog.isCrashUnacknowledged(crash, ack) shouldBe true
     }
 
     @Test
     fun `corrupt ack file falls back to surfacing`(@TempDir dir: Path) {
-        // If the ack file ever ends up with non-numeric junk (manual tamper,
-        // truncated write), prefer to show the banner once more rather than
-        // swallow a real crash report.
+        // If the ack file ever ends up with junk that doesn't match the
+        // current crash hash (manual tamper, truncated write), prefer to
+        // show the banner once more rather than swallow a real crash report.
         val (crash, ack) = files(dir)
         crash.writeText("boom")
-        ack.writeText("not-a-number")
+        ack.writeText("not-a-hash")
+        DiagLog.isCrashUnacknowledged(crash, ack) shouldBe true
+    }
+
+    @Test
+    fun `empty ack file falls back to surfacing`(@TempDir dir: Path) {
+        val (crash, ack) = files(dir)
+        crash.writeText("boom")
+        ack.writeText("")
         DiagLog.isCrashUnacknowledged(crash, ack) shouldBe true
     }
 
