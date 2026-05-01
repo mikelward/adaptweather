@@ -81,14 +81,16 @@ private fun RegionLanguagePicker(
     onSelect: (Region) -> Unit,
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
-    // System tag exposed next to "Follow system locale" so the user can verify
-    // what the app currently resolves to (e.g. "en-GB"). Use the context
-    // resources locale so this updates with runtime app-language changes,
-    // instead of freezing the process default. Strip Unicode extensions
-    // (e.g. `-u-fw-mon` from a Monday-week device preference) — they're
-    // irrelevant to language/region and just clutter the picker label.
     val uiLocale = LocalContext.current.resourcesLocale()
-    val systemTag = remember(uiLocale) { uiLocale.stripExtensions().toLanguageTag() }
+    // System tag exposed next to "Follow system locale" so the user can verify
+    // what the device is actually set to (e.g. "en-GB"). Read from the device
+    // system Resources rather than the active app Resources — once the user
+    // picks a non-SYSTEM Region, AppLocale installs a per-app override and
+    // `resourcesLocale()` would return the chosen region (de-AT), not the
+    // device locale. Strip Unicode extensions (e.g. `-u-fw-mon` from a
+    // Monday-week device preference) — they're irrelevant to language/region
+    // and just clutter the picker label.
+    val systemTag = remember { deviceSystemLocale().stripExtensions().toLanguageTag() }
     val labelFor: @Composable (Region) -> String = { option ->
         val base = stringResource(regionLabel(option))
         if (option == Region.SYSTEM) "$base ($systemTag)" else base
