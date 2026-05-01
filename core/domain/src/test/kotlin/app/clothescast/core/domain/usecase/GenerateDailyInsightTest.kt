@@ -315,17 +315,51 @@ class GenerateDailyInsightTest {
     }
 
     @Test
-    fun `delta clause uses raw day-level fields, not the sliced daytime window`() = runTest {
-        // Scenario: yesterday and today share the same overnight low (4°C) and
-        // afternoon high (20°C) — no meaningful change. But today has an early-dawn
-        // hour at 4°C that falls outside the default daytime window (07:00–19:00).
-        // Before the fix, the sliced today had feelsLikeMinC = 12°C (the 09:00 in-
-        // window low) while yesterday's feelsLikeMinC was still 4°C, producing a
-        // spurious "+8° warmer" report. With the fix, the delta uses bundle.today's
-        // raw 24h fields (4°C min, 20°C max) vs yesterday's (4°C min, 20°C max) —
-        // delta ≈ 0 on both dimensions → no delta clause emitted.
-        val sameDayHourly = listOf(
+    fun `delta compares daytime-vs-daytime when both sides have hourly data`() = runTest {
+        // Scenario: yesterday and today share the same daytime profile (12°C low,
+        // 20°C high in the 07:00–19:00 window) but yesterday had an unusually warm
+        // overnight hour at 18°C that bumped its 24h min above today's pre-dawn
+        // 4°C. A 24h-vs-24h comparison would emit "14° warmer" on the low — a
+        // spurious headline, since the listener experiences the daytime, not the
+        // overnight. With the fix, both sides slice to the same daytime window
+        // and the deltas come out near zero.
+        val todayHourly = listOf(
             HourlyForecast(LocalTime.of(4, 0), 6.0, 4.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val yesterdayHourly = listOf(
+            HourlyForecast(LocalTime.of(2, 0), 20.0, 18.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
+            HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 5.0, WeatherCondition.CLEAR),
+        )
+        val sameDaytimeToday = today.copy(
+            feelsLikeMinC = 4.0,
+            feelsLikeMaxC = 20.0,
+            hourly = todayHourly,
+        )
+        val sameDaytimeYesterday = yesterday.copy(
+            feelsLikeMinC = 18.0,
+            feelsLikeMaxC = 20.0,
+            hourly = yesterdayHourly,
+        )
+        val weather = FakeWeatherRepository(ForecastBundle(sameDaytimeToday, sameDaytimeYesterday))
+        val subject = GenerateDailyInsight(weather, clock = clock)
+
+        val result = subject(london, prefs)
+
+        // Daytime delta: high = 20 - 20 = 0, low = 12 - 12 = 0 → no clause.
+        // (24h delta would have been low = 4 - 18 = -14, emitting a spurious
+        // "14° cooler" — exactly what the daytime slice is meant to suppress.)
+        result.insight.summary.delta.shouldBeNull()
+    }
+
+    @Test
+    fun `delta falls back to 24h fields when yesterday lacks hourly data`() = runTest {
+        // Legacy / sparse fixtures (yesterday with no hourly entries) can't be
+        // sliced to a daytime window. The use case falls back to comparing 24h
+        // fields on both sides, keeping the comparison symmetric.
+        val sameDayHourly = listOf(
             HourlyForecast(LocalTime.of(9, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(15, 0), 22.0, 20.0, 5.0, WeatherCondition.CLEAR),
         )
@@ -334,6 +368,7 @@ class GenerateDailyInsightTest {
             feelsLikeMaxC = 20.0,
             hourly = sameDayHourly,
         )
+        // Yesterday: same 24h aggregates, no hourly — the fallback path.
         val sameDayYesterday = yesterday.copy(
             feelsLikeMinC = 4.0,
             feelsLikeMaxC = 20.0,
@@ -343,7 +378,7 @@ class GenerateDailyInsightTest {
 
         val result = subject(london, prefs)
 
-        // Raw delta: high = 20 - 20 = 0, low = 4 - 4 = 0 → both under 3°, no clause.
+        // 24h delta: high = 20 - 20 = 0, low = 4 - 4 = 0 → no clause.
         result.insight.summary.delta.shouldBeNull()
     }
 

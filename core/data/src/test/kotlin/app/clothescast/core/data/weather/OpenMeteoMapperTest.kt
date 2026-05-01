@@ -39,7 +39,18 @@ class OpenMeteoMapperTest {
         y.precipitationProbabilityMaxPct shouldBe 5.0
         y.precipitationMmTotal shouldBe 0.0
         y.condition shouldBe WeatherCondition.PARTLY_CLOUDY
-        y.hourly shouldBe emptyList()
+    }
+
+    @Test
+    fun `yesterday hourly is filtered to yesterday's date only`() {
+        val y = OpenMeteoMapper.toBundle(loadFixture()).yesterday
+
+        // Fixture has 2 hours on 2026-04-24 + 8 hours on 2026-04-25; yesterday
+        // gets the 2026-04-24 entries so the delta clause can slice both today
+        // and yesterday to the same daytime window.
+        y.hourly shouldHaveSize 2
+        y.hourly.first().time shouldBe LocalTime.of(22, 0)
+        y.hourly.last().time shouldBe LocalTime.of(23, 0)
     }
 
     @Test
