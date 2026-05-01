@@ -400,6 +400,15 @@ internal fun LocationActionRequiredBannerPreview() {
     Frame { LocationActionRequiredBanner(onSetUpLocation = {}) }
 }
 
+@Preview(name = "Banner · last-run crash", widthDp = 360)
+@Composable
+internal fun LastCrashBannerPreview() {
+    // Renders the stateless card variant directly so the snapshot doesn't
+    // depend on a real `cacheDir/last-crash.txt` existing on the Robolectric
+    // filesystem at test time.
+    Frame { LastCrashBannerCard(onShare = {}, onDismiss = {}) }
+}
+
 // 24-hour curve loosely tracking a temperate spring day: cool overnight low,
 // warming through morning, peak around 15:00, then dropping back. Values are
 // in Celsius — the ForecastChart converts at the edge per temperatureUnit.

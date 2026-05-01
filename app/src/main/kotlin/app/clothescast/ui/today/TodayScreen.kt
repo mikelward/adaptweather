@@ -220,6 +220,7 @@ private fun TodayContent(
             .padding(horizontal = 16.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        LastCrashBanner()
         if (locationActionRequired) {
             LocationActionRequiredBanner(onSetUpLocation = onSetUpLocation)
         }

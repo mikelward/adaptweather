@@ -34,6 +34,9 @@ object DiagLog {
     @Volatile
     private var crashFileProvider: (() -> File)? = null
 
+    @Volatile
+    private var ackFileProvider: (() -> File)? = null
+
     fun v(tag: String, msg: String, t: Throwable? = null) = log('V', tag, msg, t).also {
         if (t == null) Log.v(tag, msg) else Log.v(tag, msg, t)
     }
@@ -64,6 +67,7 @@ object DiagLog {
     fun install(context: Context) {
         val appContext = context.applicationContext
         crashFileProvider = { File(appContext.cacheDir, "last-crash.txt") }
+        ackFileProvider = { File(appContext.cacheDir, "last-crash.ack") }
         val previous = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             runCatching { writeCrashLog(thread, throwable) }
@@ -76,6 +80,44 @@ object DiagLog {
         ?.takeIf { it.exists() && it.length() > 0L }
         ?.runCatching { readText() }
         ?.getOrNull()
+
+    /**
+     * True iff a crash from the previous process is on disk and the user hasn't
+     * acknowledged it yet. The Today screen polls this on launch / resume to
+     * surface a "share crash report" banner; tapping either button on the
+     * banner calls [acknowledgePersistedCrash].
+     *
+     * Identity is the crash file's last-modified time, so a fresh crash bumps
+     * mtime and the banner re-appears even if the previous one was acked.
+     */
+    fun hasUnacknowledgedCrash(): Boolean {
+        val crash = crashFileProvider?.invoke() ?: return false
+        val ack = ackFileProvider?.invoke() ?: return false
+        return isCrashUnacknowledged(crash, ack)
+    }
+
+    /** Records the currently persisted crash as seen — see [hasUnacknowledgedCrash]. */
+    fun acknowledgePersistedCrash() {
+        val crash = crashFileProvider?.invoke() ?: return
+        val ack = ackFileProvider?.invoke() ?: return
+        writeCrashAcknowledgement(crash, ack)
+    }
+
+    internal fun isCrashUnacknowledged(crashFile: File, ackFile: File): Boolean {
+        if (!crashFile.exists() || crashFile.length() == 0L) return false
+        if (!ackFile.exists()) return true
+        val ackedMtime = runCatching { ackFile.readText().trim().toLong() }.getOrNull()
+            ?: return true
+        return ackedMtime != crashFile.lastModified()
+    }
+
+    internal fun writeCrashAcknowledgement(crashFile: File, ackFile: File) {
+        if (!crashFile.exists()) return
+        runCatching {
+            ackFile.parentFile?.mkdirs()
+            ackFile.writeText(crashFile.lastModified().toString())
+        }
+    }
 
     private fun writeCrashLog(thread: Thread, throwable: Throwable) {
         val file = crashFileProvider?.invoke() ?: return

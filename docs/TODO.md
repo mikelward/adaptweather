@@ -80,6 +80,43 @@ Code TODOs in source files are linked from here when they exist.
       (highest quality, slowest, costliest). User picks from Settings; the
       Worker passes the chosen id into a per-call `DirectGeminiClient`.
 
+## Analytics & telemetry — under consideration
+
+The post-crash share banner (this PR) covers "tell us when it broke" via
+strictly user-initiated sharing. The questions still open are about
+**product analytics** — which features are worth keeping, which defaults
+serve users best, and which TTS engines are too underused to maintain.
+Decide before wiring anything; the wiring is the easy part.
+
+- [ ] **Decide whether to ship product analytics at all.** If yes, decide
+      delivery shape: opt-out-with-toggle vs. required-first-launch
+      question. PRIVACY.md → "Under consideration" section names both
+      options; resolve and update there before any code lands.
+- [ ] **Lock the event schema before any SDK is added.** Aggregate counts
+      only — never free text. Candidate events: TTS engine in use,
+      schedule cadence (number of slots, weekday vs. weekend), delivery
+      mode (notification vs. widget vs. TTS), clothes-rule customisation
+      (any thresholds tweaked from default? how many rules added?), region
+      / unit settings. Bucketed times rather than exact local times.
+- [ ] **Hard "do not transmit" list — codify in review checklist + tests:**
+      - Calendar event data (titles, times, locations, attendee data).
+        Not aggregated, not hashed, not bucketed — *not at all*.
+      - User names, account identifiers, email addresses, contact info.
+      - Location coordinates or geocoded place names.
+      - Insight prose, notification text, or any free-form rendered
+        content (the same prose that goes to TTS — that's already a
+        bounded, user-controlled flow; analytics must not duplicate it).
+      - Persistent device / install identifiers beyond what's strictly
+        required to honour the opt-out choice.
+- [ ] **Pick a backend before the SDK.** Firebase Analytics pulls Google
+      Play Services telemetry into the app; PostHog / Plausible-style
+      self-hosted avoids that but needs a server. Picking the SDK first
+      and the backend second is how privacy boundaries quietly slip.
+- [ ] **Crash reporting → reconsider remote** after analytics is decided.
+      The local-only banner covers reachability; a remote service (Sentry
+      self-hosted, Bugsnag, etc.) would cover crashes from users who
+      never tap Share. Same opt-in / privacy-policy bar as analytics.
+
 ## Testing & quality
 
 - [ ] **Robolectric tests** for `NotificationBuilder`, `DailyAlarmScheduler`,

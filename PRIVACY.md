@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-04-27_
+_Last updated: 2026-05-01_
 
 ClothesCast is a daily weather-insight app for Android. This policy
 describes what data the app handles, where it goes, and what control you
@@ -8,7 +8,9 @@ have over it.
 
 ## TL;DR
 
-- ClothesCast has no backend servers and no analytics.
+- ClothesCast has no backend servers and does not collect analytics or
+  crash data automatically. Diagnostics are written to a file on your
+  device; nothing leaves your device unless you explicitly share it.
 - Your **approximate location** is sent to [Open-Meteo](https://open-meteo.com)
   to fetch the weather forecast and a place name. That is the only data the
   app sends off your device by default.
@@ -68,6 +70,27 @@ The source code is at <https://github.com/mikelward/clothescast>.
   notification is generated on your device. Nothing is sent to a push
   service.
 
+### Diagnostic logs and crash reports
+
+- **What:** ClothesCast keeps a small in-memory ring buffer of the most
+  recent log lines (errors, warnings, info) and, if the app crashes,
+  writes that buffer plus the stack trace to a file on your device
+  (`cacheDir/last-crash.txt`). The bug-report payload also includes your
+  current settings (schedule, units, TTS choice, clothes rules) and the
+  most recently rendered insight prose.
+- **Why:** So you can hand a complete diagnostic snapshot to the
+  developer when something goes wrong.
+- **Where it goes:** Nowhere by default. After a crash, the home screen
+  surfaces a banner offering to share the report; tapping **Share
+  report** opens Android's system share sheet so you can pick where to
+  send it (email, Slack, Drive, etc.). Dismissing the banner or ignoring
+  it leaves the file on device. There is no automatic upload.
+- **Stored on device:** The ring buffer is process-memory only. The
+  crash file persists across launches until a fresh crash overwrites
+  it, and is cleared on uninstall.
+- **Retention by us:** Whatever you send to whichever destination you
+  pick is governed by that destination's policy.
+
 ### API keys you provide
 
 - If you use online TTS, you supply your own Google Gemini, OpenAI,
@@ -104,7 +127,10 @@ provider's policy linked above for the authoritative terms.
 
 - No accounts, no sign-in.
 - No advertising identifiers, no ad networks.
-- No analytics, crash reporting, or telemetry.
+- No automatic analytics, crash reporting, or telemetry. (Crashes are
+  saved on your device only; sharing the report is something *you*
+  initiate from the home-screen banner — see "Diagnostic logs and crash
+  reports" above.)
 - No precise GPS location.
 - No contacts, photos, microphone, or files.
 - No data is sold or shared for advertising, profiling, or model training
@@ -122,6 +148,42 @@ provider's policy linked above for the authoritative terms.
 - **API keys:** Clear them from Settings → API Keys at any time.
 - **Everything:** Uninstalling the app deletes all locally stored data
   (settings, cached insight, API keys).
+
+## Under consideration
+
+We are weighing whether to add **product analytics** to help decide
+which features are worth keeping and which defaults serve users best —
+e.g. how many people use which TTS engine, how often clothes-rule
+thresholds get customised, what notification times are popular. The
+goal is to inform product decisions, not to identify users.
+
+If we add this, **this policy will be updated before any data is
+collected** and the in-app behaviour will be one of:
+
+- **Opt-out by default**, with a clearly visible toggle in Settings, or
+- **A required first-launch question** the user must answer before the
+  home screen renders, with the choice persisted thereafter.
+
+What such analytics _would_ include:
+
+- Aggregate usage counts of which TTS engines, schedule cadences,
+  delivery modes, and clothes-rule customisations are in use, so we can
+  prune unused options and pick better defaults.
+
+What such analytics _would not_ include — these are **hard limits**, not
+"best-effort":
+
+- **No calendar event data.** Not titles, not times, not locations, not
+  attendees, not whether you have any events at all.
+- **No user names**, account identifiers, email addresses, contact info.
+- **No location coordinates** or geocoded place names.
+- **No insight prose**, notification text, or anything that could carry
+  free-form user content.
+- **No persistent device or install identifier** beyond what's needed to
+  honour your opt-out choice.
+
+This section will be removed (or rewritten as a concrete subsection
+above) once the decision is made.
 
 ## Children
 
