@@ -217,7 +217,5 @@ private fun Context.localizedResources(locale: Locale): Resources {
 
 private fun Context.currentResourcesLocale(): Locale {
     val locales = resources.configuration.locales
-    if (!locales.isEmpty) return locales[0]
-    @Suppress("DEPRECATION")
-    return resources.configuration.locale
+    return if (locales.isEmpty) Locale.getDefault() else locales[0]
 }
