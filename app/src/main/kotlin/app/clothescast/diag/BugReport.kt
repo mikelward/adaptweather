@@ -29,6 +29,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.Instant
 import java.util.Date
 import java.util.Locale
 import kotlin.coroutines.resume
@@ -150,6 +152,24 @@ object BugReport {
         prefs.clothesRules.forEach { appendLine("  - ${describeRule(it)}") }
     }
 
+    /**
+     * Humanises age relative to now so a glance at the bug report tells you
+     * whether the prose was rendered fresh during this run (seconds old) or
+     * served from cache (hours / days). Stops at days because anything older
+     * is already obviously stale.
+     */
+    internal fun humanAge(generatedAt: Instant, now: Instant = Instant.now()): String {
+        val d = Duration.between(generatedAt, now)
+        if (d.isNegative) return "in the future"
+        val seconds = d.seconds
+        return when {
+            seconds < 60 -> "${seconds}s ago"
+            seconds < 3600 -> "${d.toMinutes()}m ago"
+            seconds < 86_400 -> "${d.toHours()}h ago"
+            else -> "${d.toDays()}d ago"
+        }
+    }
+
     private fun describeRule(rule: ClothesRule): String {
         val cond = when (val c = rule.condition) {
             is ClothesRule.TemperatureBelow -> "feelsLikeMinC < ${c.celsius}"
@@ -174,7 +194,7 @@ object BugReport {
         val prose = runCatching { InsightFormatter.forRegion(context, region).format(insight.summary) }
             .getOrElse { "(prose render failed: ${it.javaClass.simpleName})" }
         appendLine("  Prose: $prose")
-        appendLine("  Generated: ${insight.generatedAt}")
+        appendLine("  Generated: ${insight.generatedAt} (${humanAge(insight.generatedAt)})")
         appendLine("  For date: ${insight.forDate}")
         insight.confidence?.let {
             appendLine("  Confidence: ${it.level} (tempSpread=${it.tempSpreadC}°C, " +

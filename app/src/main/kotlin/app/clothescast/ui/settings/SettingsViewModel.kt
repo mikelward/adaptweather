@@ -49,6 +49,14 @@ class SettingsViewModel(
      * Activity passes a Toast-backed implementation.
      */
     private val showError: (String) -> Unit = {},
+    /**
+     * Pushes the chosen [Region] into the platform locale machinery
+     * (Locale.setDefault + LocaleManager / attachBaseContext cache) so the
+     * whole UI re-renders in the chosen language. Defaulted to a no-op so
+     * pure-VM tests don't need an Android Context; the Activity passes an
+     * AppLocale-backed implementation.
+     */
+    private val applyAppLocale: (Region) -> Unit = {},
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -287,6 +295,11 @@ class SettingsViewModel(
     }
 
     fun setRegion(region: Region) {
+        // Apply the locale up front so the UI recreates immediately; the
+        // DataStore write happens in the background. The Application's
+        // onCreate reconciler re-applies on next cold start, so the order
+        // here can't drift out of sync.
+        applyAppLocale(region)
         viewModelScope.launch { settingsRepository.setRegion(region) }
     }
 
@@ -412,6 +425,7 @@ class SettingsViewModel(
         private val voiceEnumerator: TtsVoiceEnumerator,
         private val elevenLabsTtsClient: ElevenLabsTtsClient,
         private val showError: (String) -> Unit,
+        private val applyAppLocale: (Region) -> Unit,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -427,6 +441,7 @@ class SettingsViewModel(
                 voiceEnumerator,
                 elevenLabsTtsClient,
                 showError,
+                applyAppLocale,
             ) as T
         }
     }
