@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
@@ -38,12 +39,14 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.R
 import app.clothescast.core.domain.model.Location
+import app.clothescast.location.hasBackgroundLocationPermission
 import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.notification.NotificationPermission
 import app.clothescast.ui.isTelevision
 import app.clothescast.ui.settings.KeyEntryFields
 import app.clothescast.ui.settings.LinkifiedText
 import app.clothescast.ui.settings.LocationSearchDialog
+import app.clothescast.ui.settings.openAppDetails
 
 /**
  * First-run onboarding. Shown when the user lands on a fresh install missing any
@@ -202,8 +205,23 @@ private fun LocationStep(
     var permissionGranted by remember {
         mutableStateOf(hasCoarseLocationPermission(context))
     }
+    var backgroundGranted by remember {
+        mutableStateOf(hasBackgroundLocationPermission(context))
+    }
     var permissionAsked by remember { mutableStateOf(false) }
     var searchOpen by remember { mutableStateOf(false) }
+    var backgroundRationaleOpen by remember { mutableStateOf(false) }
+    var backgroundDeniedOpen by remember { mutableStateOf(false) }
+
+    // Background launcher: on Android Q (API 29) the inline runtime prompt works;
+    // on R+ ACCESS_BACKGROUND_LOCATION can only be granted from system Settings, so
+    // we deep-link there from the rationale dialog instead of using this launcher.
+    val backgroundLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        backgroundGranted = granted
+        if (!granted) backgroundDeniedOpen = true
+    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -213,7 +231,18 @@ private fun LocationStep(
         // Mirrors LocationEditor: only flip the toggle on if foreground was granted,
         // otherwise the worker would consult the reader and silently fall through to
         // the configured fallback location every day.
-        if (granted) onSetUseDeviceLocation(true)
+        if (granted) {
+            onSetUseDeviceLocation(true)
+            // Auto-chain into the background-permission ask: the daily worker needs
+            // ACCESS_BACKGROUND_LOCATION to read the device fix when the app isn't
+            // foregrounded. Without this chain the user finishes onboarding with
+            // foreground-only and the worker silently falls back to the saved city.
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q &&
+                !hasBackgroundLocationPermission(context)
+            ) {
+                backgroundRationaleOpen = true
+            }
+        }
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -223,6 +252,7 @@ private fun LocationStep(
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 permissionGranted = hasCoarseLocationPermission(context)
+                backgroundGranted = hasBackgroundLocationPermission(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -230,35 +260,62 @@ private fun LocationStep(
     }
 
     // On TV device location is unavailable; only a manually picked city counts.
+    // Otherwise we treat the step as "complete" only when both foreground *and*
+    // background are granted (or the user picked a manual fallback city). Marking
+    // the step complete on foreground-only would put a green check on a state that
+    // still breaks the morning worker.
+    val deviceLocationFullyConfigured =
+        useDeviceLocation && permissionGranted && backgroundGranted
     val configured = if (isTelevision) {
         location != null
     } else {
-        (useDeviceLocation && permissionGranted) || location != null
+        deviceLocationFullyConfigured || location != null
     }
+    val needsBackgroundPrompt =
+        !isTelevision && useDeviceLocation && permissionGranted && !backgroundGranted
 
     StepCard(
         title = stringResource(R.string.onboarding_location_title),
         description = stringResource(R.string.onboarding_location_description),
         complete = configured,
     ) {
-        if (configured) {
-            val summary = when {
-                !isTelevision && useDeviceLocation && permissionGranted ->
-                    stringResource(R.string.onboarding_location_using_device)
-                location?.displayName != null -> location.displayName!!
-                location != null -> "${location.latitude}, ${location.longitude}"
-                else -> ""
-            }
-            if (summary.isNotEmpty()) {
-                Text(text = summary, style = MaterialTheme.typography.bodyMedium)
-            }
-        } else {
+        if (deviceLocationFullyConfigured) {
+            Text(
+                text = stringResource(R.string.onboarding_location_using_device),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        } else if (location != null && !needsBackgroundPrompt) {
+            Text(
+                text = location.displayName ?: "${location.latitude}, ${location.longitude}",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
+        if (needsBackgroundPrompt) {
+            // Foreground granted but background isn't — surface the always-on prompt
+            // as the primary affordance. The worker can't read the device fix without
+            // this, so don't let the user breeze past with foreground-only.
+            Text(
+                text = stringResource(R.string.onboarding_location_background_needed),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Button(
+                onClick = { backgroundRationaleOpen = true },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.onboarding_location_grant_background)) }
+        } else if (!configured) {
             // On TV, device location is not available — go straight to manual entry.
             if (!isTelevision) {
                 Button(
                     onClick = {
                         if (permissionGranted) {
                             onSetUseDeviceLocation(true)
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q &&
+                                !backgroundGranted
+                            ) {
+                                backgroundRationaleOpen = true
+                            }
                         } else {
                             launcher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
                         }
@@ -293,6 +350,50 @@ private fun LocationStep(
                 searchOpen = false
             },
             onSearch = onSearchLocations,
+        )
+    }
+
+    if (backgroundRationaleOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundRationaleOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_rationale_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_rationale_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundRationaleOpen = false
+                    // API 30+ forces the system Settings deep-link for background
+                    // location; API 29 still accepts the inline runtime prompt.
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                        openAppDetails(context)
+                    } else {
+                        backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    }
+                }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundRationaleOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_rationale_dismiss))
+                }
+            },
+        )
+    }
+
+    if (backgroundDeniedOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundDeniedOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_denied_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_denied_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundDeniedOpen = false
+                    openAppDetails(context)
+                }) { Text(stringResource(R.string.settings_location_background_denied_open)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundDeniedOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_denied_keep))
+                }
+            },
         )
     }
 }

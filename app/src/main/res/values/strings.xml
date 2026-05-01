@@ -85,6 +85,8 @@
     <string name="onboarding_location_title">Location</string>
     <string name="onboarding_location_description">Used to fetch the right forecast. Granting location lets ClothesCast read your device\'s coarse location each morning; otherwise pick a city manually.</string>
     <string name="onboarding_location_grant">Grant location permission</string>
+    <string name="onboarding_location_grant_background">Grant always-on location</string>
+    <string name="onboarding_location_background_needed">One more step: ClothesCast needs \'Allow all the time\' so the morning forecast can read your location while the app is closed.</string>
     <string name="onboarding_location_denied_hint">Location permission denied. You can pick a city manually instead.</string>
     <string name="onboarding_location_enter_manual">Enter location manually</string>
     <string name="onboarding_location_using_device">Using your device\'s location each morning.</string>
@@ -143,7 +145,9 @@
 
     <string name="settings_location_title">Location</string>
     <string name="settings_location_use_device">Use device location</string>
-    <string name="settings_location_grant_background">Grant background location (system Settings)</string>
+    <string name="settings_location_grant_background">Grant always-on location</string>
+    <string name="settings_location_background_banner_title">Always-on location not granted</string>
+    <string name="settings_location_background_banner_body">ClothesCast needs \'Allow all the time\' so the morning forecast can read your device location while the app is closed. Without it, the daily forecast falls back to your saved city.</string>
     <string name="settings_location_unset">No location set</string>
     <string name="settings_location_description">The forecast is fetched for this place. Search by city name; results come from Open-Meteo\'s free geocoding service.</string>
     <string name="settings_location_description_device_on">When enabled, ClothesCast reads the device\'s coarse location at notify time (cell-tower / WiFi only — no GPS hardware fix). The location below is used as a fallback if the device read fails. Background location must be granted in system Settings or the morning Worker can\'t read it.</string>

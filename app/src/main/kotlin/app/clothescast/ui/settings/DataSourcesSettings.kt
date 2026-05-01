@@ -11,6 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -81,10 +83,32 @@ private fun LocationCard(
     onClear: () -> Unit,
     onSearch: suspend (String) -> List<Location>,
 ) {
+    val context = LocalContext.current
     var dialogOpen by remember { mutableStateOf(false) }
+    var backgroundGranted by remember {
+        mutableStateOf(hasBackgroundLocationPermission(context))
+    }
+
+    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        // Re-check on resume so the prominent "Grant always-on" CTA disappears once
+        // the user grants the permission via the system Settings deep-link.
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                backgroundGranted = hasBackgroundLocationPermission(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val needsBackground = useDeviceLocation && !backgroundGranted
+
     SectionCard(title = stringResource(R.string.settings_location_title)) {
         DeviceLocationToggleRow(
             checked = useDeviceLocation,
+            backgroundGranted = backgroundGranted,
+            onBackgroundChanged = { backgroundGranted = it },
             onCheckedChange = onSetUseDeviceLocation,
         )
 
@@ -102,16 +126,34 @@ private fun LocationCard(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Button(
-            onClick = { dialogOpen = true },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(
-                stringResource(
-                    if (current == null) R.string.settings_location_set
-                    else R.string.settings_location_change,
-                ),
-            )
+        // Demote "Set/Change location" to outlined while always-on is the missing
+        // piece — the banner above carries the filled-button emphasis. When device
+        // location is off (or background is granted) the location picker is the
+        // primary action and gets the filled style.
+        if (needsBackground) {
+            OutlinedButton(
+                onClick = { dialogOpen = true },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    stringResource(
+                        if (current == null) R.string.settings_location_set
+                        else R.string.settings_location_change,
+                    ),
+                )
+            }
+        } else {
+            Button(
+                onClick = { dialogOpen = true },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    stringResource(
+                        if (current == null) R.string.settings_location_set
+                        else R.string.settings_location_change,
+                    ),
+                )
+            }
         }
         if (current != null) {
             TextButton(onClick = onClear, modifier = Modifier.fillMaxWidth()) {
@@ -133,32 +175,41 @@ private fun LocationCard(
 }
 
 @Composable
+private fun BackgroundLocationBanner() {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_location_background_banner_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(R.string.settings_location_background_banner_body),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+@Composable
 private fun DeviceLocationToggleRow(
     checked: Boolean,
+    backgroundGranted: Boolean,
+    onBackgroundChanged: (Boolean) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
-    // Track background-permission state so the "Grant always-on" prompt actually
-    // disappears when the user returns from system Settings having granted it —
-    // without an on-resume re-check the composable keeps the stale value from
-    // first composition and the button lingers forever.
-    var backgroundGranted by remember {
-        mutableStateOf(hasBackgroundLocationPermission(context))
-    }
     var rationaleOpen by remember { mutableStateOf(false) }
     var backgroundRationaleOpen by remember { mutableStateOf(false) }
     var backgroundDeniedOpen by remember { mutableStateOf(false) }
-
-    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                backgroundGranted = hasBackgroundLocationPermission(context)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
 
     // Background launcher: on Android 11+ this auto-deep-links into the system
     // Settings location picker; on Android 10 it shows the inline dialog. If the
@@ -167,7 +218,7 @@ private fun DeviceLocationToggleRow(
     val backgroundLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
     ) { granted ->
-        backgroundGranted = granted
+        onBackgroundChanged(granted)
         if (!granted) backgroundDeniedOpen = true
     }
 
@@ -230,7 +281,12 @@ private fun DeviceLocationToggleRow(
     }
 
     if (checked && !backgroundGranted) {
-        OutlinedButton(
+        // Promote always-on location to a prominent banner + filled CTA: without
+        // ACCESS_BACKGROUND_LOCATION the daily worker can't read the device fix,
+        // so this is the most important call to action on the screen whenever
+        // device location is on.
+        BackgroundLocationBanner()
+        Button(
             onClick = { backgroundRationaleOpen = true },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.settings_location_grant_background)) }
