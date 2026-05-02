@@ -143,6 +143,7 @@ class PreviewSnapshots {
     @Test fun confidence_low() = capture { ConfidenceLowPreview() }
 
     @Test fun work_status_running() = capture { WorkStatusRunningPreview() }
+    @Test fun work_status_retrying() = capture { WorkStatusRetryingPreview() }
     @Test fun work_status_failed() = capture { WorkStatusFailedPreview() }
     @Test fun work_status_failed_unhandled() = capture { WorkStatusFailedUnhandledPreview() }
     @Test fun work_status_failed_no_location() = capture { WorkStatusFailedNoLocationPreview() }

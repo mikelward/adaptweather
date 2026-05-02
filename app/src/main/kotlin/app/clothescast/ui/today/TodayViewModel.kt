@@ -3,6 +3,7 @@ package app.clothescast.ui.today
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import app.clothescast.core.domain.model.Fact
@@ -46,8 +47,96 @@ data class TodayState(
 
 sealed class WorkStatus {
     data object Idle : WorkStatus()
+    /** A fresh enqueue is being run for the first time. */
     data object Running : WorkStatus()
+    /**
+     * The worker returned [androidx.work.ListenableWorker.Result.retry] at
+     * least once and is now waiting on backoff / connectivity for another
+     * attempt. Distinct from [Running] so the banner can say "last attempt
+     * failed — retrying" instead of pretending the user just tapped Refresh.
+     */
+    data object Retrying : WorkStatus()
     data class Failed(val reason: String?, val detail: String?) : WorkStatus()
+}
+
+/**
+ * The just-the-fields-we-need view of a [WorkInfo]. We map to this before
+ * running [selectStatus] so the selection logic can be unit-tested as pure
+ * data without constructing real [WorkInfo] instances (its public constructor
+ * takes ~12 params and varies subtly between WorkManager versions, so a
+ * direct unit test against [WorkInfo] is brittle).
+ */
+internal data class WorkInfoLite(
+    val state: WorkInfo.State,
+    val runAttemptCount: Int,
+    val outputData: Data,
+)
+
+internal fun List<WorkInfo>.toLite(): List<WorkInfoLite> =
+    map { WorkInfoLite(it.state, it.runAttemptCount, it.outputData) }
+
+/**
+ * Maps a WorkManager unique-work history to the state the Today banner cares
+ * about. Pulled out as a top-level function (rather than a private method on
+ * [TodayViewModel]) so it's directly unit-testable without spinning up the
+ * full ViewModel + DataStore plumbing.
+ *
+ * Selection rules, in priority order:
+ *  1. **Active wins.** If any entry is ENQUEUED/RUNNING/BLOCKED, that's the
+ *     live run; ignore terminal history. If [WorkInfo.runAttemptCount] > 0
+ *     it's a post-`Result.retry()` reattempt — surface as [WorkStatus.Retrying].
+ *  2. **Most-recent terminal otherwise.** Pick the SUCCEEDED/FAILED entry with
+ *     the highest [FetchAndNotifyWorker.KEY_COMPLETED_AT] timestamp. The
+ *     previous heuristic (`maxByOrNull { runAttemptCount }`) was wrong: a
+ *     stale FAILED entry from days ago, with a high retry count from when it
+ *     died, would mask a freshly successful run that had `runAttemptCount=0`.
+ *     CANCELLED entries are ignored — they exist transiently after a REPLACE
+ *     enqueue and aren't the run the user wants to know about.
+ *  3. **Tie-break in favour of SUCCEEDED.** Pre-upgrade WorkInfos lack the
+ *     completion timestamp and tie at 0; if a fresh success ties with a stale
+ *     failure, the success wins. (Once any new run completes, its non-zero
+ *     timestamp dominates.)
+ */
+internal fun selectStatus(infos: List<WorkInfoLite>): WorkStatus {
+    if (infos.isEmpty()) return WorkStatus.Idle
+    val active = infos.firstOrNull {
+        it.state == WorkInfo.State.ENQUEUED ||
+            it.state == WorkInfo.State.RUNNING ||
+            it.state == WorkInfo.State.BLOCKED
+    }
+    if (active != null) {
+        return if (active.runAttemptCount > 0) WorkStatus.Retrying else WorkStatus.Running
+    }
+    val completed = infos.filter {
+        it.state == WorkInfo.State.SUCCEEDED || it.state == WorkInfo.State.FAILED
+    }
+    if (completed.isEmpty()) return WorkStatus.Idle
+    val latest = completed.maxWithOrNull(
+        compareBy<WorkInfoLite> { it.outputData.getLong(FetchAndNotifyWorker.KEY_COMPLETED_AT, 0L) }
+            // Tie-break on success so a brand-new SUCCEEDED beats a pre-upgrade FAILED.
+            .thenBy { if (it.state == WorkInfo.State.SUCCEEDED) 1 else 0 }
+    ) ?: return WorkStatus.Idle
+    return when (latest.state) {
+        WorkInfo.State.FAILED -> WorkStatus.Failed(
+            reason = latest.outputData.getString(FetchAndNotifyWorker.KEY_REASON),
+            detail = latest.outputData.getString(FetchAndNotifyWorker.KEY_REASON_DETAIL),
+        )
+        else -> WorkStatus.Idle
+    }
+}
+
+/**
+ * Cross-chain precedence for [TodayViewModel]. Any in-flight chain (Running or
+ * Retrying) keeps the spinner up; otherwise surface a failure if either chain
+ * ended in one. Comparing run-attempt counts across two unrelated unique-work
+ * chains was the previous source of "old failure on the wrong chain wins".
+ */
+internal fun mergeWorkStatus(a: WorkStatus, b: WorkStatus): WorkStatus = when {
+    a is WorkStatus.Running || b is WorkStatus.Running -> WorkStatus.Running
+    a is WorkStatus.Retrying || b is WorkStatus.Retrying -> WorkStatus.Retrying
+    a is WorkStatus.Failed -> a
+    b is WorkStatus.Failed -> b
+    else -> WorkStatus.Idle
 }
 
 class TodayViewModel(
@@ -66,7 +155,7 @@ class TodayViewModel(
     ) { insight, todayInfos, tonightInfos, prefs ->
         TodayState(
             insight = insight,
-            workStatus = mergeStatus(todayInfos.toStatus(), tonightInfos.toStatus()),
+            workStatus = mergeWorkStatus(selectStatus(todayInfos.toLite()), selectStatus(tonightInfos.toLite())),
             temperatureUnit = prefs.temperatureUnit,
             region = prefs.region,
             morningTime = prefs.schedule.time,
@@ -93,35 +182,6 @@ class TodayViewModel(
     /** Reverts every threshold to [OutfitSuggestion.Thresholds.DEFAULT]. */
     fun resetOutfitThresholds() {
         viewModelScope.launch { settingsRepository.resetOutfitThresholds() }
-    }
-
-    private fun List<WorkInfo>.toStatus(): WorkStatus {
-        // Most recent terminal or running entry — WorkManager may keep multiple history
-        // rows for the same unique name. We take the first one whose state matters.
-        // Caller resolves cross-chain precedence in [mergeStatus]; runAttemptCount
-        // is only comparable within a single unique-work chain.
-        if (isEmpty()) return WorkStatus.Idle
-        val latest = maxByOrNull { it.runAttemptCount } ?: first()
-        return when (latest.state) {
-            WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> WorkStatus.Running
-            WorkInfo.State.FAILED -> WorkStatus.Failed(
-                reason = latest.outputData.getString(FetchAndNotifyWorker.KEY_REASON),
-                detail = latest.outputData.getString(FetchAndNotifyWorker.KEY_REASON_DETAIL),
-            )
-            else -> WorkStatus.Idle
-        }
-    }
-
-    // Explicit precedence: any in-flight refresh keeps the spinner up; otherwise
-    // surface the most recent failure if either chain ended in one; otherwise
-    // idle. Avoids comparing runAttemptCount across two unrelated WorkManager
-    // unique-work histories — those counters are per-chain and would let a stale
-    // FAILED entry from one chain mask a live RUNNING entry on the other.
-    private fun mergeStatus(a: WorkStatus, b: WorkStatus): WorkStatus = when {
-        a is WorkStatus.Running || b is WorkStatus.Running -> WorkStatus.Running
-        a is WorkStatus.Failed -> a
-        b is WorkStatus.Failed -> b
-        else -> WorkStatus.Idle
     }
 
     class Factory(

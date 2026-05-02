@@ -354,6 +354,12 @@ internal fun WorkStatusRunningPreview() {
     Frame { WorkStatusBanner(WorkStatus.Running) }
 }
 
+@Preview(name = "Banner · retrying", widthDp = 360)
+@Composable
+internal fun WorkStatusRetryingPreview() {
+    Frame { WorkStatusBanner(WorkStatus.Retrying) }
+}
+
 @Preview(name = "Banner · failed (HTTP error)", widthDp = 360)
 @Composable
 internal fun WorkStatusFailedPreview() {
