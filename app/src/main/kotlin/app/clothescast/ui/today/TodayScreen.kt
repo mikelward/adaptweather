@@ -45,6 +45,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -803,13 +804,16 @@ private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom)
 internal fun InsightCard(insight: Insight, region: Region) {
     val context = LocalContext.current
     val formatter = remember(context, region) { InsightFormatter.forRegion(context, region) }
+    val locale = LocalConfiguration.current.locales[0]
+    val dateFormatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
+    val generatedAtFormatter = remember(locale) { DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale) }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = DATE_FORMAT.format(insight.forDate),
+                text = dateFormatter.format(insight.forDate),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -821,7 +825,7 @@ internal fun InsightCard(insight: Insight, region: Region) {
             Text(
                 text = stringResource(
                     R.string.today_generated_at,
-                    GENERATED_AT_FORMAT.format(insight.generatedAt.atZone(ZoneId.systemDefault())),
+                    generatedAtFormatter.format(insight.generatedAt.atZone(ZoneId.systemDefault())),
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -983,7 +987,3 @@ private fun java.time.LocalTime.isInTonightWindow(
     this >= tonightTime && this < morningTime
 }
 
-private val DATE_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.getDefault())
-private val GENERATED_AT_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale.getDefault())
