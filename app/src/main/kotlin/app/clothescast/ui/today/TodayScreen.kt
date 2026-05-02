@@ -95,7 +95,11 @@ fun TodayScreen(
     val context = LocalContext.current
     val activity = context.findActivity()
     val coroutineScope = rememberCoroutineScope()
-    val isWorking = state.workStatus is WorkStatus.Running
+    // Both Running (fresh enqueue) and Retrying (post-failure backoff) suppress
+    // Refresh — the worker still bills a Gemini call on resumption, and a tap
+    // would REPLACE the in-flight retry chain. The banner copy distinguishes them.
+    val isWorking = state.workStatus is WorkStatus.Running ||
+        state.workStatus is WorkStatus.Retrying
     var overflowExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -281,24 +285,8 @@ internal fun LocationActionRequiredBanner(onSetUpLocation: () -> Unit) {
 internal fun WorkStatusBanner(status: WorkStatus) {
     when (status) {
         is WorkStatus.Idle -> Unit
-        is WorkStatus.Running -> {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                    )
-                    Text(
-                        text = stringResource(R.string.today_working),
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(start = 12.dp),
-                    )
-                }
-            }
-        }
+        is WorkStatus.Running -> SpinnerBanner(stringResource(R.string.today_working))
+        is WorkStatus.Retrying -> SpinnerBanner(stringResource(R.string.today_retrying))
         is WorkStatus.Failed -> {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -338,6 +326,26 @@ internal fun WorkStatusBanner(status: WorkStatus) {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SpinnerBanner(message: String) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                strokeWidth = 2.dp,
+            )
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 12.dp),
+            )
         }
     }
 }

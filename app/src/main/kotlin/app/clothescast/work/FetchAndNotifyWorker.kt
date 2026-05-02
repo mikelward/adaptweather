@@ -7,6 +7,7 @@ import androidx.core.content.getSystemService
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
@@ -60,7 +61,9 @@ class FetchAndNotifyWorker(
     private val app: ClothesCastApplication
         get() = applicationContext as ClothesCastApplication
 
-    override suspend fun doWork(): Result {
+    override suspend fun doWork(): Result = stamped(doWorkInternal())
+
+    private suspend fun doWorkInternal(): Result {
         val prefs = try {
             app.settingsRepository.preferences.first()
         } catch (t: Throwable) {
@@ -238,6 +241,28 @@ class FetchAndNotifyWorker(
         if (detail.isNullOrBlank()) workDataOf(KEY_REASON to code)
         else workDataOf(KEY_REASON to code, KEY_REASON_DETAIL to detail)
 
+    /**
+     * Adds a wall-clock completion timestamp to every terminal Result so the Today
+     * screen can pick out the genuinely-most-recent run from WorkManager's history.
+     * Without this, [TodayViewModel.selectStatus] has no way to order multiple
+     * SUCCEEDED/FAILED entries and a stale failure can mask a fresh success — see
+     * the "error persists after it worked" report on PR claude/fix-forecast-api-error.
+     *
+     * Result.retry() leaves the WorkInfo non-terminal, so it doesn't need stamping;
+     * we only annotate success / failure outputs.
+     */
+    private fun stamped(result: Result): Result {
+        val now = System.currentTimeMillis()
+        return when (result) {
+            is Result.Success -> Result.success(result.outputData.merged(KEY_COMPLETED_AT, now))
+            is Result.Failure -> Result.failure(result.outputData.merged(KEY_COMPLETED_AT, now))
+            else -> result
+        }
+    }
+
+    private fun Data.merged(key: String, value: Long): Data =
+        Data.Builder().putAll(this).putLong(key, value).build()
+
     // First line of the exception message only — Ktor's NoTransformationFoundException
     // packs the URL, body excerpt, and a FAQ link into a multi-line wall of text.
     // Full stack trace stays in logcat and the diag ring buffer (DiagLog.e above).
@@ -402,6 +427,14 @@ class FetchAndNotifyWorker(
         const val KEY_REASON = "reason"
         const val KEY_REASON_DETAIL = "reason_detail"
 
+        /**
+         * Wall-clock millis stamped on every terminal Result. Used by
+         * [TodayViewModel.selectStatus] to disambiguate "which of these
+         * SUCCEEDED/FAILED WorkInfos is actually the latest" — WorkInfo itself
+         * exposes neither a completion time nor a chronological ordering.
+         */
+        const val KEY_COMPLETED_AT = "completed_at_ms"
+
         const val REASON_UNEXPECTED_HTTP = "unexpected_http"
         const val REASON_UNHANDLED = "unhandled"
         const val REASON_NO_LOCATION = "no_location"
@@ -433,7 +466,13 @@ class FetchAndNotifyWorker(
 
             val request = OneTimeWorkRequestBuilder<FetchAndNotifyWorker>()
                 .setConstraints(constraints)
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
+                // 10s is WorkManager's MIN_BACKOFF_MILLIS — going lower silently
+                // clamps. The just-after-doze case (DNS resolver not warm yet
+                // when NetworkType.CONNECTED is satisfied) recovers in seconds,
+                // so the previous 30s floor + exponential growth was burning
+                // ~16min on what's typically a 1-2s glitch. See bug report
+                // 2026-05-02: alarm at 07:00 → insight delivered at 07:17.
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS)
                 .setInputData(
                     workDataOf(
                         KEY_FORCE_REFRESH to force,
