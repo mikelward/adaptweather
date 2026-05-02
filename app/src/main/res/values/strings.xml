@@ -452,13 +452,13 @@
 
     <string name="notification_channel_daily_insight_name">Daily ClothesCast</string>
     <string name="notification_channel_daily_insight_description">The morning weather summary you opted in to.</string>
-    <string name="notification_daily_insight_title">Today\'s weather</string>
+    <string name="notification_daily_insight_title">Today\'s ClothesCast</string>
 
     <string name="notification_channel_tonight_insight_default_name">Nightly ClothesCast (with events)</string>
     <string name="notification_channel_tonight_insight_default_description">The evening weather summary when you have calendar events tonight. Plays your default notification sound.</string>
     <string name="notification_channel_tonight_insight_silent_name">Nightly ClothesCast (silent)</string>
     <string name="notification_channel_tonight_insight_silent_description">The evening weather summary when your evening is empty. Posted silently — you can glance at it on the lock screen, but it won\'t make a sound.</string>
-    <string name="notification_tonight_insight_title">Tonight\'s weather</string>
+    <string name="notification_tonight_insight_title">Tonight\'s ClothesCast</string>
 
     <string name="notification_channel_weather_alerts_name">Severe weather alerts</string>
     <string name="notification_channel_weather_alerts_description">High-priority alerts for severe or extreme weather events affecting your area. Delivered as soon as the daily fetch detects them.</string>
