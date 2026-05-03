@@ -52,6 +52,7 @@ class ReverseGeocoder(
                 DiagLog.w(TAG, "Reverse geocode timed out after ${timeoutMillis}ms.")
                 return null
             }
+        addresses.firstOrNull()?.logAllFields()
         return addresses.firstOrNull()?.pickCityName()
     }
 
@@ -109,6 +110,26 @@ class ReverseGeocoder(
         listOf(locality, subLocality, subAdminArea)
             .firstOrNull { !it.isNullOrBlank() }
             ?.trim()
+
+    private fun Address.logAllFields() {
+        DiagLog.d(TAG, "reverse geocode address fields:")
+        DiagLog.d(TAG, "  featureName=$featureName")
+        DiagLog.d(TAG, "  premises=$premises")
+        DiagLog.d(TAG, "  subThoroughfare=$subThoroughfare")
+        DiagLog.d(TAG, "  thoroughfare=$thoroughfare")
+        DiagLog.d(TAG, "  subLocality=$subLocality")
+        DiagLog.d(TAG, "  locality=$locality")
+        DiagLog.d(TAG, "  subAdminArea=$subAdminArea")
+        DiagLog.d(TAG, "  adminArea=$adminArea")
+        DiagLog.d(TAG, "  countryCode=$countryCode")
+        DiagLog.d(TAG, "  countryName=$countryName")
+        DiagLog.d(TAG, "  postalCode=$postalCode")
+        DiagLog.d(TAG, "  phone=$phone")
+        DiagLog.d(TAG, "  url=$url")
+        for (i in 0..maxAddressLineIndex) {
+            DiagLog.d(TAG, "  addressLine[$i]=${getAddressLine(i)}")
+        }
+    }
 
     companion object {
         private const val TAG = "ReverseGeocoder"
