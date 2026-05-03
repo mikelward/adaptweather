@@ -112,7 +112,7 @@
     <string name="onboarding_location_using_device">Using your device\'s location each morning.</string>
 
     <string name="onboarding_gemini_title">Gemini API key</string>
-    <string name="onboarding_gemini_description">Use Gemini to get high quality voices. Get a free API key at aistudio.google.com. Or skip to use your phone\'s built-in voices.</string>
+    <string name="onboarding_gemini_description">Use Gemini to get high quality voices.</string>
     <string name="onboarding_step_done">Done</string>
     <string name="onboarding_skip">Skip for now</string>
     <string name="onboarding_continue">Continue</string>
@@ -166,8 +166,9 @@
     <string name="settings_api_key_openai_label">OpenAI</string>
     <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
+    <string name="settings_api_key_gemini_header">Use Gemini to get high quality voices.</string>
     <string name="settings_api_key_status_set">A Gemini key is configured.</string>
-    <string name="settings_api_key_status_unset">No Gemini key configured. Get one at aistudio.google.com to use Gemini voices.</string>
+    <string name="settings_api_key_status_unset">Get a free API key at aistudio.google.com</string>
     <string name="settings_api_key_placeholder">Paste your Gemini API key</string>
     <string name="settings_api_key_save">Save Gemini key</string>
     <string name="settings_api_key_clear">Clear stored Gemini key</string>

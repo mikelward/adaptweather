@@ -212,6 +212,11 @@ internal fun VoiceContent(
             }
             when (selected) {
                 TtsEngine.GEMINI -> {
+                    Text(
+                        text = stringResource(R.string.settings_api_key_gemini_header),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                     KeyEntryFields(
                         configured = geminiKeyConfigured,
                         statusText = stringResource(
