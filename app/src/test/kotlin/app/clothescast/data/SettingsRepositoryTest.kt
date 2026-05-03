@@ -14,6 +14,7 @@ import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
+import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
@@ -338,6 +339,33 @@ class SettingsRepositoryTest {
 
         subject.setElevenLabsStability(-0.5)
         subject.preferences.first().elevenLabsStability shouldBe 0.0
+    }
+
+    @Test
+    fun `setTtsEngineIfUnset writes when nothing is stored`() = runTest {
+        subject.preferences.first().ttsEngine shouldBe TtsEngine.DEVICE
+
+        subject.setTtsEngineIfUnset(TtsEngine.GEMINI)
+        subject.preferences.first().ttsEngine shouldBe TtsEngine.GEMINI
+    }
+
+    @Test
+    fun `setTtsEngineIfUnset does not clobber an explicit choice`() = runTest {
+        subject.setTtsEngine(TtsEngine.ELEVENLABS)
+
+        subject.setTtsEngineIfUnset(TtsEngine.GEMINI)
+        subject.preferences.first().ttsEngine shouldBe TtsEngine.ELEVENLABS
+    }
+
+    @Test
+    fun `setTtsEngineIfUnset does not clobber an explicit DEVICE choice`() = runTest {
+        // The default is also DEVICE, so explicitly picking DEVICE has to
+        // count as "set" — otherwise re-running onboarding would silently
+        // promote a deliberately-DEVICE user to Gemini.
+        subject.setTtsEngine(TtsEngine.DEVICE)
+
+        subject.setTtsEngineIfUnset(TtsEngine.GEMINI)
+        subject.preferences.first().ttsEngine shouldBe TtsEngine.DEVICE
     }
 
     @Test

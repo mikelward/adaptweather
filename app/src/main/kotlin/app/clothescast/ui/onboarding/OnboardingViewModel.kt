@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
 import app.clothescast.core.domain.model.Location
+import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,7 +45,13 @@ class OnboardingViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), OnboardingState())
 
     fun setApiKey(key: String) {
-        viewModelScope.launch { secureKeyStore.set(key.trim()) }
+        viewModelScope.launch {
+            secureKeyStore.set(key.trim())
+            // First-run flip: if the user hasn't picked a TTS engine yet,
+            // default to Gemini now that they've configured a Gemini key.
+            // setTtsEngineIfUnset is a no-op when an explicit choice exists.
+            settingsRepository.setTtsEngineIfUnset(TtsEngine.GEMINI)
+        }
     }
 
     fun setUseDeviceLocation(enabled: Boolean) {
