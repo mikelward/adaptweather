@@ -117,7 +117,7 @@ internal fun OnboardingContent(
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = stringResource(R.string.onboarding_subtitle),
+            text = stringResource(if (isTelevision) R.string.onboarding_subtitle_tv else R.string.onboarding_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
