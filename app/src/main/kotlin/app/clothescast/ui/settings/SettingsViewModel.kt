@@ -3,6 +3,8 @@ package app.clothescast.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import app.clothescast.core.data.location.OpenMeteoGeocodingClient
 import app.clothescast.core.data.tts.ElevenLabsTtsClient
 import app.clothescast.core.domain.model.ClothesRule
@@ -19,6 +21,7 @@ import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
 import app.clothescast.diag.DiagLog
+import app.clothescast.work.FetchAndNotifyWorker
 import app.clothescast.tts.TtsVoiceEnumerator
 import app.clothescast.tts.resolve
 import app.clothescast.tts.toJavaLocale
@@ -67,6 +70,13 @@ class SettingsViewModel(
      * `FetchAndNotifyWorker.enqueueOneShot`.
      */
     private val refreshLocationCache: () -> Unit = {},
+    /**
+     * WorkManager for observing the location-cache-refresh job state and for
+     * cancelling it when device location is toggled off mid-flight. Null in
+     * tests — JVM test host has no Android services; [locationDetecting] then
+     * stays permanently false.
+     */
+    private val workManager: WorkManager? = null,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -135,6 +145,19 @@ class SettingsViewModel(
             }
         }
         viewModelScope.launch { refreshApiKeyStatus() }
+        workManager?.let { wm ->
+            viewModelScope.launch {
+                wm.getWorkInfosForUniqueWorkFlow(FetchAndNotifyWorker.UNIQUE_WORK_NAME_LOCATION_CACHE)
+                    .collect { infos ->
+                        val detecting = infos.any { info ->
+                            info.state == WorkInfo.State.ENQUEUED ||
+                                info.state == WorkInfo.State.RUNNING ||
+                                info.state == WorkInfo.State.BLOCKED
+                        }
+                        _state.update { it.copy(locationDetecting = detecting) }
+                    }
+            }
+        }
     }
 
     /**
@@ -367,15 +390,20 @@ class SettingsViewModel(
     fun setUseDeviceLocation(enabled: Boolean) {
         viewModelScope.launch {
             settingsRepository.setUseDeviceLocation(enabled)
-            // Eagerly populate the device-location cache so the user sees
-            // their city in Settings within seconds, instead of waiting for
-            // the morning worker run. The worker resolves the device fix and
-            // writes it back via setLocation() before any cache short-circuit,
-            // so this works even when today's insight is already cached.
-            // Awaited *after* the toggle write so the worker reads the
-            // freshly-updated `useDeviceLocation = true` and actually attempts
-            // the resolve. Skipped on toggle-off — nothing to refresh there.
-            if (enabled) refreshLocationCache()
+            if (enabled) {
+                // Eagerly populate the device-location cache so the user sees
+                // their city in Settings within seconds, instead of waiting for
+                // the morning worker run. Awaited *after* the toggle write so
+                // the worker reads useDeviceLocation = true when it resolves.
+                refreshLocationCache()
+            } else {
+                // Cancel any in-flight cache-refresh job. Without this, an
+                // on→off flip before the job starts still lets it run and
+                // persist a device fix via setLocation(), silently overwriting
+                // the user's manual fallback city even though device location
+                // is now off.
+                workManager?.cancelUniqueWork(FetchAndNotifyWorker.UNIQUE_WORK_NAME_LOCATION_CACHE)
+            }
         }
     }
 
@@ -461,6 +489,7 @@ class SettingsViewModel(
         private val showError: (String) -> Unit,
         private val applyAppLocale: (Region) -> Unit,
         private val refreshLocationCache: () -> Unit,
+        private val workManager: WorkManager? = null,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -478,6 +507,7 @@ class SettingsViewModel(
                 showError,
                 applyAppLocale,
                 refreshLocationCache,
+                workManager,
             ) as T
         }
     }

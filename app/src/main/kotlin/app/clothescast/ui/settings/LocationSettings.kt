@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 internal fun LocationContent(
     location: Location?,
     useDeviceLocation: Boolean,
+    locationDetecting: Boolean = false,
     padding: PaddingValues,
     onSetUseDeviceLocation: (Boolean) -> Unit,
     onSelectLocation: (Location) -> Unit,
@@ -64,6 +65,7 @@ internal fun LocationContent(
         LocationCard(
             current = location,
             useDeviceLocation = useDeviceLocation,
+            locationDetecting = locationDetecting,
             onSetUseDeviceLocation = onSetUseDeviceLocation,
             onSelect = onSelectLocation,
             onClear = onClearLocation,
@@ -76,6 +78,7 @@ internal fun LocationContent(
 private fun LocationCard(
     current: Location?,
     useDeviceLocation: Boolean,
+    locationDetecting: Boolean,
     onSetUseDeviceLocation: (Boolean) -> Unit,
     onSelect: (Location) -> Unit,
     onClear: () -> Unit,
@@ -171,7 +174,7 @@ private fun LocationCard(
         )
 
         Text(
-            text = currentLocationSummary(current, useDeviceLocation),
+            text = currentLocationSummary(current, useDeviceLocation, locationDetecting),
             style = MaterialTheme.typography.bodyLarge,
         )
 
@@ -276,11 +279,19 @@ private fun LocationCard(
 }
 
 @Composable
-private fun currentLocationSummary(current: Location?, useDeviceLocation: Boolean): String {
+private fun currentLocationSummary(
+    current: Location?,
+    useDeviceLocation: Boolean,
+    locationDetecting: Boolean,
+): String {
     if (current != null) {
         return current.displayName ?: "${current.latitude}, ${current.longitude}"
     }
-    return if (useDeviceLocation) {
+    // Show "Detecting…" only while the cache-refresh worker is actively running.
+    // Once it reaches a terminal state locationDetecting flips false, so the
+    // label falls back to the unset string instead of staying stuck forever when
+    // the worker finishes without finding a fix (no permission, provider timeout).
+    return if (useDeviceLocation && locationDetecting) {
         stringResource(R.string.settings_location_detecting)
     } else {
         stringResource(R.string.settings_location_unset)
