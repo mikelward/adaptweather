@@ -9,13 +9,10 @@ on:
     branches: [main]
   pull_request:
   # Manual rescue trigger so the release-AAB / Firebase / Play-upload steps
-  # can be re-fired when the natural `push` event was suppressed. Common
-  # case: a PR's bot-authored snapshot-regen commit (`ci: regenerate UI
-  # snapshots [skip ci]`) ends up as the head commit of the rebase-merge to
-  # `main`, and GitHub natively skips workflow runs for any push whose head
-  # commit subject contains `[skip ci]`. Without this trigger, the AAB for
-  # that SHA never builds and the Play internal track never gets it. Run
-  # from Actions tab → CI → "Run workflow", target `main`.
+  # can be re-fired when the natural `push` event didn't produce a usable
+  # build (e.g. a transient gradle / Play API failure on the original
+  # push-to-main run). Run from Actions tab → CI → "Run workflow",
+  # target `main`.
   workflow_dispatch:
 
 concurrency:
@@ -146,6 +143,12 @@ jobs:
         # Loop safety: GITHUB_TOKEN-authored commits don't trigger new workflow
         # runs, and the `git diff --quiet` check no-ops when nothing changed,
         # so reruns and identical re-records don't create empty churn commits.
+        # That's why the commit message below intentionally does NOT carry
+        # `[skip ci]`: GITHUB_TOKEN already prevents the PR-branch loop, and
+        # adding `[skip ci]` would only cause harm — when the snapshot-regen
+        # commit ends up as the head of a rebase-merge to `main`, GitHub
+        # natively skips the push-to-main run on `[skip ci]`, and the
+        # release-AAB / Firebase / Play-upload steps never fire for that SHA.
         #
         # Records SNAPSHOT_COMMIT_SHA / SNAPSHOTS_REGENERATED into the env so
         # the freshness-comment step downstream can report what happened.
@@ -181,7 +184,7 @@ jobs:
             echo "SNAPSHOT_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
             exit 0
           fi
-          git commit -m "ci: regenerate UI snapshots [skip ci]"
+          git commit -m "ci: regenerate UI snapshots"
           git push origin HEAD:'${{ github.event.pull_request.head.ref }}'
           echo "SNAPSHOTS_REGENERATED=true" >> "$GITHUB_ENV"
           echo "SNAPSHOT_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
