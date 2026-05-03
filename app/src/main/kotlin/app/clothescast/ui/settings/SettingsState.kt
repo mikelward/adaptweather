@@ -7,6 +7,7 @@ import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
+import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
@@ -36,6 +37,7 @@ data class SettingsState(
     // Region.SYSTEM falls through to the phone locale, mirroring the repository.
     val temperatureUnit: TemperatureUnit = defaultTemperatureUnitFor(Locale.getDefault()),
     val distanceUnit: DistanceUnit = defaultDistanceUnitFor(Locale.getDefault()),
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val clothesRules: List<ClothesRule> = ClothesRule.DEFAULTS,
     val location: Location? = null,
     val useDeviceLocation: Boolean = false,

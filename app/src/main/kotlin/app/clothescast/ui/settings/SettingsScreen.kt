@@ -46,6 +46,7 @@ enum class SettingsRoute(@StringRes val titleRes: Int, @StringRes val subtitleRe
     Clothes(R.string.settings_root_clothes, R.string.settings_root_clothes_subtitle),
     Region(R.string.settings_root_region, R.string.settings_root_region_subtitle),
     Voice(R.string.settings_root_voice, R.string.settings_root_voice_subtitle),
+    Display(R.string.settings_root_display, R.string.settings_root_display_subtitle),
     DataSources(R.string.settings_root_data_sources, R.string.settings_root_data_sources_subtitle),
     About(R.string.settings_root_about),
 }
@@ -172,6 +173,11 @@ fun SettingsScreen(
                 onSetElevenLabsModel = viewModel::setElevenLabsModel,
                 onSetElevenLabsSpeed = viewModel::setElevenLabsSpeed,
                 onSetElevenLabsStability = viewModel::setElevenLabsStability,
+            )
+            SettingsRoute.Display -> DisplayContent(
+                themeMode = state.themeMode,
+                padding = padding,
+                onSetThemeMode = viewModel::setThemeMode,
             )
             SettingsRoute.DataSources -> DataSourcesContent(
                 location = state.location,
