@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-05-01_
+_Last updated: 2026-05-03_
 
 ClothesCast is a daily weather-insight app for Android. This policy
 describes what data the app handles, where it goes, and what control you
@@ -8,12 +8,15 @@ have over it.
 
 ## TL;DR
 
-- ClothesCast has no backend servers and does not collect analytics or
-  crash data automatically. Diagnostics are written to a file on your
-  device; nothing leaves your device unless you explicitly share it.
+- ClothesCast has no user accounts and no backend that holds your data.
+  The app may send anonymous crash reports and aggregate usage analytics
+  to a third-party reporting service so the developer can fix bugs and
+  decide which features to keep — see "Analytics and crash reporting"
+  below for what those payloads include and (more importantly) the hard
+  limits on what they don't.
 - Your **approximate location** is sent to [Open-Meteo](https://open-meteo.com)
-  to fetch the weather forecast and a place name. That is the only data the
-  app sends off your device by default.
+  to fetch the weather forecast and a place name. That is the only
+  user-content data the app sends off your device by default.
 - If you opt in to **online text-to-speech**, the short spoken sentence
   (e.g. _"50% chance of rain at 3pm — take an umbrella"_) is sent to the
   TTS provider you chose (Google Gemini, OpenAI, or ElevenLabs) so it can
@@ -75,21 +78,32 @@ The source code is at <https://github.com/mikelward/clothescast>.
 - **What:** ClothesCast keeps a small in-memory ring buffer of the most
   recent log lines (errors, warnings, info) and, if the app crashes,
   writes that buffer plus the stack trace to a file on your device
-  (`cacheDir/last-crash.txt`). The bug-report payload also includes your
-  current settings (schedule, units, TTS choice, clothes rules) and the
-  most recently rendered insight prose.
+  (`cacheDir/last-crash.txt`). The local bug-report payload also
+  includes your current settings (schedule, units, TTS choice, clothes
+  rules) and the most recently rendered insight prose.
 - **Why:** So you can hand a complete diagnostic snapshot to the
-  developer when something goes wrong.
-- **Where it goes:** Nowhere by default. After a crash, the home screen
-  surfaces a banner offering to share the report; tapping **Share
-  report** opens Android's system share sheet so you can pick where to
-  send it (email, Slack, Drive, etc.). Dismissing the banner or ignoring
-  it leaves the file on device. There is no automatic upload.
+  developer when something goes wrong, and so the developer can be
+  alerted to crashes affecting users in the wild.
+- **Where it goes:**
+  - **Locally, always:** after a crash the home screen surfaces a
+    banner offering to share the report; tapping **Share report** opens
+    Android's system share sheet so you can pick a destination (email,
+    Slack, Drive, etc.). The on-device file includes the full payload
+    described above (settings + insight prose + log buffer).
+  - **Automatically, possibly:** the app may also send a trimmed crash
+    report — stack trace, app version, Android version, device model,
+    and a non-resettable install identifier used only to group duplicate
+    crashes — to a third-party crash-reporting service. This automatic
+    payload does **not** include settings, insight prose, calendar
+    data, location, API keys, or the in-memory log buffer. See
+    "Analytics and crash reporting" below for the full limits.
 - **Stored on device:** The ring buffer is process-memory only. The
   crash file persists across launches until a fresh crash overwrites
   it, and is cleared on uninstall.
-- **Retention by us:** Whatever you send to whichever destination you
-  pick is governed by that destination's policy.
+- **Retention by us:** The on-device file is yours — whatever you do
+  with it is governed by the destination you share to. Anything sent
+  automatically to the crash-reporting service is governed by that
+  service's privacy policy.
 
 ### API keys you provide
 
@@ -112,6 +126,7 @@ policies apply to anything they receive:
 | [Google Gemini API](https://ai.google.dev/gemini-api/terms) | The short rendered insight sentence | Only if you select Gemini TTS |
 | [OpenAI API](https://openai.com/policies/privacy-policy) | The short rendered insight sentence | Only if you select OpenAI TTS |
 | [ElevenLabs API](https://elevenlabs.io/privacy) | The short rendered insight sentence | Only if you select ElevenLabs TTS |
+| Analytics / crash-reporting service (e.g. Firebase Crashlytics + Google Analytics for Firebase) | Aggregate usage events and crash diagnostics — see "Analytics and crash reporting" below for what's in and out | Possibly always, in all builds |
 
 These providers act as service providers fulfilling a single request and
 returning the result. The TTS providers receive only the sentence to be
@@ -126,11 +141,7 @@ provider's policy linked above for the authoritative terms.
 ## What we do _not_ collect
 
 - No accounts, no sign-in.
-- No advertising identifiers, no ad networks.
-- No automatic analytics, crash reporting, or telemetry. (Crashes are
-  saved on your device only; sharing the report is something *you*
-  initiate from the home-screen banner — see "Diagnostic logs and crash
-  reports" above.)
+- No advertising identifiers, no ad networks, no ad targeting.
 - No precise GPS location.
 - No contacts, photos, microphone, or files.
 - No data is sold or shared for advertising, profiling, or model training
@@ -149,41 +160,42 @@ provider's policy linked above for the authoritative terms.
 - **Everything:** Uninstalling the app deletes all locally stored data
   (settings, cached insight, API keys).
 
-## Under consideration
+## Analytics and crash reporting
 
-We are weighing whether to add **product analytics** to help decide
-which features are worth keeping and which defaults serve users best —
-e.g. how many people use which TTS engine, how often clothes-rule
-thresholds get customised, what notification times are popular. The
-goal is to inform product decisions, not to identify users.
+To spot bugs and decide which features are worth keeping, ClothesCast
+may send two kinds of payload to a third-party reporting service (e.g.
+Firebase Crashlytics + Google Analytics for Firebase, or equivalent).
+This may be present in all builds and run for all users by default; the
+goal is to inform product decisions, not to identify you.
 
-If we add this, **this policy will be updated before any data is
-collected** and the in-app behaviour will be one of:
+What's sent:
 
-- **Opt-out by default**, with a clearly visible toggle in Settings, or
-- **A required first-launch question** the user must answer before the
-  home screen renders, with the choice persisted thereafter.
+- **Crash reports:** stack trace, app version, Android version, device
+  model, and a non-resettable install identifier used to group duplicate
+  crashes. Sent automatically when a crash occurs.
+- **Aggregate usage events:** counts of which TTS engines, schedule
+  cadences, delivery modes, and clothes-rule customisations are in use,
+  plus basic lifecycle events such as app open and daily refresh, so
+  unused options can be pruned and defaults tuned.
 
-What such analytics _would_ include:
-
-- Aggregate usage counts of which TTS engines, schedule cadences,
-  delivery modes, and clothes-rule customisations are in use, so we can
-  prune unused options and pick better defaults.
-
-What such analytics _would not_ include — these are **hard limits**, not
-"best-effort":
+What's **not** sent — these are hard limits, not "best-effort":
 
 - **No calendar event data.** Not titles, not times, not locations, not
   attendees, not whether you have any events at all.
-- **No user names**, account identifiers, email addresses, contact info.
+- **No user names**, account identifiers, email addresses, or contact
+  info.
 - **No location coordinates** or geocoded place names.
-- **No insight prose**, notification text, or anything that could carry
-  free-form user content.
-- **No persistent device or install identifier** beyond what's needed to
-  honour your opt-out choice.
+- **No insight prose**, notification text, or anything else that could
+  carry free-form user content.
+- **No API keys** or other credentials.
+- **No precise GPS** or advertising identifiers.
 
-This section will be removed (or rewritten as a concrete subsection
-above) once the decision is made.
+The reporting service receives only what's described above and is bound
+by its own privacy policy (linked from the third-party services table
+above once a specific provider is chosen). ClothesCast is open source,
+so you can audit exactly what's instrumented at
+<https://github.com/mikelward/clothescast> — or build a copy with the
+reporting calls stripped out, if you'd rather not participate.
 
 ## Children
 
