@@ -271,7 +271,7 @@ class SettingsRepository(
             ?.takeIf { it.isNotEmpty() }
             ?: Schedule.EVERY_DAY
         val deliveryMode = this[DELIVERY_MODE]?.let { runCatching { DeliveryMode.valueOf(it) }.getOrNull() }
-            ?: DeliveryMode.NOTIFICATION_ONLY
+            ?: DeliveryMode.NOTIFICATION_AND_TTS
         // Tonight's mode falls back to [deliveryMode] when absent so existing
         // installs keep the old "shared mode" behaviour until the user
         // explicitly diverges the two cards in Settings.
@@ -333,7 +333,7 @@ class SettingsRepository(
         // no calendar events, so it's not noisy out of the box).
         val tonightEnabled = this[TONIGHT_ENABLED] != false
         val tonightNotifyOnlyOnEvents = this[TONIGHT_NOTIFY_ONLY_ON_EVENTS] == true
-        val dailyMentionEveningEvents = this[DAILY_MENTION_EVENING_EVENTS] == true
+        val dailyMentionEveningEvents = this[DAILY_MENTION_EVENING_EVENTS] != false
         // Each cutoff falls back independently to the matching DEFAULT field, so a user
         // who only nudged the jacket cutoff still gets the default sweater/shorts cuts.
         val outfitThresholds = OutfitSuggestion.Thresholds(

@@ -306,9 +306,9 @@ data class UserPreferences(
      * calendar events with a clothing tip keyed to the *evening* forecast — e.g.
      * "Bring a jacket for your 9pm dinner." The tip is gated on
      * [useCalendarEvents] (no events without that), and only fires when at least
-     * one clothes rule triggers against the evening hourly slice. Off by default.
+     * one clothes rule triggers against the evening hourly slice. On by default.
      */
-    val dailyMentionEveningEvents: Boolean = false,
+    val dailyMentionEveningEvents: Boolean = true,
     /**
      * Feels-like cutoffs that decide which top + bottom the home screen renders
      * as the glanceable outfit. Defaults match the previously-hardcoded values

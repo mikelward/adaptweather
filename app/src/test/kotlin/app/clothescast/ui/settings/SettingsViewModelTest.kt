@@ -126,7 +126,7 @@ class SettingsViewModelTest {
         // The initial MutableStateFlow value matches our defaults; await the first
         // collector emission so anything from DataStore that disagreed would surface here.
         val state = subject.state.first {
-            !it.apiKeyConfigured && it.deliveryMode == DeliveryMode.NOTIFICATION_ONLY
+            !it.apiKeyConfigured && it.deliveryMode == DeliveryMode.NOTIFICATION_AND_TTS
         }
         state.temperatureUnit shouldBe TemperatureUnit.CELSIUS
         state.distanceUnit shouldBe DistanceUnit.KILOMETERS
