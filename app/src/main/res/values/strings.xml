@@ -97,7 +97,7 @@
     <string name="today_crash_banner_dismiss">Dismiss</string>
 
     <string name="onboarding_title">Welcome to ClothesCast</string>
-    <string name="onboarding_subtitle">Two quick choices and you\'re set. Tweak later in Settings.</string>
+    <string name="onboarding_subtitle">Three quick choices and you\'re set. Tweak later in Settings.</string>
     <string name="onboarding_notifications_title">Notifications</string>
     <string name="onboarding_notifications_description">Required to deliver your daily ClothesCast.</string>
     <string name="onboarding_notifications_grant">Grant notification permission</string>
