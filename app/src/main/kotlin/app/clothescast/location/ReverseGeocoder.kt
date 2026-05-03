@@ -68,8 +68,20 @@ class ReverseGeocoder(
         lat: Double,
         lon: Double,
     ): List<Address> = suspendCancellableCoroutine { cont ->
-        val listener = Geocoder.GeocodeListener { addresses ->
-            if (cont.isActive) cont.resume(addresses)
+        // Explicit object (not a SAM lambda) so we override `onError` too —
+        // on backend / network failures the framework calls `onError` instead
+        // of `onGeocode`, and the SAM form would leave it as the default
+        // no-op, blocking us until `withTimeoutOrNull` expires on every
+        // failure. Resume with empty so the caller falls back immediately.
+        val listener = object : Geocoder.GeocodeListener {
+            override fun onGeocode(addresses: MutableList<Address>) {
+                if (cont.isActive) cont.resume(addresses)
+            }
+
+            override fun onError(errorMessage: String?) {
+                DiagLog.w(TAG, "Async getFromLocation onError: ${errorMessage ?: "<no message>"}")
+                if (cont.isActive) cont.resume(emptyList())
+            }
         }
         try {
             geocoder.getFromLocation(lat, lon, 1, listener)
