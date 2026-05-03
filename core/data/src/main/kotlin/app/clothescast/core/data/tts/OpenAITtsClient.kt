@@ -29,19 +29,23 @@ import kotlinx.serialization.json.JsonPrimitive
 //     voice's baked-in accent dominates regardless of directive. Voice-list
 //     filtering in `TtsVoices` is the mechanism for giving the user a
 //     non-American voice (just `fable`, the only British in the stock list).
-//   - *pace* and *enunciation* steering does land — directives like "speak
-//     clearly at a measured pace" measurably slow the synthesis and reduce
-//     dropped consonants on field tests. We send the directive below for
-//     every clip; it's a constant, not locale-aware, since the goal is
-//     "clear and unrushed in any language" rather than accent-shaping.
+//   - *tone* and *pace* steering does land — directives like "speak clearly
+//     at a measured pace" measurably slow the synthesis and reduce dropped
+//     consonants on field tests. We also steer toward a friendly-announcement
+//     tone to avoid the theatrical delivery the model defaults to. The
+//     directive is a constant, not locale-aware, since the goal is
+//     "clear, upbeat, and grounded in any language" rather than accent-shaping.
 const val DEFAULT_OPENAI_TTS_MODEL: String = "gpt-4o-mini-tts"
 const val DEFAULT_OPENAI_TTS_VOICE: String = "alloy"
 // Mirrors `core:domain:UserPreferences.DEFAULT_OPENAI_SPEED` — the API's
 // stock 1.0× pace. Duplicated here so this layer can stay domain-free.
 const val DEFAULT_OPENAI_TTS_SPEED: Double = 1.0
 
-private const val PACE_AND_CLARITY_INSTRUCTIONS: String =
-    "Speak clearly at a measured, conversational pace, enunciating each word."
+private const val TONE_INSTRUCTIONS: String =
+    "Speak as a clear, well-enunciated, slightly upbeat announcement — like a friendly " +
+        "morning radio host or public address system. Speak with energy and confidence " +
+        "so it grabs attention, but keep the tone grounded and conversational. " +
+        "Not theatrical, not dramatic, not cinematic."
 
 /**
  * OpenAI text-to-speech via `https://api.openai.com/v1/audio/speech`.
@@ -77,7 +81,7 @@ class OpenAITtsClient(
                     input = text,
                     voice = voice,
                     responseFormat = "pcm",
-                    instructions = PACE_AND_CLARITY_INSTRUCTIONS,
+                    instructions = TONE_INSTRUCTIONS,
                     // Only send a non-default value to keep the request body
                     // minimal and to avoid the (slim) chance that the field
                     // changes the model's behaviour at exactly 1.0.

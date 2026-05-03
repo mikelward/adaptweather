@@ -101,8 +101,7 @@ class OpenAITtsClientTest {
 
         val body = checkNotNull(capturedBody)
         body.shouldContain("\"instructions\":")
-        body.shouldContain("measured, conversational pace")
-        body.shouldContain("enunciating each word")
+        body.shouldContain("friendly morning radio host or public address system")
     }
 
     @Test

@@ -43,10 +43,18 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * lo-fi "vinyl crackle" character the model otherwise bakes into the output
  * across the full clip (OpenAI TTS, going through the same player at the same
  * 24 kHz, has none of it — so this is server-side, not playback-side).
+ *
+ * Tone guidance: voices default to an exaggerated theatrical delivery without
+ * explicit direction. "Friendly PA announcement" / "morning radio host" is the
+ * target — clear, well-enunciated, slightly upbeat and attention-getting, but
+ * grounded and conversational, not cinematic or over-the-top.
  */
 internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
-    "Read the following in a clean, crisp studio voice with no audio effects, " +
-        "background noise, or vinyl-style texture:\n\n"
+    "Read the following as a clear, well-enunciated, slightly upbeat announcement — " +
+        "like a friendly morning radio host or public address system. " +
+        "Speak with energy and confidence so it grabs attention, but keep the tone " +
+        "grounded and conversational. Not theatrical, not dramatic, not cinematic. " +
+        "No audio effects, background noise, or vinyl-style texture:\n\n"
 
 /**
  * Returns a one-line accent / language instruction for Gemini's TTS prompt, or

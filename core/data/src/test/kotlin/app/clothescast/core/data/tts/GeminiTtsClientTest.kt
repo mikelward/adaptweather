@@ -101,7 +101,7 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello world")
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("clean, crisp studio voice")
+        body.shouldContain("clear, well-enunciated, slightly upbeat announcement")
         body.shouldContain("hello world")
     }
 
