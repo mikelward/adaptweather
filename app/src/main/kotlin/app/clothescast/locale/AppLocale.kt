@@ -63,7 +63,7 @@ object AppLocale {
         // Locale.getDefault() stuck on the previous app locale (formatting,
         // TTS fallbacks, etc. would keep behaving as the old region until
         // process restart).
-        Locale.setDefault(systemLocale())
+        Locale.setDefault(systemLocale(context))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.getSystemService(LocaleManager::class.java)
                 ?.applicationLocales = LocaleList.getEmptyLocaleList()
@@ -74,10 +74,16 @@ object AppLocale {
 
     /**
      * The device-level locale, ignoring any per-app override we've installed.
-     * Read from system Resources rather than [Locale.getDefault] because the
-     * latter has already been polluted by [apply] in the same process.
+     * On API 33+, [LocaleManager.getSystemLocales] is used because the OS
+     * applies per-app overrides at the process level, which causes
+     * [Resources.getSystem] to reflect the app locale rather than the device
+     * locale on those versions.
      */
-    private fun systemLocale(): Locale {
+    private fun systemLocale(context: Context): Locale {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val locales = context.getSystemService(LocaleManager::class.java)?.systemLocales
+            if (locales != null && !locales.isEmpty) return locales[0]
+        }
         val locales = Resources.getSystem().configuration.locales
         return if (!locales.isEmpty) locales[0] else Locale.ROOT
     }
