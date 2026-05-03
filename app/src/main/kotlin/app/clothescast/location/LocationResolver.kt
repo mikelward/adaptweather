@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.location.Location as AndroidLocation
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
 import android.os.Looper
 import app.clothescast.diag.DiagLog
 import androidx.core.content.ContextCompat
@@ -60,14 +59,11 @@ class LocationResolver(
             return null
         }
         // The Worker runs in the background, so a missing ACCESS_BACKGROUND_LOCATION
-        // grant on Android 10+ will make the OS throw SecurityException from any
-        // location call — log it up front so the cause is obvious in DiagLog
-        // instead of looking like a generic "location returned null".
+        // grant will make the OS throw SecurityException from any location call —
+        // log it up front so the cause is obvious in DiagLog instead of looking
+        // like a generic "location returned null".
         if (!hasBackgroundPermission()) {
-            DiagLog.w(
-                TAG,
-                "Background location not granted (Android 10+); calls from the worker will fail.",
-            )
+            DiagLog.w(TAG, "Background location not granted; calls from the worker will fail.")
         }
         val manager = context.getSystemService<LocationManager>()
         if (manager == null) {
@@ -92,13 +88,10 @@ class LocationResolver(
         Manifest.permission.ACCESS_COARSE_LOCATION,
     ) == PackageManager.PERMISSION_GRANTED
 
-    private fun hasBackgroundPermission(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return true
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+    private fun hasBackgroundPermission(): Boolean = ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+    ) == PackageManager.PERMISSION_GRANTED
 
     @SuppressLint("MissingPermission")
     private fun lastKnown(manager: LocationManager): AndroidLocation? = try {

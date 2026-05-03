@@ -213,11 +213,8 @@ private fun LocationStep(
     var backgroundRationaleOpen by remember { mutableStateOf(false) }
     var backgroundDeniedOpen by remember { mutableStateOf(false) }
 
-    // Background launcher: on Android 10 (API 29) the launcher shows the inline
-    // runtime prompt with "Allow all the time"; on Android 11+ launching the same
-    // permission deep-links straight to the system Location permission page (the
-    // picker that contains "Allow all the time"). The platform handles the split
-    // — we just call .launch().
+    // Background launcher: launching ACCESS_BACKGROUND_LOCATION deep-links to the
+    // system Location-permission picker (the page with "Allow all the time").
     val backgroundLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
@@ -239,9 +236,7 @@ private fun LocationStep(
             // ACCESS_BACKGROUND_LOCATION to read the device fix when the app isn't
             // foregrounded. Without this chain the user finishes onboarding with
             // foreground-only and the worker silently falls back to the saved city.
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q &&
-                !hasBackgroundLocationPermission(context)
-            ) {
+            if (!hasBackgroundLocationPermission(context)) {
                 backgroundRationaleOpen = true
             }
         }
@@ -318,9 +313,7 @@ private fun LocationStep(
                     onClick = {
                         if (permissionGranted) {
                             onSetUseDeviceLocation(true)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q &&
-                                !backgroundGranted
-                            ) {
+                            if (!backgroundGranted) {
                                 backgroundRationaleOpen = true
                             }
                         } else {
@@ -379,11 +372,10 @@ private fun LocationStep(
             confirmButton = {
                 TextButton(onClick = {
                     backgroundRationaleOpen = false
-                    // The launcher handles the SDK split: API 29 shows the inline
-                    // runtime prompt; API 30+ deep-links to the Location permission
-                    // page so the user can tap "Allow all the time". Earlier code
-                    // sent R+ through openAppDetails, which dumps them on the
-                    // generic App info screen instead of the location picker.
+                    // Launching ACCESS_BACKGROUND_LOCATION deep-links to the system
+                    // Location-permission picker so the user can tap "Allow all the
+                    // time". An earlier version routed through openAppDetails here,
+                    // which dumps them on the generic App info screen instead.
                     backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                 }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
             },

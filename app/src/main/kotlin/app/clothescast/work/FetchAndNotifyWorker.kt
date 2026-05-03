@@ -101,7 +101,7 @@ class FetchAndNotifyWorker(
                 //
                 //   1. Misconfigured — useDeviceLocation off + no saved
                 //      fallback, OR useDeviceLocation on but the user hasn't
-                //      granted ACCESS_BACKGROUND_LOCATION (Q+) yet. The user
+                //      granted ACCESS_BACKGROUND_LOCATION yet. The user
                 //      has to do something; retrying on backoff would just
                 //      hammer the system every 30s with no progress. Fail
                 //      with REASON_NO_LOCATION so the Today banner prompts

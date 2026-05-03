@@ -48,7 +48,7 @@ android {
 
     defaultConfig {
         applicationId = "app.clothescast"
-        minSdk = 26
+        minSdk = 31
         targetSdk = 35
         versionCode = gitCommitCount
         // semver build metadata: <base>+<commitCount>.<shortSha>. Some downstream
@@ -233,8 +233,8 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
 
     // Home-screen App Widget — Glance speaks Compose at the source level but
-    // emits RemoteViews under the hood, so it works back to the API 26 minSdk
-    // and there's no separate XML layout to maintain.
+    // emits RemoteViews under the hood, so there's no separate XML layout to
+    // maintain.
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
 
