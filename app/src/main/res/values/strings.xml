@@ -108,7 +108,7 @@
     <string name="onboarding_location_background_needed">One more step: ClothesCast needs \'Allow all the time\' so the morning forecast can read your location while the app is closed.</string>
     <string name="onboarding_location_denied_hint">Location permission denied. You can pick a city manually instead.</string>
     <string name="onboarding_location_enter_manual">Enter location manually</string>
-    <string name="onboarding_location_enter_manual_hint">Only needed if you skip the location prompt or your device picks the wrong place.</string>
+    <string name="onboarding_location_enter_manual_hint">You can manually enter your location if you deny location permission or your device location is wrong.</string>
     <string name="onboarding_location_using_device">Using your device\'s location each morning.</string>
 
     <string name="onboarding_gemini_title">Gemini API key</string>
