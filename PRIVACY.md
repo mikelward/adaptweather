@@ -94,9 +94,11 @@ The source code is at <https://github.com/mikelward/clothescast>.
     report — stack trace, app version, Android version, device model,
     and a non-resettable install identifier used only to group duplicate
     crashes — to a third-party crash-reporting service. This automatic
-    payload does **not** include settings, insight prose, calendar
-    data, location, API keys, or the in-memory log buffer. See
-    "Analytics and crash reporting" below for the full limits.
+    payload does **not** include insight prose, calendar data, location,
+    API keys, or the in-memory log buffer. (Your settings values may
+    travel separately as part of the aggregate analytics described
+    below.) See "Analytics and crash reporting" below for the full
+    limits.
 - **Stored on device:** The ring buffer is process-memory only. The
   crash file persists across launches until a fresh crash overwrites
   it, and is cleared on uninstall.
@@ -108,12 +110,10 @@ The source code is at <https://github.com/mikelward/clothescast>.
 ### API keys you provide
 
 - If you use online TTS, you supply your own Google Gemini, OpenAI,
-  and / or ElevenLabs API key. Keys are stored on your device encrypted
-  at rest — the ciphertext lives in Android's DataStore Preferences and
-  is wrapped by a Tink AEAD primitive whose own keyset is sealed by an
-  Android Keystore master key. Keys are sent only to the corresponding
-  provider on requests you initiate, and are never shared with us or
-  any third party.
+  and / or ElevenLabs API key. Keys are stored on your device,
+  encrypted at rest using a key sealed by the Android Keystore. They
+  are sent only to the corresponding provider on requests you initiate,
+  and are never shared with us or any third party.
 
 ## Third-party services
 
@@ -173,10 +173,11 @@ What's sent:
 - **Crash reports:** stack trace, app version, Android version, device
   model, and a non-resettable install identifier used to group duplicate
   crashes. Sent automatically when a crash occurs.
-- **Aggregate usage events:** counts of which TTS engines, schedule
-  cadences, delivery modes, and clothes-rule customisations are in use,
-  plus basic lifecycle events such as app open and daily refresh, so
-  unused options can be pruned and defaults tuned.
+- **Aggregate usage events:** the values of your in-app settings — TTS
+  engine, schedule cadence, delivery mode, units, notification time,
+  clothes-rule customisations, and the like — plus basic lifecycle
+  events such as app open and daily refresh, so unused options can be
+  pruned and defaults tuned.
 
 What's **not** sent — these are hard limits, not "best-effort":
 
