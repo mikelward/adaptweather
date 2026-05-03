@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,8 +22,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.WorkManager
+import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.locale.AppLocale
 import app.clothescast.notification.NotificationPermission
 import app.clothescast.ui.isTelevision
@@ -37,6 +40,7 @@ import app.clothescast.ui.theme.ClothesCastTheme
 import app.clothescast.ui.today.TodayScreen
 import app.clothescast.ui.today.TodayViewModel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
 private enum class Screen { Today, Settings, Onboarding, Pairing }
@@ -62,8 +66,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         consumeNavigateToTodayExtra(intent)
         val app = application as ClothesCastApplication
+        // Read the persisted theme synchronously so the first frame already
+        // matches the user's pick — same flicker-avoidance pattern used in
+        // ClothesCastNav for the initial-screen decision.
+        val initialThemeMode = runBlocking {
+            app.settingsRepository.preferences.first().themeMode
+        }
         setContent {
-            ClothesCastTheme {
+            val themeMode by app.settingsRepository.preferences
+                .map { it.themeMode }
+                .collectAsStateWithLifecycle(initialValue = initialThemeMode)
+            val darkTheme = when (themeMode) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+            }
+            ClothesCastTheme(darkTheme = darkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,

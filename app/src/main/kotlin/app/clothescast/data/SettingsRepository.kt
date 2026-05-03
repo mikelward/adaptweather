@@ -18,6 +18,7 @@ import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
+import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
@@ -99,6 +100,10 @@ class SettingsRepository(
 
     suspend fun setDistanceUnit(unit: DistanceUnit) {
         dataStore.edit { it[DISTANCE_UNIT] = unit.name }
+    }
+
+    suspend fun setThemeMode(mode: ThemeMode) {
+        dataStore.edit { it[THEME_MODE] = mode.name }
     }
 
     suspend fun setClothesRules(rules: List<ClothesRule>) {
@@ -282,6 +287,8 @@ class SettingsRepository(
             ?: defaultTemperatureUnitFor(regionLocale)
         val distanceUnit = this[DISTANCE_UNIT]?.let { runCatching { DistanceUnit.valueOf(it) }.getOrNull() }
             ?: defaultDistanceUnitFor(regionLocale)
+        val themeMode = this[THEME_MODE]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
+            ?: ThemeMode.SYSTEM
         val rules = parseRules(this[CLOTHES_RULES])
         val location = parseLocation(this)
         val useDeviceLocation = this[USE_DEVICE_LOCATION] == true
@@ -355,6 +362,7 @@ class SettingsRepository(
             region = region,
             temperatureUnit = temperatureUnit,
             distanceUnit = distanceUnit,
+            themeMode = themeMode,
             clothesRules = rules,
             location = location,
             useDeviceLocation = useDeviceLocation,
@@ -410,6 +418,7 @@ class SettingsRepository(
         private val REGION = stringPreferencesKey("region")
         private val TEMPERATURE_UNIT = stringPreferencesKey("temperature_unit")
         private val DISTANCE_UNIT = stringPreferencesKey("distance_unit")
+        private val THEME_MODE = stringPreferencesKey("theme_mode")
         private val CLOTHES_RULES = stringPreferencesKey("clothes_rules_json")
         private val LOCATION_LAT = doublePreferencesKey("location_latitude")
         private val LOCATION_LON = doublePreferencesKey("location_longitude")

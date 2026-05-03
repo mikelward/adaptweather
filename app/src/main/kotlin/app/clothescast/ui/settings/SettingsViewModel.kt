@@ -13,6 +13,7 @@ import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
+import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.SecureKeyStore
@@ -95,6 +96,7 @@ class SettingsViewModel(
                         region = prefs.region,
                         temperatureUnit = prefs.temperatureUnit,
                         distanceUnit = prefs.distanceUnit,
+                        themeMode = prefs.themeMode,
                         clothesRules = prefs.clothesRules,
                         location = prefs.location,
                         useDeviceLocation = prefs.useDeviceLocation,
@@ -309,6 +311,10 @@ class SettingsViewModel(
 
     fun setDistanceUnit(unit: DistanceUnit) {
         viewModelScope.launch { settingsRepository.setDistanceUnit(unit) }
+    }
+
+    fun setThemeMode(mode: ThemeMode) {
+        viewModelScope.launch { settingsRepository.setThemeMode(mode) }
     }
 
     fun addClothesRule(rule: ClothesRule) {

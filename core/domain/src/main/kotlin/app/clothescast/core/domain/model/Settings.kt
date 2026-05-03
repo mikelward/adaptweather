@@ -6,6 +6,8 @@ enum class DistanceUnit { KILOMETERS, MILES }
 
 enum class DeliveryMode { NOTIFICATION_ONLY, TTS_ONLY, NOTIFICATION_AND_TTS }
 
+enum class ThemeMode { SYSTEM, LIGHT, DARK }
+
 /**
  * Where the spoken-aloud audio comes from.
  *
@@ -187,6 +189,7 @@ data class UserPreferences(
     val region: Region = Region.SYSTEM,
     val temperatureUnit: TemperatureUnit,
     val distanceUnit: DistanceUnit,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val clothesRules: List<ClothesRule>,
     /**
      * The fixed location to fetch weather for when [useDeviceLocation] is false (or as a
