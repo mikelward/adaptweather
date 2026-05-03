@@ -1,7 +1,6 @@
 package app.clothescast.ui.settings
 
 import android.Manifest
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -120,11 +119,9 @@ private fun LocationCard(
         // would hit our isPermissionGranted check, return null, and quietly fall
         // through to the settings location every day.
         onSetUseDeviceLocation(granted)
-        if (granted && !hasBackgroundLocationPermission(context) &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        ) {
+        if (granted && !hasBackgroundLocationPermission(context)) {
             // Auto-chain into the always-on rationale; the worker can't read the
-            // device fix without ACCESS_BACKGROUND_LOCATION on Q+.
+            // device fix without ACCESS_BACKGROUND_LOCATION.
             backgroundRationaleOpen = true
         }
     }
@@ -153,22 +150,12 @@ private fun LocationCard(
                         return@Switch
                     }
                     when {
-                        !coarseGranted -> {
-                            // Pre-Q has no separate "Allow all the time" choice — coarse
-                            // grant *is* always-on — so the rationale dialog applies on
-                            // Q+ only. On older platforms skip straight to the
-                            // foreground request; the background launcher and denied
-                            // dialog also no-op there because
-                            // hasBackgroundLocationPermission() returns true.
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                rationaleOpen = true
-                            } else {
-                                foregroundLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-                            }
-                        }
+                        // Show the rationale before the foreground prompt; we'll auto-
+                        // chain into the background rationale when the user grants.
+                        !coarseGranted -> rationaleOpen = true
                         !backgroundGranted -> {
-                            // Q+ only: foreground granted previously; surface the
-                            // always-on rationale before deep-linking into Settings.
+                            // Foreground granted previously; surface the always-on
+                            // rationale before deep-linking into Settings.
                             onSetUseDeviceLocation(true)
                             backgroundRationaleOpen = true
                         }
@@ -252,13 +239,11 @@ private fun LocationCard(
             confirmButton = {
                 TextButton(onClick = {
                     backgroundRationaleOpen = false
-                    // The platform handles the SDK split for us: on Android 10 the
-                    // launcher shows the inline runtime prompt with "Allow all the
-                    // time"; on Android 11+ it deep-links straight to the Location
-                    // permission settings page (the picker with the "Allow all the
-                    // time" radio). Earlier code routed R+ through openAppDetails,
-                    // which only opens the generic App info screen and forces the
-                    // user to drill in via Permissions → Location themselves.
+                    // Launching ACCESS_BACKGROUND_LOCATION deep-links to the system
+                    // Location-permission picker (the page with the "Allow all the
+                    // time" radio). An earlier version routed through openAppDetails
+                    // here, which only opens the generic App info screen and forces
+                    // the user to drill in via Permissions → Location themselves.
                     backgroundLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                 }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
             },
