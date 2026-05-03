@@ -205,12 +205,28 @@ collect personal data from them.
 
 ## Changes
 
-If this policy changes, the updated version will be committed to
-<https://github.com/mikelward/clothescast/blob/main/PRIVACY.md>; the
-"Last updated" date at the top will reflect the change. Material changes
-to data handling will also be noted in the app's release notes.
+If this policy changes, the updated version is committed to
+<https://github.com/mikelward/clothescast/blob/main/PRIVACY.md> and the
+"Last updated" date at the top reflects the change. A short summary of
+each material change is added to the [Changelog](#changelog) below, and
+material changes are also noted in the app's release notes.
+
+The full revision history of this file is viewable on GitHub:
+**[View all changes to PRIVACY.md →](https://github.com/mikelward/clothescast/commits/main/PRIVACY.md)**
 
 ## Contact
 
 Open an issue at <https://github.com/mikelward/clothescast/issues> or
 email the address listed on the Play Store listing.
+
+## Changelog
+
+- **2026-05-03** — Permitted automatic crash reporting and aggregate
+  usage analytics in all builds and for all users, with hard limits on
+  what those payloads may include (no calendar data, location, insight
+  prose, API keys, precise GPS, or ad identifiers). Broadened analytics
+  to cover in-app settings values. Simplified the API-key storage
+  description.
+- **2026-05-01** — Initial publication.
+
+[View full revision history on GitHub →](https://github.com/mikelward/clothescast/commits/main/PRIVACY.md)
