@@ -26,7 +26,12 @@ have over it.
   (e.g. _"Bring a jacket for your concert tonight"_), and is therefore
   also sent to the TTS provider in that one case — only when both calendar
   tie-in and online TTS are enabled.
-- Nothing is sold, no advertising, no profiling, no tracking.
+- Nothing is sold, no advertising, no ad-targeting profiles, no
+  third-party data sharing beyond the services listed below. (The
+  aggregate usage analytics + crash reports above _do_ count as
+  cross-session telemetry — that's what the install identifier in the
+  crash payload is for. The "Analytics and crash reporting" section
+  spells out exactly what's in and out.)
 
 ## Who we are
 
