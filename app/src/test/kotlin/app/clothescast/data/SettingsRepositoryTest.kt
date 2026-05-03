@@ -79,7 +79,7 @@ class SettingsRepositoryTest {
         prefs.schedule.time shouldBe LocalTime.of(7, 0)
         prefs.schedule.days shouldBe Schedule.EVERY_DAY
         prefs.schedule.zoneId shouldBe zone
-        prefs.deliveryMode shouldBe DeliveryMode.NOTIFICATION_ONLY
+        prefs.deliveryMode shouldBe DeliveryMode.NOTIFICATION_AND_TTS
         prefs.temperatureUnit shouldBe TemperatureUnit.CELSIUS
         prefs.distanceUnit shouldBe DistanceUnit.KILOMETERS
         prefs.clothesRules shouldBe ClothesRule.DEFAULTS
@@ -131,14 +131,14 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `dailyMentionEveningEvents defaults to false and round-trips`() = runTest {
-        subject.preferences.first().dailyMentionEveningEvents shouldBe false
-
-        subject.setDailyMentionEveningEvents(true)
+    fun `dailyMentionEveningEvents defaults to true and round-trips`() = runTest {
         subject.preferences.first().dailyMentionEveningEvents shouldBe true
 
         subject.setDailyMentionEveningEvents(false)
         subject.preferences.first().dailyMentionEveningEvents shouldBe false
+
+        subject.setDailyMentionEveningEvents(true)
+        subject.preferences.first().dailyMentionEveningEvents shouldBe true
     }
 
     @Test
@@ -246,7 +246,7 @@ class SettingsRepositoryTest {
         }
 
         val prefs = subject.preferences.first()
-        prefs.deliveryMode shouldBe DeliveryMode.NOTIFICATION_ONLY
+        prefs.deliveryMode shouldBe DeliveryMode.NOTIFICATION_AND_TTS
         prefs.temperatureUnit shouldBe TemperatureUnit.CELSIUS
         prefs.schedule.days shouldBe Schedule.EVERY_DAY
     }
