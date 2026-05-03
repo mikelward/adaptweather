@@ -20,8 +20,10 @@ import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /**
  * Renders today's hourly temperature as a single line — feels-like or raw 2 m
@@ -66,9 +68,30 @@ fun ForecastChart(
         }
     }
 
+    // Vico's default rangeProvider clamps minY toward 0, so on a Fahrenheit day
+    // with feels-like 52–62°F the axis spans 0–62 and the auto step-picker —
+    // forced to fit that 62-unit range into ~3 label slots — lands on step 31,
+    // giving a useless "0, 31, 62" axis. (Celsius hides this because 6–18 is
+    // a smaller absolute range, so 0–18 with step 3 still looks fine.) Tighten
+    // the y-range to both lines' actual min/max — both, not just the visible
+    // line, so the axis doesn't shift when the user toggles between feels-like
+    // and air. With a tight range the auto-stepper picks sensible increments
+    // regardless of unit.
+    val rangeProvider = remember(hourly, temperatureUnit) {
+        val all = hourly.flatMap {
+            listOf(it.feelsLikeC.toUnit(temperatureUnit), it.temperatureC.toUnit(temperatureUnit))
+        }
+        val dataMin = all.min()
+        val dataMax = all.max()
+        object : CartesianLayerRangeProvider {
+            override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) = dataMin
+            override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) = dataMax
+        }
+    }
+
     CartesianChartHost(
         chart = rememberCartesianChart(
-            rememberLineCartesianLayer(),
+            rememberLineCartesianLayer(rangeProvider = rangeProvider),
             startAxis = VerticalAxis.rememberStart(),
             bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = bottomFormatter),
         ),
