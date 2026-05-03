@@ -52,6 +52,7 @@ data class ClothesRule(
         val DEFAULTS: List<ClothesRule> = listOf(
             ClothesRule("sweater", TemperatureBelow(18.0)),
             ClothesRule("jacket", TemperatureBelow(12.0)),
+            ClothesRule("coat", TemperatureBelow(6.0)),
             ClothesRule("shorts", TemperatureAbove(24.0)),
         )
     }
