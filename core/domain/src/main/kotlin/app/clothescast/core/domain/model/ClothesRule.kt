@@ -27,12 +27,29 @@ data class ClothesRule(
         fun matches(forecast: DailyForecast): Boolean
     }
 
-    data class TemperatureBelow(val celsius: Double) : Condition {
-        override fun matches(forecast: DailyForecast) = forecast.feelsLikeMinC < celsius
+    /**
+     * Below-threshold temperature condition. [value] is denominated in [unit] —
+     * the rule remembers what the user typed so a 65°F threshold stays exactly
+     * 65°F across °C↔°F switches in Region settings (no integer round-trip drift).
+     * [unit] defaults to [TemperatureUnit.CELSIUS] so legacy on-disk rules
+     * (written before the unit field existed) and existing call sites keep
+     * working unchanged.
+     */
+    data class TemperatureBelow(
+        val value: Double,
+        val unit: TemperatureUnit = TemperatureUnit.CELSIUS,
+    ) : Condition {
+        override fun matches(forecast: DailyForecast) =
+            forecast.feelsLikeMinC < value.fromUnit(unit)
     }
 
-    data class TemperatureAbove(val celsius: Double) : Condition {
-        override fun matches(forecast: DailyForecast) = forecast.feelsLikeMaxC > celsius
+    /** Above-threshold temperature condition. See [TemperatureBelow] for the [unit] semantics. */
+    data class TemperatureAbove(
+        val value: Double,
+        val unit: TemperatureUnit = TemperatureUnit.CELSIUS,
+    ) : Condition {
+        override fun matches(forecast: DailyForecast) =
+            forecast.feelsLikeMaxC > value.fromUnit(unit)
     }
 
     data class PrecipitationProbabilityAbove(val percent: Double) : Condition {

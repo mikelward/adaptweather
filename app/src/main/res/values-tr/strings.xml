@@ -27,13 +27,13 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_dialog_edit_title">Giysi kuralını düzenle</string>
     <string name="settings_clothes_item_label">Giysi</string>
     <string name="settings_clothes_condition_label">Koşul</string>
-    <string name="settings_clothes_value_label_temp_c">Eşik (°C)</string>
+    <string name="settings_clothes_value_label_temp">Eşik (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Eşik (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Hissedilen sıcaklık şundan düşükse</string>
     <string name="settings_clothes_cond_type_temp_above">Hissedilen sıcaklık şundan yüksekse</string>
     <string name="settings_clothes_cond_type_precip_above">Yağmur ihtimali şunu aşarsa</string>
-    <string name="settings_clothes_cond_temp_below">hissedilen sıcaklık %.0f°C\'nin altındaysa</string>
-    <string name="settings_clothes_cond_temp_above">hissedilen sıcaklık %.0f°C\'nin üstündeyse</string>
+    <string name="settings_clothes_cond_temp_below">hissedilen sıcaklık %1$s\'nin altındaysa</string>
+    <string name="settings_clothes_cond_temp_above">hissedilen sıcaklık %1$s\'nin üstündeyse</string>
     <string name="settings_clothes_cond_precip_above">yağmur ihtimali %.0f%% üzerindeyse</string>
 
     <string name="today_outfit_top_tshirt">Tişört</string>

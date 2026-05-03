@@ -27,13 +27,13 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_dialog_edit_title">Редагувати правило одягу</string>
     <string name="settings_clothes_item_label">Одяг</string>
     <string name="settings_clothes_condition_label">Умова</string>
-    <string name="settings_clothes_value_label_temp_c">Поріг (°C)</string>
+    <string name="settings_clothes_value_label_temp">Поріг (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Поріг (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Коли відчувається холодніше</string>
     <string name="settings_clothes_cond_type_temp_above">Коли відчувається тепліше</string>
     <string name="settings_clothes_cond_type_precip_above">Коли ймовірність дощу перевищує</string>
-    <string name="settings_clothes_cond_temp_below">коли відчувана температура нижче %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">коли відчувана температура вище %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">коли відчувана температура нижче %1$s</string>
+    <string name="settings_clothes_cond_temp_above">коли відчувана температура вище %1$s</string>
     <string name="settings_clothes_cond_precip_above">коли ймовірність дощу перевищує %.0f%%</string>
 
     <string name="today_outfit_top_tshirt">Футболка</string>

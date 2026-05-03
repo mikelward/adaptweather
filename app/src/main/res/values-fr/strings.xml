@@ -74,13 +74,13 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_clothes_dialog_edit_title">Modifier la règle vestimentaire</string>
     <string name="settings_clothes_item_label">Vêtement</string>
     <string name="settings_clothes_condition_label">Déclencheur</string>
-    <string name="settings_clothes_value_label_temp_c">Seuil (°C)</string>
+    <string name="settings_clothes_value_label_temp">Seuil (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Seuil (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Quand il fait moins de</string>
     <string name="settings_clothes_cond_type_temp_above">Quand il fait plus de</string>
     <string name="settings_clothes_cond_type_precip_above">Quand le risque de pluie dépasse</string>
-    <string name="settings_clothes_cond_temp_below">quand la température ressentie est en dessous de %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">quand la température ressentie est au-dessus de %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">quand la température ressentie est en dessous de %1$s</string>
+    <string name="settings_clothes_cond_temp_above">quand la température ressentie est au-dessus de %1$s</string>
     <string name="settings_clothes_cond_precip_above">quand le risque de pluie dépasse %.0f%%</string>
 
     <!--

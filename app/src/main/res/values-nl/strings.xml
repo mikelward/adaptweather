@@ -27,13 +27,13 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_dialog_edit_title">Kledingsregel bewerken</string>
     <string name="settings_clothes_item_label">Kledingstuk</string>
     <string name="settings_clothes_condition_label">Voorwaarde</string>
-    <string name="settings_clothes_value_label_temp_c">Drempel (°C)</string>
+    <string name="settings_clothes_value_label_temp">Drempel (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Drempel (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Wanneer het kouder voelt dan</string>
     <string name="settings_clothes_cond_type_temp_above">Wanneer het warmer voelt dan</string>
     <string name="settings_clothes_cond_type_precip_above">Wanneer de kans op regen groter is dan</string>
-    <string name="settings_clothes_cond_temp_below">wanneer de gevoelstemperatuur onder %.0f°C ligt</string>
-    <string name="settings_clothes_cond_temp_above">wanneer de gevoelstemperatuur boven %.0f°C ligt</string>
+    <string name="settings_clothes_cond_temp_below">wanneer de gevoelstemperatuur onder %1$s ligt</string>
+    <string name="settings_clothes_cond_temp_above">wanneer de gevoelstemperatuur boven %1$s ligt</string>
     <string name="settings_clothes_cond_precip_above">wanneer de kans op regen groter is dan %.0f%%</string>
 
     <string name="today_outfit_top_tshirt">T-shirt</string>

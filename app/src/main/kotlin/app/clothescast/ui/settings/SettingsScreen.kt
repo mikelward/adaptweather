@@ -135,6 +135,7 @@ fun SettingsScreen(
             )
             SettingsRoute.Clothes -> ClothesContent(
                 rules = state.clothesRules,
+                temperatureUnit = state.temperatureUnit,
                 padding = padding,
                 onAdd = viewModel::addClothesRule,
                 onReplace = viewModel::replaceClothesRule,

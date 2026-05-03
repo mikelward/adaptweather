@@ -23,6 +23,7 @@ import app.clothescast.core.domain.model.ForecastPeriod
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.UserPreferences
+import app.clothescast.core.domain.model.symbol
 import app.clothescast.insight.InsightFormatter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -159,8 +160,8 @@ object BugReport {
 
     private fun describeRule(rule: ClothesRule): String {
         val cond = when (val c = rule.condition) {
-            is ClothesRule.TemperatureBelow -> "feelsLikeMinC < ${c.celsius}"
-            is ClothesRule.TemperatureAbove -> "feelsLikeMaxC > ${c.celsius}"
+            is ClothesRule.TemperatureBelow -> "feelsLikeMin < ${c.value}${c.unit.symbol()}"
+            is ClothesRule.TemperatureAbove -> "feelsLikeMax > ${c.value}${c.unit.symbol()}"
             is ClothesRule.PrecipitationProbabilityAbove -> "precipMaxPct > ${c.percent}"
         }
         return "${rule.item} when $cond"

@@ -39,6 +39,10 @@ import androidx.compose.ui.unit.dp
 import app.clothescast.R
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.Garment
+import app.clothescast.core.domain.model.TemperatureUnit
+import app.clothescast.core.domain.model.fromUnit
+import app.clothescast.core.domain.model.symbol
+import app.clothescast.core.domain.model.toUnit
 import kotlin.math.roundToInt
 
 /**
@@ -53,6 +57,7 @@ import kotlin.math.roundToInt
 @Composable
 internal fun ClothesContent(
     rules: List<ClothesRule>,
+    temperatureUnit: TemperatureUnit,
     padding: PaddingValues,
     onAdd: (ClothesRule) -> Unit,
     onReplace: (Int, ClothesRule) -> Unit,
@@ -66,13 +71,14 @@ internal fun ClothesContent(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        ClothesRulesCard(rules, onAdd, onReplace, onDelete)
+        ClothesRulesCard(rules, temperatureUnit, onAdd, onReplace, onDelete)
     }
 }
 
 @Composable
 private fun ClothesRulesCard(
     rules: List<ClothesRule>,
+    temperatureUnit: TemperatureUnit,
     onAdd: (ClothesRule) -> Unit,
     onReplace: (Int, ClothesRule) -> Unit,
     onDelete: (Int) -> Unit,
@@ -96,6 +102,7 @@ private fun ClothesRulesCard(
             if (index > 0) HorizontalDivider()
             ClothesRuleRow(
                 rule = rule,
+                temperatureUnit = temperatureUnit,
                 onEdit = { editIndex = index },
                 onDelete = { onDelete(index) },
             )
@@ -109,6 +116,7 @@ private fun ClothesRulesCard(
     if (addOpen) {
         ClothesRuleDialog(
             initial = null,
+            temperatureUnit = temperatureUnit,
             onDismiss = { addOpen = false },
             onConfirm = {
                 addOpen = false
@@ -121,6 +129,7 @@ private fun ClothesRulesCard(
     if (editing != null && editing in rules.indices) {
         ClothesRuleDialog(
             initial = rules[editing],
+            temperatureUnit = temperatureUnit,
             onDismiss = { editIndex = null },
             onConfirm = {
                 onReplace(editing, it)
@@ -133,6 +142,7 @@ private fun ClothesRulesCard(
 @Composable
 private fun ClothesRuleRow(
     rule: ClothesRule,
+    temperatureUnit: TemperatureUnit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -150,7 +160,7 @@ private fun ClothesRuleRow(
             val label = if (garment != null) stringResource(garmentLabelRes(garment)) else rule.item
             Text(text = label, style = MaterialTheme.typography.titleSmall)
             Text(
-                text = describeCondition(rule.condition),
+                text = describeCondition(rule.condition, temperatureUnit),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -166,13 +176,41 @@ private fun ClothesRuleRow(
 }
 
 @Composable
-private fun describeCondition(condition: ClothesRule.Condition): String = when (condition) {
+private fun describeCondition(
+    condition: ClothesRule.Condition,
+    temperatureUnit: TemperatureUnit,
+): String = when (condition) {
     is ClothesRule.TemperatureBelow ->
-        stringResource(R.string.settings_clothes_cond_temp_below, condition.celsius)
+        stringResource(
+            R.string.settings_clothes_cond_temp_below,
+            formatThreshold(condition.value, condition.unit, temperatureUnit),
+        )
     is ClothesRule.TemperatureAbove ->
-        stringResource(R.string.settings_clothes_cond_temp_above, condition.celsius)
+        stringResource(
+            R.string.settings_clothes_cond_temp_above,
+            formatThreshold(condition.value, condition.unit, temperatureUnit),
+        )
     is ClothesRule.PrecipitationProbabilityAbove ->
         stringResource(R.string.settings_clothes_cond_precip_above, condition.percent)
+}
+
+/**
+ * Formats a temperature threshold for display. The user's currently-selected
+ * [displayUnit] always comes first (that's the unit the rest of the app speaks
+ * to them in); when the rule was *entered* in a different unit, the original
+ * is appended in parentheses so unit-switches don't silently mutate what the
+ * user remembers typing — e.g. a 65°F rule viewed under °C reads "18°C (65°F)".
+ */
+private fun formatThreshold(
+    storedValue: Double,
+    storedUnit: TemperatureUnit,
+    displayUnit: TemperatureUnit,
+): String {
+    val storedC = storedValue.fromUnit(storedUnit)
+    val displayed = "%.0f%s".format(storedC.toUnit(displayUnit), displayUnit.symbol())
+    if (storedUnit == displayUnit) return displayed
+    val original = "%.0f%s".format(storedValue, storedUnit.symbol())
+    return "$displayed ($original)"
 }
 
 private enum class ConditionType(@StringRes val labelRes: Int) {
@@ -198,6 +236,7 @@ private fun garmentLabelRes(garment: Garment): Int = when (garment) {
 @Composable
 private fun ClothesRuleDialog(
     initial: ClothesRule?,
+    temperatureUnit: TemperatureUnit,
     onDismiss: () -> Unit,
     onConfirm: (ClothesRule) -> Unit,
 ) {
@@ -215,11 +254,15 @@ private fun ClothesRuleDialog(
         null -> ConditionType.TEMP_BELOW
     }
     var type by remember { mutableStateOf(initialType) }
+    // Pre-fill in the user's *current* display unit. A 65°F rule opened by a °C
+    // user pre-fills as "18" (the saved value converted via Celsius); when the
+    // user confirms, the new condition takes the current `temperatureUnit` —
+    // rules don't drag stale unit-tags around once edited.
     val initialValue = when (val c = initial?.condition) {
-        is ClothesRule.TemperatureBelow -> c.celsius
-        is ClothesRule.TemperatureAbove -> c.celsius
+        is ClothesRule.TemperatureBelow -> c.value.fromUnit(c.unit).toUnit(temperatureUnit)
+        is ClothesRule.TemperatureAbove -> c.value.fromUnit(c.unit).toUnit(temperatureUnit)
         is ClothesRule.PrecipitationProbabilityAbove -> c.percent
-        null -> 18.0
+        null -> 18.0.toUnit(temperatureUnit)
     }
     // Whole-number input only. Keeps the row label (rendered with %.0f) in
     // sync with what the user typed and dodges locale-specific decimal
@@ -244,8 +287,8 @@ private fun ClothesRuleDialog(
                 onClick = {
                     val v = parsedValue!!.toDouble()
                     val condition = when (type) {
-                        ConditionType.TEMP_BELOW -> ClothesRule.TemperatureBelow(v)
-                        ConditionType.TEMP_ABOVE -> ClothesRule.TemperatureAbove(v)
+                        ConditionType.TEMP_BELOW -> ClothesRule.TemperatureBelow(v, temperatureUnit)
+                        ConditionType.TEMP_ABOVE -> ClothesRule.TemperatureAbove(v, temperatureUnit)
                         ConditionType.PRECIP_ABOVE -> ClothesRule.PrecipitationProbabilityAbove(v)
                     }
                     onConfirm(ClothesRule(garment.itemKey, condition))
@@ -290,13 +333,14 @@ private fun ClothesRuleDialog(
                     onValueChange = { valueText = it },
                     label = {
                         Text(
-                            stringResource(
-                                if (type == ConditionType.PRECIP_ABOVE) {
-                                    R.string.settings_clothes_value_label_precip
-                                } else {
-                                    R.string.settings_clothes_value_label_temp_c
-                                },
-                            ),
+                            if (type == ConditionType.PRECIP_ABOVE) {
+                                stringResource(R.string.settings_clothes_value_label_precip)
+                            } else {
+                                stringResource(
+                                    R.string.settings_clothes_value_label_temp,
+                                    temperatureUnit.symbol(),
+                                )
+                            },
                         )
                     },
                     singleLine = true,

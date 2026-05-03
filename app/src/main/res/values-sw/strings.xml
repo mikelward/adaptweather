@@ -28,13 +28,13 @@ The rest of the UI falls through to values/strings.xml (English).
     <string name="settings_clothes_dialog_edit_title">Hariri sheria ya mavazi</string>
     <string name="settings_clothes_item_label">Vazi</string>
     <string name="settings_clothes_condition_label">Hali</string>
-    <string name="settings_clothes_value_label_temp_c">Kiwango (°C)</string>
+    <string name="settings_clothes_value_label_temp">Kiwango (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Kiwango (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Inapohisi baridi zaidi ya</string>
     <string name="settings_clothes_cond_type_temp_above">Inapohisi joto zaidi ya</string>
     <string name="settings_clothes_cond_type_precip_above">Uwezekano wa mvua ni zaidi ya</string>
-    <string name="settings_clothes_cond_temp_below">wakati joto la chini ni chini ya %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">wakati joto la juu ni zaidi ya %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">wakati joto la chini ni chini ya %1$s</string>
+    <string name="settings_clothes_cond_temp_above">wakati joto la juu ni zaidi ya %1$s</string>
     <string name="settings_clothes_cond_precip_above">wakati uwezekano wa mvua ni zaidi ya %.0f%%</string>
 
     <string name="today_outfit_top_tshirt">T-shati</string>

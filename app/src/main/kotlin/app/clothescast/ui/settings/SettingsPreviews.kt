@@ -7,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
+import app.clothescast.core.domain.model.Garment
 import app.clothescast.core.domain.model.DistanceUnit
 import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.Region
@@ -81,6 +82,31 @@ internal fun SettingsClothesPreview() {
     SettingsFrame {
         ClothesContent(
             rules = ClothesRule.DEFAULTS,
+            temperatureUnit = TemperatureUnit.CELSIUS,
+            padding = PaddingValues(0.dp),
+            onAdd = {},
+            onReplace = { _, _ -> },
+            onDelete = {},
+        )
+    }
+}
+
+// Fahrenheit view of a mixed-unit list: the °C-typed defaults (sweater 18°C,
+// jacket 12°C, shorts 24°C) render as "18°C (64°F)" etc. — current unit first,
+// original parenthesised. The fourth rule was set in °F, so it shows just
+// "75°F" without parens because rule unit == display unit. This is the
+// Fahrenheit user's regression net: the Settings → Clothes editor used to lie
+// to them with hardcoded °C output regardless of preference.
+@Preview(name = "Settings · Clothes rules · Fahrenheit", widthDp = 360)
+@Composable
+internal fun SettingsClothesFahrenheitPreview() {
+    SettingsFrame {
+        ClothesContent(
+            rules = ClothesRule.DEFAULTS + ClothesRule(
+                Garment.TSHIRT.itemKey,
+                ClothesRule.TemperatureAbove(75.0, TemperatureUnit.FAHRENHEIT),
+            ),
+            temperatureUnit = TemperatureUnit.FAHRENHEIT,
             padding = PaddingValues(0.dp),
             onAdd = {},
             onReplace = { _, _ -> },

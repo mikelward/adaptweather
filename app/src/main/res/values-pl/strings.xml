@@ -27,13 +27,13 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_dialog_edit_title">Edytuj regułę ubioru</string>
     <string name="settings_clothes_item_label">Ubranie</string>
     <string name="settings_clothes_condition_label">Warunek</string>
-    <string name="settings_clothes_value_label_temp_c">Próg (°C)</string>
+    <string name="settings_clothes_value_label_temp">Próg (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Próg (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Gdy odczuwalna temperatura spada poniżej</string>
     <string name="settings_clothes_cond_type_temp_above">Gdy odczuwalna temperatura przekracza</string>
     <string name="settings_clothes_cond_type_precip_above">Gdy prawdopodobieństwo deszczu przekracza</string>
-    <string name="settings_clothes_cond_temp_below">gdy odczuwalna temperatura spada poniżej %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">gdy odczuwalna temperatura przekracza %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">gdy odczuwalna temperatura spada poniżej %1$s</string>
+    <string name="settings_clothes_cond_temp_above">gdy odczuwalna temperatura przekracza %1$s</string>
     <string name="settings_clothes_cond_precip_above">gdy prawdopodobieństwo deszczu przekracza %.0f%%</string>
 
     <string name="today_outfit_top_tshirt">Koszulka</string>
