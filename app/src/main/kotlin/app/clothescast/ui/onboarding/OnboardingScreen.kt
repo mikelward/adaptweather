@@ -340,6 +340,17 @@ private fun LocationStep(
                     )
                 }
             }
+            // Caption the manual fallback so new users don't read it as a co-equal
+            // choice and pick it just to dodge the permission prompt. Suppressed on
+            // TV (manual is the *only* path) and after a denial (the existing
+            // denied_hint already says the same thing).
+            if (!isTelevision && !(permissionAsked && !permissionGranted)) {
+                Text(
+                    text = stringResource(R.string.onboarding_location_enter_manual_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             TextButton(
                 onClick = { searchOpen = true },
                 modifier = Modifier.fillMaxWidth(),
