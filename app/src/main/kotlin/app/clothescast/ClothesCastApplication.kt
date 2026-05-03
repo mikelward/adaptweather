@@ -19,6 +19,7 @@ import app.clothescast.data.SettingsRepository
 import app.clothescast.diag.DiagLog
 import app.clothescast.locale.AppLocale
 import app.clothescast.location.LocationResolver
+import app.clothescast.location.ReverseGeocoder
 import app.clothescast.notification.InsightNotifier
 import app.clothescast.notification.NotificationChannelRegistrar
 import app.clothescast.notification.TonightInsightNotifier
@@ -52,6 +53,7 @@ class ClothesCastApplication : Application() {
     val settingsRepository: SettingsRepository by lazy { SettingsRepository.create(this) }
     val insightCache: InsightCache by lazy { InsightCache.create(this) }
     val locationResolver: LocationResolver by lazy { LocationResolver(this) }
+    val reverseGeocoder: ReverseGeocoder by lazy { ReverseGeocoder(this) }
     val insightNotifier: InsightNotifier by lazy { InsightNotifier(this) }
     val tonightInsightNotifier: TonightInsightNotifier by lazy { TonightInsightNotifier(this) }
     val weatherAlertNotifier: WeatherAlertNotifier by lazy { WeatherAlertNotifier(this) }

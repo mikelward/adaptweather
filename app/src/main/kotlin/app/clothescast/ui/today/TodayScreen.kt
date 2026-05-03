@@ -1,5 +1,9 @@
 package app.clothescast.ui.today
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -815,16 +819,40 @@ internal fun InsightCard(insight: Insight, region: Region) {
     val locale = LocalConfiguration.current.locales[0]
     val dateFormatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
     val generatedAtFormatter = remember(locale) { DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale) }
+    val location = insight.location
+    val locationLabel = shortLocationLabel(location?.displayName)
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = dateFormatter.format(insight.forDate),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = dateFormatter.format(insight.forDate),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                if (location != null && locationLabel != null) {
+                    Text(
+                        text = " · ",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = locationLabel,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            openInMaps(
+                                context = context,
+                                latitude = location.latitude,
+                                longitude = location.longitude,
+                                label = locationLabel,
+                            )
+                        },
+                    )
+                }
+            }
             insight.confidence?.let { ConfidenceChip(it) }
             Text(
                 text = formatter.format(insight.summary),
@@ -993,5 +1021,33 @@ private fun java.time.LocalTime.isInTonightWindow(
     this >= tonightTime || this < morningTime
 } else {
     this >= tonightTime && this < morningTime
+}
+
+// Trim a forward-geocoded "Boston, Massachusetts, United States" down to the
+// city for the home view's date row. Returns null when there's no friendly
+// name to show (null/blank input, or the LocationResolver placeholder string
+// that means "device location with no real city resolved") — the UI then
+// renders date-only with no separator.
+internal fun shortLocationLabel(displayName: String?): String? {
+    if (displayName.isNullOrBlank()) return null
+    if (displayName == "Device location") return null
+    return displayName.substringBefore(',').trim().takeIf { it.isNotBlank() }
+}
+
+// Hand the user's chosen maps app a `geo:` URI with a search query so the pin
+// drops on the actual GPS coords (not the geocoder's centroid for the labelled
+// place). Silently no-ops when no maps app is installed — there's no good
+// recovery and the rest of the screen still works.
+private fun openInMaps(context: Context, latitude: Double, longitude: Double, label: String?) {
+    val labelPart = label?.takeIf { it.isNotBlank() }
+        ?.let { "(${Uri.encode(it)})" }
+        .orEmpty()
+    val uri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude$labelPart")
+    val intent = Intent(Intent.ACTION_VIEW, uri)
+    try {
+        context.startActivity(intent)
+    } catch (_: ActivityNotFoundException) {
+        // No maps app installed; nothing useful to do.
+    }
 }
 

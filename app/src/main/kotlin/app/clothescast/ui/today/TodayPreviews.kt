@@ -23,6 +23,7 @@ import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
@@ -301,6 +302,23 @@ internal fun TodayInsightCardPreview() {
 @Composable
 internal fun TodayInsightCardDarkPreview() {
     Frame(darkTheme = true) { InsightCard(SAMPLE_INSIGHT, Region.SYSTEM) }
+}
+
+@Preview(name = "Today · insight with location", widthDp = 360)
+@Composable
+internal fun TodayInsightCardWithLocationPreview() {
+    Frame {
+        InsightCard(
+            SAMPLE_INSIGHT.copy(
+                location = Location(
+                    latitude = 42.3601,
+                    longitude = -71.0589,
+                    displayName = "Boston, Massachusetts, United States",
+                ),
+            ),
+            Region.SYSTEM,
+        )
+    }
 }
 
 @Preview(name = "Confidence · high", widthDp = 360)

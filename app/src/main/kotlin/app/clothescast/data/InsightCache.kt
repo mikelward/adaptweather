@@ -18,6 +18,7 @@ import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
@@ -111,12 +112,14 @@ class InsightCache(
         val nextOutfitRationale: OutfitRationaleDto? = null,
         val period: String = ForecastPeriod.TODAY.name,
         val hasEvents: Boolean = false,
+        val location: LocationDto? = null,
     ) {
         fun toDomain(): Insight = Insight(
             summary = summary.toDomain(),
             recommendedItems = recommendedItems,
             generatedAt = Instant.ofEpochMilli(generatedAtEpochMillis),
             forDate = LocalDate.ofEpochDay(forDateEpochDays),
+            location = location?.toDomain(),
             hourly = hourly.map { it.toDomain() },
             outfit = outfit?.toDomain(),
             nextOutfit = nextOutfit?.toDomain(),
@@ -124,6 +127,19 @@ class InsightCache(
             nextOutfitRationale = nextOutfitRationale?.toDomain(),
             period = runCatching { ForecastPeriod.valueOf(period) }.getOrDefault(ForecastPeriod.TODAY),
             hasEvents = hasEvents,
+        )
+    }
+
+    @Serializable
+    private data class LocationDto(
+        val latitude: Double,
+        val longitude: Double,
+        val displayName: String? = null,
+    ) {
+        fun toDomain(): Location = Location(
+            latitude = latitude,
+            longitude = longitude,
+            displayName = displayName,
         )
     }
 
@@ -285,6 +301,7 @@ class InsightCache(
         nextOutfitRationale = nextOutfitRationale?.toDto(),
         period = period.name,
         hasEvents = hasEvents,
+        location = location?.let { LocationDto(it.latitude, it.longitude, it.displayName) },
     )
 
     private fun OutfitRationale.toDto(): OutfitRationaleDto = OutfitRationaleDto(

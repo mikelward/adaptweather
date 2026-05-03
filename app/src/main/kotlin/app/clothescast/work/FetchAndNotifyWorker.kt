@@ -176,7 +176,11 @@ class FetchAndNotifyWorker(
     ): Result {
         return try {
             val result = app.generateDailyInsight(location, prefs, period)
-            val insight = result.insight
+            // Stamp the resolved location onto the insight so the home screen
+            // can show the city next to the date and deep-link to maps. UI-only
+            // — never read by InsightFormatter / RenderInsightSummary, so it
+            // can't leak into LLM / TTS prose.
+            val insight = result.insight.copy(location = location)
             // Severe alerts are out-of-band: post them as separate high-priority
             // notifications on every fresh fetch, regardless of whether the daily
             // summary itself is blank or suppressed.
@@ -281,7 +285,13 @@ class FetchAndNotifyWorker(
             val device = app.locationResolver.resolve()
             if (device != null) {
                 DiagLog.i(TAG, "Using device-resolved location at ${device.latitude}, ${device.longitude}.")
-                return device
+                // Best-effort reverse geocode so the home screen can show a
+                // friendly city name next to the date instead of the
+                // resolver's "Device location" placeholder. Null on AOSP /
+                // network failure / nothing useful in the address — the UI
+                // falls back to a date-only header in that case.
+                val cityName = app.reverseGeocoder.resolveCityName(device.latitude, device.longitude)
+                return if (cityName != null) device.copy(displayName = cityName) else device
             }
             DiagLog.i(TAG, "Device location unavailable; falling back to settings location.")
         }
