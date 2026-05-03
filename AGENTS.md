@@ -162,3 +162,31 @@ new rule the first time something bites you, not the third.
   names (`gemini-2.5-flash-tts`) for models that only exist as previews
   (`gemini-2.5-flash-preview-tts`). PR #59 → #60 was a same-day
   rename-and-revert because of this.
+
+## Cursor Cloud specific instructions
+
+- **Android SDK is installed** at `/opt/android-sdk`. The update script
+  installs it idempotently if missing (command-line tools + platforms;android-35
+  + build-tools;35.0.0). `ANDROID_HOME` / `ANDROID_SDK_ROOT` are exported via
+  `~/.bashrc`; source it or `export ANDROID_HOME=/opt/android-sdk` before
+  running Gradle if your shell hasn't picked it up.
+- **All three modules build and test on this VM.** Unlike the AGENTS.md note
+  about agent sandboxes lacking the SDK, the Cursor Cloud VM has it. You can
+  run the full CI-equivalent locally:
+  ```
+  export ANDROID_HOME=/opt/android-sdk
+  ./gradlew :core:domain:test :core:data:test :app:testDebugUnitTest
+  ./gradlew :app:assembleDebug
+  ```
+- **Pre-existing flaky test:** `SettingsViewModelTest > initial state reflects
+  repository defaults` may fail with `expected:<CELSIUS> but was:<FAHRENHEIT>`
+  depending on the JVM's default locale. This is a pre-existing issue, not
+  caused by your changes. CI passes this test because the GitHub runner locale
+  defaults differently.
+- **No lint task is configured** in the Gradle build. There is no `lint` or
+  `ktlint` plugin wired. Kotlin compiler warnings are the closest equivalent;
+  they are visible in the build output.
+- **This is a client-only Android app.** No backend server, database, or
+  Docker containers to start. The app calls Open-Meteo (free, keyless) and
+  optionally Gemini/OpenAI/ElevenLabs (BYOK). Testing is purely JVM-based.
+- **`CLAUDE.md` is a symlink** to `AGENTS.md` — editing either edits both.
