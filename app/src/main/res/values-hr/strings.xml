@@ -20,7 +20,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_root_schedule">Raspored</string>
     <string name="settings_root_region">Regija</string>
     <string name="settings_root_clothes">Odjeća</string>
-    <string name="settings_root_data_sources">Izvori podataka</string>
     <string name="settings_root_about">O aplikaciji</string>
 
     <string name="garment_sweater">Džemper</string>
@@ -266,10 +265,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_location_use_device">Koristi lokaciju uređaja</string>
     <string name="settings_location_grant_background">Dopusti pozadinsku lokaciju (postavke sustava)</string>
     <string name="settings_location_unset">Lokacija nije postavljena</string>
-    <string name="settings_location_description">Prognoza se dohvaća za ovu lokaciju. Pretraži po imenu grada; rezultati dolaze iz Open-Meteovog besplatnog servisa za geokodiranje.</string>
-    <string name="settings_location_description_device_on">Kada je uključeno, ClothesCast pri vremenu obavijesti čita približnu lokaciju tvog uređaja (samo mobilni odašiljač / WiFi — bez GPS-a). Lokacija ispod služi kao rezerva ako čitanje uređaja zakaže. Pozadinska lokacija mora biti dopuštena u postavkama sustava, inače je jutarnji Worker ne može pročitati.</string>
-    <string name="settings_location_set">Postavi lokaciju</string>
-    <string name="settings_location_change">Promijeni lokaciju</string>
     <string name="settings_location_clear">Obriši lokaciju</string>
     <string name="settings_location_search_title">Pretraži lokaciju</string>
     <string name="settings_location_query_label">Grad ili mjesto</string>
@@ -496,7 +491,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_root_clothes_subtitle">Temperature i odjevne kombinacije</string>
     <string name="settings_root_region_subtitle">Jezici i jedinice</string>
     <string name="settings_root_voice_subtitle">Pružatelji i naglasci</string>
-    <string name="settings_root_data_sources_subtitle">Lokacija i kalendar</string>
 
     <string name="settings_tts_device_voice_label">Glas uređaja</string>
     <string name="settings_tts_device_voice_auto">Automatski (najbolji za naglasak)</string>

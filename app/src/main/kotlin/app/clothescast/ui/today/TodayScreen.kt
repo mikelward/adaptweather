@@ -94,7 +94,7 @@ fun TodayScreen(
     viewModel: TodayViewModel,
     onNavigateToSettings: () -> Unit,
     onNavigateToAbout: () -> Unit,
-    onNavigateToDataSources: () -> Unit = onNavigateToSettings,
+    onNavigateToLocation: () -> Unit = onNavigateToSettings,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -178,7 +178,7 @@ fun TodayScreen(
             padding = padding,
             isWorking = isWorking,
             onRefresh = { triggerRefresh(context, state.morningTime, state.tonightTime) },
-            onSetUpLocation = onNavigateToDataSources,
+            onSetUpLocation = onNavigateToLocation,
             onAdjustThreshold = viewModel::adjustOutfitThreshold,
             onResetThresholds = viewModel::resetOutfitThresholds,
         )

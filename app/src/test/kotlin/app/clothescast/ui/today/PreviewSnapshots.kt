@@ -13,9 +13,10 @@ import app.clothescast.notification.NotificationIconThickJacketPreview
 import app.clothescast.ui.onboarding.OnboardingCompletePreview
 import app.clothescast.ui.onboarding.OnboardingFreshPreview
 import app.clothescast.ui.onboarding.OnboardingPartialPreview
+import app.clothescast.ui.settings.SettingsCalendarPreview
 import app.clothescast.ui.settings.SettingsClothesPreview
-import app.clothescast.ui.settings.SettingsDataSourcesPreview
 import app.clothescast.ui.settings.SettingsDisplayPreview
+import app.clothescast.ui.settings.SettingsLocationPreview
 import app.clothescast.ui.settings.SettingsRegionPreview
 import app.clothescast.ui.settings.SettingsRootPreview
 import app.clothescast.ui.settings.SettingsSchedulePreview
@@ -169,7 +170,8 @@ class PreviewSnapshots {
     @Test fun settings_region() = capture { SettingsRegionPreview() }
     @Test fun settings_display() = capture { SettingsDisplayPreview() }
     @Test fun settings_voice_device() = capture { SettingsVoiceDevicePreview() }
-    @Test fun settings_data_sources() = capture { SettingsDataSourcesPreview() }
+    @Test fun settings_location() = capture { SettingsLocationPreview() }
+    @Test fun settings_calendar() = capture { SettingsCalendarPreview() }
 
     // Onboarding's notification + location step cards derive their "complete"
     // checkmark from runtime permission state (POST_NOTIFICATIONS,

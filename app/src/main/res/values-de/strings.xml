@@ -41,7 +41,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_root_schedule">Zeitplan</string>
     <string name="settings_root_region">Region</string>
     <string name="settings_root_clothes">Kleidung</string>
-    <string name="settings_root_data_sources">Datenquellen</string>
     <string name="settings_root_about">Über</string>
 
     <!-- Garment dropdown labels — translated names for the picker on the
@@ -291,10 +290,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_use_device">Gerätestandort verwenden</string>
     <string name="settings_location_grant_background">Hintergrundstandort erlauben (System-Einstellungen)</string>
     <string name="settings_location_unset">Kein Standort festgelegt</string>
-    <string name="settings_location_description">Die Vorhersage wird für diesen Ort geholt. Suche nach einem Städtenamen; die Ergebnisse stammen vom kostenlosen Geocoding-Dienst von Open-Meteo.</string>
-    <string name="settings_location_description_device_on">Wenn aktiviert, liest ClothesCast zur Benachrichtigungszeit den ungefähren Standort deines Geräts (nur Funkzelle / WLAN — keine GPS-Ortung). Der Standort unten dient als Notlösung, falls das Auslesen des Geräts fehlschlägt. Hintergrundstandort muss in den System-Einstellungen erlaubt sein, sonst kann der morgendliche Worker ihn nicht lesen.</string>
-    <string name="settings_location_set">Standort festlegen</string>
-    <string name="settings_location_change">Standort ändern</string>
     <string name="settings_location_clear">Standort entfernen</string>
     <string name="settings_location_search_title">Nach Standort suchen</string>
     <string name="settings_location_query_label">Stadt oder Ort</string>
@@ -549,7 +544,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_root_clothes_subtitle">Temperaturen und Outfits</string>
     <string name="settings_root_region_subtitle">Sprachen und Einheiten</string>
     <string name="settings_root_voice_subtitle">Anbieter und Akzente</string>
-    <string name="settings_root_data_sources_subtitle">Standort und Kalender</string>
 
     <string name="settings_tts_device_voice_label">Gerätestimme</string>
     <string name="settings_tts_device_voice_auto">Automatisch (bester Akzent)</string>

@@ -186,6 +186,62 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `selectLocation also disables device location so the manual pick sticks`() = runTest {
+        // Without this, the next worker run's device-resolve would write
+        // through and immediately overwrite the city the user just picked —
+        // defeating the override. The Location page surfaces a disclosure
+        // ("Picking a city turns off auto-detect") so the toggle doesn't
+        // appear to flip on its own.
+        subject.setUseDeviceLocation(true)
+        subject.state.first { it.useDeviceLocation }
+
+        subject.selectLocation(
+            app.clothescast.core.domain.model.Location(
+                latitude = 51.5074,
+                longitude = -0.1278,
+                displayName = "London",
+            ),
+        )
+
+        val state = subject.state.first { !it.useDeviceLocation && it.location != null }
+        state.location?.displayName shouldBe "London"
+        val prefs = settingsRepository.preferences.first()
+        prefs.useDeviceLocation shouldBe false
+        prefs.location?.displayName shouldBe "London"
+    }
+
+    @Test
+    fun `setUseDeviceLocation triggers the eager cache refresh only when enabled`() = runTest {
+        // The Activity wires this lambda to `FetchAndNotifyWorker.enqueueOneShot`
+        // so the user sees their detected city populate within seconds of
+        // toggling device location ON, instead of waiting for the next
+        // morning worker run. Toggle-off must NOT enqueue — there's nothing
+        // for the worker to refresh once device-location is off.
+        var refreshCount = 0
+        val refreshSubject = SettingsViewModel(
+            settingsRepository = settingsRepository,
+            keyStore = keyStore,
+            rearmAlarm = { _, _ -> },
+            cancelAlarm = { _ -> },
+            geocodingClient = OpenMeteoGeocodingClient(
+                HttpClient(MockEngine { respond("""{"results":[]}""") }) {
+                    install(ContentNegotiation) { json(KotlinxJson { ignoreUnknownKeys = true }) }
+                },
+            ),
+            voiceEnumerator = EmptyVoiceEnumerator,
+            refreshLocationCache = { refreshCount++ },
+        )
+
+        refreshSubject.setUseDeviceLocation(true)
+        refreshSubject.state.first { it.useDeviceLocation }
+        refreshCount shouldBe 1
+
+        refreshSubject.setUseDeviceLocation(false)
+        refreshSubject.state.first { !it.useDeviceLocation }
+        refreshCount shouldBe 1
+    }
+
+    @Test
     fun `setTemperatureUnit and setDistanceUnit persist independently`() = runTest {
         subject.setTemperatureUnit(TemperatureUnit.FAHRENHEIT)
         subject.setDistanceUnit(DistanceUnit.MILES)

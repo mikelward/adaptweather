@@ -48,7 +48,6 @@ the displayed label localizes.
     <string name="settings_root_schedule">スケジュール</string>
     <string name="settings_root_region">地域</string>
     <string name="settings_root_clothes">服装</string>
-    <string name="settings_root_data_sources">データソース</string>
     <string name="settings_root_about">アプリについて</string>
 
     <string name="garment_sweater">セーター</string>
@@ -291,10 +290,6 @@ the displayed label localizes.
     <string name="settings_location_use_device">端末の位置情報を使用</string>
     <string name="settings_location_grant_background">バックグラウンド位置情報を許可（システム設定）</string>
     <string name="settings_location_unset">位置情報が未設定</string>
-    <string name="settings_location_description">予報はこの場所について取得されます。都市名で検索してください。結果は Open-Meteo の無料ジオコーディングサービスから取得されます。</string>
-    <string name="settings_location_description_device_on">有効にすると、ClothesCast は通知時に端末のおおよその位置を読み取ります（基地局 / WiFi のみ — GPS ハードウェア測位は使用しません）。端末からの読み取りに失敗した場合、下の位置がフォールバックとして使用されます。バックグラウンド位置情報はシステム設定で許可する必要があり、許可がないと朝の Worker が読み取れません。</string>
-    <string name="settings_location_set">位置を設定</string>
-    <string name="settings_location_change">位置を変更</string>
     <string name="settings_location_clear">位置をクリア</string>
     <string name="settings_location_search_title">位置を検索</string>
     <string name="settings_location_query_label">都市または場所</string>
@@ -529,7 +524,6 @@ the displayed label localizes.
     <string name="settings_root_clothes_subtitle">気温と服装</string>
     <string name="settings_root_region_subtitle">言語と単位</string>
     <string name="settings_root_voice_subtitle">プロバイダーとアクセント</string>
-    <string name="settings_root_data_sources_subtitle">位置情報とカレンダー</string>
 
     <string name="settings_tts_device_voice_label">デバイスの音声</string>
     <string name="settings_tts_device_voice_auto">自動（アクセントに最適）</string>

@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -47,9 +48,18 @@ enum class SettingsRoute(@StringRes val titleRes: Int, @StringRes val subtitleRe
     Region(R.string.settings_root_region, R.string.settings_root_region_subtitle),
     Voice(R.string.settings_root_voice, R.string.settings_root_voice_subtitle),
     Display(R.string.settings_root_display, R.string.settings_root_display_subtitle),
-    DataSources(R.string.settings_root_data_sources, R.string.settings_root_data_sources_subtitle),
+    Location(R.string.settings_root_location, R.string.settings_root_location_subtitle),
+    Calendar(R.string.settings_root_calendar, R.string.settings_root_calendar_subtitle),
     About(R.string.settings_root_about),
 }
+
+// Saved as the enum name string with a runCatching restore so an old install
+// that had the page open at process death (e.g. on the now-removed
+// `DataSources` route) doesn't crash on restore — it falls back to Root.
+private val SettingsRouteSaver: Saver<SettingsRoute, String> = Saver(
+    save = { it.name },
+    restore = { runCatching { SettingsRoute.valueOf(it) }.getOrDefault(SettingsRoute.Root) },
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +69,9 @@ fun SettingsScreen(
     initialRoute: SettingsRoute? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var route by rememberSaveable { mutableStateOf(initialRoute ?: SettingsRoute.Root) }
+    var route by rememberSaveable(stateSaver = SettingsRouteSaver) {
+        mutableStateOf(initialRoute ?: SettingsRoute.Root)
+    }
 
     // When entered via deep link (initialRoute is non-null), back from the deep-linked
     // sub-page exits Settings entirely instead of going to Root — so onboarding's
@@ -93,6 +105,7 @@ fun SettingsScreen(
     ) { padding ->
         when (route) {
             SettingsRoute.Root -> SettingsRoot(
+                useDeviceLocation = state.useDeviceLocation,
                 padding = padding,
                 onNavigate = { route = it },
             )
@@ -179,15 +192,18 @@ fun SettingsScreen(
                 padding = padding,
                 onSetThemeMode = viewModel::setThemeMode,
             )
-            SettingsRoute.DataSources -> DataSourcesContent(
+            SettingsRoute.Location -> LocationContent(
                 location = state.location,
                 useDeviceLocation = state.useDeviceLocation,
-                useCalendarEvents = state.useCalendarEvents,
                 padding = padding,
                 onSetUseDeviceLocation = viewModel::setUseDeviceLocation,
                 onSelectLocation = viewModel::selectLocation,
                 onClearLocation = viewModel::clearLocation,
                 onSearchLocations = viewModel::searchLocations,
+            )
+            SettingsRoute.Calendar -> CalendarContent(
+                useCalendarEvents = state.useCalendarEvents,
+                padding = padding,
                 onSetUseCalendarEvents = viewModel::setUseCalendarEvents,
             )
             SettingsRoute.About -> AboutContent(padding = padding)
@@ -197,6 +213,7 @@ fun SettingsScreen(
 
 @Composable
 internal fun SettingsRoot(
+    useDeviceLocation: Boolean,
     padding: PaddingValues,
     onNavigate: (SettingsRoute) -> Unit,
 ) {
@@ -209,6 +226,14 @@ internal fun SettingsRoot(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         NotificationPermissionBanner()
+        // Surface a missing always-on grant from the settings root too so the
+        // user sees the broken state without having to drill into Location.
+        // Tapping the card deep-links into Location where the launcher and
+        // rationale dialogs live.
+        BackgroundLocationWarningCard(
+            useDeviceLocation = useDeviceLocation,
+            onClick = { onNavigate(SettingsRoute.Location) },
+        )
         SettingsRoute.entries
             .filter { it != SettingsRoute.Root && it != SettingsRoute.About }
             .forEach { destination ->

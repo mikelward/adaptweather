@@ -139,7 +139,8 @@
     <string name="settings_root_region">Region</string>
     <string name="settings_root_clothes">Clothes</string>
     <string name="settings_root_display">Display</string>
-    <string name="settings_root_data_sources">Data sources</string>
+    <string name="settings_root_location">Location</string>
+    <string name="settings_root_calendar">Calendar</string>
     <string name="settings_root_about">About</string>
 
     <string name="settings_root_schedule_subtitle">Notifications and Times</string>
@@ -158,7 +159,8 @@
     <string name="settings_display_theme_system">Follow system</string>
     <string name="settings_display_theme_light">Light</string>
     <string name="settings_display_theme_dark">Dark</string>
-    <string name="settings_root_data_sources_subtitle">Location and Calendar</string>
+    <string name="settings_root_location_subtitle">Auto-detect or pick a city</string>
+    <string name="settings_root_calendar_subtitle">Today\'s events</string>
 
     <string name="settings_api_key_gemini_label">Gemini</string>
     <string name="settings_api_key_openai_label">OpenAI</string>
@@ -172,32 +174,32 @@
 
     <string name="settings_location_title">Location</string>
     <string name="settings_location_use_device">Use device location</string>
-    <string name="settings_location_grant_background">Grant always-on location</string>
-    <string name="settings_location_background_banner_title">Always-on location not granted</string>
-    <string name="settings_location_background_banner_body">ClothesCast needs \'Allow all the time\' so the morning forecast can read your device location while the app is closed. Without it, the daily forecast falls back to your saved city.</string>
+    <string name="settings_location_use_device_description">Detected from cell tower / WiFi when the forecast runs.</string>
+    <string name="settings_location_detecting">Detecting…</string>
+    <string name="settings_location_grant_background">Grant</string>
+    <string name="settings_location_background_banner_title">Always-on location needed</string>
+    <string name="settings_location_background_banner_body">Without it, the morning forecast can\'t read your location.</string>
     <string name="settings_location_unset">No location set</string>
-    <string name="settings_location_description">The forecast is fetched for this place. Search by city name; results come from Open-Meteo\'s free geocoding service.</string>
-    <string name="settings_location_description_device_on">When enabled, ClothesCast reads the device\'s coarse location at notify time (cell-tower / WiFi only — no GPS hardware fix). The location below is used as a fallback if the device read fails. Background location must be granted in system Settings or the morning Worker can\'t read it.</string>
-    <string name="settings_location_set">Set location</string>
-    <string name="settings_location_change">Change location</string>
+    <string name="settings_location_manual_override">Wrong location? Set manually</string>
+    <string name="settings_location_manual_override_disclosure">Picking a city turns off auto-detect.</string>
     <string name="settings_location_clear">Clear location</string>
     <string name="settings_location_search_title">Search for a location</string>
     <string name="settings_location_query_label">City or place</string>
     <string name="settings_location_search">Search</string>
     <string name="settings_location_searching">Searching…</string>
     <string name="settings_location_no_results">No matches.</string>
-    <string name="settings_location_rationale_title">Always-on location</string>
-    <string name="settings_location_rationale_body">ClothesCast updates your forecast in the background to deliver it on time, so it needs \'Allow all the time\' location permission.</string>
+    <string name="settings_location_rationale_title">Location access</string>
+    <string name="settings_location_rationale_body">ClothesCast reads your location to fetch your local forecast.</string>
     <string name="settings_location_rationale_continue">Continue</string>
     <string name="settings_location_rationale_dismiss">Not now</string>
     <string name="settings_location_background_rationale_title">Allow all the time</string>
-    <string name="settings_location_background_rationale_body">ClothesCast fetches your forecast in the background each morning, so it needs \'Allow all the time\' location access. You\'ll be taken to system Settings to grant it.</string>
+    <string name="settings_location_background_rationale_body">Allow ClothesCast to read your location while it\'s closed so the morning forecast updates on time.</string>
     <string name="settings_location_background_rationale_continue">Open Settings</string>
     <string name="settings_location_background_rationale_dismiss">Not now</string>
     <string name="settings_location_background_denied_title">Always-on not granted</string>
-    <string name="settings_location_background_denied_body">Without \'Allow all the time\', the morning forecast falls back to your saved location. Open system Settings to grant it?</string>
+    <string name="settings_location_background_denied_body">Without \'Allow all the time\' the morning forecast can\'t auto-update.</string>
     <string name="settings_location_background_denied_open">Open Settings</string>
-    <string name="settings_location_background_denied_keep">Keep using saved location</string>
+    <string name="settings_location_background_denied_keep">Not now</string>
 
     <string name="settings_schedule_title">Daily ClothesCast</string>
     <string name="settings_schedule_time_label">Time</string>
@@ -487,8 +489,8 @@
 
     <string name="settings_calendar_title">Calendar</string>
     <string name="settings_calendar_use_events">Use today\'s calendar events</string>
-    <string name="settings_calendar_description_off">When enabled, ClothesCast reads today\'s events from your device calendar so your morning ClothesCast can suggest items keyed to specific events — for example, "bring an umbrella for your 3pm park run". Only event titles and times are used; descriptions, attendees, and locations are read but never sent off-device.</string>
-    <string name="settings_calendar_description_on">Reading today\'s events from your device calendar to enrich your morning ClothesCast. Only titles and times are used in the rendered summary; descriptions and attendees are not. Everything stays on-device.</string>
+    <string name="settings_calendar_description_off">Tailor the morning forecast to today\'s events — only titles and times are used, and nothing leaves the device.</string>
+    <string name="settings_calendar_description_on">Tailoring the morning forecast to today\'s events. Only titles and times are used; nothing leaves the device.</string>
     <string name="settings_calendar_grant_permission">Grant calendar permission</string>
     <string name="settings_calendar_open_settings">Calendar permission denied. Grant it from system Settings.</string>
 

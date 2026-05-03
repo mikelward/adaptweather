@@ -58,6 +58,15 @@ class SettingsViewModel(
      * AppLocale-backed implementation.
      */
     private val applyAppLocale: (Region) -> Unit = {},
+    /**
+     * Kicks off a one-shot worker run to resolve the device location and
+     * write it to settings as the new fallback. Triggered when the user
+     * flips device-location ON so they see their city populate without
+     * waiting for the next morning. Defaulted to a no-op so pure-VM tests
+     * don't need a WorkManager; the Activity wires
+     * `FetchAndNotifyWorker.enqueueOneShot`.
+     */
+    private val refreshLocationCache: () -> Unit = {},
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -340,7 +349,15 @@ class SettingsViewModel(
     }
 
     fun selectLocation(location: Location) {
-        viewModelScope.launch { settingsRepository.setLocation(location) }
+        // A manual pick is the user's explicit "stop trusting the system"
+        // signal — flip device-location off so the next worker run doesn't
+        // immediately overwrite the picked city with the next device fix.
+        // The Location page surfaces a disclosure ("Picking a city turns off
+        // auto-detect") so the toggle doesn't appear to flip on its own.
+        viewModelScope.launch {
+            settingsRepository.setLocation(location)
+            settingsRepository.setUseDeviceLocation(false)
+        }
     }
 
     fun clearLocation() {
@@ -348,7 +365,18 @@ class SettingsViewModel(
     }
 
     fun setUseDeviceLocation(enabled: Boolean) {
-        viewModelScope.launch { settingsRepository.setUseDeviceLocation(enabled) }
+        viewModelScope.launch {
+            settingsRepository.setUseDeviceLocation(enabled)
+            // Eagerly populate the device-location cache so the user sees
+            // their city in Settings within seconds, instead of waiting for
+            // the morning worker run. The worker resolves the device fix and
+            // writes it back via setLocation() before any cache short-circuit,
+            // so this works even when today's insight is already cached.
+            // Awaited *after* the toggle write so the worker reads the
+            // freshly-updated `useDeviceLocation = true` and actually attempts
+            // the resolve. Skipped on toggle-off — nothing to refresh there.
+            if (enabled) refreshLocationCache()
+        }
     }
 
     fun setTtsEngine(engine: TtsEngine) {
@@ -432,6 +460,7 @@ class SettingsViewModel(
         private val elevenLabsTtsClient: ElevenLabsTtsClient,
         private val showError: (String) -> Unit,
         private val applyAppLocale: (Region) -> Unit,
+        private val refreshLocationCache: () -> Unit,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -448,6 +477,7 @@ class SettingsViewModel(
                 elevenLabsTtsClient,
                 showError,
                 applyAppLocale,
+                refreshLocationCache,
             ) as T
         }
     }

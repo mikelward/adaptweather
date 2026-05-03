@@ -39,6 +39,7 @@ import app.clothescast.ui.settings.SettingsViewModel
 import app.clothescast.ui.theme.ClothesCastTheme
 import app.clothescast.ui.today.TodayScreen
 import app.clothescast.ui.today.TodayViewModel
+import app.clothescast.work.FetchAndNotifyWorker
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -187,8 +188,8 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
                     settingsInitialRoute = SettingsRoute.About.name
                     screen = Screen.Settings
                 },
-                onNavigateToDataSources = {
-                    settingsInitialRoute = SettingsRoute.DataSources.name
+                onNavigateToLocation = {
+                    settingsInitialRoute = SettingsRoute.Location.name
                     screen = Screen.Settings
                 },
             )
@@ -218,6 +219,15 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                             (context as? Activity)?.recreate()
                         }
+                    },
+                    refreshLocationCache = {
+                        // Eager device-location populate when the user flips
+                        // device-location ON. Cache-only path — resolves the
+                        // fix and writes through to settings without running
+                        // the insight / notify / TTS pipeline, so toggling at
+                        // 10am after the morning run already fired doesn't
+                        // double-notify.
+                        FetchAndNotifyWorker.enqueueLocationCacheRefresh(context)
                     },
                 ),
             )

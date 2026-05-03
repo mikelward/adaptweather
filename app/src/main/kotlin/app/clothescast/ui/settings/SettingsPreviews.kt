@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
+import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
@@ -40,7 +41,11 @@ private fun SettingsFrame(content: @Composable () -> Unit) {
 @Composable
 internal fun SettingsRootPreview() {
     SettingsFrame {
-        SettingsRoot(padding = PaddingValues(0.dp), onNavigate = {})
+        SettingsRoot(
+            useDeviceLocation = false,
+            padding = PaddingValues(0.dp),
+            onNavigate = {},
+        )
     }
 }
 
@@ -157,19 +162,38 @@ internal fun SettingsVoiceDevicePreview() {
     }
 }
 
-@Preview(name = "Settings · Data sources", widthDp = 360)
+// Render with device-location ON and a stored fallback city: this exercises
+// both the "currently using" path (the card displays the cached city) and —
+// because the Robolectric host has no ACCESS_BACKGROUND_LOCATION grant —
+// surfaces the warning banner that's the new primary CTA. Captures the
+// regression net for the redesigned page in one snapshot.
+@Preview(name = "Settings · Location", widthDp = 360)
 @Composable
-internal fun SettingsDataSourcesPreview() {
+internal fun SettingsLocationPreview() {
     SettingsFrame {
-        DataSourcesContent(
-            location = null,
-            useDeviceLocation = false,
-            useCalendarEvents = false,
+        LocationContent(
+            location = Location(
+                latitude = 51.5074,
+                longitude = -0.1278,
+                displayName = "London",
+            ),
+            useDeviceLocation = true,
             padding = PaddingValues(0.dp),
             onSetUseDeviceLocation = {},
             onSelectLocation = {},
             onClearLocation = {},
             onSearchLocations = { emptyList() },
+        )
+    }
+}
+
+@Preview(name = "Settings · Calendar", widthDp = 360)
+@Composable
+internal fun SettingsCalendarPreview() {
+    SettingsFrame {
+        CalendarContent(
+            useCalendarEvents = false,
+            padding = PaddingValues(0.dp),
             onSetUseCalendarEvents = {},
         )
     }

@@ -45,14 +45,12 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_root_schedule">Πρόγραμμα</string>
     <string name="settings_root_region">Περιοχή</string>
     <string name="settings_root_clothes">Ρούχα</string>
-    <string name="settings_root_data_sources">Πηγές δεδομένων</string>
     <string name="settings_root_about">Σχετικά</string>
 
     <string name="settings_root_schedule_subtitle">Ειδοποιήσεις και ώρες</string>
     <string name="settings_root_clothes_subtitle">Θερμοκρασίες και σύνολα</string>
     <string name="settings_root_region_subtitle">Γλώσσες και μονάδες</string>
     <string name="settings_root_voice_subtitle">Πάροχοι και προφορές</string>
-    <string name="settings_root_data_sources_subtitle">Τοποθεσία και ημερολόγιο</string>
 
     <!-- Garment dropdown labels — translated names for the picker on
          the Ρούχα settings page. The stored key on disk is the en-US
@@ -344,10 +342,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_use_device">Χρήση τοποθεσίας συσκευής</string>
     <string name="settings_location_grant_background">Παραχώρηση τοποθεσίας στο παρασκήνιο (Ρυθμίσεις συστήματος)</string>
     <string name="settings_location_unset">Δεν έχει οριστεί τοποθεσία</string>
-    <string name="settings_location_description">Η πρόβλεψη ανακτάται για αυτή την τοποθεσία. Αναζήτησε με όνομα πόλης· τα αποτελέσματα προέρχονται από τη δωρεάν υπηρεσία γεωκωδικοποίησης του Open-Meteo.</string>
-    <string name="settings_location_description_device_on">Όταν είναι ενεργή, ο ClothesCast διαβάζει την κατά προσέγγιση τοποθεσία της συσκευής σου τη στιγμή της ειδοποίησης (μόνο πύργος κινητής τηλεφωνίας / Wi-Fi — χωρίς εντοπισμό GPS από hardware). Η τοποθεσία παρακάτω χρησιμοποιείται ως εφεδρεία αν αποτύχει η ανάγνωση από τη συσκευή. Η τοποθεσία στο παρασκήνιο πρέπει να έχει παραχωρηθεί στις Ρυθμίσεις συστήματος, αλλιώς ο πρωινός Worker δεν μπορεί να τη διαβάσει.</string>
-    <string name="settings_location_set">Όρισε τοποθεσία</string>
-    <string name="settings_location_change">Άλλαξε τοποθεσία</string>
     <string name="settings_location_clear">Καθάρισε τοποθεσία</string>
     <string name="settings_location_search_title">Αναζήτηση τοποθεσίας</string>
     <string name="settings_location_query_label">Πόλη ή τόπος</string>
