@@ -7,6 +7,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.URLProtocol
 import io.ktor.http.path
+import java.util.logging.Logger
 
 internal const val GEOCODING_HOST = "geocoding-api.open-meteo.com"
 
@@ -35,11 +36,27 @@ class OpenMeteoGeocodingClient(private val httpClient: HttpClient) {
             parameter("format", "json")
         }.body()
 
+        response.results.orEmpty().forEachIndexed { i, r ->
+            logger.fine("geocoding result[$i]: " +
+                "id=${r.id} name=${r.name} " +
+                "lat=${r.latitude} lon=${r.longitude} elevation=${r.elevation} " +
+                "featureCode=${r.featureCode} " +
+                "countryCode=${r.countryCode} countryId=${r.countryId} country=${r.country} " +
+                "timezone=${r.timezone} population=${r.population} " +
+                "admin1Id=${r.admin1Id} admin1=${r.admin1} " +
+                "admin2Id=${r.admin2Id} admin2=${r.admin2} " +
+                "admin3Id=${r.admin3Id} admin3=${r.admin3} " +
+                "admin4Id=${r.admin4Id} admin4=${r.admin4}")
+        }
         return response.results.orEmpty().map { it.toDomain() }
     }
 
     private fun GeocodingResult.toDomain(): Location {
         val displayName = listOfNotNull(name, admin1, country).joinToString(", ")
         return Location(latitude = latitude, longitude = longitude, displayName = displayName)
+    }
+
+    private companion object {
+        val logger: Logger = Logger.getLogger(OpenMeteoGeocodingClient::class.java.name)
     }
 }
