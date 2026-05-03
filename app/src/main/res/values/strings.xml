@@ -97,12 +97,12 @@
     <string name="today_crash_banner_dismiss">Dismiss</string>
 
     <string name="onboarding_title">Welcome to ClothesCast</string>
-    <string name="onboarding_subtitle">Two quick choices and you\'re set. Everything else has a sensible default you can tweak later in Settings.</string>
+    <string name="onboarding_subtitle">Two quick choices and you\'re set. Tweak later in Settings.</string>
     <string name="onboarding_notifications_title">Notifications</string>
-    <string name="onboarding_notifications_description">Required to deliver your daily ClothesCast. Grant once and ClothesCast will notify you tomorrow morning.</string>
+    <string name="onboarding_notifications_description">Required to deliver your daily ClothesCast.</string>
     <string name="onboarding_notifications_grant">Grant notification permission</string>
     <string name="onboarding_location_title">Location</string>
-    <string name="onboarding_location_description">Used to fetch the right forecast. Granting location lets ClothesCast read your device\'s coarse location each morning; otherwise pick a city manually.</string>
+    <string name="onboarding_location_description">Fetch the forecast for your approximate location.</string>
     <string name="onboarding_location_grant">Grant location permission</string>
     <string name="onboarding_location_grant_background">Grant always-on location</string>
     <string name="onboarding_location_background_needed">One more step: ClothesCast needs \'Allow all the time\' so the morning forecast can read your location while the app is closed.</string>
