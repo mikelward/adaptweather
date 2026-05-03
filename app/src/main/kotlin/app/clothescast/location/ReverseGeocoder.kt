@@ -52,7 +52,7 @@ class ReverseGeocoder(
                 DiagLog.w(TAG, "Reverse geocode timed out after ${timeoutMillis}ms.")
                 return null
             }
-        return addresses.firstOrNull()?.pickCityName()
+        return addresses.firstOrNull()?.toCityName()
     }
 
     private suspend fun fetch(geocoder: Geocoder, lat: Double, lon: Double): List<Address> =
@@ -105,10 +105,19 @@ class ReverseGeocoder(
             }
         }
 
-    private fun Address.pickCityName(): String? =
-        listOf(locality, subLocality, subAdminArea)
-            .firstOrNull { !it.isNullOrBlank() }
-            ?.trim()
+    private fun Address.toCityName(): String? {
+        val maxIdx = maxAddressLineIndex
+        val lines = if (maxIdx < 0) emptyList<String>()
+        else (0..maxIdx).mapNotNull { getAddressLine(it) }
+        return pickCityName(
+            locality = locality,
+            subLocality = subLocality,
+            subAdminArea = subAdminArea,
+            countryCode = countryCode,
+            postalCode = postalCode,
+            addressLines = lines,
+        )
+    }
 
     companion object {
         private const val TAG = "ReverseGeocoder"
