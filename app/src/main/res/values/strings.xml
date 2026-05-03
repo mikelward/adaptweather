@@ -174,7 +174,7 @@
 
     <string name="settings_location_title">Location</string>
     <string name="settings_location_use_device">Use device location</string>
-    <string name="settings_location_use_device_description">Detected from cell tower / WiFi when the forecast runs.</string>
+    <string name="settings_location_use_device_description">Last approximate location</string>
     <string name="settings_location_detecting">Detecting…</string>
     <string name="settings_location_grant_background">Grant</string>
     <string name="settings_location_background_banner_title">Always-on location needed</string>
