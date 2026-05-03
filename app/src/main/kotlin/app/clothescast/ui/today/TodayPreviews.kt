@@ -321,6 +321,26 @@ internal fun TodayInsightCardWithLocationPreview() {
     }
 }
 
+// Reverse geocoding failed (or wasn't available — AOSP, IO error, blank
+// locality). We still have coords, so the row shows the localised fallback
+// label as a maps link instead of dropping silently to date-only.
+@Preview(name = "Today · insight with location (unknown name)", widthDp = 360)
+@Composable
+internal fun TodayInsightCardLocationUnknownPreview() {
+    Frame {
+        InsightCard(
+            SAMPLE_INSIGHT.copy(
+                location = Location(
+                    latitude = 42.3601,
+                    longitude = -71.0589,
+                    displayName = "Device location",
+                ),
+            ),
+            Region.SYSTEM,
+        )
+    }
+}
+
 @Preview(name = "Confidence · high", widthDp = 360)
 @Composable
 internal fun ConfidenceHighPreview() {
