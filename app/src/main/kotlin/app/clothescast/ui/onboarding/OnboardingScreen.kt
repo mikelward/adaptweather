@@ -223,7 +223,20 @@ private fun LocationStep(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
         backgroundGranted = granted
-        if (!granted) backgroundDeniedOpen = true
+        if (granted) {
+            // Re-trigger cache refresh: the foreground-grant callback above
+            // already enqueued a refresh, but that run can fire and complete
+            // before the user has tapped "Allow all the time" — in which case
+            // LocationResolver returns null (SecurityException from
+            // requestSingleUpdate without ACCESS_BACKGROUND_LOCATION) and
+            // onboarding stays stuck without a resolved city. Calling
+            // setUseDeviceLocation(true) is idempotent for the preference but
+            // re-enqueues the cache-refresh worker via REPLACE, which now
+            // succeeds with both perms in place.
+            onSetUseDeviceLocation(true)
+        } else {
+            backgroundDeniedOpen = true
+        }
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -280,22 +293,24 @@ private fun LocationStep(
         description = stringResource(R.string.onboarding_location_description),
         complete = configured,
     ) {
-        // Prefer the resolved city — once the cache-refresh worker has
-        // written through, location is non-null even when device location
-        // is on, and showing the actual displayName lets the user verify
-        // the fix matches reality before continuing. Fall back to
-        // "Detecting…" while the worker is in-flight, and to the static
-        // device-location confirmation text only when both perms are
-        // granted but we somehow have no fix yet (e.g. NETWORK_PROVIDER
-        // returned no result).
-        if (location != null) {
-            Text(
-                text = location.displayName ?: "${location.latitude}, ${location.longitude}",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        } else if (useDeviceLocation && locationDetecting) {
+        // While the cache-refresh worker is in flight, surface "Detecting…"
+        // *before* any cached location — otherwise a manual fallback the
+        // user picked earlier in onboarding would mask the fact that a
+        // device-location lookup is still running, and they'd treat the
+        // stale manual pick as the freshly-resolved device fix. Once the
+        // worker writes through, location is non-null and we show the
+        // real displayName so the user can verify the fix matches reality.
+        // Fall back to the static device-location confirmation text only
+        // when both perms are granted but we have no fix yet (e.g.
+        // NETWORK_PROVIDER returned no result).
+        if (useDeviceLocation && locationDetecting) {
             Text(
                 text = stringResource(R.string.settings_location_detecting),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        } else if (location != null) {
+            Text(
+                text = location.displayName ?: "${location.latitude}, ${location.longitude}",
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else if (deviceLocationFullyConfigured) {
