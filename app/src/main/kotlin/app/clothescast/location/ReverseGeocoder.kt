@@ -113,7 +113,9 @@ class ReverseGeocoder(
             locality = locality,
             subLocality = subLocality,
             subAdminArea = subAdminArea,
+            adminArea = adminArea,
             countryCode = countryCode,
+            countryName = countryName,
             postalCode = postalCode,
             addressLines = lines,
         )
