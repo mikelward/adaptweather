@@ -205,7 +205,7 @@ data class UserPreferences(
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     /**
-     * Prebuilt Gemini voice name (e.g. "Kore", "Puck"). Only consulted when
+     * Prebuilt Gemini voice name (e.g. "Erinome", "Kore"). Only consulted when
      * [ttsEngine] == [TtsEngine.GEMINI]. Stored as a free-form string so adding
      * voices doesn't require a domain enum migration.
      */
@@ -319,7 +319,7 @@ data class UserPreferences(
     val outfitThresholds: OutfitSuggestion.Thresholds = OutfitSuggestion.Thresholds.DEFAULT,
 ) {
     companion object {
-        const val DEFAULT_GEMINI_VOICE = "Kore"
+        const val DEFAULT_GEMINI_VOICE = "Erinome"
         const val DEFAULT_OPENAI_VOICE = "alloy"
         // Sarah — the most generally pleasant of ElevenLabs's stock library voices.
         const val DEFAULT_ELEVENLABS_VOICE = "EXAVITQu4vr4xnSDxMaL"
