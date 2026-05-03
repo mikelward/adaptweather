@@ -1,5 +1,6 @@
 package app.clothescast.ui.settings
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -81,19 +82,25 @@ private fun RegionLanguagePicker(
     onSelect: (Region) -> Unit,
 ) {
     var dialogOpen by remember { mutableStateOf(false) }
-    val uiLocale = LocalContext.current.resourcesLocale()
-    // System tag exposed next to "Follow system locale" so the user can verify
-    // what the device is actually set to (e.g. "en-GB"). Read from the device
-    // system Resources rather than the active app Resources — once the user
-    // picks a non-SYSTEM Region, AppLocale installs a per-app override and
-    // `resourcesLocale()` would return the chosen region (de-AT), not the
-    // device locale. Strip Unicode extensions (e.g. `-u-fw-mon` from a
-    // Monday-week device preference) — they're irrelevant to language/region
-    // and just clutter the picker label.
-    val systemTag = remember { deviceSystemLocale().stripExtensions().toLanguageTag() }
+    val context = LocalContext.current
+    val uiLocale = context.resourcesLocale()
+    // System tag and label for "Follow system locale": both derived from the
+    // device locale, not the per-app override. On API 33+ the OS applies
+    // per-app locales at the process level, so Resources.getSystem() reflects
+    // the app override — we use LocaleManager.getSystemLocales() there.
+    // The label itself is also rendered in the device language so it reads
+    // naturally regardless of which in-app region is active.
+    val systemLocale = remember { context.deviceSystemLocale().stripExtensions() }
+    val systemTag = remember(systemLocale) { systemLocale.toLanguageTag() }
+    val systemLabel = remember(systemLocale) {
+        val cfg = Configuration(context.resources.configuration)
+            .also { it.setLocale(systemLocale) }
+        context.createConfigurationContext(cfg)
+            .resources.getString(R.string.settings_region_language_system)
+    }
     val labelFor: @Composable (Region) -> String = { option ->
-        val base = stringResource(regionLabel(option))
-        if (option == Region.SYSTEM) "$base ($systemTag)" else base
+        if (option == Region.SYSTEM) "$systemLabel ($systemTag)"
+        else stringResource(regionLabel(option))
     }
     val title = stringResource(R.string.settings_region_language_title)
     OutlinedButton(

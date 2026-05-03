@@ -1,7 +1,9 @@
 package app.clothescast.ui.settings
 
+import android.app.LocaleManager
 import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import java.util.Locale
 
 /** Returns the active resources locale for UI translation/sorting decisions. */
@@ -12,10 +14,18 @@ internal fun Context.resourcesLocale(): Locale {
 
 /**
  * The device's system locale, ignoring any per-app override installed by
- * [app.clothescast.locale.AppLocale.apply]. Read from system Resources so a
- * Region choice (e.g. de-AT) doesn't mask what the device is actually set to.
+ * [app.clothescast.locale.AppLocale.apply].
+ *
+ * On API 33+, [LocaleManager.getSystemLocales] is used instead of
+ * [Resources.getSystem] because the OS applies per-app locale overrides at
+ * the process level on those versions, which causes [Resources.getSystem] to
+ * reflect the app's chosen region (e.g. de-AT) rather than the device locale.
  */
-internal fun deviceSystemLocale(): Locale {
+internal fun Context.deviceSystemLocale(): Locale {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val locales = getSystemService(LocaleManager::class.java)?.systemLocales
+        if (locales != null && !locales.isEmpty) return locales[0]
+    }
     val locales = Resources.getSystem().configuration.locales
     return if (locales.isEmpty) Locale.getDefault() else locales[0]
 }
