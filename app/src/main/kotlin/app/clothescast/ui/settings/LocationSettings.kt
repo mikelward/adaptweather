@@ -252,13 +252,14 @@ private fun LocationCard(
             confirmButton = {
                 TextButton(onClick = {
                     backgroundRationaleOpen = false
-                    // API 30+ forces the system Settings deep-link; API 29 still
-                    // accepts the inline runtime prompt.
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        openAppDetails(context)
-                    } else {
-                        backgroundLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                    }
+                    // The platform handles the SDK split for us: on Android 10 the
+                    // launcher shows the inline runtime prompt with "Allow all the
+                    // time"; on Android 11+ it deep-links straight to the Location
+                    // permission settings page (the picker with the "Allow all the
+                    // time" radio). Earlier code routed R+ through openAppDetails,
+                    // which only opens the generic App info screen and forces the
+                    // user to drill in via Permissions → Location themselves.
+                    backgroundLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                 }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
             },
             dismissButton = {

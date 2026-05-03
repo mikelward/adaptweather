@@ -213,9 +213,11 @@ private fun LocationStep(
     var backgroundRationaleOpen by remember { mutableStateOf(false) }
     var backgroundDeniedOpen by remember { mutableStateOf(false) }
 
-    // Background launcher: on Android Q (API 29) the inline runtime prompt works;
-    // on R+ ACCESS_BACKGROUND_LOCATION can only be granted from system Settings, so
-    // we deep-link there from the rationale dialog instead of using this launcher.
+    // Background launcher: on Android 10 (API 29) the launcher shows the inline
+    // runtime prompt with "Allow all the time"; on Android 11+ launching the same
+    // permission deep-links straight to the system Location permission page (the
+    // picker that contains "Allow all the time"). The platform handles the split
+    // — we just call .launch().
     val backgroundLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
@@ -377,13 +379,12 @@ private fun LocationStep(
             confirmButton = {
                 TextButton(onClick = {
                     backgroundRationaleOpen = false
-                    // API 30+ forces the system Settings deep-link for background
-                    // location; API 29 still accepts the inline runtime prompt.
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                        openAppDetails(context)
-                    } else {
-                        backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                    }
+                    // The launcher handles the SDK split: API 29 shows the inline
+                    // runtime prompt; API 30+ deep-links to the Location permission
+                    // page so the user can tap "Allow all the time". Earlier code
+                    // sent R+ through openAppDetails, which dumps them on the
+                    // generic App info screen instead of the location picker.
+                    backgroundLauncher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                 }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
             },
             dismissButton = {
