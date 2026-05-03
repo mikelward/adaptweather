@@ -71,6 +71,17 @@ class FetchAndNotifyWorker(
             return Result.retry()
         }
 
+        // Cache-only path triggered by the Settings location toggle. Just
+        // resolves the device fix and writes it back via setLocation; skips
+        // the forecast / insight / deliver pipeline so the user doesn't get
+        // a duplicate notification (or TTS) when they enable device location
+        // later in the day, after the morning run already fired.
+        if (inputData.getBoolean(KEY_CACHE_LOCATION_ONLY, false)) {
+            DiagLog.i(TAG, "Cache-only location refresh; skipping insight pipeline.")
+            resolveLocation(prefs)
+            return Result.success()
+        }
+
         val period = inputData.getString(KEY_PERIOD)
             ?.let { runCatching { ForecastPeriod.valueOf(it) }.getOrNull() }
             ?: ForecastPeriod.TODAY
@@ -291,7 +302,19 @@ class FetchAndNotifyWorker(
                 // network failure / nothing useful in the address — the UI
                 // falls back to a date-only header in that case.
                 val cityName = app.reverseGeocoder.resolveCityName(device.latitude, device.longitude)
-                return if (cityName != null) device.copy(displayName = cityName) else device
+                val resolved = if (cityName != null) device.copy(displayName = cityName) else device
+                // Persist the resolved fix as the fallback so the next run can
+                // use the most recent good read when the device read fails
+                // (provider blip, no fix, services briefly off). With this in
+                // place users no longer need to manually pick a city as a
+                // safety net — manual entry becomes the explicit override for
+                // when auto-detection is wrong. Re-emits to any active
+                // SettingsViewModel collector; if the user has Settings open
+                // when the morning alarm fires, the displayed location will
+                // swap to the freshly-resolved city — acceptable.
+                runCatching { app.settingsRepository.setLocation(resolved) }
+                    .onFailure { DiagLog.w(TAG, "Failed to cache resolved location.", it) }
+                return resolved
             }
             DiagLog.i(TAG, "Device location unavailable; falling back to settings location.")
         }
@@ -432,6 +455,11 @@ class FetchAndNotifyWorker(
         private const val TAG = "FetchAndNotifyWorker"
         const val UNIQUE_WORK_NAME = "daily_insight_fetch"
         const val UNIQUE_WORK_NAME_TONIGHT = "tonight_insight_fetch"
+        // Distinct queue from the daily / tonight runs so a user toggling
+        // device location while a forecast run is in flight doesn't cancel
+        // it (and vice versa). Cache-only runs are idempotent and skip the
+        // insight pipeline entirely.
+        const val UNIQUE_WORK_NAME_LOCATION_CACHE = "location_cache_refresh"
 
         // Output Data keys for surfacing failure reasons in the UI.
         const val KEY_REASON = "reason"
@@ -464,6 +492,15 @@ class FetchAndNotifyWorker(
 
         /** Which slice of the day this run is for; defaults to TODAY when absent. */
         private const val KEY_PERIOD = "period"
+
+        /**
+         * Set true via [enqueueLocationCacheRefresh] when the user toggles
+         * device location ON in Settings. The worker resolves + caches the
+         * device fix and exits without delivering an insight, so the user
+         * doesn't get a duplicate notification at e.g. 10am after the
+         * morning run already fired at 7am.
+         */
+        private const val KEY_CACHE_LOCATION_ONLY = "cache_location_only"
 
         fun enqueueOneShot(
             context: Context,
@@ -502,6 +539,38 @@ class FetchAndNotifyWorker(
             }
             WorkManager.getInstance(context)
                 .enqueueUniqueWork(workName, policy, request)
+        }
+
+        /**
+         * Cache-only refresh: resolves the device location and writes it to
+         * settings without running the insight pipeline. Used when the user
+         * toggles device location ON from Settings so they see their city
+         * populate within seconds without waiting for the next morning run —
+         * and crucially without a duplicate notification / TTS for today.
+         */
+        fun enqueueLocationCacheRefresh(context: Context) {
+            // NetworkType.CONNECTED so the reverse-geocode resolves a friendly
+            // city name; the underlying NETWORK_PROVIDER fix itself works
+            // offline from cached cell-tower / WiFi data, but the displayed
+            // displayName ("London") is much nicer than the lat/lon fallback.
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val request = OneTimeWorkRequestBuilder<FetchAndNotifyWorker>()
+                .setConstraints(constraints)
+                .setInputData(workDataOf(KEY_CACHE_LOCATION_ONLY to true))
+                .build()
+
+            // REPLACE: a rapid off→on→off→on toggle cancels any in-flight
+            // refresh and starts a new one — the user's most recent intent
+            // is the only one that matters.
+            WorkManager.getInstance(context)
+                .enqueueUniqueWork(
+                    UNIQUE_WORK_NAME_LOCATION_CACHE,
+                    ExistingWorkPolicy.REPLACE,
+                    request,
+                )
         }
     }
 }

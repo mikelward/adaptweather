@@ -43,7 +43,6 @@ only the displayed label localizes.
     <string name="settings_root_schedule">Расписание</string>
     <string name="settings_root_region">Регион</string>
     <string name="settings_root_clothes">Одежда</string>
-    <string name="settings_root_data_sources">Источники данных</string>
     <string name="settings_root_about">О приложении</string>
 
     <string name="garment_sweater">Свитер</string>
@@ -284,10 +283,6 @@ only the displayed label localizes.
     <string name="settings_location_use_device">Использовать местоположение устройства</string>
     <string name="settings_location_grant_background">Разрешить фоновое местоположение (системные настройки)</string>
     <string name="settings_location_unset">Местоположение не задано</string>
-    <string name="settings_location_description">Прогноз получается для этого места. Ищи по названию города; результаты приходят из бесплатной службы геокодирования Open-Meteo.</string>
-    <string name="settings_location_description_device_on">Когда включено, ClothesCast при отправке уведомления читает примерное местоположение твоего устройства (только сота / WiFi — без GPS-аппаратной фиксации). Указанное ниже местоположение используется как запасное, если чтение с устройства не удаётся. Фоновое местоположение должно быть разрешено в системных настройках, иначе утренний Worker не сможет его прочитать.</string>
-    <string name="settings_location_set">Задать местоположение</string>
-    <string name="settings_location_change">Изменить местоположение</string>
     <string name="settings_location_clear">Очистить местоположение</string>
     <string name="settings_location_search_title">Поиск местоположения</string>
     <string name="settings_location_query_label">Город или место</string>
@@ -512,7 +507,6 @@ only the displayed label localizes.
     <string name="settings_root_clothes_subtitle">Температуры и наряды</string>
     <string name="settings_root_region_subtitle">Языки и единицы</string>
     <string name="settings_root_voice_subtitle">Провайдеры и акценты</string>
-    <string name="settings_root_data_sources_subtitle">Местоположение и календарь</string>
 
     <string name="settings_tts_device_voice_label">Голос устройства</string>
     <string name="settings_tts_device_voice_auto">Авто (лучший для акцента)</string>

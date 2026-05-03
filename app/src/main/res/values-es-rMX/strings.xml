@@ -26,7 +26,6 @@ that a Mexican speaker would notice as wrong is overridden here.
     <string name="today_empty_subtitle">Tu ClothesCast matutino aparecerá aquí cuando se genere. Configura tu ubicación en la configuración y toca Obtener ahora.</string>
     <string name="onboarding_subtitle">Dos elecciones rápidas y ya está. Todo lo demás tiene un valor predeterminado razonable que podrás ajustar más tarde en la configuración.</string>
     <string name="settings_location_grant_background">Conceder ubicación en segundo plano (configuración del sistema)</string>
-    <string name="settings_location_description_device_on">Si está activo, ClothesCast lee la ubicación aproximada de tu dispositivo en el momento de la notificación (solo torre de telefonía / WiFi — sin GPS por hardware). La ubicación de abajo se usa como respaldo si la lectura del dispositivo falla. La ubicación en segundo plano debe concederse en la configuración del sistema, o el Worker matutino no podrá leerla.</string>
     <string name="settings_calendar_open_settings">Acceso al calendario denegado. Concédelo en la configuración del sistema.</string>
 
     <!-- Mexican Spanish prefers "agregar" over the Spain-Spanish "añadir"

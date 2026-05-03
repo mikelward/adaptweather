@@ -57,7 +57,6 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="settings_root_schedule">Agendamento</string>
     <string name="settings_root_region">Região</string>
     <string name="settings_root_clothes">Vestuário</string>
-    <string name="settings_root_data_sources">Origens de dados</string>
     <string name="settings_root_about">Acerca</string>
 
     <!-- Garment dropdown labels — translated names for the picker on the
@@ -307,10 +306,6 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="settings_location_use_device">Utilizar localização do dispositivo</string>
     <string name="settings_location_grant_background">Conceder localização em segundo plano (definições do sistema)</string>
     <string name="settings_location_unset">Localização não definida</string>
-    <string name="settings_location_description">A previsão é obtida para este local. Procura pelo nome da cidade; os resultados vêm do serviço gratuito de geocodificação da Open-Meteo.</string>
-    <string name="settings_location_description_device_on">Quando ativada, o ClothesCast lê a localização aproximada do teu dispositivo no momento da notificação (apenas torre celular / Wi-Fi — sem fixação GPS por hardware). A localização abaixo é usada como reserva caso a leitura do dispositivo falhe. A localização em segundo plano tem de estar concedida nas definições do sistema, caso contrário o Worker matinal não consegue lê-la.</string>
-    <string name="settings_location_set">Definir localização</string>
-    <string name="settings_location_change">Alterar localização</string>
     <string name="settings_location_clear">Limpar localização</string>
     <string name="settings_location_search_title">Procurar uma localização</string>
     <string name="settings_location_query_label">Cidade ou local</string>

@@ -52,7 +52,6 @@ displayed label localizes.
     <string name="settings_root_schedule">일정</string>
     <string name="settings_root_region">지역</string>
     <string name="settings_root_clothes">옷</string>
-    <string name="settings_root_data_sources">데이터 소스</string>
     <string name="settings_root_about">정보</string>
 
     <string name="garment_sweater">스웨터</string>
@@ -307,10 +306,6 @@ displayed label localizes.
     <string name="settings_location_use_device">기기 위치 사용</string>
     <string name="settings_location_grant_background">백그라운드 위치 허용 (시스템 설정)</string>
     <string name="settings_location_unset">위치가 설정되지 않음</string>
-    <string name="settings_location_description">이 장소에 대한 예보를 가져옵니다. 도시 이름으로 검색하세요. 결과는 Open-Meteo의 무료 지오코딩 서비스에서 가져옵니다.</string>
-    <string name="settings_location_description_device_on">활성화하면 ClothesCast가 알림 시점에 기기의 대략적인 위치를 읽어요(기지국 / WiFi만 사용 — GPS 하드웨어 측위는 사용하지 않음). 기기 위치를 읽지 못하면 아래 위치를 대신 사용해요. 백그라운드 위치는 시스템 설정에서 허용해야 하며, 그렇지 않으면 아침 Worker가 읽을 수 없어요.</string>
-    <string name="settings_location_set">위치 설정</string>
-    <string name="settings_location_change">위치 변경</string>
     <string name="settings_location_clear">위치 지우기</string>
     <string name="settings_location_search_title">위치 검색</string>
     <string name="settings_location_query_label">도시 또는 장소</string>
@@ -542,7 +537,6 @@ displayed label localizes.
     <string name="settings_root_clothes_subtitle">온도 및 의상</string>
     <string name="settings_root_region_subtitle">언어 및 단위</string>
     <string name="settings_root_voice_subtitle">공급자 및 억양</string>
-    <string name="settings_root_data_sources_subtitle">위치 및 캘린더</string>
 
     <string name="settings_tts_voice_locale_am_et">암하라어 (에티오피아)</string>
     <string name="settings_tts_voice_locale_da_dk">덴마크어 (덴마크)</string>

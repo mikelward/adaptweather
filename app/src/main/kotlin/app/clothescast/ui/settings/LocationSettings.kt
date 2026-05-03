@@ -1,0 +1,487 @@
+package app.clothescast.ui.settings
+
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import app.clothescast.R
+import app.clothescast.core.domain.model.Location
+import app.clothescast.location.hasBackgroundLocationPermission
+import app.clothescast.location.hasCoarseLocationPermission
+import kotlinx.coroutines.launch
+
+@Composable
+internal fun LocationContent(
+    location: Location?,
+    useDeviceLocation: Boolean,
+    padding: PaddingValues,
+    onSetUseDeviceLocation: (Boolean) -> Unit,
+    onSelectLocation: (Location) -> Unit,
+    onClearLocation: () -> Unit,
+    onSearchLocations: suspend (String) -> List<Location>,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        LocationCard(
+            current = location,
+            useDeviceLocation = useDeviceLocation,
+            onSetUseDeviceLocation = onSetUseDeviceLocation,
+            onSelect = onSelectLocation,
+            onClear = onClearLocation,
+            onSearch = onSearchLocations,
+        )
+    }
+}
+
+@Composable
+private fun LocationCard(
+    current: Location?,
+    useDeviceLocation: Boolean,
+    onSetUseDeviceLocation: (Boolean) -> Unit,
+    onSelect: (Location) -> Unit,
+    onClear: () -> Unit,
+    onSearch: suspend (String) -> List<Location>,
+) {
+    val context = LocalContext.current
+    var dialogOpen by remember { mutableStateOf(false) }
+    var coarseGranted by remember { mutableStateOf(hasCoarseLocationPermission(context)) }
+    var backgroundGranted by remember { mutableStateOf(hasBackgroundLocationPermission(context)) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        // Re-check on resume so the prominent "Grant" warning disappears once the
+        // user grants the permission via the system Settings deep-link.
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                coarseGranted = hasCoarseLocationPermission(context)
+                backgroundGranted = hasBackgroundLocationPermission(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    var rationaleOpen by remember { mutableStateOf(false) }
+    var backgroundRationaleOpen by remember { mutableStateOf(false) }
+    var backgroundDeniedOpen by remember { mutableStateOf(false) }
+
+    val backgroundLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        backgroundGranted = granted
+        if (!granted) backgroundDeniedOpen = true
+    }
+
+    val foregroundLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        coarseGranted = granted
+        // Only flip the toggle on if foreground was granted; otherwise the worker
+        // would hit our isPermissionGranted check, return null, and quietly fall
+        // through to the settings location every day.
+        onSetUseDeviceLocation(granted)
+        if (granted && !hasBackgroundLocationPermission(context) &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        ) {
+            // Auto-chain into the always-on rationale; the worker can't read the
+            // device fix without ACCESS_BACKGROUND_LOCATION on Q+.
+            backgroundRationaleOpen = true
+        }
+    }
+
+    if (useDeviceLocation && !backgroundGranted) {
+        BackgroundLocationWarningBanner(
+            onGrant = { backgroundRationaleOpen = true },
+        )
+    }
+
+    SectionCard(title = stringResource(R.string.settings_location_title)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.settings_location_use_device),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = useDeviceLocation,
+                onCheckedChange = { wantsOn ->
+                    if (!wantsOn) {
+                        onSetUseDeviceLocation(false)
+                        return@Switch
+                    }
+                    when {
+                        !coarseGranted -> {
+                            // Pre-Q has no separate "Allow all the time" choice — coarse
+                            // grant *is* always-on — so the rationale dialog applies on
+                            // Q+ only. On older platforms skip straight to the
+                            // foreground request; the background launcher and denied
+                            // dialog also no-op there because
+                            // hasBackgroundLocationPermission() returns true.
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                rationaleOpen = true
+                            } else {
+                                foregroundLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                            }
+                        }
+                        !backgroundGranted -> {
+                            // Q+ only: foreground granted previously; surface the
+                            // always-on rationale before deep-linking into Settings.
+                            onSetUseDeviceLocation(true)
+                            backgroundRationaleOpen = true
+                        }
+                        else -> onSetUseDeviceLocation(true)
+                    }
+                },
+            )
+        }
+        Text(
+            text = stringResource(R.string.settings_location_use_device_description),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Text(
+            text = currentLocationSummary(current, useDeviceLocation),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+        // Manual override is the escape hatch for "the system returned the wrong
+        // location" — demoted to a TextButton so it doesn't compete with the
+        // primary device-location toggle. Selecting a city automatically turns
+        // off auto-detect (handled in SettingsViewModel.selectLocation) so the
+        // pick sticks; the disclosure tells the user up front.
+        TextButton(
+            onClick = { dialogOpen = true },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.settings_location_manual_override)) }
+        if (useDeviceLocation) {
+            Text(
+                text = stringResource(R.string.settings_location_manual_override_disclosure),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (current != null && !useDeviceLocation) {
+            // Hide Clear when device location is on — the cache repopulates on the
+            // next worker run anyway, so a Clear tap would have no lasting effect
+            // and the user would rightly find that confusing.
+            TextButton(onClick = onClear, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.settings_location_clear))
+            }
+        }
+    }
+
+    if (dialogOpen) {
+        LocationSearchDialog(
+            onDismiss = { dialogOpen = false },
+            onSelect = {
+                onSelect(it)
+                dialogOpen = false
+            },
+            onSearch = onSearch,
+        )
+    }
+
+    if (rationaleOpen) {
+        AlertDialog(
+            onDismissRequest = { rationaleOpen = false },
+            title = { Text(stringResource(R.string.settings_location_rationale_title)) },
+            text = { Text(stringResource(R.string.settings_location_rationale_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    rationaleOpen = false
+                    foregroundLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                }) { Text(stringResource(R.string.settings_location_rationale_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { rationaleOpen = false }) {
+                    Text(stringResource(R.string.settings_location_rationale_dismiss))
+                }
+            },
+        )
+    }
+
+    if (backgroundRationaleOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundRationaleOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_rationale_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_rationale_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundRationaleOpen = false
+                    // API 30+ forces the system Settings deep-link; API 29 still
+                    // accepts the inline runtime prompt.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        openAppDetails(context)
+                    } else {
+                        backgroundLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    }
+                }) { Text(stringResource(R.string.settings_location_background_rationale_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundRationaleOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_rationale_dismiss))
+                }
+            },
+        )
+    }
+
+    if (backgroundDeniedOpen) {
+        AlertDialog(
+            onDismissRequest = { backgroundDeniedOpen = false },
+            title = { Text(stringResource(R.string.settings_location_background_denied_title)) },
+            text = { Text(stringResource(R.string.settings_location_background_denied_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    backgroundDeniedOpen = false
+                    openAppDetails(context)
+                }) { Text(stringResource(R.string.settings_location_background_denied_open)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { backgroundDeniedOpen = false }) {
+                    Text(stringResource(R.string.settings_location_background_denied_keep))
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun currentLocationSummary(current: Location?, useDeviceLocation: Boolean): String {
+    if (current != null) {
+        return current.displayName ?: "${current.latitude}, ${current.longitude}"
+    }
+    return if (useDeviceLocation) {
+        stringResource(R.string.settings_location_detecting)
+    } else {
+        stringResource(R.string.settings_location_unset)
+    }
+}
+
+@Composable
+private fun BackgroundLocationWarningBanner(onGrant: () -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_location_background_banner_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = stringResource(R.string.settings_location_background_banner_body),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Button(
+                onClick = onGrant,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.settings_location_grant_background)) }
+        }
+    }
+}
+
+/**
+ * Settings root warning card — a compact deep-link variant of
+ * [BackgroundLocationWarningBanner]. Shown on the Settings root when device
+ * location is on but background access is missing; tapping the card navigates
+ * into the Location sub-page where the full launcher and rationale dialogs
+ * live. Renders nothing while permission is granted or device location is off,
+ * and re-checks on resume so granting from system Settings clears the card
+ * without an in-app action.
+ */
+@Composable
+internal fun BackgroundLocationWarningCard(
+    useDeviceLocation: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    var backgroundGranted by remember { mutableStateOf(hasBackgroundLocationPermission(context)) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                backgroundGranted = hasBackgroundLocationPermission(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    if (!useDeviceLocation || backgroundGranted) return
+
+    Card(
+        onClick = onClick,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_location_background_banner_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = stringResource(R.string.settings_location_background_banner_body),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+/**
+ * Search-by-city-name dialog used by the location page and the onboarding
+ * screen's location step. Shows a query field, runs [onSearch] on demand, and
+ * lets the user pick exactly one of the geocoder results.
+ */
+@Composable
+internal fun LocationSearchDialog(
+    onDismiss: () -> Unit,
+    onSelect: (Location) -> Unit,
+    onSearch: suspend (String) -> List<Location>,
+) {
+    var query by remember { mutableStateOf("") }
+    var results by remember { mutableStateOf<List<Location>>(emptyList()) }
+    var inFlight by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String?>(null) }
+    var selected by remember { mutableStateOf<Location?>(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                enabled = selected != null,
+                onClick = { selected?.let(onSelect) },
+            ) { Text(stringResource(android.R.string.ok)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.cancel))
+            }
+        },
+        title = { Text(stringResource(R.string.settings_location_search_title)) },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        label = { Text(stringResource(R.string.settings_location_query_label)) },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    val coroutineScope = rememberCoroutineScope()
+                    TextButton(
+                        enabled = query.isNotBlank() && !inFlight,
+                        onClick = {
+                            coroutineScope.launch {
+                                inFlight = true
+                                error = null
+                                try {
+                                    results = onSearch(query)
+                                    selected = null
+                                } catch (t: Throwable) {
+                                    error = t.message ?: t.javaClass.simpleName
+                                    results = emptyList()
+                                } finally {
+                                    inFlight = false
+                                }
+                            }
+                        },
+                        modifier = Modifier.padding(start = 8.dp),
+                    ) { Text(stringResource(R.string.settings_location_search)) }
+                }
+
+                when {
+                    inFlight -> Text(stringResource(R.string.settings_location_searching))
+                    error != null -> Text(
+                        text = error!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    results.isEmpty() && query.isNotBlank() ->
+                        Text(stringResource(R.string.settings_location_no_results))
+                    else -> results.forEach { result ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            RadioButton(
+                                selected = selected == result,
+                                onClick = { selected = result },
+                            )
+                            Text(
+                                text = result.displayName ?: "${result.latitude}, ${result.longitude}",
+                                modifier = Modifier.padding(start = 8.dp),
+                            )
+                        }
+                    }
+                }
+            }
+        },
+    )
+}

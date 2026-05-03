@@ -55,7 +55,6 @@ label localises.
     <string name="settings_root_schedule">排程</string>
     <string name="settings_root_region">地區</string>
     <string name="settings_root_clothes">服裝</string>
-    <string name="settings_root_data_sources">資料來源</string>
     <string name="settings_root_about">關於</string>
 
     <string name="garment_sweater">毛衣</string>
@@ -276,10 +275,6 @@ label localises.
     <string name="settings_location_use_device">使用裝置位置</string>
     <string name="settings_location_grant_background">授予背景位置權限（系統設定）</string>
     <string name="settings_location_unset">尚未設定位置</string>
-    <string name="settings_location_description">天氣預報是針對這個地點取得的。請依城市名稱搜尋；結果來自 Open-Meteo 的免費地理編碼服務。</string>
-    <string name="settings_location_description_device_on">啟用後，ClothesCast 在通知時會讀取裝置的概略位置（僅基地台 / Wi-Fi — 不使用 GPS 硬體定位）。如果裝置讀取失敗，會使用下方的位置作為備用。背景位置權限必須在系統設定裡授予，否則早晨的 Worker 無法讀取。</string>
-    <string name="settings_location_set">設定位置</string>
-    <string name="settings_location_change">變更位置</string>
     <string name="settings_location_clear">清除位置</string>
     <string name="settings_location_search_title">搜尋位置</string>
     <string name="settings_location_query_label">城市或地點</string>
