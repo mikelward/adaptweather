@@ -126,23 +126,20 @@ private fun List<TtsVoiceOption>.appendKeepSelected(
 // the language tag first.
 private fun VoiceLocale.languageSubtag(): String? = bcp47?.substringBefore('-')
 
+// Curated from listening tests across en-AU and en-GB. Erinome is the default
+// — excellent across both locales. Clear/Firm (Erinome, Iapetus, Kore) for a
+// crisp newsreader delivery; Gentle/Smooth (Vindemiatrix, Despina) for softer;
+// Informative/Knowledgeable (Charon, Sadaltager) as male alternatives.
+// Dropped: Orus (theatrical), Aoede (Alan Rickman with newsreader+en-GB),
+// Achird, and the remaining 9 that were theatrical or had vowel issues.
 val GEMINI_VOICES: List<TtsVoiceOption> = listOf(
+    TtsVoiceOption("Erinome", "Erinome — Clear"),
+    TtsVoiceOption("Iapetus", "Iapetus — Clear"),
     TtsVoiceOption("Kore", "Kore — Firm"),
     TtsVoiceOption("Charon", "Charon — Informative"),
-    TtsVoiceOption("Sulafat", "Sulafat — Warm"),
-    TtsVoiceOption("Achird", "Achird — Friendly"),
-    TtsVoiceOption("Despina", "Despina — Smooth"),
-    TtsVoiceOption("Vindemiatrix", "Vindemiatrix — Gentle"),
-    TtsVoiceOption("Iapetus", "Iapetus — Clear"),
-    TtsVoiceOption("Algieba", "Algieba — Smooth"),
-    TtsVoiceOption("Erinome", "Erinome — Clear"),
-    TtsVoiceOption("Orus", "Orus — Firm"),
-    TtsVoiceOption("Aoede", "Aoede — Breezy"),
-    TtsVoiceOption("Leda", "Leda — Youthful"),
-    TtsVoiceOption("Zephyr", "Zephyr — Bright"),
-    TtsVoiceOption("Puck", "Puck — Upbeat"),
-    TtsVoiceOption("Fenrir", "Fenrir — Excitable"),
     TtsVoiceOption("Sadaltager", "Sadaltager — Knowledgeable"),
+    TtsVoiceOption("Vindemiatrix", "Vindemiatrix — Gentle"),
+    TtsVoiceOption("Despina", "Despina — Smooth"),
 )
 
 // OpenAI's stock voices have *baked-in* accents. The `gpt-4o-mini-tts` model

@@ -264,8 +264,8 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `gemini voice defaults to Kore when nothing stored`() = runTest {
-        subject.preferences.first().geminiVoice shouldBe "Kore"
+    fun `gemini voice defaults to Erinome when nothing stored`() = runTest {
+        subject.preferences.first().geminiVoice shouldBe "Erinome"
     }
 
     @Test
