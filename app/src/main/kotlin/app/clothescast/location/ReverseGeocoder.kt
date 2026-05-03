@@ -1,0 +1,104 @@
+package app.clothescast.location
+
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.os.Build
+import app.clothescast.diag.DiagLog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import java.io.IOException
+import java.util.Locale
+import kotlin.coroutines.resume
+
+/**
+ * Resolves a `(lat, lon)` pair to a city-friendly name using Android's built-in
+ * [Geocoder]. The Today screen uses the result to label the forecast next to
+ * the date when the user is on device location (saved-fallback users already
+ * carry a forward-geocoded `displayName`).
+ *
+ * Privacy: on Play Services devices the framework's `Geocoder` implementation
+ * sends the coordinates to Google's geocoding service; on AOSP-only or stripped
+ * builds [Geocoder.isPresent] returns false and we short-circuit. This is a
+ * separate off-device send from the Open-Meteo forecast call — Open-Meteo
+ * doesn't (yet) offer reverse geocoding.
+ *
+ * Returns null on every failure path; the worker treats null as "no friendly
+ * name available" and the UI falls back to a date-only header.
+ */
+class ReverseGeocoder(
+    private val context: Context,
+    private val timeoutMillis: Long = 5_000L,
+) {
+    /** Best-effort city/locality name, or null if the geocoder is unavailable
+     *  / times out / returns nothing useful. */
+    suspend fun resolveCityName(latitude: Double, longitude: Double): String? = try {
+        resolveInner(latitude, longitude)
+    } catch (t: Throwable) {
+        DiagLog.w(TAG, "Unexpected ${t.javaClass.simpleName} from resolveCityName; returning null.", t)
+        null
+    }
+
+    private suspend fun resolveInner(latitude: Double, longitude: Double): String? {
+        if (!Geocoder.isPresent()) {
+            DiagLog.i(TAG, "Geocoder backend not available on this device; skipping reverse lookup.")
+            return null
+        }
+        val geocoder = Geocoder(context, Locale.getDefault())
+        val addresses = withTimeoutOrNull(timeoutMillis) { fetch(geocoder, latitude, longitude) }
+            ?: run {
+                DiagLog.w(TAG, "Reverse geocode timed out after ${timeoutMillis}ms.")
+                return null
+            }
+        return addresses.firstOrNull()?.pickCityName()
+    }
+
+    private suspend fun fetch(geocoder: Geocoder, lat: Double, lon: Double): List<Address> =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            fetchAsync(geocoder, lat, lon)
+        } else {
+            fetchSync(geocoder, lat, lon)
+        }
+
+    @android.annotation.TargetApi(Build.VERSION_CODES.TIRAMISU)
+    private suspend fun fetchAsync(
+        geocoder: Geocoder,
+        lat: Double,
+        lon: Double,
+    ): List<Address> = suspendCancellableCoroutine { cont ->
+        val listener = Geocoder.GeocodeListener { addresses ->
+            if (cont.isActive) cont.resume(addresses)
+        }
+        try {
+            geocoder.getFromLocation(lat, lon, 1, listener)
+        } catch (t: Throwable) {
+            DiagLog.w(TAG, "Async getFromLocation threw ${t.javaClass.simpleName}; returning empty.", t)
+            if (cont.isActive) cont.resume(emptyList())
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private suspend fun fetchSync(geocoder: Geocoder, lat: Double, lon: Double): List<Address> =
+        withContext(Dispatchers.IO) {
+            try {
+                geocoder.getFromLocation(lat, lon, 1).orEmpty()
+            } catch (t: IOException) {
+                DiagLog.w(TAG, "Sync getFromLocation IO failure; returning empty.", t)
+                emptyList()
+            } catch (t: IllegalArgumentException) {
+                DiagLog.w(TAG, "Sync getFromLocation rejected coordinates; returning empty.", t)
+                emptyList()
+            }
+        }
+
+    private fun Address.pickCityName(): String? =
+        listOf(locality, subLocality, subAdminArea)
+            .firstOrNull { !it.isNullOrBlank() }
+            ?.trim()
+
+    companion object {
+        private const val TAG = "ReverseGeocoder"
+    }
+}

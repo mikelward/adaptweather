@@ -17,6 +17,7 @@ import app.clothescast.core.domain.model.GarmentReason
 import app.clothescast.core.domain.model.HourlyForecast
 import app.clothescast.core.domain.model.Insight
 import app.clothescast.core.domain.model.InsightSummary
+import app.clothescast.core.domain.model.Location
 import app.clothescast.core.domain.model.OutfitRationale
 import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.PrecipClause
@@ -208,6 +209,49 @@ class InsightCacheTest {
         subject.store(withRationale)
 
         subject.latest.first() shouldBe withRationale
+    }
+
+    @Test
+    fun `location round-trips through the cache`() = runTest {
+        val withLocation = sample.copy(
+            location = Location(
+                latitude = 42.3601,
+                longitude = -71.0589,
+                displayName = "Boston",
+            ),
+        )
+
+        subject.store(withLocation)
+
+        subject.latest.first() shouldBe withLocation
+    }
+
+    @Test
+    fun `legacy v4 payloads without a location field decode with location null`() = runTest {
+        // The location field was added without bumping the cache key — legacy
+        // v4 JSON written before this change omits the field entirely. The
+        // DTO's nullable default means existing caches still deserialise
+        // (rather than dropping to null and burning a regen on next launch).
+        val legacyV4Json = """
+            {
+              "summary": {
+                "period": "TODAY",
+                "band": {"low": "COOL", "high": "MILD"},
+                "delta": {"degrees": 4, "direction": "COOLER"},
+                "clothes": {"items": ["sweater", "umbrella"]}
+              },
+              "recommendedItems": ["sweater", "umbrella"],
+              "generatedAtEpochMillis": ${now.toEpochMilli()},
+              "forDateEpochDays": ${today.toEpochDay()}
+            }
+        """.trimIndent()
+        dataStore.edit {
+            it[stringPreferencesKey("latest_insight_v4")] = legacyV4Json
+        }
+
+        val read = subject.latest.first()
+        read shouldBe sample
+        read?.location shouldBe null
     }
 
     @Test

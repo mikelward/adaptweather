@@ -20,6 +20,15 @@ data class Insight(
     val recommendedItems: List<String>,
     val generatedAt: Instant,
     val forDate: LocalDate,
+    /**
+     * The location the forecast was generated for. UI-only — the home screen
+     * shows a friendly short version next to the date and uses the lat/lon
+     * for the maps deep-link. Never read by [InsightSummary] formatting, so
+     * it can't leak into LLM / TTS prose. Null on insights from older caches
+     * deserialised before this field existed; the next worker run repopulates
+     * it.
+     */
+    val location: Location? = null,
     val hourly: List<HourlyForecast> = emptyList(),
     /**
      * Cross-model agreement at fetch time, when available. Null when the
