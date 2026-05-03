@@ -129,6 +129,18 @@ class SettingsRepository(
         dataStore.edit { it[TTS_ENGINE] = engine.name }
     }
 
+    /**
+     * Writes [engine] only if no TTS engine has been explicitly stored. Used by
+     * onboarding to flip the default from DEVICE to GEMINI when the user enters
+     * a Gemini key, without clobbering an explicit choice the user later made
+     * in Settings if they re-enter onboarding.
+     */
+    suspend fun setTtsEngineIfUnset(engine: TtsEngine) {
+        dataStore.edit { prefs ->
+            if (prefs[TTS_ENGINE] == null) prefs[TTS_ENGINE] = engine.name
+        }
+    }
+
     suspend fun setGeminiVoice(voice: String) {
         dataStore.edit { it[GEMINI_VOICE] = voice }
     }

@@ -6,7 +6,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.data.SecureKeyStore
+import app.clothescast.data.SettingsRepository
 import app.clothescast.pairing.PairingServer
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
@@ -52,6 +54,7 @@ sealed interface PairingState {
  */
 class PairingViewModel(
     private val secureKeyStore: SecureKeyStore,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<PairingState>(PairingState.Error)
@@ -79,6 +82,10 @@ class PairingViewModel(
             val srv = PairingServer { key ->
                 viewModelScope.launch {
                     secureKeyStore.set(key)
+                    // Mirror OnboardingViewModel.setApiKey: configuring a Gemini
+                    // key during onboarding flips the TTS default to Gemini,
+                    // unless the user already picked an engine in Settings.
+                    settingsRepository.setTtsEngineIfUnset(TtsEngine.GEMINI)
                     _state.value = PairingState.Received
                 }
             }
@@ -119,13 +126,14 @@ class PairingViewModel(
 
     class Factory(
         private val secureKeyStore: SecureKeyStore,
+        private val settingsRepository: SettingsRepository,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(PairingViewModel::class.java)) {
                 "Unknown ViewModel: ${modelClass.name}"
             }
-            return PairingViewModel(secureKeyStore) as T
+            return PairingViewModel(secureKeyStore, settingsRepository) as T
         }
     }
 

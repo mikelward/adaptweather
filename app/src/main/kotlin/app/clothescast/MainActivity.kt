@@ -238,6 +238,7 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
             val pairing: PairingViewModel = viewModel(
                 factory = PairingViewModel.Factory(
                     secureKeyStore = app.secureKeyStore,
+                    settingsRepository = app.settingsRepository,
                 ),
             )
             PairingScreen(
