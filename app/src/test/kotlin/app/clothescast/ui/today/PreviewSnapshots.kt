@@ -15,6 +15,7 @@ import app.clothescast.ui.onboarding.OnboardingFreshPreview
 import app.clothescast.ui.onboarding.OnboardingPartialPreview
 import app.clothescast.ui.settings.SettingsClothesPreview
 import app.clothescast.ui.settings.SettingsDataSourcesPreview
+import app.clothescast.ui.settings.SettingsDisplayPreview
 import app.clothescast.ui.settings.SettingsRegionPreview
 import app.clothescast.ui.settings.SettingsRootPreview
 import app.clothescast.ui.settings.SettingsSchedulePreview
@@ -166,6 +167,7 @@ class PreviewSnapshots {
     @Test fun settings_schedule() = capture { SettingsSchedulePreview() }
     @Test fun settings_clothes() = capture { SettingsClothesPreview() }
     @Test fun settings_region() = capture { SettingsRegionPreview() }
+    @Test fun settings_display() = capture { SettingsDisplayPreview() }
     @Test fun settings_voice_device() = capture { SettingsVoiceDevicePreview() }
     @Test fun settings_data_sources() = capture { SettingsDataSourcesPreview() }
 
