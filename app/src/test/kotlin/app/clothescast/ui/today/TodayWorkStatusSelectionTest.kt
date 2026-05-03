@@ -32,11 +32,19 @@ class TodayWorkStatusSelectionTest {
     }
 
     @Test
-    fun `running entry with attempt count above zero surfaces as Retrying`() {
+    fun `first execution (runAttemptCount = 1) surfaces as Running, not Retrying`() {
+        // WorkManager sets runAttemptCount = 1 when a worker starts its first
+        // execution. The old check (> 0) incorrectly showed "Last attempt failed"
+        // on every first launch.
+        selectStatus(listOf(active(WorkInfo.State.RUNNING, runAttemptCount = 1))) shouldBe WorkStatus.Running
+    }
+
+    @Test
+    fun `running entry with attempt count above one surfaces as Retrying`() {
         // After Result.retry(), WorkManager bumps runAttemptCount and parks the
         // WorkInfo back in ENQUEUED until backoff elapses. The banner should
         // tell the user "last attempt failed" rather than pretend it's a
-        // brand-new fetch.
+        // brand-new fetch. runAttemptCount reaches 2 on the second attempt.
         selectStatus(listOf(active(WorkInfo.State.ENQUEUED, runAttemptCount = 2))) shouldBe WorkStatus.Retrying
     }
 

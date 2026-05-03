@@ -83,8 +83,10 @@ internal fun List<WorkInfo>.toLite(): List<WorkInfoLite> =
  *
  * Selection rules, in priority order:
  *  1. **Active wins.** If any entry is ENQUEUED/RUNNING/BLOCKED, that's the
- *     live run; ignore terminal history. If [WorkInfo.runAttemptCount] > 0
+ *     live run; ignore terminal history. If [WorkInfo.runAttemptCount] > 1
  *     it's a post-`Result.retry()` reattempt — surface as [WorkStatus.Retrying].
+ *     (WorkManager sets runAttemptCount = 1 on the very first execution, so
+ *     the threshold is > 1, not > 0.)
  *  2. **Most-recent terminal otherwise.** Pick the SUCCEEDED/FAILED entry with
  *     the highest [FetchAndNotifyWorker.KEY_COMPLETED_AT] timestamp. The
  *     previous heuristic (`maxByOrNull { runAttemptCount }`) was wrong: a
@@ -105,7 +107,7 @@ internal fun selectStatus(infos: List<WorkInfoLite>): WorkStatus {
             it.state == WorkInfo.State.BLOCKED
     }
     if (active != null) {
-        return if (active.runAttemptCount > 0) WorkStatus.Retrying else WorkStatus.Running
+        return if (active.runAttemptCount > 1) WorkStatus.Retrying else WorkStatus.Running
     }
     val completed = infos.filter {
         it.state == WorkInfo.State.SUCCEEDED || it.state == WorkInfo.State.FAILED
