@@ -820,7 +820,10 @@ internal fun InsightCard(insight: Insight, region: Region) {
     val dateFormatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
     val generatedAtFormatter = remember(locale) { DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale) }
     val location = insight.location
+    // Fall back to a localised "Your location" when reverse geocoding returned
+    // nothing useful — we still have coords, so the maps link is worth keeping.
     val locationLabel = shortLocationLabel(location?.displayName)
+        ?: location?.let { stringResource(R.string.today_location_unknown) }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),

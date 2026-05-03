@@ -13,6 +13,11 @@
     <string name="today_empty_subtitle">Your morning ClothesCast will appear here once it has been generated. Set your location in Settings, then tap Fetch now.</string>
     <string name="today_fetch_now">Fetch now</string>
     <string name="today_generated_at">Generated at %1$s</string>
+    <!-- Fallback label for the maps link beside the date when we have GPS
+         coordinates but no friendly city name (reverse geocoding returned
+         nothing useful, or the device is on AOSP without a backend). The
+         link still opens the user's maps app at the actual coords. -->
+    <string name="today_location_unknown">Your location</string>
 
     <string name="today_outfit_title">What to wear</string>
     <string name="today_outfit_label_today">Today</string>
