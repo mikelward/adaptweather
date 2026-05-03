@@ -112,16 +112,13 @@ label localises.
     <string name="settings_delivery_notification_and_tts">通知與語音朗讀</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "新增 API 金鑰" dialog.
     -->
     <string name="settings_tts_engine_title">語音引擎</string>
-    <string name="settings_tts_engine_description">線上引擎（Gemini、OpenAI、ElevenLabs）聽起來更自然，但在朗讀時需要連網，並使用你的 API 金鑰進行合成（每次朗讀 ClothesCast 時呼叫一次）。如果選定的引擎失敗，會回退到裝置語音。</string>
     <string name="settings_tts_engine_device">裝置（離線，免費）</string>
     <string name="settings_tts_engine_gemini">Gemini（高品質，線上）</string>
-    <string name="settings_tts_engine_openai">OpenAI（高品質，線上）</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs（最高品質，線上）</string>
 
     <string name="settings_tts_voice_label">語音</string>
     <string name="settings_tts_voice_dismiss">完成</string>
@@ -240,14 +237,12 @@ label localises.
     <string name="settings_tts_voice_locale_fa_ir">波斯文（伊朗）</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
+    API keys screen — Gemini block with status copy, paste-key placeholder,
+    and
     save / clear buttons. URLs stay verbatim with the conventional
     space-around-Latin spacing.
     -->
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">已設定 Gemini 金鑰。</string>
     <string name="settings_api_key_status_unset">尚未設定 Gemini 金鑰。可在 aistudio.google.com 取得一組，以使用 Gemini 語音。</string>
@@ -255,17 +250,7 @@ label localises.
     <string name="settings_api_key_save">儲存 Gemini 金鑰</string>
     <string name="settings_api_key_clear">清除已儲存的 Gemini 金鑰</string>
 
-    <string name="settings_openai_key_status_set">已設定 OpenAI 金鑰。</string>
-    <string name="settings_openai_key_status_unset">尚未設定 OpenAI 金鑰。可在 platform.openai.com 取得一組，以使用 OpenAI 語音。</string>
-    <string name="settings_openai_key_placeholder">貼上你的 OpenAI API 金鑰</string>
-    <string name="settings_openai_key_save">儲存 OpenAI 金鑰</string>
-    <string name="settings_openai_key_clear">清除已儲存的 OpenAI 金鑰</string>
 
-    <string name="settings_elevenlabs_key_status_set">已設定 ElevenLabs 金鑰。</string>
-    <string name="settings_elevenlabs_key_status_unset">尚未設定 ElevenLabs 金鑰。可在 elevenlabs.io 取得一組，以使用 ElevenLabs 語音。</string>
-    <string name="settings_elevenlabs_key_placeholder">貼上你的 ElevenLabs API 金鑰</string>
-    <string name="settings_elevenlabs_key_save">儲存 ElevenLabs 金鑰</string>
-    <string name="settings_elevenlabs_key_clear">清除已儲存的 ElevenLabs 金鑰</string>
 
     <!--
     Location screen — device-location toggle, manual city search +

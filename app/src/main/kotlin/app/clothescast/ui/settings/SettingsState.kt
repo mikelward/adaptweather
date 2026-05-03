@@ -14,8 +14,6 @@ import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.defaultDistanceUnitFor
 import app.clothescast.data.defaultTemperatureUnitFor
 import app.clothescast.tts.DeviceVoice
-import app.clothescast.tts.TtsVoiceOption
-import app.clothescast.tts.defaultOpenAiVoiceFor
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.util.Locale
@@ -43,17 +41,6 @@ data class SettingsState(
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
-    // Match SettingsRepository's locale-aware default so the picker doesn't
-    // briefly render "alloy" before the first DataStore emission overrides it.
-    // Region isn't known yet at construction time, so this initial value falls
-    // back to the phone's current locale → fable on en-GB, nova everywhere else.
-    // The DataStore emission immediately corrects it using the stored region.
-    val openAiVoice: String = defaultOpenAiVoiceFor(VoiceLocale.SYSTEM),
-    val openAiSpeed: Double = UserPreferences.DEFAULT_OPENAI_SPEED,
-    val elevenLabsVoice: String = UserPreferences.DEFAULT_ELEVENLABS_VOICE,
-    val elevenLabsModel: String = UserPreferences.DEFAULT_ELEVENLABS_MODEL,
-    val elevenLabsSpeed: Double = UserPreferences.DEFAULT_ELEVENLABS_SPEED,
-    val elevenLabsStability: Double = UserPreferences.DEFAULT_ELEVENLABS_STABILITY,
     /**
      * On-device voice ID the user has pinned, or `null` for "auto-pick the
      * highest-quality voice for [voiceLocale]" (the default for installs
@@ -81,18 +68,6 @@ data class SettingsState(
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val useCalendarEvents: Boolean = false,
     val apiKeyConfigured: Boolean = false,
-    val openAiKeyConfigured: Boolean = false,
-    val elevenLabsKeyConfigured: Boolean = false,
-    /**
-     * Voices fetched from `GET /v1/voices` after the user taps Refresh in
-     * Settings. `null` means "no refresh has happened this session" — the
-     * picker falls back to the curated [app.clothescast.tts.ELEVENLABS_VOICES]
-     * list. An empty list means the API returned no voices (exotic
-     * account state) and is rendered the same way as the fallback so the
-     * picker is never empty.
-     */
-    val elevenLabsRefreshedVoices: List<TtsVoiceOption>? = null,
-    val elevenLabsRefreshing: Boolean = false,
     /**
      * True while the WorkManager location-cache-refresh job is ENQUEUED,
      * RUNNING, or BLOCKED. Drives "Detecting…" in the Location settings

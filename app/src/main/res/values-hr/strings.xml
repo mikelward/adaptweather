@@ -79,16 +79,13 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_delivery_notification_and_tts">Obavijest i izgovor</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "Add API key" dialog.
     -->
     <string name="settings_tts_engine_title">Glasovni mehanizam</string>
-    <string name="settings_tts_engine_description">Online mehanizmi (Gemini, OpenAI, ElevenLabs) zvuče puno prirodnije, ali zahtijevaju mrežni poziv prilikom govora i koriste tvoj API ključ za sintezu (jedan kratki poziv po izgovorenom ClothesCastu). Vraća se na glas uređaja ako odabrani mehanizam zakaže.</string>
     <string name="settings_tts_engine_device">Uređaj (offline, besplatno)</string>
     <string name="settings_tts_engine_gemini">Gemini (visoka kvaliteta, online)</string>
-    <string name="settings_tts_engine_openai">OpenAI (visoka kvaliteta, online)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (najviša kvaliteta, online)</string>
 
     <string name="settings_tts_voice_label">Glas</string>
     <string name="settings_tts_voice_dismiss">Gotovo</string>
@@ -230,14 +227,11 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_fa_ir">Perzijski (Iran)</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key field placeholder, and
-    save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
-    elevenlabs.io) stay verbatim.
+    API keys screen — Gemini block with status copy, paste-key field
+    placeholder, and save / clear buttons. URL (aistudio.google.com) stays
+    verbatim.
     -->
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Gemini ključ je postavljen.</string>
     <string name="settings_api_key_status_unset">Gemini ključ nije postavljen. Nabavi ga na aistudio.google.com za korištenje Gemini glasova.</string>
@@ -245,17 +239,7 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_api_key_save">Spremi Gemini ključ</string>
     <string name="settings_api_key_clear">Izbriši spremljeni Gemini ključ</string>
 
-    <string name="settings_openai_key_status_set">OpenAI ključ je postavljen.</string>
-    <string name="settings_openai_key_status_unset">OpenAI ključ nije postavljen. Nabavi ga na platform.openai.com za korištenje OpenAI glasova.</string>
-    <string name="settings_openai_key_placeholder">Zalijepi svoj OpenAI API ključ</string>
-    <string name="settings_openai_key_save">Spremi OpenAI ključ</string>
-    <string name="settings_openai_key_clear">Izbriši spremljeni OpenAI ključ</string>
 
-    <string name="settings_elevenlabs_key_status_set">ElevenLabs ključ je postavljen.</string>
-    <string name="settings_elevenlabs_key_status_unset">ElevenLabs ključ nije postavljen. Nabavi ga na elevenlabs.io za korištenje ElevenLabs glasova.</string>
-    <string name="settings_elevenlabs_key_placeholder">Zalijepi svoj ElevenLabs API ključ</string>
-    <string name="settings_elevenlabs_key_save">Spremi ElevenLabs ključ</string>
-    <string name="settings_elevenlabs_key_clear">Izbriši spremljeni ElevenLabs ključ</string>
 
     <!--
     Location screen — device-location toggle, manual city search +
@@ -454,15 +438,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="pairing_error_body">Provjeri je li TV spojen na Wi-Fi i pokušaj ponovo.</string>
     <string name="pairing_retry">Pokušaj ponovo</string>
 
-    <string name="settings_elevenlabs_model_label">Model</string>
-    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — uravnotežen (zadano, 0,5 kredita/znak)</string>
-    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — vrhunska kvaliteta (1,0 kredit/znak)</string>
-    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — najbrži (0,5 kredita/znak)</string>
-    <string name="settings_elevenlabs_model_v3">v3 alpha — podrška audio oznaka (eksperimentalno)</string>
-    <string name="settings_elevenlabs_refresh_voices">Osvježi glasove</string>
-    <string name="settings_elevenlabs_refresh_voices_loaded">Prikazano %1$d glasova iz tvog ElevenLabs računa.</string>
-    <string name="settings_elevenlabs_speed_label">Brzina × %1$s</string>
-    <string name="settings_elevenlabs_stability_label">Stabilnost %1$s</string>
 
     <string name="settings_location_background_rationale_title">Dopusti uvijek</string>
     <string name="settings_location_background_rationale_body">ClothesCast dohvaća tvoju prognozu u pozadini svako jutro, pa mu je potreban pristup lokaciji \'Dopusti uvijek\'. Bit ćeš preusmjeren na sistemske Postavke radi odobrenja.</string>
@@ -479,7 +454,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_location_rationale_continue">Nastavi</string>
     <string name="settings_location_rationale_dismiss">Sad ne</string>
 
-    <string name="settings_openai_speed_label">Brzina × %1$s</string>
 
     <string name="settings_region_language_am_et">Amharski (Etiopija)</string>
     <string name="settings_region_language_da_dk">Danski (Danska)</string>
@@ -506,8 +480,6 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="settings_tts_voice_locale_nb_no">Norveški Bokmål (Norveška)</string>
     <string name="settings_tts_voice_locale_sq_al">Albanski (Albanija)</string>
     <string name="settings_tts_voice_locale_sw_ke">Svahili (Kenija)</string>
-    <string name="settings_tts_voice_locale_language_fallback">Nema %1$s glasova u ovom engineu — prikazuju se glasovi istog jezika.</string>
-    <string name="settings_tts_voice_locale_no_match">Nema %1$s glasova u ovom engineu — pokušaj drugi naglasak.</string>
 
     <string name="today_failed_no_location">Nismo mogli dobiti tvoju lokaciju. Odobri stalni pristup lokaciji ili postavi grad u Postavkama.</string>
     <string name="today_location_required_title">Postavi svoju lokaciju</string>

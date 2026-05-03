@@ -12,9 +12,8 @@ import kotlin.coroutines.resume
  * Plays a chunk of 16-bit signed mono PCM through [AudioTrack] in `MODE_STREAM`,
  * suspending until the playback head reaches the end of the buffer.
  *
- * Shared by [GeminiTtsSpeaker] and [OpenAITtsSpeaker] — both providers return PCM
- * with the same encoding, only the sample rate differs (Gemini reports it in the
- * response mimeType; OpenAI fixes it at 24 kHz).
+ * Used by [GeminiTtsSpeaker] — Gemini returns 16-bit signed mono PCM with the
+ * sample rate reported in the response mimeType.
  *
  * Uses `USAGE_ASSISTANT` to bypass the notification stream's compression/limiting,
  * which audibly distorts speech at 24 kHz. `MODE_STREAM` (rather than `MODE_STATIC`)

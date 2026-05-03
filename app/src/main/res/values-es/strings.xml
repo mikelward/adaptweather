@@ -108,16 +108,13 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_delivery_notification_and_tts">Notificación y lectura en voz alta</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "Añadir clave API" dialog.
     -->
     <string name="settings_tts_engine_title">Motor de voz</string>
-    <string name="settings_tts_engine_description">Los motores online (Gemini, OpenAI, ElevenLabs) suenan mucho más naturales, pero requieren una llamada de red en el momento de hablar y usan tu clave API para la síntesis (una llamada corta por cada ClothesCast hablado). Vuelve a la voz del dispositivo si el motor elegido falla.</string>
     <string name="settings_tts_engine_device">Dispositivo (offline, gratis)</string>
     <string name="settings_tts_engine_gemini">Gemini (alta calidad, online)</string>
-    <string name="settings_tts_engine_openai">OpenAI (alta calidad, online)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (máxima calidad, online)</string>
 
     <string name="settings_tts_voice_label">Voz</string>
     <string name="settings_tts_voice_dismiss">Hecho</string>
@@ -257,13 +254,11 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_fa_ir">Persa (Irán)</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
+    API keys screen — Gemini block with status copy, paste-key placeholder,
+    and
     save / clear buttons. URLs stay verbatim.
     -->
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Hay una clave de Gemini configurada.</string>
     <string name="settings_api_key_status_unset">No hay clave de Gemini configurada. Consigue una en aistudio.google.com para usar las voces de Gemini.</string>
@@ -271,17 +266,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_api_key_save">Guardar clave de Gemini</string>
     <string name="settings_api_key_clear">Borrar clave de Gemini guardada</string>
 
-    <string name="settings_openai_key_status_set">Hay una clave de OpenAI configurada.</string>
-    <string name="settings_openai_key_status_unset">No hay clave de OpenAI configurada. Consigue una en platform.openai.com para usar las voces de OpenAI.</string>
-    <string name="settings_openai_key_placeholder">Pega tu clave API de OpenAI</string>
-    <string name="settings_openai_key_save">Guardar clave de OpenAI</string>
-    <string name="settings_openai_key_clear">Borrar clave de OpenAI guardada</string>
 
-    <string name="settings_elevenlabs_key_status_set">Hay una clave de ElevenLabs configurada.</string>
-    <string name="settings_elevenlabs_key_status_unset">No hay clave de ElevenLabs configurada. Consigue una en elevenlabs.io para usar las voces de ElevenLabs.</string>
-    <string name="settings_elevenlabs_key_placeholder">Pega tu clave API de ElevenLabs</string>
-    <string name="settings_elevenlabs_key_save">Guardar clave de ElevenLabs</string>
-    <string name="settings_elevenlabs_key_clear">Borrar clave de ElevenLabs guardada</string>
 
     <!--
     Location screen — device-location toggle, manual city search +
@@ -485,15 +470,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="pairing_error_body">Asegúrate de que el televisor esté conectado a la red Wi-Fi y vuelve a intentarlo.</string>
     <string name="pairing_retry">Reintentar</string>
 
-    <string name="settings_elevenlabs_model_label">Modelo</string>
-    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — equilibrado (predeterminado, 0,5 créditos/car.)</string>
-    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — calidad premium (1,0 créditos/car.)</string>
-    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — más rápido (0,5 créditos/car.)</string>
-    <string name="settings_elevenlabs_model_v3">v3 alpha — compatible con etiquetas de audio (experimental)</string>
-    <string name="settings_elevenlabs_refresh_voices">Actualizar voces</string>
-    <string name="settings_elevenlabs_refresh_voices_loaded">Mostrando %1$d voces de tu cuenta de ElevenLabs.</string>
-    <string name="settings_elevenlabs_speed_label">Velocidad × %1$s</string>
-    <string name="settings_elevenlabs_stability_label">Estabilidad %1$s</string>
 
     <string name="settings_location_background_rationale_title">Permitir siempre</string>
     <string name="settings_location_background_rationale_body">ClothesCast obtiene tu pronóstico en segundo plano cada mañana, por lo que necesita acceso a la ubicación \'Permitir siempre\'. Serás redirigido a los Ajustes del sistema para concederlo.</string>
@@ -510,7 +486,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_rationale_continue">Continuar</string>
     <string name="settings_location_rationale_dismiss">Ahora no</string>
 
-    <string name="settings_openai_speed_label">Velocidad × %1$s</string>
 
     <string name="settings_region_language_am_et">Amhárico (Etiopía)</string>
     <string name="settings_region_language_da_dk">Danés (Dinamarca)</string>
@@ -537,8 +512,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_nb_no">Noruego Bokmål (Noruega)</string>
     <string name="settings_tts_voice_locale_sq_al">Albanés (Albania)</string>
     <string name="settings_tts_voice_locale_sw_ke">Suajili (Kenia)</string>
-    <string name="settings_tts_voice_locale_language_fallback">No hay voces de %1$s en este motor — se muestran voces en el mismo idioma.</string>
-    <string name="settings_tts_voice_locale_no_match">No hay voces de %1$s en este motor — prueba otro acento.</string>
 
     <string name="today_failed_no_location">No se pudo obtener tu ubicación. Concede permiso de ubicación permanente o establece una ciudad en Ajustes.</string>
     <string name="today_location_required_title">Configura tu ubicación</string>

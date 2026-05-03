@@ -15,7 +15,6 @@ import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
-import app.clothescast.core.domain.model.VoiceLocale
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -252,15 +251,9 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `voice setters round-trip and are independent across providers`() = runTest {
+    fun `gemini voice setter round-trips`() = runTest {
         subject.setGeminiVoice("Puck")
-        subject.setOpenAiVoice("nova")
-        subject.setElevenLabsVoice("21m00Tcm4TlvDq8ikWAM")
-
-        val prefs = subject.preferences.first()
-        prefs.geminiVoice shouldBe "Puck"
-        prefs.openAiVoice shouldBe "nova"
-        prefs.elevenLabsVoice shouldBe "21m00Tcm4TlvDq8ikWAM"
+        subject.preferences.first().geminiVoice shouldBe "Puck"
     }
 
     @Test
@@ -289,59 +282,6 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `elevenLabs voice defaults to Sarah when nothing stored`() = runTest {
-        subject.preferences.first().elevenLabsVoice shouldBe "EXAVITQu4vr4xnSDxMaL"
-    }
-
-    @Test
-    fun `elevenLabs model and speed round-trip and default sensibly`() = runTest {
-        // Defaults match the constants exposed by core:domain so the picker
-        // shows the right initial selection on a fresh install.
-        val initial = subject.preferences.first()
-        initial.elevenLabsModel shouldBe "eleven_turbo_v2_5"
-        initial.elevenLabsSpeed shouldBe 1.0
-
-        subject.setElevenLabsModel("eleven_flash_v2_5")
-        subject.setElevenLabsSpeed(1.05)
-
-        val updated = subject.preferences.first()
-        updated.elevenLabsModel shouldBe "eleven_flash_v2_5"
-        updated.elevenLabsSpeed shouldBe 1.05
-    }
-
-    @Test
-    fun `elevenLabs speed setter clamps to the documented 0_7 to 1_2 range`() = runTest {
-        // Out-of-range values get clamped on write so a malformed prefs
-        // edit (or a future migration that bypasses the slider) can't
-        // push past what ElevenLabs actually accepts.
-        subject.setElevenLabsSpeed(2.0)
-        subject.preferences.first().elevenLabsSpeed shouldBe 1.2
-
-        subject.setElevenLabsSpeed(0.1)
-        subject.preferences.first().elevenLabsSpeed shouldBe 0.7
-    }
-
-    @Test
-    fun `elevenLabs stability defaults to 0_65 and round-trips`() = runTest {
-        // Default mirrors the previously-hardcoded value in
-        // ElevenLabsTtsClient so existing installs hear no change after the
-        // slider lands.
-        subject.preferences.first().elevenLabsStability shouldBe 0.65
-
-        subject.setElevenLabsStability(0.4)
-        subject.preferences.first().elevenLabsStability shouldBe 0.4
-    }
-
-    @Test
-    fun `elevenLabs stability setter clamps to the documented 0 to 1 range`() = runTest {
-        subject.setElevenLabsStability(2.0)
-        subject.preferences.first().elevenLabsStability shouldBe 1.0
-
-        subject.setElevenLabsStability(-0.5)
-        subject.preferences.first().elevenLabsStability shouldBe 0.0
-    }
-
-    @Test
     fun `setTtsEngineIfUnset writes when nothing is stored`() = runTest {
         subject.preferences.first().ttsEngine shouldBe TtsEngine.DEVICE
 
@@ -351,10 +291,10 @@ class SettingsRepositoryTest {
 
     @Test
     fun `setTtsEngineIfUnset does not clobber an explicit choice`() = runTest {
-        subject.setTtsEngine(TtsEngine.ELEVENLABS)
+        subject.setTtsEngine(TtsEngine.GEMINI)
 
-        subject.setTtsEngineIfUnset(TtsEngine.GEMINI)
-        subject.preferences.first().ttsEngine shouldBe TtsEngine.ELEVENLABS
+        subject.setTtsEngineIfUnset(TtsEngine.DEVICE)
+        subject.preferences.first().ttsEngine shouldBe TtsEngine.GEMINI
     }
 
     @Test
@@ -366,66 +306,6 @@ class SettingsRepositoryTest {
 
         subject.setTtsEngineIfUnset(TtsEngine.GEMINI)
         subject.preferences.first().ttsEngine shouldBe TtsEngine.DEVICE
-    }
-
-    @Test
-    fun `openAi speed defaults to 1_0 and round-trips`() = runTest {
-        subject.preferences.first().openAiSpeed shouldBe 1.0
-
-        subject.setOpenAiSpeed(0.85)
-        subject.preferences.first().openAiSpeed shouldBe 0.85
-    }
-
-    @Test
-    fun `openAi speed setter clamps to the picker range`() = runTest {
-        subject.setOpenAiSpeed(2.0)
-        subject.preferences.first().openAiSpeed shouldBe 1.2
-
-        subject.setOpenAiSpeed(0.1)
-        subject.preferences.first().openAiSpeed shouldBe 0.7
-    }
-
-    @Test
-    fun `openAiVoice defaults to nova for non-British locale preferences`() = runTest {
-        subject.setVoiceLocale(VoiceLocale.EN_US)
-        subject.preferences.first().openAiVoice shouldBe "nova"
-
-        subject.setVoiceLocale(VoiceLocale.EN_AU)
-        subject.preferences.first().openAiVoice shouldBe "nova"
-    }
-
-    @Test
-    fun `openAiVoice defaults to fable for the en-GB locale preference`() = runTest {
-        subject.setVoiceLocale(VoiceLocale.EN_GB)
-        subject.preferences.first().openAiVoice shouldBe "fable"
-    }
-
-    @Test
-    fun `explicitly chosen openAiVoice overrides the locale-derived default`() = runTest {
-        subject.setVoiceLocale(VoiceLocale.EN_GB)
-        subject.setOpenAiVoice("alloy")
-
-        subject.preferences.first().openAiVoice shouldBe "alloy"
-    }
-
-    @Test
-    fun `openAiVoice defaults to fable when voiceLocale is SYSTEM and region is EN_GB`() = runTest {
-        // voiceLocale = SYSTEM → accent follows the app's region setting;
-        // region = EN_GB → effective locale is en-GB → fable.
-        subject.setRegion(Region.EN_GB)
-        subject.preferences.first().openAiVoice shouldBe "fable"
-    }
-
-    @Test
-    fun `openAiVoice defaults to nova when voiceLocale is SYSTEM and region is EN_US`() = runTest {
-        subject.setRegion(Region.EN_US)
-        subject.preferences.first().openAiVoice shouldBe "nova"
-    }
-
-    @Test
-    fun `openAiVoice defaults from system locale when both voiceLocale and region are SYSTEM`() = runTest {
-        // Both SYSTEM → falls back to systemLocaleProvider (Locale.UK = en-GB in tests) → fable.
-        subject.preferences.first().openAiVoice shouldBe "fable"
     }
 
     @Test
