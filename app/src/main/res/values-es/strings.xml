@@ -561,4 +561,50 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_max_below">Sensación máxima de solo %1$s%2$s, por debajo de %3$s%2$s</string>
     <string name="today_rationale_max_above_with_time">Sensación máxima de %1$s%2$s a las %3$s, al menos %4$s%2$s</string>
     <string name="today_rationale_max_above">Sensación máxima de %1$s%2$s, al menos %3$s%2$s</string>
+
+    <!-- Fallback label for the maps link when GPS coords are known but no
+         city name could be resolved. -->
+    <string name="today_location_unknown">Tu ubicación</string>
+
+    <!-- Shown while WorkManager is in exponential back-off between retries. -->
+    <string name="today_retrying">El último intento falló — reintentando…</string>
+
+    <!-- Crash-report banner shown on the Today screen after a previous crash. -->
+    <string name="today_crash_banner_title">El último inicio se cerró de forma inesperada</string>
+    <string name="today_crash_banner_body">Se guardó un informe de error en tu dispositivo. ¿Compartirlo para corregir el fallo? No se envía nada hasta que elijas dónde.</string>
+    <string name="today_crash_banner_share">Compartir informe</string>
+    <string name="today_crash_banner_dismiss">Ignorar</string>
+
+    <!-- TV-specific onboarding subtitle (two steps instead of three). -->
+    <string name="onboarding_subtitle_tv">Dos elecciones rápidas y ya está. Todo lo demás se puede ajustar más tarde en los ajustes.</string>
+
+    <!-- Onboarding — background location step. -->
+    <string name="onboarding_location_grant_background">Permitir siempre</string>
+    <string name="onboarding_location_background_needed">Un paso más: ClothesCast necesita \'Permitir siempre\' para poder leer tu ubicación por la mañana cuando la app está cerrada.</string>
+    <string name="onboarding_location_enter_manual_hint">Puedes introducir tu ubicación manualmente si denegas el permiso de ubicación o si la ubicación de tu dispositivo es incorrecta.</string>
+
+    <!-- Settings root — rows not yet translated. -->
+    <string name="settings_root_display">Pantalla</string>
+    <string name="settings_root_location">Ubicación</string>
+    <string name="settings_root_calendar">Calendario</string>
+    <string name="settings_root_display_subtitle">Tema</string>
+    <string name="settings_root_location_subtitle">Detección automática o elegir ciudad</string>
+    <string name="settings_root_calendar_subtitle">Eventos de hoy</string>
+
+    <!-- Display / theme settings. -->
+    <string name="settings_display_theme_title">Tema</string>
+    <string name="settings_display_theme_system">Seguir el sistema</string>
+    <string name="settings_display_theme_light">Claro</string>
+    <string name="settings_display_theme_dark">Oscuro</string>
+
+    <!-- API key screen — Gemini section header. -->
+    <string name="settings_api_key_gemini_header">Usa Gemini para obtener voces de alta calidad.</string>
+
+    <!-- Location screen — additional strings. -->
+    <string name="settings_location_use_device_description">Última ubicación aproximada</string>
+    <string name="settings_location_detecting">Detectando…</string>
+    <string name="settings_location_background_banner_title">Se necesita ubicación permanente</string>
+    <string name="settings_location_background_banner_body">Sin ella, el pronóstico matutino no puede leer tu ubicación.</string>
+    <string name="settings_location_manual_override">¿Ubicación incorrecta? Configurar manualmente</string>
+    <string name="settings_location_manual_override_disclosure">Elegir una ciudad desactiva la detección automática.</string>
 </resources>
