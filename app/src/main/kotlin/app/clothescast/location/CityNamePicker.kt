@@ -39,6 +39,15 @@ internal fun pickCityName(
         cleanAdminArea(adminArea)?.let { return it }
     }
 
+    // New York City: Geocoder fills `locality` with the borough (Brooklyn, Queens,
+    // The Bronx, Staten Island) for non-Manhattan addresses, which surfaces as a
+    // sub-city label on the Today header. Collapse to "New York" when the address
+    // sits in any of the five boroughs — identified uniformly by the NYC county
+    // names in `subAdminArea`.
+    if (cc == "US" && subAdminArea?.trim() in NYC_COUNTIES) {
+        return "New York"
+    }
+
     return listOfNotNull(
         locality,
         subLocality,
@@ -60,6 +69,16 @@ private val CITY_STATE_FALLBACK_NAMES = mapOf(
 )
 
 private val GOVERNORATE_COUNTRIES = setOf("EG")
+
+// Counties that make up New York City's five boroughs. Manhattan is "New York
+// County"; the others share names with their boroughs (Kings = Brooklyn, etc.).
+private val NYC_COUNTIES = setOf(
+    "New York County",   // Manhattan
+    "Kings County",      // Brooklyn
+    "Queens County",     // Queens
+    "Bronx County",      // The Bronx
+    "Richmond County",   // Staten Island
+)
 
 /**
  * Strips Irish "County "/"Co. " prefixes and " Governorate"/" Province"/" Prefecture"
