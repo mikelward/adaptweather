@@ -104,16 +104,13 @@ label localizes.
     <string name="settings_delivery_notification_and_tts">通知和语音朗读</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "添加 API 密钥" dialog.
     -->
     <string name="settings_tts_engine_title">语音引擎</string>
-    <string name="settings_tts_engine_description">在线引擎（Gemini、OpenAI、ElevenLabs）听起来更自然，但在朗读时需要联网，并使用你的 API 密钥进行合成（每次朗读 ClothesCast 时调用一次）。如果选定的引擎失败，会回退到设备语音。</string>
     <string name="settings_tts_engine_device">设备（离线，免费）</string>
     <string name="settings_tts_engine_gemini">Gemini（高质量，在线）</string>
-    <string name="settings_tts_engine_openai">OpenAI（高质量，在线）</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs（最高质量，在线）</string>
 
     <string name="settings_tts_voice_label">语音</string>
     <string name="settings_tts_voice_dismiss">完成</string>
@@ -250,14 +247,12 @@ label localizes.
     <string name="settings_tts_voice_locale_fa_ir">波斯语（伊朗）</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
+    API keys screen — Gemini block with status copy, paste-key placeholder,
+    and
     save / clear buttons. URLs stay verbatim with the conventional
     space-around-Latin spacing.
     -->
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">已配置 Gemini 密钥。</string>
     <string name="settings_api_key_status_unset">未配置 Gemini 密钥。可在 aistudio.google.com 获取一个，以使用 Gemini 语音。</string>
@@ -265,17 +260,7 @@ label localizes.
     <string name="settings_api_key_save">保存 Gemini 密钥</string>
     <string name="settings_api_key_clear">清除已保存的 Gemini 密钥</string>
 
-    <string name="settings_openai_key_status_set">已配置 OpenAI 密钥。</string>
-    <string name="settings_openai_key_status_unset">未配置 OpenAI 密钥。可在 platform.openai.com 获取一个，以使用 OpenAI 语音。</string>
-    <string name="settings_openai_key_placeholder">粘贴你的 OpenAI API 密钥</string>
-    <string name="settings_openai_key_save">保存 OpenAI 密钥</string>
-    <string name="settings_openai_key_clear">清除已保存的 OpenAI 密钥</string>
 
-    <string name="settings_elevenlabs_key_status_set">已配置 ElevenLabs 密钥。</string>
-    <string name="settings_elevenlabs_key_status_unset">未配置 ElevenLabs 密钥。可在 elevenlabs.io 获取一个，以使用 ElevenLabs 语音。</string>
-    <string name="settings_elevenlabs_key_placeholder">粘贴你的 ElevenLabs API 密钥</string>
-    <string name="settings_elevenlabs_key_save">保存 ElevenLabs 密钥</string>
-    <string name="settings_elevenlabs_key_clear">清除已保存的 ElevenLabs 密钥</string>
 
     <!--
     Location screen — device-location toggle, manual city search +
@@ -479,15 +464,6 @@ label localizes.
     <string name="pairing_error_body">请确保电视已连接到 Wi-Fi，然后重试。</string>
     <string name="pairing_retry">重试</string>
 
-    <string name="settings_elevenlabs_model_label">模型</string>
-    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — 均衡（默认，0.5 积分/字符）</string>
-    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — 旗舰品质（1.0 积分/字符）</string>
-    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — 最快（0.5 积分/字符）</string>
-    <string name="settings_elevenlabs_model_v3">v3 alpha — 支持音频标签（实验性）</string>
-    <string name="settings_elevenlabs_refresh_voices">刷新语音</string>
-    <string name="settings_elevenlabs_refresh_voices_loaded">正在显示您 ElevenLabs 账户中的 %1$d 个语音。</string>
-    <string name="settings_elevenlabs_speed_label">速度 × %1$s</string>
-    <string name="settings_elevenlabs_stability_label">稳定性 %1$s</string>
 
     <string name="settings_location_background_rationale_title">始终允许</string>
     <string name="settings_location_background_rationale_body">ClothesCast 每天早晨在后台获取您的天气预报，因此需要"始终允许"位置访问权限。您将被带到系统设置以授予该权限。</string>
@@ -504,7 +480,6 @@ label localizes.
     <string name="settings_location_rationale_continue">继续</string>
     <string name="settings_location_rationale_dismiss">暂不</string>
 
-    <string name="settings_openai_speed_label">速度 × %1$s</string>
 
     <string name="settings_region_language_am_et">阿姆哈拉语（埃塞俄比亚）</string>
     <string name="settings_region_language_da_dk">丹麦语（丹麦）</string>
@@ -531,8 +506,6 @@ label localizes.
     <string name="settings_tts_voice_locale_nb_no">挪威语（书面挪威语）</string>
     <string name="settings_tts_voice_locale_sq_al">阿尔巴尼亚语（阿尔巴尼亚）</string>
     <string name="settings_tts_voice_locale_sw_ke">斯瓦希里语（肯尼亚）</string>
-    <string name="settings_tts_voice_locale_language_fallback">此引擎中没有 %1$s 语音 — 正在显示相同语言的语音。</string>
-    <string name="settings_tts_voice_locale_no_match">此引擎中没有 %1$s 语音 — 请尝试其他口音。</string>
 
     <string name="today_failed_no_location">无法获取您的位置。请授予始终开启位置权限，或在设置中设置城市。</string>
     <string name="today_location_required_title">设置您的位置</string>

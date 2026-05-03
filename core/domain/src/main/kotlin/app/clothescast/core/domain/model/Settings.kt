@@ -16,12 +16,8 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
  * - [GEMINI] uses Gemini's audio-output model (`gemini-2.5-flash-preview-tts`) over
  *   the BYOK Gemini key. Near-human quality, requires network at speak-time, costs
  *   a small amount per character. Falls back to [DEVICE] if the call fails.
- * - [OPENAI] uses OpenAI's `audio/speech` endpoint over a separate BYOK OpenAI key.
- *   Comparable quality to Gemini; falls back to [DEVICE] on failure.
- * - [ELEVENLABS] uses ElevenLabs's `text-to-speech` endpoint over a separate BYOK
- *   ElevenLabs key; falls back to [DEVICE] on failure.
  */
-enum class TtsEngine { DEVICE, GEMINI, OPENAI, ELEVENLABS }
+enum class TtsEngine { DEVICE, GEMINI }
 
 /**
  * User-selectable accent / language preference for spoken playback. Used by
@@ -32,15 +28,6 @@ enum class TtsEngine { DEVICE, GEMINI, OPENAI, ELEVENLABS }
  *  - [TtsEngine.GEMINI] passes the locale through as a natural-language
  *    accent directive prepended to the prompt — Gemini's prebuilt voices are
  *    language-agnostic personalities and follow that direction.
- *  - [TtsEngine.OPENAI] and [TtsEngine.ELEVENLABS] both filter the voice
- *    picker to voices whose baked-in accent matches the variant, falling
- *    back to the full list if no voice matches. Their voices have fixed
- *    accents that prompt-steering can't reliably override (we tried; only
- *    voice selection actually changes the audible accent), so the variant
- *    has to drive *which voice* gets used rather than *how* a given voice
- *    speaks. For OpenAI, [defaultOpenAiVoiceFor] also picks a sensible
- *    starting voice for first-launch users (en-GB → `fable`, else `nova`)
- *    so the user hears the right accent before they ever open Settings.
  *
  * [SYSTEM] means "follow the phone's locale" — the right default for almost
  * everyone, since their device language already encodes their accent
@@ -211,48 +198,6 @@ data class UserPreferences(
      */
     val geminiVoice: String = DEFAULT_GEMINI_VOICE,
     /**
-     * OpenAI voice name (e.g. "alloy", "echo"). Only consulted when [ttsEngine]
-     * == [TtsEngine.OPENAI].
-     */
-    val openAiVoice: String = DEFAULT_OPENAI_VOICE,
-    /**
-     * Per-clip OpenAI playback rate (multiplier). Mirrors the ElevenLabs speed
-     * knob for consistency — same 0.7–1.2 range, same UI affordance. Sent as
-     * the `speed` field on the speech request. The active model
-     * (`gpt-4o-mini-tts`) currently steers pace primarily through the
-     * `instructions` field, but the wire parameter is harmless when ignored
-     * and forward-compatible with `tts-1` / `tts-1-hd`. Only consulted when
-     * [ttsEngine] == [TtsEngine.OPENAI].
-     */
-    val openAiSpeed: Double = DEFAULT_OPENAI_SPEED,
-    /**
-     * ElevenLabs voice ID — the opaque library identifier (e.g.
-     * "EXAVITQu4vr4xnSDxMaL" for Sarah). Only consulted when [ttsEngine]
-     * == [TtsEngine.ELEVENLABS].
-     */
-    val elevenLabsVoice: String = DEFAULT_ELEVENLABS_VOICE,
-    /**
-     * ElevenLabs synthesis model ID (e.g. `eleven_turbo_v2_5`,
-     * `eleven_multilingual_v2`, `eleven_flash_v2_5`, `eleven_v3`). Stored
-     * as a free-form string so adding a new model doesn't need a domain
-     * enum migration. Only consulted when [ttsEngine] ==
-     * [TtsEngine.ELEVENLABS].
-     */
-    val elevenLabsModel: String = DEFAULT_ELEVENLABS_MODEL,
-    /**
-     * Per-clip ElevenLabs playback rate (multiplier, 0.7–1.2 per the
-     * documented range). Default 1.0 (vendor stock pace). Only consulted
-     * when [ttsEngine] == [TtsEngine.ELEVENLABS].
-     */
-    val elevenLabsSpeed: Double = DEFAULT_ELEVENLABS_SPEED,
-    /**
-     * Per-clip ElevenLabs `voice_settings.stability` (0.0–1.0). Higher =
-     * steadier pronunciation, lower = more expressive. Default 0.65 favours
-     * pronunciation consistency over expression for short weather briefings.
-     * Only consulted when [ttsEngine] == [TtsEngine.ELEVENLABS].
-     */
-    val elevenLabsStability: Double = DEFAULT_ELEVENLABS_STABILITY,
-    /**
      * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
      * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)
      * means "auto-pick the highest-quality voice for [voiceLocale]" — the
@@ -320,34 +265,5 @@ data class UserPreferences(
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Erinome"
-        const val DEFAULT_OPENAI_VOICE = "alloy"
-        // Sarah — the most generally pleasant of ElevenLabs's stock library voices.
-        const val DEFAULT_ELEVENLABS_VOICE = "EXAVITQu4vr4xnSDxMaL"
-        // Mirrors `core:data:ElevenLabsTtsClient.DEFAULT_ELEVENLABS_TTS_MODEL`
-        // — duplicated as a literal so domain stays Android- and data-layer-
-        // independent. Update both sides together if the default ever shifts.
-        const val DEFAULT_ELEVENLABS_MODEL = "eleven_turbo_v2_5"
-        // Playback-rate multiplier applied per request (clamped 0.7–1.2 by
-        // the picker UI; ElevenLabs documents the same range). Default 1.0
-        // matches the vendor's stock pace.
-        const val DEFAULT_ELEVENLABS_SPEED = 1.0
-        const val MIN_ELEVENLABS_SPEED = 0.7
-        const val MAX_ELEVENLABS_SPEED = 1.2
-        // Documented voice_settings.stability range is 0–1. Default mirrors
-        // the previously-hardcoded value in ElevenLabsTtsClient so existing
-        // installs hear no change after the slider lands.
-        const val DEFAULT_ELEVENLABS_STABILITY = 0.65
-        const val MIN_ELEVENLABS_STABILITY = 0.0
-        const val MAX_ELEVENLABS_STABILITY = 1.0
-
-        // Same range as ElevenLabs speed for UI parity. OpenAI's API
-        // accepts 0.25–4.0 but values outside ~0.7–1.2 sound robotic / silly
-        // for a weather briefing; matching the ElevenLabs slider keeps the
-        // UX consistent and prevents users from accidentally picking 4×.
-        // Default 1.0 because there are no field reports of OpenAI sounding
-        // "too fast" the way ElevenLabs has.
-        const val DEFAULT_OPENAI_SPEED = 1.0
-        const val MIN_OPENAI_SPEED = 0.7
-        const val MAX_OPENAI_SPEED = 1.2
     }
 }

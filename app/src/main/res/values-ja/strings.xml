@@ -106,16 +106,13 @@ the displayed label localizes.
     <string name="settings_delivery_notification_and_tts">通知と音声読み上げ</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button, missing-API-key
     hint and the in-line "API キーを追加" dialog.
     -->
     <string name="settings_tts_engine_title">音声エンジン</string>
-    <string name="settings_tts_engine_description">オンラインエンジン（Gemini、OpenAI、ElevenLabs）はずっと自然に聞こえますが、読み上げ時にネットワーク呼び出しが必要で、合成にあなたの API キーを使用します（読み上げる ClothesCast ごとに1回の短い呼び出し）。選択したエンジンが失敗した場合、端末の音声にフォールバックします。</string>
     <string name="settings_tts_engine_device">端末（オフライン、無料）</string>
     <string name="settings_tts_engine_gemini">Gemini（高品質、オンライン）</string>
-    <string name="settings_tts_engine_openai">OpenAI（高品質、オンライン）</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs（最高品質、オンライン）</string>
 
     <string name="settings_tts_voice_label">音声</string>
     <string name="settings_tts_voice_dismiss">完了</string>
@@ -255,14 +252,12 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_fa_ir">ペルシャ語（イラン）</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
+    API keys screen — Gemini block with status copy, paste-key placeholder,
+    and
     save / clear buttons. URLs stay verbatim with the conventional
     space-around-Latin spacing.
     -->
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Gemini キーが設定されています。</string>
     <string name="settings_api_key_status_unset">Gemini キーが未設定です。aistudio.google.com で取得すると Gemini 音声を使用できます。</string>
@@ -270,17 +265,7 @@ the displayed label localizes.
     <string name="settings_api_key_save">Gemini キーを保存</string>
     <string name="settings_api_key_clear">保存された Gemini キーを削除</string>
 
-    <string name="settings_openai_key_status_set">OpenAI キーが設定されています。</string>
-    <string name="settings_openai_key_status_unset">OpenAI キーが未設定です。platform.openai.com で取得すると OpenAI 音声を使用できます。</string>
-    <string name="settings_openai_key_placeholder">OpenAI API キーを貼り付け</string>
-    <string name="settings_openai_key_save">OpenAI キーを保存</string>
-    <string name="settings_openai_key_clear">保存された OpenAI キーを削除</string>
 
-    <string name="settings_elevenlabs_key_status_set">ElevenLabs キーが設定されています。</string>
-    <string name="settings_elevenlabs_key_status_unset">ElevenLabs キーが未設定です。elevenlabs.io で取得すると ElevenLabs 音声を使用できます。</string>
-    <string name="settings_elevenlabs_key_placeholder">ElevenLabs API キーを貼り付け</string>
-    <string name="settings_elevenlabs_key_save">ElevenLabs キーを保存</string>
-    <string name="settings_elevenlabs_key_clear">保存された ElevenLabs キーを削除</string>
 
     <!--
     Location screen — device-location toggle, manual city search +
@@ -487,15 +472,6 @@ the displayed label localizes.
     <string name="pairing_error_body">TVがWi-Fiに接続されていることを確認して、もう一度お試しください。</string>
     <string name="pairing_retry">再試行</string>
 
-    <string name="settings_elevenlabs_model_label">モデル</string>
-    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — バランス型（デフォルト、0.5クレジット/文字）</string>
-    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — フラッグシップ品質（1.0クレジット/文字）</string>
-    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — 最速（0.5クレジット/文字）</string>
-    <string name="settings_elevenlabs_model_v3">v3 alpha — オーディオタグ対応（実験的）</string>
-    <string name="settings_elevenlabs_refresh_voices">ボイスを更新</string>
-    <string name="settings_elevenlabs_refresh_voices_loaded">ElevenLabsアカウントから%1$d件のボイスを表示しています。</string>
-    <string name="settings_elevenlabs_speed_label">速度 × %1$s</string>
-    <string name="settings_elevenlabs_stability_label">安定性 %1$s</string>
 
     <string name="settings_location_background_rationale_title">常に許可</string>
     <string name="settings_location_background_rationale_body">ClothesCastは毎朝バックグラウンドで予報を取得するため、位置情報の「常に許可」が必要です。システム設定に移動して許可を付与してください。</string>
@@ -512,7 +488,6 @@ the displayed label localizes.
     <string name="settings_location_rationale_continue">続ける</string>
     <string name="settings_location_rationale_dismiss">後で</string>
 
-    <string name="settings_openai_speed_label">速度 × %1$s</string>
 
     <string name="settings_region_language_am_et">アムハラ語（エチオピア）</string>
     <string name="settings_region_language_da_dk">デンマーク語（デンマーク）</string>
@@ -539,8 +514,6 @@ the displayed label localizes.
     <string name="settings_tts_voice_locale_nb_no">ノルウェー語 Bokmål（ノルウェー）</string>
     <string name="settings_tts_voice_locale_sq_al">アルバニア語（アルバニア）</string>
     <string name="settings_tts_voice_locale_sw_ke">スワヒリ語（ケニア）</string>
-    <string name="settings_tts_voice_locale_language_fallback">%1$sの音声はこのエンジンにありません。同言語の音声を表示しています。</string>
-    <string name="settings_tts_voice_locale_no_match">%1$sの音声はこのエンジンにありません。別のアクセントをお試しください。</string>
 
     <string name="today_failed_no_location">位置情報を取得できませんでした。常時位置情報の許可を付与するか、設定で都市を設定してください。</string>
     <string name="today_location_required_title">位置情報を設定してください</string>

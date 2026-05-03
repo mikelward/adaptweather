@@ -60,13 +60,9 @@ object BugReport {
 
     private suspend fun buildPayload(context: Context, app: ClothesCastApplication): String {
         val prefs = runCatching { app.settingsRepository.preferences.first() }.getOrNull()
-        val keyStatus = runCatching {
-            Triple(
-                app.secureKeyStore.geminiKeyConfiguredFlow.first(),
-                app.secureKeyStore.openAiKeyConfiguredFlow.first(),
-                app.secureKeyStore.elevenLabsKeyConfiguredFlow.first(),
-            )
-        }.getOrDefault(Triple(false, false, false))
+        val geminiKeyConfigured = runCatching {
+            app.secureKeyStore.geminiKeyConfiguredFlow.first()
+        }.getOrDefault(false)
         val today = runCatching {
             app.insightCache.latestForPeriod(ForecastPeriod.TODAY).first()
         }.getOrNull()
@@ -97,10 +93,7 @@ object BugReport {
             } else {
                 appendPreferences(prefs)
             }
-            val (gemini, openAi, elevenLabs) = keyStatus
-            appendLine("API keys: Gemini=${if (gemini) "set" else "unset"}, " +
-                "OpenAI=${if (openAi) "set" else "unset"}, " +
-                "ElevenLabs=${if (elevenLabs) "set" else "unset"}")
+            appendLine("API keys: Gemini=${if (geminiKeyConfigured) "set" else "unset"}")
             appendLine()
             appendLine("--- Current ClothesCasts ---")
             val region = prefs?.region ?: Region.SYSTEM
@@ -134,12 +127,6 @@ object BugReport {
         appendLine("TTS engine: ${prefs.ttsEngine}")
         appendLine("Voice locale: ${prefs.voiceLocale}")
         appendLine("Gemini voice: ${prefs.geminiVoice}")
-        appendLine("OpenAI voice: ${prefs.openAiVoice}")
-        appendLine("OpenAI speed: ${prefs.openAiSpeed}")
-        appendLine("ElevenLabs voice: ${prefs.elevenLabsVoice}")
-        appendLine("ElevenLabs model: ${prefs.elevenLabsModel}")
-        appendLine("ElevenLabs speed: ${prefs.elevenLabsSpeed}")
-        appendLine("ElevenLabs stability: ${prefs.elevenLabsStability}")
         appendLine("Device voice: ${prefs.deviceVoice ?: "(auto)"}")
         appendLine("Use device location: ${prefs.useDeviceLocation}")
         val locDesc = prefs.location?.let { loc ->

@@ -164,8 +164,6 @@
     <string name="settings_root_calendar_subtitle">Today\'s events</string>
 
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_gemini_header">Use Gemini to get high quality voices.</string>
     <string name="settings_api_key_status_set">A Gemini key is configured.</string>
@@ -221,11 +219,9 @@
     <string name="settings_delivery_notification_and_tts">Notification and spoken aloud</string>
 
     <string name="settings_tts_engine_title">Voice engine</string>
-    <string name="settings_tts_engine_description">Online engines (Gemini, OpenAI, ElevenLabs) sound much more natural but need a network call at speak-time and use your API key for synthesis (one short call per spoken ClothesCast). Falls back to the device voice if the chosen engine fails.</string>
+    <string name="settings_tts_engine_description">Gemini sounds much more natural than the device voice but needs a network call at speak-time and uses your API key for synthesis (one short call per spoken ClothesCast). Falls back to the device voice if Gemini fails.</string>
     <string name="settings_tts_engine_device">Device (offline, free)</string>
     <string name="settings_tts_engine_gemini">Gemini (high quality, online)</string>
-    <string name="settings_tts_engine_openai">OpenAI (high quality, online)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (highest quality, online)</string>
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
     <!-- Device-voice picker (TtsEngine.DEVICE only). %1$s is a voice id like
@@ -302,63 +298,7 @@
     <string name="settings_tts_voice_locale_sq_al">Albanian (Albania)</string>
     <string name="settings_tts_voice_locale_am_et">Amharic (Ethiopia)</string>
     <string name="settings_tts_test">Test voice</string>
-    <!-- Shown next to the engine picker when the chosen engine's API key isn't
-         configured. %1$s is the engine name ("Gemini" / "OpenAI" / "ElevenLabs"). -->
-    <!-- Button next to the missing-key hint that opens a paste-key dialog. -->
-    <!-- Title of the paste-key dialog. %1$s is the engine name. -->
     <string name="settings_tts_test_in_flight">Testing — please wait…</string>
-
-    <string name="settings_openai_key_status_set">An OpenAI key is configured.</string>
-    <string name="settings_openai_key_status_unset">No OpenAI key configured. Get one at platform.openai.com to use OpenAI voices.</string>
-    <string name="settings_openai_key_placeholder">Paste your OpenAI API key</string>
-    <string name="settings_openai_key_save">Save OpenAI key</string>
-    <string name="settings_openai_key_clear">Clear stored OpenAI key</string>
-
-    <string name="settings_elevenlabs_key_status_set">An ElevenLabs key is configured.</string>
-    <string name="settings_elevenlabs_key_status_unset">No ElevenLabs key configured. Get one at elevenlabs.io to use ElevenLabs voices.</string>
-    <string name="settings_elevenlabs_key_placeholder">Paste your ElevenLabs API key</string>
-    <string name="settings_elevenlabs_key_save">Save ElevenLabs key</string>
-    <string name="settings_elevenlabs_key_clear">Clear stored ElevenLabs key</string>
-    <!-- TODO(translations): the ElevenLabs refresh / model / speed strings
-         below are en-only for now. Localised values-*/strings.xml files
-         already translate the rest of the ElevenLabs settings keys, so
-         non-English users will see these specific controls in English
-         until translations land in a follow-up. -->
-    <!-- Button shown only when an ElevenLabs key is set; fetches the
-         account's voice library (premade + cloned) so the picker shows
-         exactly what the user has access to. -->
-    <string name="settings_elevenlabs_refresh_voices">Refresh voices</string>
-    <!-- Caption under the picker after a successful refresh. %1$d is the
-         number of voices loaded from the user's account. -->
-    <string name="settings_elevenlabs_refresh_voices_loaded">Showing %1$d voices from your ElevenLabs account.</string>
-
-    <!-- Section heading above the four-radio model picker. -->
-    <string name="settings_elevenlabs_model_label">Model</string>
-    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — balanced (default, 0.5 credits/char)</string>
-    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — flagship quality (1.0 credits/char)</string>
-    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — fastest (0.5 credits/char)</string>
-    <string name="settings_elevenlabs_model_v3">v3 alpha — audio-tag aware (experimental)</string>
-    <!-- Heading above the speed slider; %1$s is the current value formatted
-         as e.g. "0.90". -->
-    <string name="settings_elevenlabs_speed_label">Speed × %1$s</string>
-    <!-- Heading above the stability slider; %1$s is the current value
-         formatted as e.g. "0.65". Higher = steadier pronunciation, lower =
-         more expressive. -->
-    <string name="settings_elevenlabs_stability_label">Stability %1$s</string>
-    <!-- Heading above the OpenAI speed slider; %1$s is the current value
-         formatted as e.g. "1.00". Mirrors the ElevenLabs speed slider for
-         consistency. -->
-    <string name="settings_openai_speed_label">Speed × %1$s</string>
-
-    <!-- Captions under the cloud voice pickers when the user's chosen voice
-         locale has no exact-accent match. %1$s is the human-readable locale
-         label (e.g. "English (Australia)", "Japanese (Japan)"). The
-         "language fallback" variant fires when there's at least one voice
-         in the same language but a different accent — e.g. en-AU user with
-         only en-US/en-GB voices. The "no match" variant fires when nothing
-         in this engine speaks the requested language at all. -->
-    <string name="settings_tts_voice_locale_language_fallback">No %1$s voices in this engine — showing voices in the same language.</string>
-    <string name="settings_tts_voice_locale_no_match">No %1$s voices in this engine — try another accent.</string>
 
     <string name="settings_region_language_title">Language</string>
     <!-- Caption rendered under the Region > Language title, pairing with

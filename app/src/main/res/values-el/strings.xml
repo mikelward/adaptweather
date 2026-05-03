@@ -9,8 +9,8 @@ doesn't fit the existing prose voice ("Δικός σου ClothesCast", "Τι
 να φορέσεις σήμερα").
 
 Brand name "ClothesCast" stays in Latin script, as do all third-party
-brand names (Gemini, OpenAI, ElevenLabs, Open-Meteo, Android Keystore,
-GitHub, dontkillmyapp.com) and the URLs.
+brand names (Gemini, Open-Meteo, Android Keystore, GitHub,
+dontkillmyapp.com) and the URLs.
 
 Quotation marks around nested toggle / event labels use Greek
 guillemets «…» — locale-native style, the same convention Greek
@@ -123,19 +123,15 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_delivery_notification_and_tts">Ειδοποίηση και φωνητική ανάγνωση</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
-    voice + language sub-pickers, device-voice picker, install-Google-TTS
-    hint, ElevenLabs model + speed, refresh-voices button, test-voice
+    Voice screen — engine picker (Device / Gemini), voice + language
+    sub-pickers, device-voice picker, install-Google-TTS hint, test-voice
     button. Tu-form imperatives ("Πάτησε", "Δοκίμασε"). The "API key"
     loanword stays unchanged — modern Greek tech vocab keeps the Latin
     abbreviation, the same way it does for "URL", "JSON", "TTS".
     -->
     <string name="settings_tts_engine_title">Μηχανή φωνής</string>
-    <string name="settings_tts_engine_description">Οι online μηχανές (Gemini, OpenAI, ElevenLabs) ακούγονται πολύ πιο φυσικές αλλά απαιτούν κλήση δικτύου τη στιγμή της εκφώνησης και χρησιμοποιούν το API key σου για τη σύνθεση (μία σύντομη κλήση ανά ClothesCast που εκφωνείται). Επιστρέφει στη φωνή της συσκευής αν αποτύχει η επιλεγμένη μηχανή.</string>
     <string name="settings_tts_engine_device">Συσκευή (offline, δωρεάν)</string>
     <string name="settings_tts_engine_gemini">Gemini (υψηλή ποιότητα, online)</string>
-    <string name="settings_tts_engine_openai">OpenAI (υψηλή ποιότητα, online)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (κορυφαία ποιότητα, online)</string>
 
     <string name="settings_tts_voice_label">Φωνή</string>
     <string name="settings_tts_voice_dismiss">Έγινε</string>
@@ -156,19 +152,6 @@ zh-CN) is unchanged; only the displayed label localizes.
 
     <string name="settings_tts_test">Δοκιμή φωνής</string>
     <string name="settings_tts_test_in_flight">Δοκιμή — περίμενε…</string>
-
-    <!-- ElevenLabs refresh-voices button + voice-count toast, model
-         picker, and per-clip speed slider. The model labels keep the
-         credit-cost annotation in Greek: "0,5 πιστώσεις/χαρακτήρα" with
-         comma decimal separator (the Greek convention). -->
-    <string name="settings_elevenlabs_refresh_voices">Ανανέωση φωνών</string>
-    <string name="settings_elevenlabs_refresh_voices_loaded">Εμφάνιση %1$d φωνών από τον λογαριασμό σου ElevenLabs.</string>
-    <string name="settings_elevenlabs_model_label">Μοντέλο</string>
-    <string name="settings_elevenlabs_model_turbo_v2_5">Turbo v2.5 — ισορροπημένο (προεπιλογή, 0,5 πιστώσεις/χαρακτήρα)</string>
-    <string name="settings_elevenlabs_model_multilingual_v2">Multilingual v2 — κορυφαία ποιότητα (1,0 πιστώσεις/χαρακτήρα)</string>
-    <string name="settings_elevenlabs_model_flash_v2_5">Flash v2.5 — το πιο γρήγορο (0,5 πιστώσεις/χαρακτήρα)</string>
-    <string name="settings_elevenlabs_model_v3">v3 alpha — με αναγνώριση audio tags (πειραματικό)</string>
-    <string name="settings_elevenlabs_speed_label">Ταχύτητα × %1$s</string>
 
     <!--
     Region screen — language picker title + caption (the disambiguation
@@ -303,15 +286,12 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_fa_ir">Περσικά (Ιράν)</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
-    save / clear buttons. URLs (aistudio.google.com, platform.openai.com,
-    elevenlabs.io) stay verbatim. "API key" / "key" stay as Latin
-    loanwords — modern Greek tech vocab keeps them unchanged.
+    API keys screen — Gemini block with status copy, paste-key placeholder,
+    and save / clear buttons. URL (aistudio.google.com) stays verbatim.
+    "API key" / "key" stay as Latin loanwords — modern Greek tech vocab
+    keeps them unchanged.
     -->
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Έχει ρυθμιστεί ένα Gemini key.</string>
     <string name="settings_api_key_status_unset">Δεν έχει ρυθμιστεί Gemini key. Πάρε ένα από το aistudio.google.com για να χρησιμοποιήσεις τις φωνές Gemini.</string>
@@ -319,17 +299,7 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_api_key_save">Αποθήκευση Gemini key</string>
     <string name="settings_api_key_clear">Διαγραφή αποθηκευμένου Gemini key</string>
 
-    <string name="settings_openai_key_status_set">Έχει ρυθμιστεί ένα OpenAI key.</string>
-    <string name="settings_openai_key_status_unset">Δεν έχει ρυθμιστεί OpenAI key. Πάρε ένα από το platform.openai.com για να χρησιμοποιήσεις τις φωνές OpenAI.</string>
-    <string name="settings_openai_key_placeholder">Επικόλλησε το OpenAI API key σου</string>
-    <string name="settings_openai_key_save">Αποθήκευση OpenAI key</string>
-    <string name="settings_openai_key_clear">Διαγραφή αποθηκευμένου OpenAI key</string>
 
-    <string name="settings_elevenlabs_key_status_set">Έχει ρυθμιστεί ένα ElevenLabs key.</string>
-    <string name="settings_elevenlabs_key_status_unset">Δεν έχει ρυθμιστεί ElevenLabs key. Πάρε ένα από το elevenlabs.io για να χρησιμοποιήσεις τις φωνές ElevenLabs.</string>
-    <string name="settings_elevenlabs_key_placeholder">Επικόλλησε το ElevenLabs API key σου</string>
-    <string name="settings_elevenlabs_key_save">Αποθήκευση ElevenLabs key</string>
-    <string name="settings_elevenlabs_key_clear">Διαγραφή αποθηκευμένου ElevenLabs key</string>
 
     <!--
     Location screen — device-location toggle, manual city search +
@@ -561,14 +531,12 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="pairing_error_body">Βεβαιώσου ότι η τηλεόραση είναι συνδεδεμένη στο Wi-Fi και δοκίμασε ξανά.</string>
     <string name="pairing_retry">Επανάληψη</string>
 
-    <string name="settings_elevenlabs_stability_label">Σταθερότητα %1$s</string>
 
     <string name="settings_location_background_rationale_title">Να επιτρέπεται πάντα</string>
     <string name="settings_location_background_rationale_body">Το ClothesCast λαμβάνει την πρόγνωση στο παρασκήνιο κάθε πρωί και χρειάζεται πρόσβαση τοποθεσίας \'Να επιτρέπεται πάντα\'. Θα μεταφερθείς στις Ρυθμίσεις συστήματος για να την παραχωρήσεις.</string>
     <string name="settings_location_background_rationale_continue">Άνοιγμα Ρυθμίσεων</string>
     <string name="settings_location_background_rationale_dismiss">Όχι τώρα</string>
 
-    <string name="settings_openai_speed_label">Ταχύτητα × %1$s</string>
 
     <string name="settings_region_language_am_et">Αμχαρικά (Αιθιοπία)</string>
     <string name="settings_region_language_da_dk">Δανικά (Δανία)</string>
@@ -585,8 +553,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_tts_voice_locale_sw_ke">Σουαχίλι (Κένυα)</string>
     <string name="settings_tts_voice_locale_th_th">Ταϊλανδικά (Ταϊλάνδη)</string>
     <string name="settings_tts_voice_locale_zh_tw">Κινεζικά (Παραδοσιακά)</string>
-    <string name="settings_tts_voice_locale_language_fallback">Δεν υπάρχουν φωνές %1$s σε αυτή τη μηχανή — εμφάνιση φωνών στην ίδια γλώσσα.</string>
-    <string name="settings_tts_voice_locale_no_match">Δεν υπάρχουν φωνές %1$s σε αυτή τη μηχανή — δοκίμασε άλλη προφορά.</string>
 
     <string name="today_rationale_title">Γιατί αυτή η ένδυση;</string>
     <string name="today_rationale_show">Γιατί;</string>

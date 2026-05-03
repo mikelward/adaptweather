@@ -130,7 +130,7 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="settings_delivery_notification_and_tts">Notificação e leitura em voz alta</string>
 
     <!--
-    Voice screen — engine picker (Device / Gemini / OpenAI / ElevenLabs),
+    Voice screen — engine picker (Device / Gemini),
     voice + language sub-pickers, test-voice button. PT uses "a + infinitive"
     where BR uses the -ndo gerund: "A testar" instead of "Testando",
     "A pesquisar" instead of "Pesquisando". "Dispositivo" is the PT
@@ -138,11 +138,8 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     "dispositivo" reads as native PT in the engine picker.
     -->
     <string name="settings_tts_engine_title">Motor de voz</string>
-    <string name="settings_tts_engine_description">Os motores online (Gemini, OpenAI, ElevenLabs) soam muito mais naturais, mas exigem uma chamada de rede no momento da fala e usam a tua chave API para a síntese (uma chamada curta por ClothesCast lido). Recorre à voz do dispositivo se o motor escolhido falhar.</string>
     <string name="settings_tts_engine_device">Dispositivo (offline, gratuito)</string>
     <string name="settings_tts_engine_gemini">Gemini (alta qualidade, online)</string>
-    <string name="settings_tts_engine_openai">OpenAI (alta qualidade, online)</string>
-    <string name="settings_tts_engine_elevenlabs">ElevenLabs (qualidade máxima, online)</string>
 
     <string name="settings_tts_voice_label">Voz</string>
     <string name="settings_tts_voice_dismiss">Concluído</string>
@@ -267,15 +264,13 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="settings_tts_voice_locale_fa_ir">Persa (Irão)</string>
 
     <!--
-    API keys screen — three identical-shape blocks (Gemini, OpenAI,
-    ElevenLabs), each with status copy, paste-key placeholder, and
+    API keys screen — Gemini block with status copy, paste-key placeholder,
+    and
     save / clear buttons. URLs stay verbatim. PT uses "Guardar" for
     the save action where BR uses "Salvar"; "Cola" is the tu-form
     imperative of "colar" (paste).
     -->
     <string name="settings_api_key_gemini_label">Gemini</string>
-    <string name="settings_api_key_openai_label">OpenAI</string>
-    <string name="settings_api_key_elevenlabs_label">ElevenLabs</string>
 
     <string name="settings_api_key_status_set">Está configurada uma chave Gemini.</string>
     <string name="settings_api_key_status_unset">Nenhuma chave Gemini configurada. Obtém uma em aistudio.google.com para utilizar vozes Gemini.</string>
@@ -283,17 +278,7 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="settings_api_key_save">Guardar chave Gemini</string>
     <string name="settings_api_key_clear">Apagar chave Gemini guardada</string>
 
-    <string name="settings_openai_key_status_set">Está configurada uma chave OpenAI.</string>
-    <string name="settings_openai_key_status_unset">Nenhuma chave OpenAI configurada. Obtém uma em platform.openai.com para utilizar vozes OpenAI.</string>
-    <string name="settings_openai_key_placeholder">Cola a tua chave API OpenAI</string>
-    <string name="settings_openai_key_save">Guardar chave OpenAI</string>
-    <string name="settings_openai_key_clear">Apagar chave OpenAI guardada</string>
 
-    <string name="settings_elevenlabs_key_status_set">Está configurada uma chave ElevenLabs.</string>
-    <string name="settings_elevenlabs_key_status_unset">Nenhuma chave ElevenLabs configurada. Obtém uma em elevenlabs.io para utilizar vozes ElevenLabs.</string>
-    <string name="settings_elevenlabs_key_placeholder">Cola a tua chave API ElevenLabs</string>
-    <string name="settings_elevenlabs_key_save">Guardar chave ElevenLabs</string>
-    <string name="settings_elevenlabs_key_clear">Apagar chave ElevenLabs guardada</string>
 
     <!--
     Location screen — device-location toggle, manual city search +

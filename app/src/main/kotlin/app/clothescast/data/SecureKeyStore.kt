@@ -24,7 +24,7 @@ import java.util.Base64
  * Each key is encrypted with a Tink AEAD primitive whose keyset is itself encrypted
  * by an Android-Keystore master key — so the secret material never appears in
  * SharedPreferences in plaintext. Ciphertext is persisted in DataStore Preferences
- * under per-provider preference keys (Gemini in one slot, OpenAI in another).
+ * under per-provider preference keys.
  *
  * EncryptedSharedPreferences is deprecated as of androidx.security:security-crypto
  * 1.1.0-alpha07 — Tink + DataStore is its modern replacement.
@@ -39,8 +39,7 @@ import java.util.Base64
  * the user to re-enter their key, rather than looping on a corrupt ciphertext.
  *
  * `SecureKeyStore` itself implements [KeyProvider] — `get()` returns the Gemini key,
- * matching the contract `GeminiTtsClient` consumes. The OpenAI key is exposed through
- * [openAiKeyProvider].
+ * matching the contract `GeminiTtsClient` consumes.
  */
 class SecureKeyStore(
     private val aead: Aead,
@@ -53,18 +52,6 @@ class SecureKeyStore(
 
     suspend fun clear() = remove(GEMINI_PREF_KEY)
 
-    suspend fun getOpenAi(): String = read(OPENAI_PREF_KEY, OPENAI_AAD, "OpenAI")
-
-    suspend fun setOpenAi(key: String) = write(OPENAI_PREF_KEY, OPENAI_AAD, key)
-
-    suspend fun clearOpenAi() = remove(OPENAI_PREF_KEY)
-
-    suspend fun getElevenLabs(): String = read(ELEVENLABS_PREF_KEY, ELEVENLABS_AAD, "ElevenLabs")
-
-    suspend fun setElevenLabs(key: String) = write(ELEVENLABS_PREF_KEY, ELEVENLABS_AAD, key)
-
-    suspend fun clearElevenLabs() = remove(ELEVENLABS_PREF_KEY)
-
     /**
      * Reactive view of "is a Gemini key currently stored." Used by the Today screen's
      * welcome card to decide whether to nudge the user to set a key. Reads only the
@@ -73,28 +60,6 @@ class SecureKeyStore(
     val geminiKeyConfiguredFlow: Flow<Boolean> = dataStore.data
         .map { it[GEMINI_PREF_KEY] != null }
         .distinctUntilChanged()
-
-    val openAiKeyConfiguredFlow: Flow<Boolean> = dataStore.data
-        .map { it[OPENAI_PREF_KEY] != null }
-        .distinctUntilChanged()
-
-    val elevenLabsKeyConfiguredFlow: Flow<Boolean> = dataStore.data
-        .map { it[ELEVENLABS_PREF_KEY] != null }
-        .distinctUntilChanged()
-
-    /**
-     * KeyProvider view onto the OpenAI key. Used to wire `OpenAITtsClient` while
-     * keeping the underlying SecureKeyStore as the single source of truth for
-     * encrypted on-device storage.
-     */
-    val openAiKeyProvider: KeyProvider = object : KeyProvider {
-        override suspend fun get(): String = getOpenAi()
-    }
-
-    /** KeyProvider view onto the ElevenLabs key. */
-    val elevenLabsKeyProvider: KeyProvider = object : KeyProvider {
-        override suspend fun get(): String = getElevenLabs()
-    }
 
     private suspend fun read(prefKey: Preferences.Key<String>, aad: ByteArray, provider: String): String {
         val ciphertextB64 = dataStore.data.map { it[prefKey] }.first()
@@ -123,12 +88,6 @@ class SecureKeyStore(
     companion object {
         private val GEMINI_PREF_KEY = stringPreferencesKey("gemini_api_key_v1")
         private val GEMINI_AAD = "clothescast:gemini_api_key:v1".toByteArray(Charsets.UTF_8)
-
-        private val OPENAI_PREF_KEY = stringPreferencesKey("openai_api_key_v1")
-        private val OPENAI_AAD = "clothescast:openai_api_key:v1".toByteArray(Charsets.UTF_8)
-
-        private val ELEVENLABS_PREF_KEY = stringPreferencesKey("elevenlabs_api_key_v1")
-        private val ELEVENLABS_AAD = "clothescast:elevenlabs_api_key:v1".toByteArray(Charsets.UTF_8)
 
         private const val MASTER_KEY_URI = "android-keystore://clothescast_master_key"
         private const val KEYSET_PREFS = "clothescast_master_prefs"

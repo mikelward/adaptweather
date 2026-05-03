@@ -22,7 +22,6 @@ import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.tts.defaultOpenAiVoiceFor
 import app.clothescast.tts.toJavaLocale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -150,46 +149,6 @@ class SettingsRepository(
         dataStore.edit { it[GEMINI_VOICE] = voice }
     }
 
-    suspend fun setOpenAiVoice(voice: String) {
-        dataStore.edit { it[OPENAI_VOICE] = voice }
-    }
-
-    suspend fun setOpenAiSpeed(speed: Double) {
-        // Clamp on write so a misconfigured caller can't push out-of-range
-        // values into DataStore. Mirrors setElevenLabsSpeed.
-        val clamped = speed.coerceIn(
-            UserPreferences.MIN_OPENAI_SPEED,
-            UserPreferences.MAX_OPENAI_SPEED,
-        )
-        dataStore.edit { it[OPENAI_SPEED] = clamped }
-    }
-
-    suspend fun setElevenLabsVoice(voice: String) {
-        dataStore.edit { it[ELEVENLABS_VOICE] = voice }
-    }
-
-    suspend fun setElevenLabsModel(model: String) {
-        dataStore.edit { it[ELEVENLABS_MODEL] = model }
-    }
-
-    suspend fun setElevenLabsSpeed(speed: Double) {
-        // Clamp to ElevenLabs's documented range so a misconfigured caller
-        // can't push an out-of-range value into DataStore.
-        val clamped = speed.coerceIn(
-            UserPreferences.MIN_ELEVENLABS_SPEED,
-            UserPreferences.MAX_ELEVENLABS_SPEED,
-        )
-        dataStore.edit { it[ELEVENLABS_SPEED] = clamped }
-    }
-
-    suspend fun setElevenLabsStability(stability: Double) {
-        val clamped = stability.coerceIn(
-            UserPreferences.MIN_ELEVENLABS_STABILITY,
-            UserPreferences.MAX_ELEVENLABS_STABILITY,
-        )
-        dataStore.edit { it[ELEVENLABS_STABILITY] = clamped }
-    }
-
     suspend fun setDeviceVoice(voice: String?) {
         dataStore.edit {
             // Null clears the pin → speaker reverts to auto-pick; the worker
@@ -281,7 +240,7 @@ class SettingsRepository(
             ?: Region.SYSTEM
         // Resolve units off the user's region — SYSTEM falls through to the
         // phone locale. Once they explicitly pick a unit it sticks regardless
-        // of region (mirrors how openAiVoice handles voiceLocale).
+        // of region.
         val regionLocale = region.toJavaLocale() ?: systemLocaleProvider()
         val temperatureUnit = this[TEMPERATURE_UNIT]?.let { runCatching { TemperatureUnit.valueOf(it) }.getOrNull() }
             ?: defaultTemperatureUnitFor(regionLocale)
@@ -298,28 +257,6 @@ class SettingsRepository(
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
-        // OpenAI default depends on locale (en-GB → fable; everything else → nova).
-        // Resolve with regionLocale as fallback: a SYSTEM voiceLocale on an en-GB
-        // region should default to fable just as an explicit EN_GB voiceLocale does.
-        // Resolve only after voiceLocale is known so the picked voice matches.
-        val openAiVoice = this[OPENAI_VOICE]?.takeIf { it.isNotBlank() }
-            ?: defaultOpenAiVoiceFor(voiceLocale, regionLocale)
-        val elevenLabsVoice = this[ELEVENLABS_VOICE]?.takeIf { it.isNotBlank() }
-            ?: UserPreferences.DEFAULT_ELEVENLABS_VOICE
-        val elevenLabsModel = this[ELEVENLABS_MODEL]?.takeIf { it.isNotBlank() }
-            ?: UserPreferences.DEFAULT_ELEVENLABS_MODEL
-        val elevenLabsSpeed = this[ELEVENLABS_SPEED]?.coerceIn(
-            UserPreferences.MIN_ELEVENLABS_SPEED,
-            UserPreferences.MAX_ELEVENLABS_SPEED,
-        ) ?: UserPreferences.DEFAULT_ELEVENLABS_SPEED
-        val elevenLabsStability = this[ELEVENLABS_STABILITY]?.coerceIn(
-            UserPreferences.MIN_ELEVENLABS_STABILITY,
-            UserPreferences.MAX_ELEVENLABS_STABILITY,
-        ) ?: UserPreferences.DEFAULT_ELEVENLABS_STABILITY
-        val openAiSpeed = this[OPENAI_SPEED]?.coerceIn(
-            UserPreferences.MIN_OPENAI_SPEED,
-            UserPreferences.MAX_OPENAI_SPEED,
-        ) ?: UserPreferences.DEFAULT_OPENAI_SPEED
         val deviceVoice = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
         val useCalendarEvents = this[USE_CALENDAR_EVENTS] == true
         val tonightTime = this[TONIGHT_TIME]?.let { LocalTime.parse(it, TIME_FORMAT) }
@@ -368,12 +305,6 @@ class SettingsRepository(
             useDeviceLocation = useDeviceLocation,
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
-            openAiVoice = openAiVoice,
-            openAiSpeed = openAiSpeed,
-            elevenLabsVoice = elevenLabsVoice,
-            elevenLabsModel = elevenLabsModel,
-            elevenLabsSpeed = elevenLabsSpeed,
-            elevenLabsStability = elevenLabsStability,
             deviceVoice = deviceVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
@@ -426,12 +357,6 @@ class SettingsRepository(
         private val USE_DEVICE_LOCATION = booleanPreferencesKey("use_device_location")
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
-        private val OPENAI_VOICE = stringPreferencesKey("openai_voice")
-        private val ELEVENLABS_VOICE = stringPreferencesKey("elevenlabs_voice")
-        private val ELEVENLABS_MODEL = stringPreferencesKey("elevenlabs_model")
-        private val ELEVENLABS_SPEED = doublePreferencesKey("elevenlabs_speed")
-        private val ELEVENLABS_STABILITY = doublePreferencesKey("elevenlabs_stability")
-        private val OPENAI_SPEED = doublePreferencesKey("openai_speed")
         private val DEVICE_VOICE = stringPreferencesKey("device_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")

@@ -225,8 +225,8 @@ class GeminiTtsClient(
         // Without an explicit status check we'd quietly deserialize a 4xx error body
         // (e.g. {"error": {"code": 403, "message": "..."}}) as a TtsResponse with
         // default empty `candidates`, hiding the actual reason behind the generic
-        // empty-response exception. Mirror OpenAITtsClient's approach: pull the body
-        // on a non-success status, surface it.
+        // empty-response exception. Pull the body on a non-success status and
+        // surface it.
         if (!httpResponse.status.isSuccess()) {
             throw GeminiTtsHttpException(httpResponse.status, httpResponse.bodyAsBytes())
         }
