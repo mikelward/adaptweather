@@ -87,7 +87,7 @@ class GeminiTtsClientTest {
     }
 
     @Test
-    fun `request body prepends the studio-voice style directive to the user text`() = runTest {
+    fun `request body prepends the newsreader style directive to the user text`() = runTest {
         var capturedBody: String? = null
         val client = GeminiTtsClient(
             httpClient = mockClient(SUCCESS_BODY) {
@@ -101,7 +101,7 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello world")
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("clean, crisp studio voice")
+        body.shouldContain("newsreader style")
         body.shouldContain("hello world")
     }
 
@@ -138,7 +138,7 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("General Australian accent")
+        body.shouldContain("Cultivated Australian accent")
     }
 
     @Test

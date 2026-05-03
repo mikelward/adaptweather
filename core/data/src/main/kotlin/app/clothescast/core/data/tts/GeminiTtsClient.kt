@@ -31,7 +31,7 @@ import java.util.Locale
 // `-preview-` track — see CLAUDE.md's "Don't rename Gemini models from
 // web-search guesses" before swapping it for a GA-sounding name.
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
-const val DEFAULT_GEMINI_TTS_VOICE: String = "Kore"
+const val DEFAULT_GEMINI_TTS_VOICE: String = "Erinome"
 
 internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"
@@ -39,14 +39,17 @@ internal const val GEMINI_API_VERSION = "v1beta"
 /**
  * Natural-language style instruction prepended to every TTS request. Gemini
  * documents the input text as a style-steerable prompt — preambles like this
- * are interpreted as direction and not spoken back. We use it to suppress the
- * lo-fi "vinyl crackle" character the model otherwise bakes into the output
- * across the full clip (OpenAI TTS, going through the same player at the same
- * 24 kHz, has none of it — so this is server-side, not playback-side).
+ * are interpreted as direction and not spoken back.
+ *
+ * "Newsreader style" sets a clear, educated delivery register that applies
+ * regardless of which accent directive follows — it suppresses theatrical
+ * over-dramatisation and the lo-fi "vinyl crackle" the model otherwise bakes
+ * in, without pushing into posh/formal territory.
  */
 internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
-    "Read the following in a clean, crisp studio voice with no audio effects, " +
-        "background noise, or vinyl-style texture:\n\n"
+    "Read the following in a clear, educated newsreader style — articulate but " +
+        "not theatrical or exaggerated. No audio effects, background noise, or " +
+        "vinyl-style texture:\n\n"
 
 /**
  * Returns a one-line accent / language instruction for Gemini's TTS prompt, or
@@ -75,7 +78,7 @@ internal fun geminiAccentDirectiveFor(locale: Locale): String? {
 
 private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "en-GB" to "Speak with a Standard Southern British accent.",
-    "en-AU" to "Speak with a General Australian accent.",
+    "en-AU" to "Speak with a Cultivated Australian accent — clear and educated, not broad.",
     "en-US" to "Speak with a General American accent.",
     "en-CA" to "Speak with a Canadian English accent.",
     // Language-only fallback for Standard German (de-DE) and any de-* variant
