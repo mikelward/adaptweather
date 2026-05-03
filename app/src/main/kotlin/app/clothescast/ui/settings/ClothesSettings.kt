@@ -256,21 +256,23 @@ private fun ClothesRuleDialog(
     var type by remember { mutableStateOf(initialType) }
     // Pre-fill in the user's *current* display unit. A 65°F rule opened by a °C
     // user pre-fills as "18" (the saved value converted via Celsius); when the
-    // user confirms, the new condition takes the current `temperatureUnit` —
-    // rules don't drag stale unit-tags around once edited.
+    // user *changes* the value and confirms, the new condition takes the
+    // current `temperatureUnit`. A no-op confirm preserves the original unit
+    // and value verbatim — see the confirm-button branch.
     val initialValue = when (val c = initial?.condition) {
         is ClothesRule.TemperatureBelow -> c.value.fromUnit(c.unit).toUnit(temperatureUnit)
         is ClothesRule.TemperatureAbove -> c.value.fromUnit(c.unit).toUnit(temperatureUnit)
         is ClothesRule.PrecipitationProbabilityAbove -> c.percent
         null -> 18.0.toUnit(temperatureUnit)
     }
+    val initialInt = initialValue.roundToInt()
     // Whole-number input only. Keeps the row label (rendered with %.0f) in
     // sync with what the user typed and dodges locale-specific decimal
     // separators (German keyboards default to "18,5", which Double.toDoubleOrNull
     // rejects). Existing rules with fractional values round to the nearest
     // int when first opened — defaults are all integers so this is purely
     // defensive for legacy data.
-    var valueText by remember { mutableStateOf(initialValue.roundToInt().toString()) }
+    var valueText by remember { mutableStateOf(initialInt.toString()) }
 
     val parsedValue = valueText.toIntOrNull()
     // Precip rules are bounded 0–100 (it's a probability percentage); temperature
@@ -286,10 +288,24 @@ private fun ClothesRuleDialog(
                 enabled = valueValid,
                 onClick = {
                     val v = parsedValue!!.toDouble()
+                    // No-op edit guard: if the user opened the dialog and confirmed
+                    // without changing the displayed integer (or the condition
+                    // type), preserve the original condition object verbatim. The
+                    // pre-fill rounds across unit conversion (65°F → "18" under
+                    // °C); without this guard, "OK" would silently rewrite the
+                    // rule as 18°C and lose the original 65°F on the next switch.
+                    val unchanged = initial != null && parsedValue == initialInt
+                    val initialCond = initial?.condition
                     val condition = when (type) {
-                        ConditionType.TEMP_BELOW -> ClothesRule.TemperatureBelow(v, temperatureUnit)
-                        ConditionType.TEMP_ABOVE -> ClothesRule.TemperatureAbove(v, temperatureUnit)
-                        ConditionType.PRECIP_ABOVE -> ClothesRule.PrecipitationProbabilityAbove(v)
+                        ConditionType.TEMP_BELOW ->
+                            if (unchanged && initialCond is ClothesRule.TemperatureBelow) initialCond
+                            else ClothesRule.TemperatureBelow(v, temperatureUnit)
+                        ConditionType.TEMP_ABOVE ->
+                            if (unchanged && initialCond is ClothesRule.TemperatureAbove) initialCond
+                            else ClothesRule.TemperatureAbove(v, temperatureUnit)
+                        ConditionType.PRECIP_ABOVE ->
+                            if (unchanged && initialCond is ClothesRule.PrecipitationProbabilityAbove) initialCond
+                            else ClothesRule.PrecipitationProbabilityAbove(v)
                     }
                     onConfirm(ClothesRule(garment.itemKey, condition))
                 },
