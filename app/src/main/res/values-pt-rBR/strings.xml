@@ -79,13 +79,13 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_clothes_dialog_edit_title">Editar regra de roupa</string>
     <string name="settings_clothes_item_label">Peça</string>
     <string name="settings_clothes_condition_label">Condição</string>
-    <string name="settings_clothes_value_label_temp_c">Limite (°C)</string>
+    <string name="settings_clothes_value_label_temp">Limite (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Limite (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Quando a sensação for menor que</string>
     <string name="settings_clothes_cond_type_temp_above">Quando a sensação for maior que</string>
     <string name="settings_clothes_cond_type_precip_above">Quando a chance de chuva superar</string>
-    <string name="settings_clothes_cond_temp_below">quando a temperatura sentida for abaixo de %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">quando a temperatura sentida for acima de %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">quando a temperatura sentida for abaixo de %1$s</string>
+    <string name="settings_clothes_cond_temp_above">quando a temperatura sentida for acima de %1$s</string>
     <string name="settings_clothes_cond_precip_above">quando a chance de chuva superar %.0f%%</string>
 
     <!--

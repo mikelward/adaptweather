@@ -216,6 +216,39 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `setClothesRules round-trips a fahrenheit-typed threshold`() = runTest {
+        // The rule remembers what the user typed (65°F), not a converted Celsius
+        // approximation — switching unit at display time is reversible.
+        val rules = listOf(
+            ClothesRule("sweater", ClothesRule.TemperatureBelow(65.0, TemperatureUnit.FAHRENHEIT)),
+            ClothesRule("shorts", ClothesRule.TemperatureAbove(80.0, TemperatureUnit.FAHRENHEIT)),
+        )
+
+        subject.setClothesRules(rules)
+
+        subject.preferences.first().clothesRules shouldContainExactly rules
+    }
+
+    @Test
+    fun `legacy clothes-rules JSON without a unit field deserialises as celsius`() = runTest {
+        // Pre-unit-aware app versions wrote `{ "item": ..., "type": ..., "value": ... }`
+        // with no `unit`. The DTO must still parse them, and the resulting rule
+        // must behave exactly as it did before the unit field existed.
+        dataStore.edit {
+            it[stringPreferencesKey("clothes_rules_json")] = """
+                [{"item":"sweater","type":"temp_below","value":18.0},
+                 {"item":"shorts","type":"temp_above","value":24.0}]
+            """.trimIndent()
+        }
+
+        val rules = subject.preferences.first().clothesRules
+        rules shouldContainExactly listOf(
+            ClothesRule("sweater", ClothesRule.TemperatureBelow(18.0, TemperatureUnit.CELSIUS)),
+            ClothesRule("shorts", ClothesRule.TemperatureAbove(24.0, TemperatureUnit.CELSIUS)),
+        )
+    }
+
+    @Test
     fun `setClothesRules with empty list reads back as defaults`() = runTest {
         // An empty stored list — whether set deliberately or left over from the
         // editable-UI era when a user deleted all their rules — is treated as

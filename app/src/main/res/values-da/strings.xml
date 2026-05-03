@@ -27,13 +27,13 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_dialog_edit_title">Rediger tøjregel</string>
     <string name="settings_clothes_item_label">Tøjstykke</string>
     <string name="settings_clothes_condition_label">Betingelse</string>
-    <string name="settings_clothes_value_label_temp_c">Tærskel (°C)</string>
+    <string name="settings_clothes_value_label_temp">Tærskel (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Tærskel (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Når det føles koldere end</string>
     <string name="settings_clothes_cond_type_temp_above">Når det føles varmere end</string>
     <string name="settings_clothes_cond_type_precip_above">Når regnsandsynligheden er over</string>
-    <string name="settings_clothes_cond_temp_below">når den følte temperatur er under %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">når den følte temperatur er over %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">når den følte temperatur er under %1$s</string>
+    <string name="settings_clothes_cond_temp_above">når den følte temperatur er over %1$s</string>
     <string name="settings_clothes_cond_precip_above">når regnsandsynligheden er over %.0f%%</string>
 
     <string name="today_outfit_top_tshirt">T-shirt</string>

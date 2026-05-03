@@ -86,13 +86,13 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_clothes_dialog_edit_title">Επεξεργασία κανόνα ένδυσης</string>
     <string name="settings_clothes_item_label">Ρούχο</string>
     <string name="settings_clothes_condition_label">Συνθήκη</string>
-    <string name="settings_clothes_value_label_temp_c">Όριο (°C)</string>
+    <string name="settings_clothes_value_label_temp">Όριο (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Όριο (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Όταν η αισθητή θερμοκρασία είναι κάτω από</string>
     <string name="settings_clothes_cond_type_temp_above">Όταν η αισθητή θερμοκρασία είναι πάνω από</string>
     <string name="settings_clothes_cond_type_precip_above">Όταν η πιθανότητα βροχής ξεπερνά</string>
-    <string name="settings_clothes_cond_temp_below">όταν η ελάχιστη αισθητή θερμοκρασία είναι κάτω από %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">όταν η μέγιστη αισθητή θερμοκρασία είναι πάνω από %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">όταν η ελάχιστη αισθητή θερμοκρασία είναι κάτω από %1$s</string>
+    <string name="settings_clothes_cond_temp_above">όταν η μέγιστη αισθητή θερμοκρασία είναι πάνω από %1$s</string>
     <string name="settings_clothes_cond_precip_above">όταν η πιθανότητα βροχής ξεπερνά %.0f%%</string>
 
     <!--

@@ -29,13 +29,13 @@ surfaces fall back to default English (matching values-pl / values-uk).
     <string name="settings_clothes_dialog_edit_title">Upravit pravidlo oblékání</string>
     <string name="settings_clothes_item_label">Oblečení</string>
     <string name="settings_clothes_condition_label">Podmínka</string>
-    <string name="settings_clothes_value_label_temp_c">Práh (°C)</string>
+    <string name="settings_clothes_value_label_temp">Práh (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Práh (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Když je pocitová pod</string>
     <string name="settings_clothes_cond_type_temp_above">Když je pocitová nad</string>
     <string name="settings_clothes_cond_type_precip_above">Když je pravděpodobnost deště nad</string>
-    <string name="settings_clothes_cond_temp_below">když je pocitová teplota pod %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">když je pocitová teplota nad %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">když je pocitová teplota pod %1$s</string>
+    <string name="settings_clothes_cond_temp_above">když je pocitová teplota nad %1$s</string>
     <string name="settings_clothes_cond_precip_above">když je pravděpodobnost deště nad %.0f%%</string>
 
     <string name="today_outfit_top_tshirt">Tričko</string>

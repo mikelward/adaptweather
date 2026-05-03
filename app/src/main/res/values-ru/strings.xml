@@ -67,13 +67,13 @@ only the displayed label localizes.
     <string name="settings_clothes_dialog_edit_title">Изменить правило одежды</string>
     <string name="settings_clothes_item_label">Одежда</string>
     <string name="settings_clothes_condition_label">Условие</string>
-    <string name="settings_clothes_value_label_temp_c">Порог (°C)</string>
+    <string name="settings_clothes_value_label_temp">Порог (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Порог (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Когда ощущается холоднее</string>
     <string name="settings_clothes_cond_type_temp_above">Когда ощущается теплее</string>
     <string name="settings_clothes_cond_type_precip_above">Когда вероятность дождя превышает</string>
-    <string name="settings_clothes_cond_temp_below">когда ощущаемая температура ниже %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">когда ощущаемая температура выше %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">когда ощущаемая температура ниже %1$s</string>
+    <string name="settings_clothes_cond_temp_above">когда ощущаемая температура выше %1$s</string>
     <string name="settings_clothes_cond_precip_above">когда вероятность дождя превышает %.0f%%</string>
 
     <!--

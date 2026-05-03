@@ -29,13 +29,13 @@ surfaces fall back to default English (matching values-pl / values-uk).
     <string name="settings_clothes_dialog_edit_title">Öltözködési szabály szerkesztése</string>
     <string name="settings_clothes_item_label">Ruhadarab</string>
     <string name="settings_clothes_condition_label">Feltétel</string>
-    <string name="settings_clothes_value_label_temp_c">Küszöb (°C)</string>
+    <string name="settings_clothes_value_label_temp">Küszöb (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Küszöb (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Ha hidegebbnek érződik mint</string>
     <string name="settings_clothes_cond_type_temp_above">Ha melegebbnek érződik mint</string>
     <string name="settings_clothes_cond_type_precip_above">Ha az eső valószínűsége nagyobb mint</string>
-    <string name="settings_clothes_cond_temp_below">ha a hőérzet %.0f°C alatt van</string>
-    <string name="settings_clothes_cond_temp_above">ha a hőérzet %.0f°C felett van</string>
+    <string name="settings_clothes_cond_temp_below">ha a hőérzet %1$s alatt van</string>
+    <string name="settings_clothes_cond_temp_above">ha a hőérzet %1$s felett van</string>
     <string name="settings_clothes_cond_precip_above">ha az eső valószínűsége meghaladja a %.0f%%-ot</string>
 
     <string name="today_outfit_top_tshirt">Póló</string>

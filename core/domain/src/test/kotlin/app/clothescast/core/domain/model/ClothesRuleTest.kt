@@ -60,6 +60,36 @@ class ClothesRuleTest {
     }
 
     @Test
+    fun `fahrenheit-typed below threshold compares against the converted value`() {
+        // 65°F ≈ 18.33°C. A feels-like min of 17°C should trigger; 19°C should not.
+        val rule = ClothesRule(
+            "sweater",
+            ClothesRule.TemperatureBelow(65.0, TemperatureUnit.FAHRENHEIT),
+        )
+        rule.appliesTo(forecast(min = 17.0, max = 22.0)) shouldBe true
+        rule.appliesTo(forecast(min = 19.0, max = 22.0)) shouldBe false
+    }
+
+    @Test
+    fun `fahrenheit-typed above threshold compares against the converted value`() {
+        // 80°F ≈ 26.67°C.
+        val rule = ClothesRule(
+            "shorts",
+            ClothesRule.TemperatureAbove(80.0, TemperatureUnit.FAHRENHEIT),
+        )
+        rule.appliesTo(forecast(min = 12.0, max = 27.0)) shouldBe true
+        rule.appliesTo(forecast(min = 12.0, max = 26.0)) shouldBe false
+    }
+
+    @Test
+    fun `default unit on temperature conditions stays celsius`() {
+        // Source-compat guard: callers that don't pass a unit (incl. legacy DTO
+        // round-trip) keep behaving as before.
+        val rule = ClothesRule.TemperatureBelow(18.0)
+        rule.unit shouldBe TemperatureUnit.CELSIUS
+    }
+
+    @Test
     fun `precipitation rule uses peak probability`() {
         val rule = ClothesRule("umbrella", ClothesRule.PrecipitationProbabilityAbove(50.0))
         rule.appliesTo(forecast(min = 10.0, max = 18.0, precip = 65.0)) shouldBe true

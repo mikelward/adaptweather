@@ -27,13 +27,13 @@ editor, outfit-card labels, and region/voice-locale picker names.
     <string name="settings_clothes_dialog_edit_title">Muokkaa vaatesääntöä</string>
     <string name="settings_clothes_item_label">Vaatekappale</string>
     <string name="settings_clothes_condition_label">Ehto</string>
-    <string name="settings_clothes_value_label_temp_c">Raja-arvo (°C)</string>
+    <string name="settings_clothes_value_label_temp">Raja-arvo (%1$s)</string>
     <string name="settings_clothes_value_label_precip">Raja-arvo (%%)</string>
     <string name="settings_clothes_cond_type_temp_below">Kun tuntuu kylmemmältä kuin</string>
     <string name="settings_clothes_cond_type_temp_above">Kun tuntuu lämpimämmältä kuin</string>
     <string name="settings_clothes_cond_type_precip_above">Kun sateen todennäköisyys on yli</string>
-    <string name="settings_clothes_cond_temp_below">kun tuntuva lämpötila on alle %.0f°C</string>
-    <string name="settings_clothes_cond_temp_above">kun tuntuva lämpötila on yli %.0f°C</string>
+    <string name="settings_clothes_cond_temp_below">kun tuntuva lämpötila on alle %1$s</string>
+    <string name="settings_clothes_cond_temp_above">kun tuntuva lämpötila on yli %1$s</string>
     <string name="settings_clothes_cond_precip_above">kun sateen todennäköisyys on yli %.0f%%</string>
 
     <string name="today_outfit_top_tshirt">T-paita</string>
