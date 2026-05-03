@@ -99,7 +99,7 @@
     <string name="onboarding_title">Welcome to ClothesCast</string>
     <string name="onboarding_subtitle">Two quick choices and you\'re set. Everything else has a sensible default you can tweak later in Settings.</string>
     <string name="onboarding_notifications_title">Notifications</string>
-    <string name="onboarding_notifications_description">Required to deliver your daily ClothesCast. Grant once and ClothesCast will post tomorrow morning.</string>
+    <string name="onboarding_notifications_description">Required to deliver your daily ClothesCast. Grant once and ClothesCast will notify you tomorrow morning.</string>
     <string name="onboarding_notifications_grant">Grant notification permission</string>
     <string name="onboarding_location_title">Location</string>
     <string name="onboarding_location_description">Used to fetch the right forecast. Granting location lets ClothesCast read your device\'s coarse location each morning; otherwise pick a city manually.</string>
@@ -112,7 +112,7 @@
     <string name="onboarding_location_using_device">Using your device\'s location each morning.</string>
 
     <string name="onboarding_gemini_title">Gemini API key</string>
-    <string name="onboarding_gemini_description">Used by ClothesCast for spoken-aloud voices and forecast generation. Get one free at aistudio.google.com. The key is encrypted at rest using the Android Keystore.</string>
+    <string name="onboarding_gemini_description">Use Gemini to get high quality voices. Get a free API key at aistudio.google.com. Or skip to use your phone\'s built-in voices.</string>
     <string name="onboarding_step_done">Done</string>
     <string name="onboarding_skip">Skip for now</string>
     <string name="onboarding_continue">Continue</string>
