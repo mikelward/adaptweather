@@ -453,7 +453,7 @@ private fun GeminiKeyStep(
         if (!configured) {
             KeyEntryFields(
                 configured = false,
-                statusText = "",
+                statusText = stringResource(R.string.settings_api_key_status_unset),
                 placeholder = stringResource(R.string.settings_api_key_placeholder),
                 saveLabel = stringResource(R.string.settings_api_key_save),
                 clearLabel = stringResource(R.string.settings_api_key_clear),
