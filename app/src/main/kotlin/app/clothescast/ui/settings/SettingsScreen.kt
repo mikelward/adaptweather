@@ -195,6 +195,7 @@ fun SettingsScreen(
             SettingsRoute.Location -> LocationContent(
                 location = state.location,
                 useDeviceLocation = state.useDeviceLocation,
+                locationDetecting = state.locationDetecting,
                 padding = padding,
                 onSetUseDeviceLocation = viewModel::setUseDeviceLocation,
                 onSelectLocation = viewModel::selectLocation,

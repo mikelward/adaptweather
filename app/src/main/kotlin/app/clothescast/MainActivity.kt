@@ -229,6 +229,7 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
                         // double-notify.
                         FetchAndNotifyWorker.enqueueLocationCacheRefresh(context)
                     },
+                    workManager = WorkManager.getInstance(app),
                 ),
             )
             SettingsScreen(

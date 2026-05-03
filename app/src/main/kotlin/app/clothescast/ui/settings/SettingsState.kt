@@ -93,4 +93,11 @@ data class SettingsState(
      */
     val elevenLabsRefreshedVoices: List<TtsVoiceOption>? = null,
     val elevenLabsRefreshing: Boolean = false,
+    /**
+     * True while the WorkManager location-cache-refresh job is ENQUEUED,
+     * RUNNING, or BLOCKED. Drives "Detecting…" in the Location settings
+     * card — the label only shows "Detecting…" while this is true, so it
+     * can't get stuck after the worker finishes without resolving a fix.
+     */
+    val locationDetecting: Boolean = false,
 )
