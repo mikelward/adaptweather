@@ -248,6 +248,16 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
                     secureKeyStore = app.secureKeyStore,
                     settingsRepository = app.settingsRepository,
                     geocodingClient = app.geocodingClient,
+                    refreshLocationCache = {
+                        // Eager device-location populate when the user grants
+                        // location permission during onboarding. Cache-only
+                        // path — same worker used by Settings — so the
+                        // resolved city surfaces in seconds and the user can
+                        // tell at a glance whether they need to enter a
+                        // manual fallback instead.
+                        FetchAndNotifyWorker.enqueueLocationCacheRefresh(context)
+                    },
+                    workManager = WorkManager.getInstance(app),
                 ),
             )
             OnboardingScreen(

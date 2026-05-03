@@ -74,6 +74,7 @@ fun OnboardingScreen(
             geminiKeyConfigured = state.geminiKeyConfigured,
             location = state.location,
             useDeviceLocation = state.useDeviceLocation,
+            locationDetecting = state.locationDetecting,
             isTelevision = isTV,
             padding = padding,
             onSetApiKey = viewModel::setApiKey,
@@ -92,6 +93,7 @@ internal fun OnboardingContent(
     geminiKeyConfigured: Boolean,
     location: Location?,
     useDeviceLocation: Boolean,
+    locationDetecting: Boolean = false,
     isTelevision: Boolean = false,
     padding: PaddingValues,
     onSetApiKey: (String) -> Unit,
@@ -128,6 +130,7 @@ internal fun OnboardingContent(
         LocationStep(
             location = location,
             useDeviceLocation = useDeviceLocation,
+            locationDetecting = locationDetecting,
             isTelevision = isTelevision,
             onSetUseDeviceLocation = onSetUseDeviceLocation,
             onSelectLocation = onSelectLocation,
@@ -196,6 +199,7 @@ private fun NotificationStep() {
 private fun LocationStep(
     location: Location?,
     useDeviceLocation: Boolean,
+    locationDetecting: Boolean,
     isTelevision: Boolean,
     onSetUseDeviceLocation: (Boolean) -> Unit,
     onSelectLocation: (Location) -> Unit,
@@ -276,14 +280,27 @@ private fun LocationStep(
         description = stringResource(R.string.onboarding_location_description),
         complete = configured,
     ) {
-        if (deviceLocationFullyConfigured) {
-            Text(
-                text = stringResource(R.string.onboarding_location_using_device),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        } else if (location != null) {
+        // Prefer the resolved city — once the cache-refresh worker has
+        // written through, location is non-null even when device location
+        // is on, and showing the actual displayName lets the user verify
+        // the fix matches reality before continuing. Fall back to
+        // "Detecting…" while the worker is in-flight, and to the static
+        // device-location confirmation text only when both perms are
+        // granted but we somehow have no fix yet (e.g. NETWORK_PROVIDER
+        // returned no result).
+        if (location != null) {
             Text(
                 text = location.displayName ?: "${location.latitude}, ${location.longitude}",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        } else if (useDeviceLocation && locationDetecting) {
+            Text(
+                text = stringResource(R.string.settings_location_detecting),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        } else if (deviceLocationFullyConfigured) {
+            Text(
+                text = stringResource(R.string.onboarding_location_using_device),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
