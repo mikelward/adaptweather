@@ -44,32 +44,34 @@ class CityNamePickerTest {
 
     @Test
     fun `US address falls through to locality`() {
-        // Brooklyn 11201: GB branch is skipped; locality is the right answer.
+        // Boston, Suffolk County: not an NYC borough; locality is the right answer.
         pickCityName(
-            locality = "Brooklyn",
+            locality = "Boston",
             subLocality = null,
-            subAdminArea = "Kings County",
-            adminArea = "New York",
+            subAdminArea = "Suffolk County",
+            adminArea = "Massachusetts",
             countryCode = "US",
             countryName = "United States",
-            postalCode = "11201",
-            addressLines = listOf("123 Main St, Brooklyn, NY 11201, USA"),
-        ) shouldBe "Brooklyn"
+            postalCode = "02108",
+            addressLines = listOf("1 Beacon St, Boston, MA 02108, USA"),
+        ) shouldBe "Boston"
     }
 
     @Test
     fun `US locality is preferred even when postcode appears in addressLine`() {
         // Confirms the GB extraction logic doesn't accidentally fire for non-GB.
+        // Uses Boston (Suffolk County, MA) to avoid triggering the NYC borough
+        // collapse — we want this test to exercise the locality fallback path.
         pickCityName(
-            locality = "New York",
+            locality = "Boston",
             subLocality = null,
-            subAdminArea = "New York County",
-            adminArea = "New York",
+            subAdminArea = "Suffolk County",
+            adminArea = "Massachusetts",
             countryCode = "US",
             countryName = "United States",
-            postalCode = "10020",
-            addressLines = listOf("10 W 50th St, New York, NY 10020, USA"),
-        ) shouldBe "New York"
+            postalCode = "02108",
+            addressLines = listOf("1 Beacon St, Boston, MA 02108, USA"),
+        ) shouldBe "Boston"
     }
 
     @Test
@@ -398,23 +400,130 @@ class CityNamePickerTest {
         ) shouldBe "Dublin"
     }
 
-    // --- Suffix-style "X County" must NOT be stripped (US/UK convention) ------
+    // --- New York City borough collapse ----------------------------------------
 
     @Test
-    fun `US Kings County suffix is not stripped`() {
-        // If locality is missing, "Kings County" should fall through unchanged
-        // — we don't want "Kings". (In practice locality wins; this guards the
-        // helper.)
+    fun `Brooklyn collapses to New York`() {
+        // Brooklyn (Kings County) is a NYC borough — show "New York", not the
+        // borough name.
         pickCityName(
-            locality = null,
+            locality = "Brooklyn",
             subLocality = null,
             subAdminArea = "Kings County",
             adminArea = "New York",
             countryCode = "US",
             countryName = "United States",
+            postalCode = "11201",
+            addressLines = listOf("123 Main St, Brooklyn, NY 11201, USA"),
+        ) shouldBe "New York"
+    }
+
+    @Test
+    fun `Manhattan returns New York`() {
+        pickCityName(
+            locality = "New York",
+            subLocality = null,
+            subAdminArea = "New York County",
+            adminArea = "New York",
+            countryCode = "US",
+            countryName = "United States",
+            postalCode = "10001",
+            addressLines = listOf("West 33rd Street, New York, NY 10001, USA"),
+        ) shouldBe "New York"
+    }
+
+    @Test
+    fun `Queens collapses to New York`() {
+        pickCityName(
+            locality = "Flushing",
+            subLocality = null,
+            subAdminArea = "Queens County",
+            adminArea = "New York",
+            countryCode = "US",
+            countryName = "United States",
+            postalCode = "11354",
+            addressLines = emptyList(),
+        ) shouldBe "New York"
+    }
+
+    @Test
+    fun `Bronx collapses to New York`() {
+        pickCityName(
+            locality = "Bronx",
+            subLocality = null,
+            subAdminArea = "Bronx County",
+            adminArea = "New York",
+            countryCode = "US",
+            countryName = "United States",
+            postalCode = "10451",
+            addressLines = emptyList(),
+        ) shouldBe "New York"
+    }
+
+    @Test
+    fun `Staten Island collapses to New York`() {
+        pickCityName(
+            locality = "Staten Island",
+            subLocality = null,
+            subAdminArea = "Richmond County",
+            adminArea = "New York",
+            countryCode = "US",
+            countryName = "United States",
+            postalCode = "10301",
+            addressLines = emptyList(),
+        ) shouldBe "New York"
+    }
+
+    @Test
+    fun `Buffalo upstate is not collapsed`() {
+        // Erie County (Buffalo) is in NY state but not in NYC; locality wins.
+        pickCityName(
+            locality = "Buffalo",
+            subLocality = null,
+            subAdminArea = "Erie County",
+            adminArea = "New York",
+            countryCode = "US",
+            countryName = "United States",
+            postalCode = "14202",
+            addressLines = emptyList(),
+        ) shouldBe "Buffalo"
+    }
+
+    @Test
+    fun `Chicago returns the city not the county`() {
+        // Chicago / Cook County: county name is clearly different from the city
+        // name. Locality must win — guards against ever returning "Cook County"
+        // by accident (e.g. if cleanAdminArea ever started stripping " County"
+        // off the end, "Cook County" → "Cook" would also be wrong, so a
+        // distinctly-named county is the strong test).
+        pickCityName(
+            locality = "Chicago",
+            subLocality = null,
+            subAdminArea = "Cook County",
+            adminArea = "Illinois",
+            countryCode = "US",
+            countryName = "United States",
+            postalCode = "60601",
+            addressLines = listOf("233 S Wacker Dr, Chicago, IL 60601, USA"),
+        ) shouldBe "Chicago"
+    }
+
+    // --- Suffix-style "X County" must NOT be stripped (US/UK convention) ------
+
+    @Test
+    fun `US Orange County suffix is not stripped`() {
+        // If locality is missing, "Orange County" (a non-NYC US county) should
+        // fall through unchanged — we don't want "Orange". Guards the helper.
+        pickCityName(
+            locality = null,
+            subLocality = null,
+            subAdminArea = "Orange County",
+            adminArea = "California",
+            countryCode = "US",
+            countryName = "United States",
             postalCode = null,
             addressLines = emptyList(),
-        ) shouldBe "Kings County"
+        ) shouldBe "Orange County"
     }
 
     // --- Fallback to countryName as last resort -------------------------------
