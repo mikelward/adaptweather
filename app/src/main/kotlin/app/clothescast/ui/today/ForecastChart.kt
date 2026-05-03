@@ -24,6 +24,23 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
+
+// Smallest y-axis span we'll display. A 1-degree-variation day padded to this
+// still shows clear hour-to-hour movement, but the chart never collapses to a
+// flat line nor exaggerates rounding noise into peaks. Units are the user's
+// display unit, so the same 4 means "4°C" or "4°F" — neither extreme is
+// unreasonable to fill the chart at minimum.
+//
+// Why 4 specifically: it's even, so when the deficit (MIN_Y_SPAN - actual span)
+// is even the symmetric pad — `ceil(deficit/2)` below, `floor(deficit/2)`
+// above — splits evenly. A constant-temperature day gets +2 / -2 around the
+// reading, perfectly centred. With span 4, Vico's auto-stepper reliably picks
+// step 1 (5 labels), which reads cleanly without leaving the line stuck in the
+// middle 40% of the chart.
+private const val MIN_Y_SPAN = 4.0
 
 /**
  * Renders today's hourly temperature as a single line — feels-like or raw 2 m
@@ -75,24 +92,45 @@ fun ForecastChart(
     // a smaller absolute range, so 0–18 with step 3 still looks fine.) Tighten
     // the y-range to both lines' actual min/max — both, not just the visible
     // line, so the axis doesn't shift when the user toggles between feels-like
-    // and air. With a tight range the auto-stepper picks sensible increments
-    // regardless of unit.
+    // and air. Floor / ceil to integers and enforce [MIN_Y_SPAN] in the user's
+    // display unit so a calm day with a 1-degree variation doesn't get
+    // amplified into a noisy zigzag — the data still fills more than half the
+    // chart, but the labels stay on whole-degree gridlines.
     val rangeProvider = remember(hourly, temperatureUnit) {
         val all = hourly.flatMap {
             listOf(it.feelsLikeC.toUnit(temperatureUnit), it.temperatureC.toUnit(temperatureUnit))
         }
-        val dataMin = all.min()
-        val dataMax = all.max()
+        val rawMin = floor(all.min())
+        val rawMax = ceil(all.max())
+        // Symmetric integer pad: extra below = ceil(deficit/2), extra above =
+        // floor(deficit/2). When deficit is even (the common case with an even
+        // MIN_Y_SPAN — e.g., a constant-temperature day, deficit = 4) the
+        // pad is exactly symmetric (+2 / -2). Odd deficits land slightly
+        // bottom-heavy, which is fine — extra headroom below is less visually
+        // disruptive than above, where it would push the line off the bottom.
+        val deficit = (MIN_Y_SPAN - (rawMax - rawMin)).coerceAtLeast(0.0)
+        val padBelow = ceil(deficit / 2.0)
+        val padAbove = floor(deficit / 2.0)
+        val dataMin = rawMin - padBelow
+        val dataMax = rawMax + padAbove
         object : CartesianLayerRangeProvider {
             override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) = dataMin
             override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) = dataMax
         }
     }
 
+    // Format y-axis labels as integers. With integer bounds and a 5-unit
+    // minimum span Vico's auto-stepper lands on sensible whole-number steps
+    // (1, 2, 5) so we don't need to override the item placer — adjacent labels
+    // never collapse onto the same rounded value.
+    val startFormatter = remember {
+        CartesianValueFormatter { _, value, _ -> value.roundToInt().toString() }
+    }
+
     CartesianChartHost(
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(rangeProvider = rangeProvider),
-            startAxis = VerticalAxis.rememberStart(),
+            startAxis = VerticalAxis.rememberStart(valueFormatter = startFormatter),
             bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = bottomFormatter),
         ),
         modelProducer = producer,
