@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Hindi (India) translation. Scope: insight-prose templates, garment labels,
-clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
-The rest of the UI falls through to values/strings.xml (English).
+Hindi (India) — full UI coverage. आप-form (friendly-polite) throughout.
 
-TODO: expand to full UI coverage like ja / ko / zh-CN / zh-TW. Currently
-~344 of the 412 base keys are not translated and fall through to English —
-chrome (Settings, Today, Onboarding, Pairing, notification channels,
-About) all read in English on a Hindi device. Mirror the structure used
-by the East Asian locales: friendly-polite register (आप-form, not तू),
-Devanagari typography (Devanagari danda । for sentence final where it
-reads naturally; Latin period after Latin script). Brand name
-"ClothesCast" stays in Latin. Picker labels under
-`settings_region_language_*` and `settings_tts_voice_locale_*` should
-give Hindi names for every offered locale (अंग्रेज़ी (अमेरिका), फ़्रेंच (कनाडा),
-चीनी (सरलीकृत), …); the locale tag stored on disk is unchanged, only
-the displayed label localises. As with the other locales, leave
-`app_name` and the English-only `insight_time_am/pm/midnight/noon[_minutes]`
-formatter helpers unoverridden — Hindi already has `insight_time_hour`
-/ `_hour_minutes` translated below.
+Typography:
+- Devanagari danda । for sentence-final punctuation where natural;
+  Latin period after Latin-script terms or brand names.
+- Parentheses: Hindi ( ) around Hindi content; Latin ( ) for Latin URLs.
+- Brand name "ClothesCast" stays in Latin throughout.
+- Picker labels give Hindi names for every offered locale.
+
+Not overridden by design:
+- `app_name` — brand identifier, identical across locales.
+- `insight_time_am`/`_pm`/`_midnight`/`_noon` (and *_minutes variants) —
+  English-only spoken-time helpers; hi uses `insight_time_hour` /
+  `_hour_minutes` ("15 बजे" / "15:30 बजे") translated below.
 -->
 <resources>
+    <!-- Self-name entries (already correct) -->
     <string name="settings_region_language_hi_in">हिंदी (भारत)</string>
     <string name="settings_tts_voice_locale_hi_in">हिंदी (भारत)</string>
-    <string name="settings_tts_voice_locale_label">लहजा</string>
-    <string name="settings_tts_voice_locale_system">भाषा सेटिंग का पालन करें</string>
 
+    <!-- Settings — top bar + root navigation. -->
+    <string name="settings_title">सेटिंग</string>
+    <string name="settings_back">वापस</string>
+
+    <string name="settings_root_voice">आवाज़</string>
+    <string name="settings_root_schedule">समय-सारणी</string>
+    <string name="settings_root_region">क्षेत्र</string>
+    <string name="settings_root_clothes">कपड़े</string>
+    <string name="settings_root_display">प्रदर्शन</string>
+    <string name="settings_root_location">स्थान</string>
+    <string name="settings_root_calendar">कैलेंडर</string>
+    <string name="settings_root_about">ऐप के बारे में</string>
+
+    <string name="settings_root_schedule_subtitle">सूचनाएँ और समय</string>
+    <string name="settings_root_clothes_subtitle">तापमान और पोशाक</string>
+    <string name="settings_root_region_subtitle">भाषाएँ और इकाइयाँ</string>
+    <string name="settings_root_voice_subtitle">प्रदाता और लहजा</string>
+    <string name="settings_root_display_subtitle">थीम</string>
+    <string name="settings_root_location_subtitle">स्वतः पहचान या शहर चुनें</string>
+    <string name="settings_root_calendar_subtitle">आज की घटनाएँ</string>
+
+    <!-- Garments -->
     <string name="garment_sweater">स्वेटर</string>
     <string name="garment_hoodie">हुडी</string>
     <string name="garment_jacket">जैकेट</string>
@@ -36,6 +52,9 @@ formatter helpers unoverridden — Hindi already has `insight_time_hour`
     <string name="garment_pants">पैंट</string>
     <string name="garment_jeans">जींस</string>
 
+    <!-- Clothes rules screen. -->
+    <string name="settings_clothes_title">कपड़ों के नियम</string>
+    <string name="settings_clothes_description">यदि पूर्वानुमान इनमें से किसी सीमा को पार करे, तो वह कपड़ा आपके दैनिक ClothesCast में दिखेगा।</string>
     <string name="settings_clothes_empty">कोई नियम नहीं। जोड़ें पर टैप करके एक बनाएँ।</string>
     <string name="settings_clothes_add">जोड़ें</string>
     <string name="settings_clothes_edit">संपादित करें</string>
@@ -53,12 +72,389 @@ formatter helpers unoverridden — Hindi already has `insight_time_hour`
     <string name="settings_clothes_cond_temp_above">जब अधिकतम महसूस तापमान %1$s से अधिक हो</string>
     <string name="settings_clothes_cond_precip_above">जब बारिश की संभावना %.0f%% से अधिक हो</string>
 
+    <!-- Schedule screen. -->
+    <string name="settings_schedule_title">दैनिक ClothesCast</string>
+    <string name="settings_schedule_time_label">समय</string>
+    <string name="settings_schedule_days_label">सप्ताह के दिन</string>
+    <string name="settings_daily_mention_evening_events">शाम की घटनाओं का उल्लेख करें</string>
+
+    <string name="settings_tonight_title">रात्रि ClothesCast</string>
+    <string name="settings_tonight_description">एक दूसरा ClothesCast शाम को जो आज रात के मौसम को कवर करता है। शांत शामों पर यह चुप रहता है, या यदि "केवल शाम की घटनाएँ होने पर सूचित करें" चालू है तो दिखता नहीं; घटनाओं वाली शामों पर यह आवाज़ करता है और (यदि बोलकर पढ़ने की सुविधा चालू हो) खुद पढ़ता है।</string>
+    <string name="settings_tonight_enabled">रात्रि ClothesCast दिखाएँ</string>
+    <string name="settings_tonight_time_label">समय</string>
+    <string name="settings_tonight_days_label">सप्ताह के दिन</string>
+    <string name="settings_tonight_notify_only_on_events">केवल शाम की घटनाएँ होने पर सूचित करें</string>
+
+    <!-- Delivery picker. -->
+    <string name="settings_delivery_label">डिलीवरी</string>
+    <string name="settings_delivery_notification_only">केवल सूचना</string>
+    <string name="settings_delivery_tts_only">केवल बोलकर</string>
+    <string name="settings_delivery_notification_and_tts">सूचना और बोलकर</string>
+
+    <!-- Voice screen. -->
+    <string name="settings_tts_engine_title">आवाज़ इंजन</string>
+    <string name="settings_tts_engine_description">Gemini डिवाइस की आवाज़ से बहुत ज़्यादा स्वाभाविक लगती है लेकिन बोलते समय नेटवर्क कॉल की ज़रूरत होती है और संश्लेषण के लिए आपकी API कुंजी उपयोग होती है (हर ClothesCast पठन पर एक छोटी कॉल)। Gemini विफल होने पर डिवाइस की आवाज़ पर वापस आता है।</string>
+    <string name="settings_tts_engine_device">डिवाइस (ऑफ़लाइन, मुफ़्त)</string>
+    <string name="settings_tts_engine_gemini">Gemini (उच्च गुणवत्ता, ऑनलाइन)</string>
+    <string name="settings_tts_voice_label">आवाज़</string>
+    <string name="settings_tts_voice_dismiss">हो गया</string>
+    <string name="settings_tts_voice_locale_label">लहजा</string>
+    <string name="settings_tts_voice_locale_description">बोली जाने वाली आवाज़ का लहजा सेट करता है। प्रदर्शित टेक्स्ट नहीं बदलता।</string>
+    <string name="settings_tts_voice_locale_system">भाषा सेटिंग का पालन करें</string>
+    <string name="settings_tts_device_voice_label">डिवाइस की आवाज़</string>
+    <string name="settings_tts_device_voice_auto">स्वतः (लहजे के लिए सबसे अच्छी)</string>
+    <string name="settings_tts_device_voice_currently">वर्तमान: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">लोड हो रहा है…</string>
+    <string name="settings_tts_device_voice_network">नेटवर्क</string>
+    <string name="settings_tts_device_voice_offline">ऑफ़लाइन</string>
+    <string name="settings_tts_install_google_hint">बेहतर आवाज़ों के लिए Google का टेक्स्ट-टू-स्पीच इंजन इंस्टाल करें।</string>
+    <string name="settings_tts_install_google_button">Google TTS इंस्टाल करें</string>
+    <string name="settings_tts_test">आवाज़ परखें</string>
+    <string name="settings_tts_test_in_flight">परख रहे हैं — कृपया प्रतीक्षा करें…</string>
+
+    <!-- Voice locale picker — Hindi names for every offered locale. -->
+    <string name="settings_tts_voice_locale_en_us">अंग्रेज़ी (अमेरिका)</string>
+    <string name="settings_tts_voice_locale_en_gb">अंग्रेज़ी (यूके)</string>
+    <string name="settings_tts_voice_locale_en_au">अंग्रेज़ी (ऑस्ट्रेलिया)</string>
+    <string name="settings_tts_voice_locale_en_ca">अंग्रेज़ी (कनाडा)</string>
+    <string name="settings_tts_voice_locale_en_za">अंग्रेज़ी (दक्षिण अफ़्रीका)</string>
+    <string name="settings_tts_voice_locale_de_de">जर्मन (जर्मनी)</string>
+    <string name="settings_tts_voice_locale_de_at">जर्मन (ऑस्ट्रिया)</string>
+    <string name="settings_tts_voice_locale_de_ch">जर्मन (स्विट्ज़रलैंड)</string>
+    <string name="settings_tts_voice_locale_fr_fr">फ़्रेंच (फ़्रांस)</string>
+    <string name="settings_tts_voice_locale_fr_ca">फ़्रेंच (कनाडा)</string>
+    <string name="settings_tts_voice_locale_it_it">इतालवी (इटली)</string>
+    <string name="settings_tts_voice_locale_es_es">स्पेनिश (स्पेन)</string>
+    <string name="settings_tts_voice_locale_es_mx">स्पेनिश (मेक्सिको)</string>
+    <string name="settings_tts_voice_locale_ca_es">कातालान (स्पेन)</string>
+    <string name="settings_tts_voice_locale_ru_ru">रूसी (रूस)</string>
+    <string name="settings_tts_voice_locale_pl_pl">पोलिश (पोलैंड)</string>
+    <string name="settings_tts_voice_locale_hr_hr">क्रोएशियाई (क्रोएशिया)</string>
+    <string name="settings_tts_voice_locale_sl_si">स्लोवेनियाई (स्लोवेनिया)</string>
+    <string name="settings_tts_voice_locale_sr_rs">सर्बियाई (लैटिन)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">सर्बियाई (सिरिलिक)</string>
+    <string name="settings_tts_voice_locale_bg_bg">बल्गेरियाई (बुल्गारिया)</string>
+    <string name="settings_tts_voice_locale_cs_cz">चेक (चेकिया)</string>
+    <string name="settings_tts_voice_locale_sk_sk">स्लोवाक (स्लोवाकिया)</string>
+    <string name="settings_tts_voice_locale_hu_hu">हंगेरियन (हंगरी)</string>
+    <string name="settings_tts_voice_locale_ro_ro">रोमानियाई (रोमानिया)</string>
+    <string name="settings_tts_voice_locale_el_gr">यूनानी (यूनान)</string>
+    <string name="settings_tts_voice_locale_uk_ua">यूक्रेनी (यूक्रेन)</string>
+    <string name="settings_tts_voice_locale_pt_br">पुर्तगाली (ब्राज़ील)</string>
+    <string name="settings_tts_voice_locale_pt_pt">पुर्तगाली (पुर्तगाल)</string>
+    <string name="settings_tts_voice_locale_nl_nl">डच (नीदरलैंड)</string>
+    <string name="settings_tts_voice_locale_sv_se">स्वीडिश (स्वीडन)</string>
+    <string name="settings_tts_voice_locale_da_dk">डेनिश (डेनमार्क)</string>
+    <string name="settings_tts_voice_locale_nb_no">नॉर्वेजियन बोकमाल (नॉर्वे)</string>
+    <string name="settings_tts_voice_locale_fi_fi">फ़िनिश (फ़िनलैंड)</string>
+    <string name="settings_tts_voice_locale_et_ee">एस्टोनियाई (एस्टोनिया)</string>
+    <string name="settings_tts_voice_locale_lv_lv">लातवियाई (लातविया)</string>
+    <string name="settings_tts_voice_locale_lt_lt">लिथुआनियाई (लिथुआनिया)</string>
+    <string name="settings_tts_voice_locale_tr_tr">तुर्की (तुर्किये)</string>
+    <string name="settings_tts_voice_locale_id_id">इंडोनेशियाई (इंडोनेशिया)</string>
+    <string name="settings_tts_voice_locale_ms_my">मलय (मलेशिया)</string>
+    <string name="settings_tts_voice_locale_fil_ph">फ़िलिपिनो (फ़िलीपींस)</string>
+    <string name="settings_tts_voice_locale_sw_ke">स्वाहिली (केन्या)</string>
+    <string name="settings_tts_voice_locale_vi_vn">वियतनामी (वियतनाम)</string>
+    <string name="settings_tts_voice_locale_th_th">थाई (थाईलैंड)</string>
+    <string name="settings_tts_voice_locale_zh_cn">चीनी (सरलीकृत)</string>
+    <string name="settings_tts_voice_locale_zh_tw">चीनी (पारंपरिक)</string>
+    <string name="settings_tts_voice_locale_bn_bd">बंगाली (बांग्लादेश)</string>
+    <string name="settings_tts_voice_locale_ja_jp">जापानी (जापान)</string>
+    <string name="settings_tts_voice_locale_ko_kr">कोरियाई (दक्षिण कोरिया)</string>
+    <string name="settings_tts_voice_locale_ar_sa">अरबी (सऊदी अरब)</string>
+    <string name="settings_tts_voice_locale_ar_eg">अरबी (मिस्र)</string>
+    <string name="settings_tts_voice_locale_ar_ae">अरबी (संयुक्त अरब अमीरात)</string>
+    <string name="settings_tts_voice_locale_ar_ma">अरबी (मोरक्को)</string>
+    <string name="settings_tts_voice_locale_he_il">हिब्रू (इज़राइल)</string>
+    <string name="settings_tts_voice_locale_fa_ir">फ़ारसी (ईरान)</string>
+    <string name="settings_tts_voice_locale_sq_al">अल्बानियाई (अल्बानिया)</string>
+    <string name="settings_tts_voice_locale_am_et">अम्हारिक (इथियोपिया)</string>
+
+    <!-- Region screen. -->
+    <string name="settings_region_language_title">भाषा</string>
+    <string name="settings_region_language_description">प्रदर्शित टेक्स्ट और सूचनाओं की भाषा सेट करता है।</string>
+    <string name="settings_region_language_system">सिस्टम भाषा का पालन करें</string>
+
+    <!-- Region language picker — Hindi names for every offered locale. -->
+    <string name="settings_region_language_en_us">अंग्रेज़ी (अमेरिका)</string>
+    <string name="settings_region_language_en_gb">अंग्रेज़ी (यूके)</string>
+    <string name="settings_region_language_en_au">अंग्रेज़ी (ऑस्ट्रेलिया)</string>
+    <string name="settings_region_language_en_ca">अंग्रेज़ी (कनाडा)</string>
+    <string name="settings_region_language_en_za">अंग्रेज़ी (दक्षिण अफ़्रीका)</string>
+    <string name="settings_region_language_de_de">जर्मन (जर्मनी)</string>
+    <string name="settings_region_language_de_at">जर्मन (ऑस्ट्रिया)</string>
+    <string name="settings_region_language_de_ch">जर्मन (स्विट्ज़रलैंड)</string>
+    <string name="settings_region_language_fr_fr">फ़्रेंच (फ़्रांस)</string>
+    <string name="settings_region_language_fr_ca">फ़्रेंच (कनाडा)</string>
+    <string name="settings_region_language_it_it">इतालवी (इटली)</string>
+    <string name="settings_region_language_es_es">स्पेनिश (स्पेन)</string>
+    <string name="settings_region_language_es_mx">स्पेनिश (मेक्सिको)</string>
+    <string name="settings_region_language_ca_es">कातालान (स्पेन)</string>
+    <string name="settings_region_language_ru_ru">रूसी (रूस)</string>
+    <string name="settings_region_language_pl_pl">पोलिश (पोलैंड)</string>
+    <string name="settings_region_language_hr_hr">क्रोएशियाई (क्रोएशिया)</string>
+    <string name="settings_region_language_sl_si">स्लोवेनियाई (स्लोवेनिया)</string>
+    <string name="settings_region_language_sr_rs">सर्बियाई (लैटिन)</string>
+    <string name="settings_region_language_sr_cyrl_rs">सर्बियाई (सिरिलिक)</string>
+    <string name="settings_region_language_bg_bg">बल्गेरियाई (बुल्गारिया)</string>
+    <string name="settings_region_language_cs_cz">चेक (चेकिया)</string>
+    <string name="settings_region_language_sk_sk">स्लोवाक (स्लोवाकिया)</string>
+    <string name="settings_region_language_hu_hu">हंगेरियन (हंगरी)</string>
+    <string name="settings_region_language_ro_ro">रोमानियाई (रोमानिया)</string>
+    <string name="settings_region_language_el_gr">यूनानी (यूनान)</string>
+    <string name="settings_region_language_uk_ua">यूक्रेनी (यूक्रेन)</string>
+    <string name="settings_region_language_pt_br">पुर्तगाली (ब्राज़ील)</string>
+    <string name="settings_region_language_pt_pt">पुर्तगाली (पुर्तगाल)</string>
+    <string name="settings_region_language_nl_nl">डच (नीदरलैंड)</string>
+    <string name="settings_region_language_sv_se">स्वीडिश (स्वीडन)</string>
+    <string name="settings_region_language_da_dk">डेनिश (डेनमार्क)</string>
+    <string name="settings_region_language_nb_no">नॉर्वेजियन बोकमाल (नॉर्वे)</string>
+    <string name="settings_region_language_fi_fi">फ़िनिश (फ़िनलैंड)</string>
+    <string name="settings_region_language_et_ee">एस्टोनियाई (एस्टोनिया)</string>
+    <string name="settings_region_language_lv_lv">लातवियाई (लातविया)</string>
+    <string name="settings_region_language_lt_lt">लिथुआनियाई (लिथुआनिया)</string>
+    <string name="settings_region_language_tr_tr">तुर्की (तुर्किये)</string>
+    <string name="settings_region_language_id_id">इंडोनेशियाई (इंडोनेशिया)</string>
+    <string name="settings_region_language_ms_my">मलय (मलेशिया)</string>
+    <string name="settings_region_language_fil_ph">फ़िलिपिनो (फ़िलीपींस)</string>
+    <string name="settings_region_language_sw_ke">स्वाहिली (केन्या)</string>
+    <string name="settings_region_language_vi_vn">वियतनामी (वियतनाम)</string>
+    <string name="settings_region_language_th_th">थाई (थाईलैंड)</string>
+    <string name="settings_region_language_zh_cn">चीनी (सरलीकृत)</string>
+    <string name="settings_region_language_zh_tw">चीनी (पारंपरिक)</string>
+    <string name="settings_region_language_bn_bd">बंगाली (बांग्लादेश)</string>
+    <string name="settings_region_language_ja_jp">जापानी (जापान)</string>
+    <string name="settings_region_language_ko_kr">कोरियाई (दक्षिण कोरिया)</string>
+    <string name="settings_region_language_ar_sa">अरबी (सऊदी अरब)</string>
+    <string name="settings_region_language_he_il">हिब्रू (इज़राइल)</string>
+    <string name="settings_region_language_fa_ir">फ़ारसी (ईरान)</string>
+    <string name="settings_region_language_sq_al">अल्बानियाई (अल्बानिया)</string>
+    <string name="settings_region_language_am_et">अम्हारिक (इथियोपिया)</string>
+
+    <!-- Units pickers. -->
+    <string name="settings_temperature_unit_title">तापमान इकाई</string>
+    <string name="settings_temperature_unit_celsius">सेल्सियस (°C)</string>
+    <string name="settings_temperature_unit_fahrenheit">फ़ारेनहाइट (°F)</string>
+    <string name="settings_distance_unit_title">दूरी इकाई</string>
+    <string name="settings_distance_unit_kilometers">किलोमीटर</string>
+    <string name="settings_distance_unit_miles">मील</string>
+
+    <!-- API keys screen. -->
+    <string name="settings_api_key_gemini_label">Gemini</string>
+    <string name="settings_api_key_gemini_header">बेहतर आवाज़ें पाने के लिए Gemini उपयोग करें।</string>
+    <string name="settings_api_key_status_set">Gemini कुंजी सेट है।</string>
+    <string name="settings_api_key_status_unset">aistudio.google.com पर मुफ़्त API कुंजी पाएँ</string>
+    <string name="settings_api_key_placeholder">अपनी Gemini API कुंजी चिपकाएँ</string>
+    <string name="settings_api_key_save">Gemini कुंजी सेव करें</string>
+    <string name="settings_api_key_clear">सेव की गई Gemini कुंजी हटाएँ</string>
+
+    <!-- Location screen. -->
+    <string name="settings_location_title">स्थान</string>
+    <string name="settings_location_use_device">डिवाइस का स्थान उपयोग करें</string>
+    <string name="settings_location_use_device_description">पिछला अनुमानित स्थान</string>
+    <string name="settings_location_detecting">पहचान रहे हैं…</string>
+    <string name="settings_location_grant_background">अनुमति दें</string>
+    <string name="settings_location_background_banner_title">हमेशा-चालू स्थान ज़रूरी</string>
+    <string name="settings_location_background_banner_body">इसके बिना, सुबह का पूर्वानुमान आपका स्थान नहीं पढ़ सकता।</string>
+    <string name="settings_location_unset">कोई स्थान सेट नहीं</string>
+    <string name="settings_location_manual_override">गलत स्थान? हाथ से सेट करें</string>
+    <string name="settings_location_manual_override_disclosure">शहर चुनने पर स्वतः पहचान बंद हो जाती है।</string>
+    <string name="settings_location_clear">स्थान साफ़ करें</string>
+    <string name="settings_location_search_title">स्थान खोजें</string>
+    <string name="settings_location_query_label">शहर या जगह</string>
+    <string name="settings_location_search">खोजें</string>
+    <string name="settings_location_searching">खोज रहे हैं…</string>
+    <string name="settings_location_no_results">कोई मिलान नहीं।</string>
+    <string name="settings_location_rationale_title">स्थान एक्सेस</string>
+    <string name="settings_location_rationale_body">ClothesCast आपका स्थानीय पूर्वानुमान लाने के लिए आपका स्थान पढ़ता है।</string>
+    <string name="settings_location_rationale_continue">जारी रखें</string>
+    <string name="settings_location_rationale_dismiss">अभी नहीं</string>
+    <string name="settings_location_background_rationale_title">हमेशा अनुमति दें</string>
+    <string name="settings_location_background_rationale_body">ClothesCast बंद होने पर भी सुबह का पूर्वानुमान समय पर अपडेट हो सके, इसके लिए "हमेशा अनुमति दें" की ज़रूरत है।</string>
+    <string name="settings_location_background_rationale_continue">सेटिंग खोलें</string>
+    <string name="settings_location_background_rationale_dismiss">अभी नहीं</string>
+    <string name="settings_location_background_denied_title">हमेशा-चालू एक्सेस नहीं मिली</string>
+    <string name="settings_location_background_denied_body">"हमेशा अनुमति दें" के बिना सुबह का पूर्वानुमान स्वतः अपडेट नहीं हो सकता।</string>
+    <string name="settings_location_background_denied_open">सेटिंग खोलें</string>
+    <string name="settings_location_background_denied_keep">अभी नहीं</string>
+
+    <!-- Notification channels. -->
+    <string name="notification_channel_daily_insight_name">दैनिक ClothesCast</string>
+    <string name="notification_channel_daily_insight_description">वह सुबह की मौसम सारांश जिसे आपने चालू किया।</string>
+    <string name="notification_daily_insight_title">आज का ClothesCast</string>
+
+    <string name="notification_channel_tonight_insight_default_name">रात्रि ClothesCast (घटनाओं के साथ)</string>
+    <string name="notification_channel_tonight_insight_default_description">जब आज रात कैलेंडर में घटनाएँ हों तो शाम की मौसम सारांश। डिफ़ॉल्ट सूचना ध्वनि बजाता है।</string>
+    <string name="notification_channel_tonight_insight_silent_name">रात्रि ClothesCast (मौन)</string>
+    <string name="notification_channel_tonight_insight_silent_description">जब आपकी शाम खाली हो तब की मौसम सारांश। चुपचाप भेजी जाती है — लॉक स्क्रीन पर देख सकते हैं, लेकिन आवाज़ नहीं होगी।</string>
+    <string name="notification_tonight_insight_title">आज रात का ClothesCast</string>
+
+    <string name="notification_channel_weather_alerts_name">गंभीर मौसम चेतावनियाँ</string>
+    <string name="notification_channel_weather_alerts_description">आपके क्षेत्र को प्रभावित करने वाले गंभीर मौसम की उच्च-प्राथमिकता चेतावनियाँ। दैनिक फ़ेच द्वारा पता चलते ही दी जाती हैं।</string>
+    <string name="notification_weather_alert_title">मौसम चेतावनी: %1$s</string>
+
+    <!-- Notification permission card. -->
+    <string name="settings_notification_permission_title">सूचनाएँ अवरुद्ध हैं</string>
+    <string name="settings_notification_permission_description">सूचना अनुमति के बिना, आपके दैनिक ClothesCast के जाने की जगह नहीं है। अनुमति दें ताकि ClothesCast कल सुबह भेज सके।</string>
+    <string name="settings_notification_permission_grant">सूचना अनुमति दें</string>
+
+    <!-- Calendar settings. -->
+    <string name="settings_calendar_title">कैलेंडर</string>
+    <string name="settings_calendar_use_events">आज की कैलेंडर घटनाएँ उपयोग करें</string>
+    <string name="settings_calendar_description_off">सुबह के पूर्वानुमान को आज की घटनाओं के अनुसार अनुकूलित करें — केवल शीर्षक और समय उपयोग होते हैं, और कुछ भी डिवाइस से बाहर नहीं जाता।</string>
+    <string name="settings_calendar_description_on">सुबह के पूर्वानुमान को आज की घटनाओं के अनुसार अनुकूलित किया जा रहा है। केवल शीर्षक और समय उपयोग होते हैं; कुछ भी डिवाइस से बाहर नहीं जाता।</string>
+    <string name="settings_calendar_grant_permission">कैलेंडर अनुमति दें</string>
+    <string name="settings_calendar_open_settings">कैलेंडर अनुमति नकारी गई। सिस्टम सेटिंग से दें।</string>
+
+    <!-- Debug screen (debug builds only). -->
+    <string name="settings_debug_title">डीबग (केवल डीबग बिल्ड)</string>
+    <string name="settings_debug_description">दैनिक ClothesCast पाइपलाइन को तुरंत चलाएँ। निर्धारित समय का इंतज़ार किए बिना सत्यापन के लिए उपयोगी।</string>
+    <string name="settings_debug_fire_now">ClothesCast अभी चलाएँ</string>
+    <string name="settings_debug_fire_toast">ClothesCast worker कतार में जोड़ा गया</string>
+
+    <!-- About screen. -->
+    <string name="settings_about_title">ऐप के बारे में</string>
+    <string name="settings_about_version">संस्करण %1$s (%2$d)</string>
+    <string name="settings_about_build_type_suffix"> · %1$s बिल्ड</string>
+    <string name="settings_about_privacy">आपकी Gemini API कुंजी (बोलकर TTS के लिए) Android Keystore से जुड़ी कुंजी द्वारा एन्क्रिप्ट होकर स्टोर होती है। पूर्वानुमान Open-Meteo से आते हैं (कोई कुंजी नहीं, कोई खाता नहीं); दैनिक सारांश टेक्स्ट डिवाइस पर स्थानीय रूप से बनता है। ClothesCast का कोई बैकएंड नहीं है — हमारे नियंत्रण वाले किसी सर्वर को कुछ नहीं भेजा जाता।</string>
+    <string name="settings_about_privacy_policy">गोपनीयता नीति</string>
+    <string name="settings_about_source">GitHub पर स्रोत कोड</string>
+    <string name="settings_about_dontkillmyapp">बैकग्राउंड प्रतिबंध (dontkillmyapp.com)</string>
+    <string name="settings_about_share_bug_report">बग रिपोर्ट साझा करें</string>
+    <string name="settings_about_version_copied">संस्करण क्लिपबोर्ड पर कॉपी किया</string>
+
+    <!-- Display / theme screen. -->
+    <string name="settings_display_theme_title">थीम</string>
+    <string name="settings_display_theme_system">सिस्टम का पालन करें</string>
+    <string name="settings_display_theme_light">हल्का</string>
+    <string name="settings_display_theme_dark">गहरा</string>
+
+    <!-- Today screen. -->
+    <string name="today_title">आज</string>
+    <string name="today_open_settings">सेटिंग खोलें</string>
+    <string name="today_more_options">और विकल्प</string>
+    <string name="today_report_a_bug">बग रिपोर्ट करें</string>
+    <string name="today_refresh">रीफ़्रेश करें</string>
+    <string name="today_refresh_toast_daily">आपका दैनिक ClothesCast रीफ़्रेश हो रहा है — कुछ ही देर में दिखेगा।</string>
+    <string name="today_refresh_toast_nightly">आपका रात्रि ClothesCast रीफ़्रेश हो रहा है — कुछ ही देर में दिखेगा।</string>
+    <string name="today_empty_title">अभी कोई ClothesCast नहीं</string>
+    <string name="today_empty_subtitle">आपका सुबह का ClothesCast तैयार होने पर यहाँ दिखेगा। सेटिंग में अपना स्थान सेट करें, फिर "अभी लाएँ" टैप करें।</string>
+    <string name="today_fetch_now">अभी लाएँ</string>
+    <string name="today_generated_at">%1$s को बनाया गया</string>
+    <string name="today_location_unknown">आपका स्थान</string>
+
+    <!-- Outfit card. -->
+    <string name="today_outfit_title">क्या पहनें</string>
+    <string name="today_outfit_label_today">आज</string>
+    <string name="today_outfit_label_tonight">आज रात</string>
+    <string name="today_outfit_label_tomorrow">कल</string>
     <string name="today_outfit_top_tshirt">टी-शर्ट</string>
     <string name="today_outfit_top_sweater">स्वेटर</string>
     <string name="today_outfit_top_thick_jacket">मोटी जैकेट</string>
     <string name="today_outfit_bottom_shorts">शॉर्ट्स</string>
     <string name="today_outfit_bottom_long_pants">पैंट</string>
 
+    <!-- Rationale ("Why this outfit?") dialog. -->
+    <string name="today_rationale_title">यह पोशाक क्यों?</string>
+    <string name="today_rationale_show">क्यों?</string>
+    <string name="today_rationale_dismiss">समझ गया</string>
+    <string name="today_rationale_threshold_decrease">सीमा 1 डिग्री घटाएँ</string>
+    <string name="today_rationale_threshold_increase">सीमा 1 डिग्री बढ़ाएँ</string>
+    <string name="today_rationale_threshold_changed_hint">नई पोशाक देखने के लिए रीफ़्रेश करें।</string>
+    <string name="today_rationale_unavailable">कोई कारण उपलब्ध नहीं — अगले रीफ़्रेश के बाद ऐप खोलें।</string>
+    <string name="today_rationale_min_below_with_time">महसूस न्यूनतम %1$s%2$s, %3$s को, %4$s%2$s से कम</string>
+    <string name="today_rationale_min_below">महसूस न्यूनतम %1$s%2$s, %3$s%2$s से कम</string>
+    <string name="today_rationale_min_above_with_time">महसूस न्यूनतम %1$s%2$s, %3$s को, कम से कम %4$s%2$s</string>
+    <string name="today_rationale_min_above">महसूस न्यूनतम %1$s%2$s, कम से कम %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">महसूस अधिकतम केवल %1$s%2$s, %3$s को, %4$s%2$s से कम</string>
+    <string name="today_rationale_max_below">महसूस अधिकतम केवल %1$s%2$s, %3$s%2$s से कम</string>
+    <string name="today_rationale_max_above_with_time">महसूस अधिकतम %1$s%2$s, %3$s को, कम से कम %4$s%2$s</string>
+    <string name="today_rationale_max_above">महसूस अधिकतम %1$s%2$s, कम से कम %3$s%2$s</string>
+
+    <!-- Hourly forecast chart. -->
+    <string name="today_forecast_title">प्रति घंटा पूर्वानुमान</string>
+    <string name="today_forecast_min_max">महसूस %1$d – %2$d%3$s · हवा %4$d – %5$d%6$s</string>
+    <string name="today_forecast_legend_feels_like">प्रति घंटा महसूस तापमान (%1$s) · स्विच के लिए टैप करें</string>
+    <string name="today_forecast_legend_air">प्रति घंटा हवा का तापमान (%1$s) · स्विच के लिए टैप करें</string>
+
+    <!-- Confidence chip. -->
+    <string name="today_confidence_high">उच्च विश्वास — प्रमुख मॉडल सहमत</string>
+    <string name="today_confidence_medium">मध्यम विश्वास</string>
+    <string name="today_confidence_low">कम विश्वास — पूर्वानुमान असहमत</string>
+    <string name="today_confidence_spread">अंतर: %1$.1f°C, %2$.0fpp वर्षा, %3$d मॉडल में</string>
+
+    <!-- Work status / error states. -->
+    <string name="today_working">ClothesCast ला रहे हैं…</string>
+    <string name="today_retrying">पिछला प्रयास विफल — पुनः प्रयास हो रहा है…</string>
+    <string name="today_failed_title">पिछला प्रयास विफल</string>
+    <string name="today_failed_unexpected_http">पूर्वानुमान सेवा से अनपेक्षित HTTP त्रुटि।</string>
+    <string name="today_failed_unhandled">एक अनपेक्षित त्रुटि हुई।</string>
+    <string name="today_failed_no_location">आपका स्थान नहीं मिला। हमेशा-चालू स्थान अनुमति दें, या सेटिंग में कोई शहर सेट करें।</string>
+    <string name="today_failed_show_details">विवरण दिखाएँ</string>
+    <string name="today_failed_hide_details">विवरण छुपाएँ</string>
+
+    <!-- Location required empty state. -->
+    <string name="today_location_required_title">अपना स्थान सेट करें</string>
+    <string name="today_location_required_body">ClothesCast को पूर्वानुमान लाने के लिए आपके स्थान की ज़रूरत है। हमेशा-चालू स्थान अनुमति दें, या कोई शहर चुनें।</string>
+    <string name="today_location_required_action">स्थान सेटिंग खोलें</string>
+
+    <!-- Crash banner. -->
+    <string name="today_crash_banner_title">पिछला रन क्रैश हुआ</string>
+    <string name="today_crash_banner_body">आपके डिवाइस पर क्रैश रिपोर्ट सेव हुई। बग ठीक करने में मदद के लिए साझा करें? आप चुनें तभी कुछ भेजा जाएगा।</string>
+    <string name="today_crash_banner_share">रिपोर्ट साझा करें</string>
+    <string name="today_crash_banner_dismiss">खारिज करें</string>
+
+    <!-- In-app update banners. -->
+    <string name="today_update_available_title">अपडेट उपलब्ध</string>
+    <string name="today_update_available_body">ClothesCast का नया संस्करण Play Store पर है।</string>
+    <string name="today_update_available_action">अपडेट करें</string>
+    <string name="today_update_available_dismiss">अभी नहीं</string>
+    <string name="today_update_downloaded_body">अपडेट डाउनलोड हो गया। इंस्टाल पूरा करने के लिए पुनः शुरू करें।</string>
+    <string name="today_update_downloaded_action">पुनः शुरू करें</string>
+
+    <!-- Home-screen widget. -->
+    <string name="widget_label">पोशाक</string>
+    <string name="widget_description">मौजूदा समय की पोशाक एक नज़र में।</string>
+    <string name="widget_empty_title">अभी कोई पोशाक नहीं</string>
+    <string name="widget_empty_subtitle">ClothesCast खोलने के लिए टैप करें</string>
+
+    <!-- Onboarding. -->
+    <string name="onboarding_title">ClothesCast में आपका स्वागत है</string>
+    <string name="onboarding_subtitle">तीन आसान विकल्प और आप तैयार। बाद में सेटिंग में बदल सकते हैं।</string>
+    <string name="onboarding_subtitle_tv">दो आसान विकल्प और आप तैयार। बाद में सेटिंग में बदल सकते हैं।</string>
+    <string name="onboarding_notifications_title">सूचनाएँ</string>
+    <string name="onboarding_notifications_description">आपका दैनिक ClothesCast देने के लिए ज़रूरी।</string>
+    <string name="onboarding_notifications_grant">सूचना अनुमति दें</string>
+    <string name="onboarding_location_title">स्थान</string>
+    <string name="onboarding_location_description">आपके अनुमानित स्थान के लिए पूर्वानुमान लाएँ।</string>
+    <string name="onboarding_location_grant">स्थान अनुमति दें</string>
+    <string name="onboarding_location_grant_background">हमेशा-चालू स्थान अनुमति दें</string>
+    <string name="onboarding_location_background_needed">एक और कदम: ClothesCast को "हमेशा अनुमति दें" चाहिए ताकि सुबह का पूर्वानुमान ऐप बंद होने पर भी आपका स्थान पढ़ सके।</string>
+    <string name="onboarding_location_denied_hint">स्थान अनुमति नकारी गई। आप इसके बजाय कोई शहर चुन सकते हैं।</string>
+    <string name="onboarding_location_enter_manual">स्थान हाथ से दर्ज करें</string>
+    <string name="onboarding_location_enter_manual_hint">यदि आप स्थान अनुमति नकारते हैं या आपका डिवाइस स्थान गलत है, तो आप अपना स्थान हाथ से दर्ज कर सकते हैं।</string>
+    <string name="onboarding_location_using_device">हर सुबह आपके डिवाइस का स्थान उपयोग हो रहा है।</string>
+    <string name="onboarding_gemini_title">Gemini API कुंजी</string>
+    <string name="onboarding_gemini_description">बेहतर आवाज़ें पाने के लिए Gemini उपयोग करें।</string>
+    <string name="onboarding_step_done">हो गया</string>
+    <string name="onboarding_skip">अभी छोड़ें</string>
+    <string name="onboarding_continue">जारी रखें</string>
+    <string name="onboarding_pair_from_phone">फ़ोन से जोड़ें</string>
+
+    <!-- TV phone-pairing screen. -->
+    <string name="pairing_title">स्कैन करके जोड़ें</string>
+    <string name="pairing_instructions">अपने फ़ोन से इस QR कोड को स्कैन करें, फिर खुलने वाले फॉर्म में अपनी Gemini API कुंजी डालें। कुंजी आपके होम Wi-Fi पर सीधे इस TV पर भेजी जाएगी — कोई क्लाउड रिले नहीं।</string>
+    <string name="pairing_qr_description">%1$s से लिंक करने वाला QR कोड</string>
+    <string name="pairing_cancel">रद्द करें</string>
+    <string name="pairing_received">कुंजी मिली — सेव हो रही है…</string>
+    <string name="pairing_timeout_title">जोड़ने की खिड़की समाप्त</string>
+    <string name="pairing_timeout_body">5 मिनट की जोड़ने की खिड़की बंद हो गई। नई खिड़की खोलने के लिए पुनः प्रयास करें टैप करें।</string>
+    <string name="pairing_error_title">जोड़ना शुरू नहीं हो सका</string>
+    <string name="pairing_error_body">सुनिश्चित करें कि TV Wi-Fi से जुड़ा है, फिर पुनः प्रयास करें।</string>
+    <string name="pairing_retry">पुनः प्रयास करें</string>
+
+    <!-- Insight prose templates. -->
     <string name="insight_lead_today">आज</string>
     <string name="insight_lead_tonight">आज रात</string>
     <!-- "आज मौसम सुहाना रहेगा।" -->
