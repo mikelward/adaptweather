@@ -579,4 +579,15 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="settings_location_background_banner_body">Sans elle, les prévisions matinales ne peuvent pas lire ta position.</string>
     <string name="settings_location_manual_override">Position incorrecte ? Définir manuellement</string>
     <string name="settings_location_manual_override_disclosure">Choisir une ville désactive la détection auto.</string>
+
+    <!-- TTS engine selection — description beneath the Gemini/Device toggle. -->
+    <string name="settings_tts_engine_description">Gemini sonne beaucoup plus naturel que la voix de l\'appareil, mais nécessite un appel réseau au moment de la synthèse et utilise ta clé API pour la synthèse (un court appel par ClothesCast prononcé). Bascule vers la voix de l\'appareil si Gemini échoue.</string>
+
+    <!-- In-app update banner: shown when a newer build is on the Play Store. -->
+    <string name="today_update_available_title">Mise à jour disponible</string>
+    <string name="today_update_available_body">Une version plus récente de ClothesCast est disponible sur le Play Store.</string>
+    <string name="today_update_available_action">Mettre à jour</string>
+    <string name="today_update_available_dismiss">Pas maintenant</string>
+    <string name="today_update_downloaded_body">Mise à jour téléchargée. Redémarre pour terminer l\'installation.</string>
+    <string name="today_update_downloaded_action">Redémarrer</string>
 </resources>

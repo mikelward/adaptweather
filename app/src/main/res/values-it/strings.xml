@@ -519,4 +519,61 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_max_below">Percepito massimo solo %1$s%2$s, sotto %3$s%2$s</string>
     <string name="today_rationale_max_above_with_time">Percepito massimo %1$s%2$s alle %3$s, almeno %4$s%2$s</string>
     <string name="today_rationale_max_above">Percepito massimo %1$s%2$s, almeno %3$s%2$s</string>
+
+    <!-- Fallback label for the maps link when GPS coords are known but no
+         city name could be resolved. -->
+    <string name="today_location_unknown">La tua posizione</string>
+
+    <!-- Shown while WorkManager is in exponential back-off between retries. -->
+    <string name="today_retrying">L\'ultimo tentativo è fallito — nuovo tentativo in corso…</string>
+
+    <!-- Crash-report banner shown on the Today screen after a previous crash. -->
+    <string name="today_crash_banner_title">L\'ultimo avvio è andato in crash</string>
+    <string name="today_crash_banner_body">Un rapporto di errore è stato salvato sul tuo dispositivo. Condividerlo per correggere il bug? Nulla viene inviato finché non scegli una destinazione.</string>
+    <string name="today_crash_banner_share">Condividi rapporto</string>
+    <string name="today_crash_banner_dismiss">Chiudi</string>
+
+    <!-- TV-specific onboarding subtitle (two steps instead of three). -->
+    <string name="onboarding_subtitle_tv">Due scelte rapide e sei pronto. Tutto il resto può essere modificato nelle impostazioni in seguito.</string>
+
+    <!-- Onboarding — background location step. -->
+    <string name="onboarding_location_grant_background">Consenti sempre</string>
+    <string name="onboarding_location_background_needed">Ancora un passo: ClothesCast ha bisogno di \'Consenti sempre\' per poter leggere la tua posizione mentre l\'app è chiusa per la previsione mattutina.</string>
+    <string name="onboarding_location_enter_manual_hint">Puoi inserire la tua posizione manualmente se rifiuti l\'accesso alla posizione o se la posizione del dispositivo non è corretta.</string>
+
+    <!-- Settings root — rows not yet translated. -->
+    <string name="settings_root_display">Schermo</string>
+    <string name="settings_root_location">Posizione</string>
+    <string name="settings_root_calendar">Calendario</string>
+    <string name="settings_root_display_subtitle">Tema</string>
+    <string name="settings_root_location_subtitle">Automatico o scegli una città</string>
+    <string name="settings_root_calendar_subtitle">Appuntamenti di oggi</string>
+
+    <!-- Display / theme settings. -->
+    <string name="settings_display_theme_title">Tema</string>
+    <string name="settings_display_theme_system">Impostazione di sistema</string>
+    <string name="settings_display_theme_light">Chiaro</string>
+    <string name="settings_display_theme_dark">Scuro</string>
+
+    <!-- API key screen — Gemini section header. -->
+    <string name="settings_api_key_gemini_header">Usa Gemini per voci di alta qualità.</string>
+
+    <!-- Location screen — additional strings. -->
+    <string name="settings_location_use_device_description">Ultima posizione approssimativa</string>
+    <string name="settings_location_detecting">Rilevamento in corso…</string>
+    <string name="settings_location_background_banner_title">Posizione permanente richiesta</string>
+    <string name="settings_location_background_banner_body">Senza di essa, la previsione mattutina non può leggere la tua posizione.</string>
+    <string name="settings_location_manual_override">Posizione errata? Impostala manualmente</string>
+    <string name="settings_location_manual_override_disclosure">Se scegli una città, il rilevamento automatico verrà disattivato.</string>
+
+    <!-- TTS engine selection — description beneath the Gemini/Device toggle. -->
+    <string name="settings_tts_engine_description">Gemini suona molto più naturale rispetto alla voce del dispositivo, ma richiede una chiamata di rete al momento della sintesi e utilizza la tua chiave API per la sintesi (una breve chiamata per ogni ClothesCast riprodotto). Torna alla voce del dispositivo se Gemini fallisce.</string>
+
+    <!-- In-app update banner: shown when a newer build is on the Play Store. -->
+    <string name="today_update_available_title">Aggiornamento disponibile</string>
+    <string name="today_update_available_body">Una versione più recente di ClothesCast è disponibile nel Play Store.</string>
+    <string name="today_update_available_action">Aggiorna</string>
+    <string name="today_update_available_dismiss">Non ora</string>
+    <string name="today_update_downloaded_body">Aggiornamento scaricato. Riavvia per completare l\'installazione.</string>
+    <string name="today_update_downloaded_action">Riavvia</string>
 </resources>
