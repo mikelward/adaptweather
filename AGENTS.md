@@ -74,6 +74,20 @@ new rule the first time something bites you, not the third.
   pushed SHA so a stale review of a superseded commit isn't conflated with
   the current state. The user uses this to know when the automated pass
   is done vs. still pending.
+- **Post a PR comment with image diffs inline whenever snapshots change.**
+  The GitHub mobile app shows "Binary files not rendered" for any binary
+  diff (added or modified), so PNG changes in the Files tab — including
+  the bot's `ci: regenerate UI snapshots` commits — are invisible from
+  the user's phone, and long-press doesn't expose an "Open in Browser"
+  escape hatch on those links. After each regen commit (or any push that
+  touches `app/snapshots/`), post one PR comment embedding each affected
+  image as `![label](https://github.com/<owner>/<repo>/raw/<sha>/<path>.png)`.
+  For modified files include both the previous and new versions labelled
+  by SHA so the user can flip between them; for added files just the new
+  one. Markdown-embedded images render fine in the mobile app even though
+  file diffs don't. One comment per regen is enough — don't re-post if a
+  later regen reverts the same bytes (the existing thread already shows
+  both states).
 - **Report Android versionCode after every merge to `main`.** When a PR
   merges, fetch `main` and run `git rev-list --count origin/main` to get
   the versionCode (`app/build.gradle.kts` derives it from this count).
