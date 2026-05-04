@@ -3,8 +3,6 @@
     <item android:drawable="@mipmap/ic_launcher_foreground" />
     <item
         android:drawable="@drawable/ic_construction_badge"
-        android:gravity="bottom|center_horizontal"
-        android:width="60dp"
-        android:height="10dp"
-        android:bottom="18dp" />
+        android:gravity="bottom|fill_horizontal"
+        android:height="14dp" />
 </layer-list>
