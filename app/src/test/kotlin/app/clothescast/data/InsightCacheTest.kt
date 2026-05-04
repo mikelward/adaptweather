@@ -118,18 +118,19 @@ class InsightCacheTest {
     @Test
     fun `corrupt JSON in the slot maps to null rather than crashing`() = runTest {
         dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v4")] = "{not valid json"
+            it[stringPreferencesKey("latest_insight_v5")] = "{not valid json"
         }
 
         subject.latest.first() shouldBe null
     }
 
     @Test
-    fun `pre-v4 payloads are dropped rather than crashing the cache`() = runTest {
-        // Older app versions stored `summary` as a rendered string (v2) and
-        // later as a structured object without `Fact.thresholdKind` (v3). The
-        // current schema (v4) carries the kind tag, so a v2 / v3 payload no
-        // longer deserialises and the slot drops to null. The next worker run
+    fun `pre-v5 payloads are dropped rather than crashing the cache`() = runTest {
+        // Older app versions stored `summary` as a rendered string (v2),
+        // later as a structured object without `Fact.thresholdKind` (v3),
+        // then with the kind tag (v4). The current schema (v5) replaces
+        // `thresholdKind` with `ruleItem`, so older payloads no longer
+        // deserialise and the slot drops to null. The next worker run
         // regenerates on the new key.
         val v2Json = """
             {
@@ -140,9 +141,9 @@ class InsightCacheTest {
             }
         """.trimIndent()
         dataStore.edit {
-            // v4 key, v2-shaped payload — the decoder fails on the `summary`
+            // v5 key, v2-shaped payload — the decoder fails on the `summary`
             // field and the runCatching in the cache returns null.
-            it[stringPreferencesKey("latest_insight_v4")] = v2Json
+            it[stringPreferencesKey("latest_insight_v5")] = v2Json
         }
 
         subject.latest.first() shouldBe null
@@ -183,7 +184,7 @@ class InsightCacheTest {
                         observedC = 13.0,
                         observedAt = LocalTime.of(7, 0),
                         thresholdC = 18.0,
-                        thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                        ruleItem = "sweater",
                         comparison = Fact.Comparison.BELOW,
                     ),
                 ),
@@ -194,8 +195,8 @@ class InsightCacheTest {
                         metric = Fact.Metric.FEELS_LIKE_MAX,
                         observedC = 19.0,
                         observedAt = null,
-                        thresholdC = 22.0,
-                        thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX,
+                        thresholdC = 24.0,
+                        ruleItem = "shorts",
                         comparison = Fact.Comparison.BELOW,
                     ),
                 ),
@@ -227,12 +228,12 @@ class InsightCacheTest {
     }
 
     @Test
-    fun `legacy v4 payloads without a location field decode with location null`() = runTest {
-        // The location field was added without bumping the cache key — legacy
-        // v4 JSON written before this change omits the field entirely. The
-        // DTO's nullable default means existing caches still deserialise
-        // (rather than dropping to null and burning a regen on next launch).
-        val legacyV4Json = """
+    fun `payloads without optional fields decode with those fields null`() = runTest {
+        // location, outfit and outfitRationale are all DTO-optional with null
+        // defaults — a minimal v5 payload (e.g. an early build that hasn't
+        // populated them yet, or a future field-pruning) still deserialises
+        // rather than dropping to null and burning a regen on next launch.
+        val minimalJson = """
             {
               "summary": {
                 "period": "TODAY",
@@ -246,7 +247,7 @@ class InsightCacheTest {
             }
         """.trimIndent()
         dataStore.edit {
-            it[stringPreferencesKey("latest_insight_v4")] = legacyV4Json
+            it[stringPreferencesKey("latest_insight_v5")] = minimalJson
         }
 
         val read = subject.latest.first()

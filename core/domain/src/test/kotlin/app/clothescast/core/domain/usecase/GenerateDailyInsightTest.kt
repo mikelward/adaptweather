@@ -441,7 +441,7 @@ class GenerateDailyInsightTest {
         val todayHourly = listOf(
             HourlyForecast(LocalTime.of(8, 0), 22.0, 22.0, 5.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(15, 0), 26.0, 26.0, 5.0, WeatherCondition.CLEAR),
-            // Overnight hours dropping into the SWEATER band — drives a different
+            // Overnight hours dropping below the jacket cutoff — drives a heavier
             // nextOutfit than the daytime TSHIRT.
             HourlyForecast(LocalTime.of(20, 0), 14.0, 12.0, 5.0, WeatherCondition.CLEAR),
             HourlyForecast(LocalTime.of(23, 0), 11.0, 9.0, 5.0, WeatherCondition.CLEAR),
@@ -458,12 +458,17 @@ class GenerateDailyInsightTest {
 
         val result = subject(london, prefs, ForecastPeriod.TODAY)
 
+        // Daytime min 20 / max 26 against default rules: sweater (18) and
+        // jacket (12) don't fire on min 20 → TSHIRT; shorts (24) fires on
+        // max 26 → SHORTS.
         result.insight.outfit shouldBe OutfitSuggestion(
             top = OutfitSuggestion.Top.TSHIRT,
             bottom = OutfitSuggestion.Bottom.SHORTS,
         )
+        // Tonight slice min 9 / max 12: jacket rule (12°C) fires on min 9 →
+        // THICK_JACKET; shorts (24°C) doesn't fire on max 12 → LONG_PANTS.
         result.insight.nextOutfit shouldBe OutfitSuggestion(
-            top = OutfitSuggestion.Top.SWEATER,
+            top = OutfitSuggestion.Top.THICK_JACKET,
             bottom = OutfitSuggestion.Bottom.LONG_PANTS,
         )
     }
@@ -487,11 +492,12 @@ class GenerateDailyInsightTest {
 
         val result = subject(london, prefs, ForecastPeriod.TONIGHT)
 
-        // Tomorrow's feels-like 14→26: SWEATER (min < 18) and LONG_PANTS
-        // (min ≤ 15 — shorts need both max > 22 and min > 15).
+        // Tomorrow's feels-like 14→26 against default rules: sweater (18)
+        // fires on min 14 → SWEATER; jacket (12) doesn't fire (14 ≥ 12);
+        // shorts (24) fires on max 26 → SHORTS.
         result.insight.nextOutfit shouldBe OutfitSuggestion(
             top = OutfitSuggestion.Top.SWEATER,
-            bottom = OutfitSuggestion.Bottom.LONG_PANTS,
+            bottom = OutfitSuggestion.Bottom.SHORTS,
         )
     }
 

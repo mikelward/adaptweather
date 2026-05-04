@@ -6,12 +6,18 @@ import java.time.LocalTime
  * A glanceable two-piece outfit pairing — one [Top] and one [Bottom] — derived from the
  * forecast so the home screen can render two big icons instead of a comma-separated word
  * list. The set is intentionally tiny (3 tops × 2 bottoms) because the goal is "tell me
- * at a glance", not "build my closet". Customisable item-level rules still live in
- * [ClothesRule] and continue to drive [Insight.recommendedItems].
+ * at a glance", not "build my closet".
  *
- * Thresholds use feels-like temperatures (wind chill / humidity adjusted), matching what
- * [ClothesRule] does, since that's what people actually experience on the way out the
- * door.
+ * The picker is driven entirely by the user's [ClothesRule] list — the same rules that
+ * populate [Insight.recommendedItems]. Specifically: a firing `jacket`/`coat` rule
+ * promotes the top to [Top.THICK_JACKET], a firing `sweater`/`hoodie` rule promotes it
+ * to [Top.SWEATER], and a firing `shorts` rule swaps the bottom to [Bottom.SHORTS].
+ * That keeps the home-screen icon and the bulleted recommendations honest about the
+ * same set of cutoffs — no second mental model, no shadow defaults.
+ *
+ * Rule conditions are checked against feels-like temperatures (wind chill / humidity
+ * adjusted) — that's what people experience on the way out the door, and it's already
+ * what [ClothesRule.appliesTo] does.
  */
 data class OutfitSuggestion(
     val top: Top,
@@ -21,79 +27,30 @@ data class OutfitSuggestion(
 
     enum class Bottom { SHORTS, LONG_PANTS }
 
-    /**
-     * The thresholds [fromForecast] uses to map a forecast onto a top + bottom. Pulled out
-     * as a named object so both the suggestion and the rationale read the same numbers,
-     * and so a future PR can swap [DEFAULT] for a user-tunable instance plumbed through
-     * preferences without touching the call sites in [GenerateDailyInsight].
-     */
-    data class Thresholds(
-        val sweaterMaxFeelsLikeMinC: Double,
-        val tshirtMinFeelsLikeMinC: Double,
-        val shortsMinFeelsLikeMaxC: Double,
-        val shortsMinFeelsLikeMinC: Double,
-    ) {
-        /** Returns the value of [kind] in this set. */
-        fun valueOf(kind: Fact.ThresholdKind): Double = when (kind) {
-            Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN -> sweaterMaxFeelsLikeMinC
-            Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN -> tshirtMinFeelsLikeMinC
-            Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX -> shortsMinFeelsLikeMaxC
-            Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN -> shortsMinFeelsLikeMinC
-        }
-
-        /**
-         * Returns a copy with [kind] set to [valueC], clamped to [MIN_C] / [MAX_C] so a
-         * misconfigured caller (or a relentless `+1°` tap) can't push a knob into
-         * nonsense territory like 200°C. The relative ordering between the two top
-         * cutoffs ([sweaterMaxFeelsLikeMinC] vs [tshirtMinFeelsLikeMinC]) is *not*
-         * enforced — the user is free to set them equal, and the layered when-chain in
-         * [fromForecast] will simply skip the SWEATER branch in that case.
-         */
-        fun with(kind: Fact.ThresholdKind, valueC: Double): Thresholds {
-            val clamped = valueC.coerceIn(MIN_C, MAX_C)
-            return when (kind) {
-                Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN -> copy(sweaterMaxFeelsLikeMinC = clamped)
-                Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN -> copy(tshirtMinFeelsLikeMinC = clamped)
-                Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX -> copy(shortsMinFeelsLikeMaxC = clamped)
-                Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN -> copy(shortsMinFeelsLikeMinC = clamped)
-            }
-        }
-
-        companion object {
-            val DEFAULT: Thresholds = Thresholds(
-                sweaterMaxFeelsLikeMinC = 8.0,
-                tshirtMinFeelsLikeMinC = 18.0,
-                shortsMinFeelsLikeMaxC = 22.0,
-                shortsMinFeelsLikeMinC = 15.0,
-            )
-
-            /** Sanity bounds for any threshold knob. Wide enough that no realistic
-             * weather rule ever touches them; narrow enough that a runaway tap can't
-             * stamp a billion degrees into preferences. */
-            const val MIN_C: Double = -20.0
-            const val MAX_C: Double = 40.0
-        }
-    }
-
     companion object {
+        // Catalog item keys (see [Garment.itemKey]) that drive each icon tier.
+        // The top tiers are layered: any firing `jacket` / `coat` rule promotes
+        // the icon to THICK_JACKET, otherwise a firing `sweater` / `hoodie` lands
+        // on SWEATER. Order within each list also drives which rule the
+        // rationale cites when multiple fire — the canonical key (`jacket` /
+        // `sweater`) comes first because that's the icon-boundary the user
+        // crossed. A `coat` rule that fires alongside `jacket` only gets
+        // surfaced when `jacket` is missing from the user's list. A user who
+        // deleted everything in the cold half gets TSHIRT for any temperature.
+        private val THICK_JACKET_KEYS = listOf("jacket", "coat")
+        private val SWEATER_KEYS = listOf("sweater", "hoodie")
+        private val SHORTS_KEYS = listOf("shorts")
+
         fun fromForecast(
             forecast: DailyForecast,
-            thresholds: Thresholds = Thresholds.DEFAULT,
+            clothesRules: List<ClothesRule>,
         ): OutfitSuggestion {
             val top = when {
-                forecast.feelsLikeMinC < thresholds.sweaterMaxFeelsLikeMinC -> Top.THICK_JACKET
-                forecast.feelsLikeMinC < thresholds.tshirtMinFeelsLikeMinC -> Top.SWEATER
+                clothesRules.firstFiring(forecast, THICK_JACKET_KEYS) != null -> Top.THICK_JACKET
+                clothesRules.firstFiring(forecast, SWEATER_KEYS) != null -> Top.SWEATER
                 else -> Top.TSHIRT
             }
-            // Shorts only when it's warm *and* doesn't drop too cold at the coldest part
-            // of the day — nobody enjoys discovering at 7am that "shorts weather" was
-            // really "afternoon shorts weather". Comparison is inclusive (`>=`) so the
-            // "at least" prose in the rationale dialog reads true at the exact-boundary
-            // edge case (max == 22°C is shorts weather, not long-pants).
-            val bottom = if (
-                forecast.feelsLikeMaxC >= thresholds.shortsMinFeelsLikeMaxC &&
-                forecast.feelsLikeMinC >= thresholds.shortsMinFeelsLikeMinC
-            ) {
+            val bottom = if (clothesRules.firstFiring(forecast, SHORTS_KEYS) != null) {
                 Bottom.SHORTS
             } else {
                 Bottom.LONG_PANTS
@@ -106,74 +63,91 @@ data class OutfitSuggestion(
          * one [GarmentReason] for the top slot and one for the bottom. The "Why this
          * outfit?" sheet on the home screen uses this to surface the deciding numbers
          * (and the time of the deciding hour) so the user can sanity-check the call.
+         *
+         * Each fact's [Fact.ruleItem] points at the `ClothesRule.item` key that
+         * supplied the threshold — the rationale dialog uses that to wire its
+         * `−1° / +1°` controls back to the right rule.
          */
         fun explainFromForecast(
             forecast: DailyForecast,
-            thresholds: Thresholds = Thresholds.DEFAULT,
+            clothesRules: List<ClothesRule>,
         ): OutfitRationale {
-            val coldestHour = forecast.hourly.minByOrNull { it.feelsLikeC }
-            val warmestHour = forecast.hourly.maxByOrNull { it.feelsLikeC }
-            val topFact = when {
-                forecast.feelsLikeMinC < thresholds.sweaterMaxFeelsLikeMinC -> Fact(
-                    metric = Fact.Metric.FEELS_LIKE_MIN,
-                    observedC = forecast.feelsLikeMinC,
-                    observedAt = coldestHour?.time,
-                    thresholdC = thresholds.sweaterMaxFeelsLikeMinC,
-                    thresholdKind = Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN,
-                    comparison = Fact.Comparison.BELOW,
-                )
-                forecast.feelsLikeMinC < thresholds.tshirtMinFeelsLikeMinC -> Fact(
-                    metric = Fact.Metric.FEELS_LIKE_MIN,
-                    observedC = forecast.feelsLikeMinC,
-                    observedAt = coldestHour?.time,
-                    thresholdC = thresholds.tshirtMinFeelsLikeMinC,
-                    thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
-                    comparison = Fact.Comparison.BELOW,
-                )
-                else -> Fact(
-                    metric = Fact.Metric.FEELS_LIKE_MIN,
-                    observedC = forecast.feelsLikeMinC,
-                    observedAt = coldestHour?.time,
-                    thresholdC = thresholds.tshirtMinFeelsLikeMinC,
-                    thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
-                    comparison = Fact.Comparison.AT_OR_ABOVE,
-                )
-            }
-            // Bottom is a two-condition rule (warm max AND not-too-cold min). For
-            // SHORTS we name both supporting facts; for LONG_PANTS we name whichever
-            // failed (or both, if both did) so the user sees the actual blocker.
-            // Inclusive (`>=`) to match [fromForecast]'s operator, so the cached
-            // [Fact.comparison] doesn't disagree with the live rule outcome at exact
-            // equality.
-            val maxOk = forecast.feelsLikeMaxC >= thresholds.shortsMinFeelsLikeMaxC
-            val minOk = forecast.feelsLikeMinC >= thresholds.shortsMinFeelsLikeMinC
-            val maxFact = Fact(
-                metric = Fact.Metric.FEELS_LIKE_MAX,
-                observedC = forecast.feelsLikeMaxC,
-                observedAt = warmestHour?.time,
-                thresholdC = thresholds.shortsMinFeelsLikeMaxC,
-                thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MAX,
-                comparison = if (maxOk) Fact.Comparison.AT_OR_ABOVE else Fact.Comparison.BELOW,
-            )
-            val minFact = Fact(
-                metric = Fact.Metric.FEELS_LIKE_MIN,
-                observedC = forecast.feelsLikeMinC,
-                observedAt = coldestHour?.time,
-                thresholdC = thresholds.shortsMinFeelsLikeMinC,
-                thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN,
-                comparison = if (minOk) Fact.Comparison.AT_OR_ABOVE else Fact.Comparison.BELOW,
-            )
-            val bottomFacts = when {
-                maxOk && minOk -> listOf(maxFact, minFact)
-                !maxOk && !minOk -> listOf(maxFact, minFact)
-                !maxOk -> listOf(maxFact)
-                else -> listOf(minFact)
-            }
+            val coldestHour = forecast.hourly.minByOrNull { it.feelsLikeC }?.time
+            val warmestHour = forecast.hourly.maxByOrNull { it.feelsLikeC }?.time
             return OutfitRationale(
-                top = GarmentReason(facts = listOf(topFact)),
-                bottom = GarmentReason(facts = bottomFacts),
+                top = GarmentReason(facts = listOf(topFact(forecast, clothesRules, coldestHour))),
+                bottom = GarmentReason(facts = listOf(bottomFact(forecast, clothesRules, warmestHour))),
             )
         }
+
+        private fun topFact(
+            forecast: DailyForecast,
+            rules: List<ClothesRule>,
+            coldestHour: LocalTime?,
+        ): Fact {
+            // The deciding rule, in priority order: the firing thick-jacket rule;
+            // otherwise the firing sweater rule; otherwise the warmest cold rule
+            // we *aren't* below (the "above the sweater cutoff" case for TSHIRT).
+            // The default sweater rule is the last-resort anchor so we always have
+            // something to cite, even if the user deleted every cold rule.
+            val rule = rules.firstFiring(forecast, THICK_JACKET_KEYS)
+                ?: rules.firstFiring(forecast, SWEATER_KEYS)
+                ?: rules.firstByKey(SWEATER_KEYS)
+                ?: rules.firstByKey(THICK_JACKET_KEYS)
+                ?: ClothesRule.DEFAULTS.first { it.item == "sweater" }
+            return rule.toMinFact(forecast, coldestHour)
+        }
+
+        private fun bottomFact(
+            forecast: DailyForecast,
+            rules: List<ClothesRule>,
+            warmestHour: LocalTime?,
+        ): Fact {
+            // Same idea on the warm side: a firing shorts rule wins; otherwise we
+            // cite whichever shorts rule the user has on file (or the catalog
+            // default) so the dialog can still show the cutoff that wasn't met.
+            val rule = rules.firstFiring(forecast, SHORTS_KEYS)
+                ?: rules.firstByKey(SHORTS_KEYS)
+                ?: ClothesRule.DEFAULTS.first { it.item == "shorts" }
+            return rule.toMaxFact(forecast, warmestHour)
+        }
+
+        private fun List<ClothesRule>.firstFiring(
+            forecast: DailyForecast,
+            keys: List<String>,
+        ): ClothesRule? = keys.firstNotNullOfOrNull { key ->
+            firstOrNull { it.item == key && it.appliesTo(forecast) }
+        }
+
+        private fun List<ClothesRule>.firstByKey(keys: List<String>): ClothesRule? =
+            keys.firstNotNullOfOrNull { key -> firstOrNull { it.item == key } }
+
+        private fun ClothesRule.toFact(
+            metric: Fact.Metric,
+            observedC: Double,
+            observedAt: LocalTime?,
+        ): Fact {
+            val thresholdC = thresholdC()
+                ?: error("Outfit rationale only supports temperature rules; got $condition")
+            return Fact(
+                metric = metric,
+                observedC = observedC,
+                observedAt = observedAt,
+                thresholdC = thresholdC,
+                ruleItem = item,
+                comparison = if (observedC < thresholdC) {
+                    Fact.Comparison.BELOW
+                } else {
+                    Fact.Comparison.AT_OR_ABOVE
+                },
+            )
+        }
+
+        private fun ClothesRule.toMinFact(forecast: DailyForecast, observedAt: LocalTime?): Fact =
+            toFact(Fact.Metric.FEELS_LIKE_MIN, forecast.feelsLikeMinC, observedAt)
+
+        private fun ClothesRule.toMaxFact(forecast: DailyForecast, observedAt: LocalTime?): Fact =
+            toFact(Fact.Metric.FEELS_LIKE_MAX, forecast.feelsLikeMaxC, observedAt)
     }
 }
 
@@ -186,7 +160,7 @@ data class OutfitRationale(
     val bottom: GarmentReason,
 )
 
-/** Reasons for a single garment slot. Multiple [Fact]s when the rule has multiple terms. */
+/** Reasons for a single garment slot. One [Fact] per slot in the current picker. */
 data class GarmentReason(
     val facts: List<Fact>,
 )
@@ -196,40 +170,20 @@ data class GarmentReason(
  * day-level aggregate without hourly entries (legacy fixtures, sparse caches) — the
  * UI omits the time clause in that case.
  *
- * [thresholdKind] names *which* preference this fact came from, so the rationale
- * dialog can wire its `−1°` / `+1°` buttons back to the right field on
- * [OutfitSuggestion.Thresholds] without having to reverse-engineer it from
- * [thresholdC].
+ * [ruleItem] names *which* [ClothesRule] this fact came from (by its `item` key), so
+ * the rationale dialog can wire its `−1°` / `+1°` buttons back to the same rule and
+ * persist user adjustments to the right entry on disk.
  */
 data class Fact(
     val metric: Metric,
     val observedC: Double,
     val observedAt: LocalTime?,
     val thresholdC: Double,
-    val thresholdKind: ThresholdKind,
+    val ruleItem: String,
     val comparison: Comparison,
 ) {
     enum class Metric { FEELS_LIKE_MIN, FEELS_LIKE_MAX }
 
     /** How [observedC] relates to [thresholdC]. */
     enum class Comparison { BELOW, AT_OR_ABOVE }
-
-    /**
-     * Which field on [OutfitSuggestion.Thresholds] this fact's [thresholdC] came from.
-     * Used by the rationale dialog to identify the preference behind a given fact line
-     * and persist user adjustments to the right knob.
-     */
-    enum class ThresholdKind {
-        /** Below this feels-like-min, top flips from sweater to thick jacket. */
-        SWEATER_MAX_FEELS_LIKE_MIN,
-
-        /** Below this feels-like-min, top flips from t-shirt to sweater. */
-        TSHIRT_MIN_FEELS_LIKE_MIN,
-
-        /** Above this feels-like-max, bottom can flip to shorts (alongside the min check). */
-        SHORTS_MIN_FEELS_LIKE_MAX,
-
-        /** Above this feels-like-min, bottom can flip to shorts (alongside the max check). */
-        SHORTS_MIN_FEELS_LIKE_MIN,
-    }
 }

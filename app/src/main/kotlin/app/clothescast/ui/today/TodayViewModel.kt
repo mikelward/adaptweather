@@ -6,9 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import app.clothescast.core.domain.model.Fact
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.Insight
-import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.data.InsightCache
@@ -37,12 +36,12 @@ data class TodayState(
     // just exposes the prefs side of the equation.
     val useDeviceLocation: Boolean = false,
     val hasFallbackLocation: Boolean = false,
-    /** Live cutoffs the rationale dialog reads to render its current threshold value
-     * and the `−1°` / `+1°` controls. The cached [Insight.outfitRationale] still
-     * carries the threshold values that *were* in effect at insight-generation time
-     * (which might differ from these if the user has nudged a knob since); the
+    /** Live clothes rules the rationale dialog reads to render the current threshold
+     * value and the `−1°` / `+1°` controls. The cached [Insight.outfitRationale]
+     * still carries the rule values that *were* in effect at insight-generation
+     * time (which can differ from these if the user has nudged a knob since); the
      * dialog prefers these for display so the controls stay honest. */
-    val outfitThresholds: OutfitSuggestion.Thresholds = OutfitSuggestion.Thresholds.DEFAULT,
+    val clothesRules: List<ClothesRule> = emptyList(),
 )
 
 sealed class WorkStatus {
@@ -164,26 +163,22 @@ class TodayViewModel(
             tonightTime = prefs.tonightSchedule.time,
             useDeviceLocation = prefs.useDeviceLocation,
             hasFallbackLocation = prefs.location != null,
-            outfitThresholds = prefs.outfitThresholds,
+            clothesRules = prefs.clothesRules,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 
     /**
-     * Nudges one of [OutfitSuggestion.Thresholds]'s knobs by [deltaC] degrees Celsius.
-     * Wired to the rationale dialog's `−1°` / `+1°` controls. The read-modify-write
-     * is delegated to [SettingsRepository.adjustOutfitThreshold] which performs it
-     * inside a single `DataStore.edit { … }` transaction — rapid taps each read the
-     * latest persisted value, so taps don't collapse into one even when several
-     * coroutines are in flight. Final value is clamped to the documented sanity
-     * range.
+     * Nudges the temperature threshold of the [ClothesRule] keyed [ruleItem] by
+     * [deltaC] degrees Celsius. Wired to the rationale dialog's `−1°` / `+1°`
+     * controls. The read-modify-write is delegated to
+     * [SettingsRepository.adjustClothesRuleThreshold] which performs it inside a
+     * single `DataStore.edit { … }` transaction — rapid taps each read the latest
+     * persisted value, so taps don't collapse into one even when several coroutines
+     * are in flight. Final value is clamped to the documented sanity range and
+     * persisted in the rule's existing unit.
      */
-    fun adjustOutfitThreshold(kind: Fact.ThresholdKind, deltaC: Double) {
-        viewModelScope.launch { settingsRepository.adjustOutfitThreshold(kind, deltaC) }
-    }
-
-    /** Reverts every threshold to [OutfitSuggestion.Thresholds.DEFAULT]. */
-    fun resetOutfitThresholds() {
-        viewModelScope.launch { settingsRepository.resetOutfitThresholds() }
+    fun adjustClothesRuleThreshold(ruleItem: String, deltaC: Double) {
+        viewModelScope.launch { settingsRepository.adjustClothesRuleThreshold(ruleItem, deltaC) }
     }
 
     class Factory(

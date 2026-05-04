@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import app.clothescast.core.domain.model.BandClause
 import app.clothescast.core.domain.model.ClothesClause
+import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.ConfidenceInfo
 import app.clothescast.core.domain.model.DeltaClause
 import app.clothescast.core.domain.model.Fact
@@ -212,7 +213,7 @@ internal fun OutfitRationaleDialogPreview() {
                             observedC = 13.0,
                             observedAt = LocalTime.of(7, 0),
                             thresholdC = 18.0,
-                            thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                            ruleItem = "sweater",
                             comparison = Fact.Comparison.BELOW,
                         ),
                     ),
@@ -220,20 +221,19 @@ internal fun OutfitRationaleDialogPreview() {
                 bottom = GarmentReason(
                     facts = listOf(
                         Fact(
-                            metric = Fact.Metric.FEELS_LIKE_MIN,
-                            observedC = 13.0,
-                            observedAt = LocalTime.of(7, 0),
-                            thresholdC = 15.0,
-                            thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN,
+                            metric = Fact.Metric.FEELS_LIKE_MAX,
+                            observedC = 17.0,
+                            observedAt = LocalTime.of(14, 0),
+                            thresholdC = 24.0,
+                            ruleItem = "shorts",
                             comparison = Fact.Comparison.BELOW,
                         ),
                     ),
                 ),
             ),
             temperatureUnit = TemperatureUnit.CELSIUS,
-            outfitThresholds = OutfitSuggestion.Thresholds.DEFAULT,
+            clothesRules = ClothesRule.DEFAULTS,
             onAdjustThreshold = { _, _ -> },
-            onResetThresholds = {},
             onDismiss = {},
         )
     }
@@ -243,10 +243,10 @@ internal fun OutfitRationaleDialogPreview() {
 @Composable
 internal fun OutfitRationaleDialogTunedPreview() {
     Frame {
-        // Mid-tweak state: the t-shirt cutoff (`tshirtMinFeelsLikeMinC`) has been
-        // lowered from 18°C to 15°C, so observed 13°C is still BELOW the customised
-        // threshold and the comparison string stays "under". The Reset button
-        // surfaces because thresholds differ from DEFAULT.
+        // Mid-tweak state: the user lowered their `sweater` rule from 18°C to 15°C,
+        // so observed 13°C is still BELOW the customised threshold and the prose
+        // stays "under". Cached fact still carries 18°C; the dialog reads the live
+        // 15°C from clothesRules.
         OutfitRationaleDialog(
             outfit = OutfitSuggestion(OutfitSuggestion.Top.SWEATER, OutfitSuggestion.Bottom.LONG_PANTS),
             rationale = OutfitRationale(
@@ -257,7 +257,7 @@ internal fun OutfitRationaleDialogTunedPreview() {
                             observedC = 13.0,
                             observedAt = LocalTime.of(7, 0),
                             thresholdC = 18.0,
-                            thresholdKind = Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
+                            ruleItem = "sweater",
                             comparison = Fact.Comparison.BELOW,
                         ),
                     ),
@@ -265,22 +265,21 @@ internal fun OutfitRationaleDialogTunedPreview() {
                 bottom = GarmentReason(
                     facts = listOf(
                         Fact(
-                            metric = Fact.Metric.FEELS_LIKE_MIN,
-                            observedC = 13.0,
-                            observedAt = LocalTime.of(7, 0),
-                            thresholdC = 15.0,
-                            thresholdKind = Fact.ThresholdKind.SHORTS_MIN_FEELS_LIKE_MIN,
+                            metric = Fact.Metric.FEELS_LIKE_MAX,
+                            observedC = 17.0,
+                            observedAt = LocalTime.of(14, 0),
+                            thresholdC = 24.0,
+                            ruleItem = "shorts",
                             comparison = Fact.Comparison.BELOW,
                         ),
                     ),
                 ),
             ),
             temperatureUnit = TemperatureUnit.CELSIUS,
-            outfitThresholds = OutfitSuggestion.Thresholds.DEFAULT.copy(
-                tshirtMinFeelsLikeMinC = 15.0,
-            ),
+            clothesRules = ClothesRule.DEFAULTS.map {
+                if (it.item == "sweater") it.copy(condition = ClothesRule.TemperatureBelow(15.0)) else it
+            },
             onAdjustThreshold = { _, _ -> },
-            onResetThresholds = {},
             onDismiss = {},
         )
     }

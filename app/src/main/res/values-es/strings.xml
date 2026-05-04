@@ -521,7 +521,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_title">¿Por qué este conjunto?</string>
     <string name="today_rationale_show">¿Por qué?</string>
     <string name="today_rationale_dismiss">Entendido</string>
-    <string name="today_rationale_reset">Restablecer umbrales</string>
     <string name="today_rationale_threshold_decrease">Bajar umbral 1 grado</string>
     <string name="today_rationale_threshold_increase">Subir umbral 1 grado</string>
     <string name="today_rationale_threshold_changed_hint">Actualiza para ver el nuevo conjunto.</string>

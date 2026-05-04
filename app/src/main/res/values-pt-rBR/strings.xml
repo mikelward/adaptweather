@@ -525,7 +525,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_title">Por que esta roupa?</string>
     <string name="today_rationale_show">Por quê?</string>
     <string name="today_rationale_dismiss">Entendi</string>
-    <string name="today_rationale_reset">Redefinir limites</string>
     <string name="today_rationale_threshold_decrease">Diminuir limite em 1 grau</string>
     <string name="today_rationale_threshold_increase">Aumentar limite em 1 grau</string>
     <string name="today_rationale_threshold_changed_hint">Atualize para ver a nova roupa.</string>

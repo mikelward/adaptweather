@@ -72,5 +72,34 @@ data class ClothesRule(
             ClothesRule("coat", TemperatureBelow(6.0)),
             ClothesRule("shorts", TemperatureAbove(24.0)),
         )
+
+        /** Sanity bounds in °C for the rationale dialog's `+1°` / `−1°` taps. Wide enough
+         * that no realistic weather rule ever touches them; narrow enough that a runaway
+         * tap can't stamp a billion degrees into preferences. The Settings clothes-rule
+         * editor doesn't enforce these — typing 100°C by hand is still allowed — they
+         * exist only to bound the inline-nudge path. */
+        const val THRESHOLD_MIN_C: Double = -20.0
+        const val THRESHOLD_MAX_C: Double = 40.0
     }
+}
+
+/**
+ * The Celsius-equivalent threshold of a temperature-keyed rule, regardless of
+ * which unit the user typed it in. Returns `null` for [ClothesRule.PrecipitationProbabilityAbove].
+ */
+fun ClothesRule.thresholdC(): Double? = when (val c = condition) {
+    is ClothesRule.TemperatureBelow -> c.value.fromUnit(c.unit)
+    is ClothesRule.TemperatureAbove -> c.value.fromUnit(c.unit)
+    is ClothesRule.PrecipitationProbabilityAbove -> null
+}
+
+/**
+ * Returns a copy of this rule with its temperature threshold set to [newC] (Celsius),
+ * preserved in the rule's existing unit so a Fahrenheit user's `75°F` rule stays
+ * Fahrenheit on disk. Returns `null` for non-temperature rules.
+ */
+fun ClothesRule.withThresholdC(newC: Double): ClothesRule? = when (val c = condition) {
+    is ClothesRule.TemperatureBelow -> copy(condition = c.copy(value = newC.toUnit(c.unit)))
+    is ClothesRule.TemperatureAbove -> copy(condition = c.copy(value = newC.toUnit(c.unit)))
+    is ClothesRule.PrecipitationProbabilityAbove -> null
 }
