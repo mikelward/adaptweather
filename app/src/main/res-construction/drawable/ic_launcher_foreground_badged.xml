@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@mipmap/ic_launcher_foreground" />
+    <item
+        android:drawable="@drawable/ic_construction_badge"
+        android:gravity="bottom|right"
+        android:width="32dp"
+        android:height="32dp"
+        android:right="20dp"
+        android:bottom="20dp" />
+</layer-list>

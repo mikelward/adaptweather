@@ -35,6 +35,18 @@ val gitCommitCount: Int = git("rev-list", "--count", "HEAD").toInt()
 val versionNameBase = "0.1.0"
 val gitShortSha: String = git("rev-parse", "--short", "HEAD")
 
+// "Is this a CI build?" CI builds keep the unmodified launcher icon; any
+// build run outside CI gets an under-construction badge overlaid on the icon
+// (see app/src/main/res-construction/). The `CI=true` env var is set by
+// GitHub Actions and most other CI providers, so the rule is simply: if the
+// environment looks like CI, no badge; otherwise, badge.
+//
+// This keeps the rule trivial to reason about — "the APK on my phone came
+// from CI" is exactly the question the badge answers — at the cost of
+// over-badging the rare case where a developer runs `CI=true` locally.
+val isCiBuild: Boolean = System.getenv("CI") == "true"
+println("clothescast: isCiBuild=$isCiBuild (versionCode=$gitCommitCount, HEAD=$gitShortSha)")
+
 android {
     // Pinned to app.clothescast. Renamed from app.adaptweather as part of the
     // product rename; existing FAD testers had to uninstall + reinstall,
@@ -56,6 +68,18 @@ android {
         // versionName, not versionCode — embedding the count means one string
         // identifies the build everywhere.
         versionName = "$versionNameBase+$gitCommitCount.$gitShortSha"
+    }
+
+    // Construction-badge overlay: on local builds (anything outside CI), layer
+    // an under-construction badge over the launcher icon (see res-construction/
+    // for the override XMLs). CI builds get the unmodified icon. The override
+    // directory is only added to the source set when needed — leaving it
+    // permanently registered would either silently shadow the real icon (if
+    // AGP picked the override) or error on duplicate resources (if it didn't).
+    sourceSets.named("main") {
+        if (!isCiBuild) {
+            res.srcDirs("src/main/res", "src/main/res-construction")
+        }
     }
 
     signingConfigs {
