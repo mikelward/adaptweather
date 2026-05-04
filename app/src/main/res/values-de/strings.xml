@@ -542,7 +542,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_title">Warum dieses Outfit?</string>
     <string name="today_rationale_show">Warum?</string>
     <string name="today_rationale_dismiss">Verstanden</string>
-    <string name="today_rationale_reset">Schwellenwerte zurücksetzen</string>
     <string name="today_rationale_threshold_decrease">Schwellenwert um 1 Grad senken</string>
     <string name="today_rationale_threshold_increase">Schwellenwert um 1 Grad erhöhen</string>
     <string name="today_rationale_threshold_changed_hint">Aktualisieren, um das neue Outfit zu sehen.</string>

@@ -86,10 +86,10 @@ class GenerateDailyInsight(
             ForecastPeriod.TODAY -> tonightForecast.takeIf { it.hourly.isNotEmpty() }
             ForecastPeriod.TONIGHT -> bundle.tomorrow
         }
-        val thresholds = prefs.outfitThresholds
-        val nextOutfit = nextForecast?.let { OutfitSuggestion.fromForecast(it, thresholds) }
+        val rules = prefs.clothesRules
+        val nextOutfit = nextForecast?.let { OutfitSuggestion.fromForecast(it, rules) }
         val nextOutfitRationale = nextForecast?.let {
-            OutfitSuggestion.explainFromForecast(it, thresholds)
+            OutfitSuggestion.explainFromForecast(it, rules)
         }
         val todayTriggered = evaluateClothesRules(periodForecast, prefs.clothesRules)
         // Calendar events are gated on both the opt-in pref AND a configured reader.
@@ -142,9 +142,9 @@ class GenerateDailyInsight(
             forDate = bundle.today.date,
             hourly = periodForecast.hourly,
             confidence = bundle.confidence,
-            outfit = OutfitSuggestion.fromForecast(periodForecast, thresholds),
+            outfit = OutfitSuggestion.fromForecast(periodForecast, rules),
             nextOutfit = nextOutfit,
-            outfitRationale = OutfitSuggestion.explainFromForecast(periodForecast, thresholds),
+            outfitRationale = OutfitSuggestion.explainFromForecast(periodForecast, rules),
             nextOutfitRationale = nextOutfitRationale,
             period = period,
             hasEvents = periodEvents.isNotEmpty(),

@@ -515,7 +515,6 @@ label localizes.
     <string name="today_rationale_title">为什么是这套穿搭？</string>
     <string name="today_rationale_show">为什么？</string>
     <string name="today_rationale_dismiss">明白了</string>
-    <string name="today_rationale_reset">重置阈值</string>
     <string name="today_rationale_threshold_decrease">将阈值降低 1 度</string>
     <string name="today_rationale_threshold_increase">将阈值提高 1 度</string>
     <string name="today_rationale_threshold_changed_hint">刷新以查看新穿搭。</string>

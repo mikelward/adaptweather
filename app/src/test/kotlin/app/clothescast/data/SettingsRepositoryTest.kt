@@ -9,15 +9,15 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.clothescast.core.domain.model.ClothesRule
 import app.clothescast.core.domain.model.DeliveryMode
 import app.clothescast.core.domain.model.DistanceUnit
-import app.clothescast.core.domain.model.Fact
-import app.clothescast.core.domain.model.OutfitSuggestion
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
+import app.clothescast.core.domain.model.thresholdC
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -353,79 +353,71 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `outfitThresholds defaults to DEFAULT and round-trips`() = runTest {
-        subject.preferences.first().outfitThresholds shouldBe OutfitSuggestion.Thresholds.DEFAULT
-
-        val tuned = OutfitSuggestion.Thresholds.DEFAULT.copy(
-            sweaterMaxFeelsLikeMinC = 7.0,
-            tshirtMinFeelsLikeMinC = 17.0,
-        )
-        subject.setOutfitThresholds(tuned)
-        subject.preferences.first().outfitThresholds shouldBe tuned
-    }
-
-    @Test
-    fun `outfitThresholds setter clamps to MIN_C and MAX_C`() = runTest {
-        // Out-of-range values can't reach DataStore — even a runaway tap loop
-        // can't push past the documented bounds.
-        val absurd = OutfitSuggestion.Thresholds(
-            sweaterMaxFeelsLikeMinC = -200.0,
-            tshirtMinFeelsLikeMinC = 999.0,
-            shortsMinFeelsLikeMaxC = 999.0,
-            shortsMinFeelsLikeMinC = -200.0,
-        )
-        subject.setOutfitThresholds(absurd)
-
-        val read = subject.preferences.first().outfitThresholds
-        read.sweaterMaxFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MIN_C
-        read.tshirtMinFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MAX_C
-        read.shortsMinFeelsLikeMaxC shouldBe OutfitSuggestion.Thresholds.MAX_C
-        read.shortsMinFeelsLikeMinC shouldBe OutfitSuggestion.Thresholds.MIN_C
-    }
-
-    @Test
-    fun `resetOutfitThresholds restores DEFAULT`() = runTest {
-        subject.setOutfitThresholds(
-            OutfitSuggestion.Thresholds.DEFAULT.with(
-                Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN,
-                4.0,
-            ),
-        )
-        subject.preferences.first().outfitThresholds.sweaterMaxFeelsLikeMinC shouldBe 4.0
-
-        subject.resetOutfitThresholds()
-        subject.preferences.first().outfitThresholds shouldBe OutfitSuggestion.Thresholds.DEFAULT
-    }
-
-    @Test
-    fun `adjustOutfitThreshold serialises rapid taps so none are dropped`() = runTest {
+    fun `adjustClothesRuleThreshold serialises rapid taps so none are dropped`() = runTest {
         // Five concurrent `−1°` taps must each see the prior write — final
         // value is the starting threshold minus 5°C, not a single 1°C step
         // from the same pre-update snapshot. DataStore.edit serialises edits,
         // so this exercises the atomic read-modify-write path that protects
         // tap-spam from collapsing into one.
-        val starting = OutfitSuggestion.Thresholds.DEFAULT.tshirtMinFeelsLikeMinC
+        val starting = ClothesRule.DEFAULTS.first { it.item == "sweater" }.thresholdC()!!
         coroutineScope {
             repeat(5) {
-                launch {
-                    subject.adjustOutfitThreshold(
-                        Fact.ThresholdKind.TSHIRT_MIN_FEELS_LIKE_MIN,
-                        -1.0,
-                    )
-                }
+                launch { subject.adjustClothesRuleThreshold("sweater", -1.0) }
             }
         }
-        subject.preferences.first().outfitThresholds.tshirtMinFeelsLikeMinC shouldBe (starting - 5.0)
+        subject.preferences.first()
+            .clothesRules.first { it.item == "sweater" }
+            .thresholdC() shouldBe (starting - 5.0)
     }
 
     @Test
-    fun `adjustOutfitThreshold clamps to MIN_C and MAX_C`() = runTest {
+    fun `adjustClothesRuleThreshold clamps to the documented sanity range`() = runTest {
         // Even a relentless tap-spam can't escape the documented bounds.
-        repeat(100) {
-            subject.adjustOutfitThreshold(Fact.ThresholdKind.SWEATER_MAX_FEELS_LIKE_MIN, -1.0)
-        }
-        subject.preferences.first().outfitThresholds.sweaterMaxFeelsLikeMinC shouldBe
-            OutfitSuggestion.Thresholds.MIN_C
+        repeat(100) { subject.adjustClothesRuleThreshold("sweater", -1.0) }
+        subject.preferences.first()
+            .clothesRules.first { it.item == "sweater" }
+            .thresholdC() shouldBe ClothesRule.THRESHOLD_MIN_C
+    }
+
+    @Test
+    fun `adjustClothesRuleThreshold preserves Fahrenheit-typed rules`() = runTest {
+        // A 75°F shorts rule (≈ 23.89°C) bumped by +1°C lands at 25.69°F — the
+        // unit on disk doesn't switch under the user's feet.
+        subject.setClothesRules(
+            listOf(ClothesRule("shorts", ClothesRule.TemperatureAbove(75.0, TemperatureUnit.FAHRENHEIT))),
+        )
+        subject.adjustClothesRuleThreshold("shorts", 1.0)
+
+        val updated = subject.preferences.first().clothesRules.first { it.item == "shorts" }
+        val cond = updated.condition as ClothesRule.TemperatureAbove
+        cond.unit shouldBe TemperatureUnit.FAHRENHEIT
+        // 75°F = 23.888…°C; +1°C = 24.888…°C; back to °F = 76.8°F.
+        cond.value shouldBe 76.8.plusOrMinus(1e-9)
+    }
+
+    @Test
+    fun `adjustClothesRuleThreshold recreates a deleted rule from the catalog default`() = runTest {
+        // User previously deleted the shorts rule; the rationale dialog's
+        // `+1°` should bring it back rather than silently no-op.
+        subject.setClothesRules(ClothesRule.DEFAULTS.filterNot { it.item == "shorts" })
+        subject.adjustClothesRuleThreshold("shorts", -1.0)
+
+        val rules = subject.preferences.first().clothesRules
+        val recreated = rules.first { it.item == "shorts" }
+        recreated.thresholdC() shouldBe 23.0
+        // Catalog default's unit (°C) is preserved on the recreated rule.
+        (recreated.condition as ClothesRule.TemperatureAbove).unit shouldBe TemperatureUnit.CELSIUS
+    }
+
+    @Test
+    fun `adjustClothesRuleThreshold leaves precipitation rules alone`() = runTest {
+        // No temperature condition to nudge → the call is a no-op rather than
+        // mutating a precipitation rule's percent into degrees.
+        val precipRule = ClothesRule("umbrella", ClothesRule.PrecipitationProbabilityAbove(60.0))
+        subject.setClothesRules(listOf(precipRule))
+        subject.adjustClothesRuleThreshold("umbrella", 5.0)
+
+        subject.preferences.first().clothesRules shouldContainExactly listOf(precipRule)
     }
 
     @Test

@@ -507,7 +507,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_title">Perché questo outfit?</string>
     <string name="today_rationale_show">Perché?</string>
     <string name="today_rationale_dismiss">Ho capito</string>
-    <string name="today_rationale_reset">Reimposta soglie</string>
     <string name="today_rationale_threshold_decrease">Abbassa soglia di 1 grado</string>
     <string name="today_rationale_threshold_increase">Alza soglia di 1 grado</string>
     <string name="today_rationale_threshold_changed_hint">Aggiorna per vedere il nuovo outfit.</string>

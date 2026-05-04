@@ -521,7 +521,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_title">Pourquoi cette tenue ?</string>
     <string name="today_rationale_show">Pourquoi ?</string>
     <string name="today_rationale_dismiss">Compris</string>
-    <string name="today_rationale_reset">Réinitialiser les seuils</string>
     <string name="today_rationale_threshold_decrease">Baisser le seuil de 1 degré</string>
     <string name="today_rationale_threshold_increase">Augmenter le seuil de 1 degré</string>
     <string name="today_rationale_threshold_changed_hint">Actualise pour voir la nouvelle tenue.</string>

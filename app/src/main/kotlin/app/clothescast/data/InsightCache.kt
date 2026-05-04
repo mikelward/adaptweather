@@ -249,7 +249,7 @@ class InsightCache(
         val observedC: Double,
         val observedAtSecondOfDay: Int? = null,
         val thresholdC: Double,
-        val thresholdKind: String,
+        val ruleItem: String,
         val comparison: String,
     ) {
         fun toDomain(): Fact = Fact(
@@ -258,14 +258,7 @@ class InsightCache(
             observedC = observedC,
             observedAt = observedAtSecondOfDay?.let { LocalTime.ofSecondOfDay(it.toLong()) },
             thresholdC = thresholdC,
-            // Throw on an unknown kind rather than fall back — `thresholdKind`
-            // identifies *which* preference the rationale dialog's `−1°` / `+1°`
-            // controls bind to, so silently aliasing it to a different knob
-            // would adjust the wrong threshold on the user's behalf. The
-            // runCatching at [readSlot] turns this into a dropped cache entry;
-            // the next worker run regenerates it cleanly. Cache entries are
-            // regeneratable, so discarding is preferable to mis-association.
-            thresholdKind = Fact.ThresholdKind.valueOf(thresholdKind),
+            ruleItem = ruleItem,
             comparison = runCatching { Fact.Comparison.valueOf(comparison) }
                 .getOrDefault(Fact.Comparison.AT_OR_ABOVE),
         )
@@ -317,7 +310,7 @@ class InsightCache(
         observedC = observedC,
         observedAtSecondOfDay = observedAt?.toSecondOfDay(),
         thresholdC = thresholdC,
-        thresholdKind = thresholdKind.name,
+        ruleItem = ruleItem,
         comparison = comparison.name,
     )
 
@@ -343,14 +336,13 @@ class InsightCache(
     )
 
     companion object {
-        // Bumped from `latest_insight_v3` / `latest_tonight_insight_v2` when [Fact]
-        // grew a non-null [Fact.thresholdKind] tag — old payloads omit it and the
-        // serializer can't fill in a sensible default since we'd have to guess
-        // *which* knob a given threshold value referred to. Old payloads are
-        // dropped on first read; the next worker run repopulates with the new
-        // schema.
-        private val TODAY_INSIGHT_JSON = stringPreferencesKey("latest_insight_v4")
-        private val TONIGHT_INSIGHT_JSON = stringPreferencesKey("latest_tonight_insight_v3")
+        // Bumped when [Fact] swapped its `thresholdKind` enum for a free-form
+        // [Fact.ruleItem] string keyed to a [ClothesRule.item] — old payloads
+        // carried the enum name and the serializer can't infer a clothes-rule
+        // key from it. Old payloads are dropped on first read; the next worker
+        // run repopulates with the new schema.
+        private val TODAY_INSIGHT_JSON = stringPreferencesKey("latest_insight_v5")
+        private val TONIGHT_INSIGHT_JSON = stringPreferencesKey("latest_tonight_insight_v4")
 
         fun create(context: Context): InsightCache = InsightCache(context.insightDataStore)
     }

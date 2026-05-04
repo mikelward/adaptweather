@@ -527,7 +527,6 @@ displayed label localizes.
     <string name="today_rationale_title">왜 이 의상인가요?</string>
     <string name="today_rationale_show">왜요?</string>
     <string name="today_rationale_dismiss">알겠습니다</string>
-    <string name="today_rationale_reset">임계값 재설정</string>
     <string name="today_rationale_threshold_decrease">임계값 1도 낮추기</string>
     <string name="today_rationale_threshold_increase">임계값 1도 높이기</string>
     <string name="today_rationale_threshold_changed_hint">새 의상을 보려면 새로고침하세요.</string>

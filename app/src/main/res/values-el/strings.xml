@@ -557,7 +557,6 @@ zh-CN) is unchanged; only the displayed label localizes.
     <string name="today_rationale_title">Γιατί αυτή η ένδυση;</string>
     <string name="today_rationale_show">Γιατί;</string>
     <string name="today_rationale_dismiss">Κατάλαβα</string>
-    <string name="today_rationale_reset">Επαναφορά ορίων</string>
     <string name="today_rationale_threshold_decrease">Μείωση ορίου κατά 1 βαθμό</string>
     <string name="today_rationale_threshold_increase">Αύξηση ορίου κατά 1 βαθμό</string>
     <string name="today_rationale_threshold_changed_hint">Ανανέωσε για να δεις τη νέα ένδυση.</string>
