@@ -453,6 +453,64 @@ internal fun LastCrashBannerPreview() {
     Frame { LastCrashBannerCard(onShare = {}, onDismiss = {}) }
 }
 
+@Preview(name = "Banner · update available", widthDp = 360)
+@Composable
+internal fun UpdateAvailableBannerPreview() {
+    // Renders the stateless card variant directly so the snapshot doesn't
+    // need a working AppUpdateManager / SettingsRepository on the Robolectric
+    // app at test time.
+    Frame {
+        UpdateAvailableBannerCard(
+            downloadComplete = false,
+            onAction = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(name = "Banner · update downloaded", widthDp = 360)
+@Composable
+internal fun UpdateDownloadedBannerPreview() {
+    Frame {
+        UpdateAvailableBannerCard(
+            downloadComplete = true,
+            onAction = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(name = "Banner · local build (clean)", widthDp = 360)
+@Composable
+internal fun LocalBuildBannerPreview() {
+    // Pin `now` and `buildTimestampMs` so the snapshot's relative time string
+    // is deterministic instead of "5 hours ago" sliding to "6 hours ago" at
+    // the next snapshot run.
+    Frame {
+        LocalBuildBannerCard(
+            branch = "claude/add-update-check-banner-lcQwR",
+            sha = "3cb1b3c",
+            dirty = false,
+            buildTimestampMs = 1_746_360_000_000L, // 2026-05-04 11:00 UTC
+            nowProvider = { 1_746_367_200_000L },  // +2h00
+        )
+    }
+}
+
+@Preview(name = "Banner · local build (dirty)", widthDp = 360)
+@Composable
+internal fun LocalBuildBannerDirtyPreview() {
+    Frame {
+        LocalBuildBannerCard(
+            branch = "claude/add-update-check-banner-lcQwR",
+            sha = "3cb1b3c",
+            dirty = true,
+            buildTimestampMs = 1_746_366_000_000L, // 2026-05-04 12:40 UTC
+            nowProvider = { 1_746_367_200_000L },  // +20 min
+        )
+    }
+}
+
 // 24-hour curve loosely tracking a temperate spring day: cool overnight low,
 // warming through morning, peak around 15:00, then dropping back. Values are
 // in Celsius — the ForecastChart converts at the edge per temperatureUnit.

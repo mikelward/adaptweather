@@ -154,6 +154,10 @@ class PreviewSnapshots {
     @Test fun work_status_failed_no_location() = capture { WorkStatusFailedNoLocationPreview() }
     @Test fun location_action_required_banner() = capture { LocationActionRequiredBannerPreview() }
     @Test fun last_crash_banner() = capture { LastCrashBannerPreview() }
+    @Test fun update_available_banner() = capture { UpdateAvailableBannerPreview() }
+    @Test fun update_downloaded_banner() = capture { UpdateDownloadedBannerPreview() }
+    @Test fun local_build_banner() = capture { LocalBuildBannerPreview() }
+    @Test fun local_build_banner_dirty() = capture { LocalBuildBannerDirtyPreview() }
 
     @Test fun notification_icon_tshirt() = capture { NotificationIconTShirtPreview() }
     @Test fun notification_icon_sweater() = capture { NotificationIconSweaterPreview() }

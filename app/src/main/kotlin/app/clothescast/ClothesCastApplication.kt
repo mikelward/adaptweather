@@ -25,6 +25,7 @@ import app.clothescast.notification.WeatherAlertNotifier
 import app.clothescast.tts.AndroidTtsSpeaker
 import app.clothescast.tts.AndroidTtsVoiceEnumerator
 import app.clothescast.tts.TtsSpeaker
+import app.clothescast.update.AppUpdateChecker
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -71,6 +72,7 @@ class ClothesCastApplication : Application() {
      */
     val androidTtsVoiceEnumerator: AndroidTtsVoiceEnumerator by lazy { AndroidTtsVoiceEnumerator(this) }
     val calendarEventReader: CalendarEventReader by lazy { CalendarContractEventReader(this) }
+    val appUpdateChecker: AppUpdateChecker by lazy { AppUpdateChecker(this) }
     val geminiTtsClient: GeminiTtsClient by lazy { GeminiTtsClient(httpClient, secureKeyStore) }
 
     private val httpClient: HttpClient by lazy {

@@ -112,6 +112,18 @@
     <string name="today_crash_banner_share">Share report</string>
     <string name="today_crash_banner_dismiss">Dismiss</string>
 
+    <!-- Banner surfaced on the Today screen when a newer build of the app is on
+         the Play Store. Only shown for Play-Store installs (sideload / F-Droid
+         users can't action it). Tapping Update kicks off Play's flexible in-app
+         update flow: the new APK downloads in the background, then the banner
+         switches to "Update downloaded" with a Restart button to install. -->
+    <string name="today_update_available_title">Update available</string>
+    <string name="today_update_available_body">A newer version of ClothesCast is on the Play Store.</string>
+    <string name="today_update_available_action">Update</string>
+    <string name="today_update_available_dismiss">Not now</string>
+    <string name="today_update_downloaded_body">Update downloaded. Restart to finish installing.</string>
+    <string name="today_update_downloaded_action">Restart</string>
+
     <string name="onboarding_title">Welcome to ClothesCast</string>
     <string name="onboarding_subtitle">Three quick choices and you\'re set. Tweak later in Settings.</string>
     <string name="onboarding_subtitle_tv">Two quick choices and you\'re set. Tweak later in Settings.</string>
