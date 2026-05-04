@@ -69,6 +69,20 @@ class SettingsRepository(
         dataStore.edit { it[DISMISSED_UPDATE_VERSION] = versionCode }
     }
 
+    /**
+     * The git SHA the user has dismissed the local-build banner for. Empty
+     * means "never dismissed". Keyed on SHA so installing a build from a new
+     * commit automatically resurfaces the banner — the user sees it once per
+     * commit, not once per launch.
+     */
+    val dismissedLocalBuildSha: Flow<String> = dataStore.data.map {
+        it[DISMISSED_LOCAL_BUILD_SHA] ?: ""
+    }
+
+    suspend fun setDismissedLocalBuildSha(sha: String) {
+        dataStore.edit { it[DISMISSED_LOCAL_BUILD_SHA] = sha }
+    }
+
     suspend fun setSchedule(time: LocalTime, days: Set<DayOfWeek>) {
         require(days.isNotEmpty()) { "Schedule must include at least one day" }
         dataStore.edit { prefs ->
@@ -391,6 +405,7 @@ class SettingsRepository(
         private val OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN =
             doublePreferencesKey("outfit_threshold_shorts_min_feels_like_min_c")
         private val DISMISSED_UPDATE_VERSION = intPreferencesKey("dismissed_update_version")
+        private val DISMISSED_LOCAL_BUILD_SHA = stringPreferencesKey("dismissed_local_build_sha")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)
