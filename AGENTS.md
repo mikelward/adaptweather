@@ -183,9 +183,10 @@ new rule the first time something bites you, not the third.
   depending on the JVM's default locale. This is a pre-existing issue, not
   caused by your changes. CI passes this test because the GitHub runner locale
   defaults differently.
-- **No lint task is configured** in the Gradle build. There is no `lint` or
-  `ktlint` plugin wired. Kotlin compiler warnings are the closest equivalent;
-  they are visible in the build output.
+- **Android Lint is available** for the `:app` module via AGP; run
+  `./gradlew :app:lintDebug` when app-side validation needs lint coverage.
+  There is no separate `ktlint` plugin wired, so Kotlin style checks are not
+  available beyond compiler warnings.
 - **This is a client-only Android app.** No backend server, database, or
   Docker containers to start. The app calls Open-Meteo (free, keyless) and
   optionally Gemini/OpenAI/ElevenLabs (BYOK). Testing is purely JVM-based.
