@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -52,6 +53,21 @@ class SettingsRepository(
     private val json: Json = Json { ignoreUnknownKeys = true },
 ) {
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs -> prefs.toUserPreferences() }
+
+    /**
+     * The available-version code the user has dismissed the in-app update
+     * banner for. `0` means "never dismissed" — any non-zero
+     * `availableVersionCode` from Play surfaces the banner. Stored separately
+     * from [UserPreferences] because it isn't a user-visible preference and
+     * doesn't need to flow through the rest of the settings UI.
+     */
+    val dismissedUpdateVersion: Flow<Int> = dataStore.data.map {
+        it[DISMISSED_UPDATE_VERSION] ?: 0
+    }
+
+    suspend fun setDismissedUpdateVersion(versionCode: Int) {
+        dataStore.edit { it[DISMISSED_UPDATE_VERSION] = versionCode }
+    }
 
     suspend fun setSchedule(time: LocalTime, days: Set<DayOfWeek>) {
         require(days.isNotEmpty()) { "Schedule must include at least one day" }
@@ -374,6 +390,7 @@ class SettingsRepository(
             doublePreferencesKey("outfit_threshold_shorts_min_feels_like_max_c")
         private val OUTFIT_THRESHOLD_SHORTS_MIN_FEELS_LIKE_MIN =
             doublePreferencesKey("outfit_threshold_shorts_min_feels_like_min_c")
+        private val DISMISSED_UPDATE_VERSION = intPreferencesKey("dismissed_update_version")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

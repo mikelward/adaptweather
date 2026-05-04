@@ -55,6 +55,19 @@ val isCiBuild: Boolean = System.getenv("CI") == "true"
 val launcherIconRes: String = if (isCiBuild) "@mipmap/ic_launcher" else "@mipmap/ic_launcher_construction"
 println("clothescast: isCiBuild=$isCiBuild, launcherIcon=$launcherIconRes (versionCode=$gitCommitCount, HEAD=$gitShortSha)")
 
+// Today-screen local-build banner: shown on non-CI builds (gated on the same
+// `isCiBuild` flag the launcher icon uses) so a developer can see at a glance
+// which APK is installed and how fresh it is — "claude/foo · abc1234 (dirty)
+// · 2 hours ago". Detached HEAD shows up as a literal "HEAD" from rev-parse;
+// translate that to the short SHA so CI debug builds (rare) read sensibly.
+val gitBranchRaw: String = git("rev-parse", "--abbrev-ref", "HEAD")
+val gitBranch: String = if (gitBranchRaw == "HEAD") "detached@$gitShortSha" else gitBranchRaw
+val gitDirty: Boolean = git("status", "--porcelain").isNotEmpty()
+// Captured at Gradle configure time. Each new build invalidates the BuildConfig
+// regen, but that's already AGP's normal behaviour and the dev banner needs a
+// "2 hours ago" relative timestamp that's accurate for the current install.
+val buildTimestampMs: Long = System.currentTimeMillis()
+
 android {
     // Pinned to app.clothescast. Renamed from app.adaptweather as part of the
     // product rename; existing FAD testers had to uninstall + reinstall,
@@ -76,10 +89,24 @@ android {
         // versionName, not versionCode — embedding the count means one string
         // identifies the build everywhere.
         versionName = "$versionNameBase+$gitCommitCount.$gitShortSha"
+
         // Manifest-merger placeholder consumed by AndroidManifest.xml's
         // android:icon attribute. See the launcherIconRes block above for
         // the rule.
         manifestPlaceholders["launcherIconRes"] = launcherIconRes
+
+        // Dev banner fields surfaced on the Today screen for local (non-CI)
+        // builds. IS_LOCAL_BUILD piggybacks on the same `isCiBuild` flag the
+        // launcher icon uses, so the badge and the banner agree on which
+        // APKs are "the developer's own machine" — FAD-distributed debug
+        // APKs and Play release builds (both built on CI) get neither.
+        // Defined for all variants so the composable compiles regardless of
+        // which buildType is active.
+        buildConfigField("boolean", "IS_LOCAL_BUILD", (!isCiBuild).toString())
+        buildConfigField("String", "GIT_BRANCH", "\"$gitBranch\"")
+        buildConfigField("String", "GIT_SHA", "\"$gitShortSha\"")
+        buildConfigField("boolean", "GIT_DIRTY", gitDirty.toString())
+        buildConfigField("long", "BUILD_TIMESTAMP_MS", "${buildTimestampMs}L")
     }
 
     signingConfigs {
@@ -277,6 +304,14 @@ dependencies {
     // QR code generation: encodes the pairing URL into a BitMatrix that we render
     // as an Android Bitmap. Pure-Java, no Android SDK dependency.
     implementation(libs.zxing.core)
+
+    // Play in-app updates. Used to check whether a newer build is on the Play
+    // Store and to drive the FLEXIBLE update flow (background download +
+    // "Restart" confirmation) from the Today-screen banner. Returns
+    // UPDATE_NOT_AVAILABLE for non-Play installs, but we still gate the call on
+    // PackageManager.getInstallSourceInfo to skip the round-trip on F-Droid /
+    // sideloaded builds.
+    implementation(libs.play.app.update.ktx)
 
     testImplementation(platform("org.junit:junit-bom:5.11.3"))
     testImplementation(libs.junit.jupiter.api)

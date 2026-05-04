@@ -229,6 +229,11 @@ private fun TodayContent(
             .padding(horizontal = 16.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        // First in the stack on purpose: a stale build is the upstream cause of
+        // many bug reports, so giving the user the chance to update before they
+        // notice anything else is the highest-leverage placement.
+        UpdateAvailableBanner()
+        LocalBuildBanner()
         LastCrashBanner()
         if (locationActionRequired) {
             LocationActionRequiredBanner(onSetUpLocation = onSetUpLocation)

@@ -31,6 +31,10 @@ vico = "2.0.3"
 roborazzi = "1.32.0"
 robolectric = "4.14.1"
 junit4 = "4.13.2"
+# Play in-app updates: AppUpdateManager + the FLEXIBLE flow (background download
+# + "Restart to install" prompt). Used to surface the update-available banner on
+# the Today screen for Play-Store installs only.
+playAppUpdate = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -89,6 +93,8 @@ junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit5" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

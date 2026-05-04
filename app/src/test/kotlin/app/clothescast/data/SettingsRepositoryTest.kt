@@ -429,6 +429,21 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `dismissedUpdateVersion defaults to 0 and round-trips`() = runTest {
+        // Default 0 means "never dismissed" — any non-zero availableVersionCode
+        // from Play surfaces the update banner. Storing the dismissed version
+        // (rather than a boolean) means a still-newer release re-surfaces the
+        // banner automatically.
+        subject.dismissedUpdateVersion.first() shouldBe 0
+
+        subject.setDismissedUpdateVersion(72)
+        subject.dismissedUpdateVersion.first() shouldBe 72
+
+        subject.setDismissedUpdateVersion(99)
+        subject.dismissedUpdateVersion.first() shouldBe 99
+    }
+
+    @Test
     fun `zoneId is resolved fresh on each emission`() = runTest {
         val zones = mutableListOf(ZoneId.of("UTC"), ZoneId.of("America/New_York"))
         val rotating = SettingsRepository(
