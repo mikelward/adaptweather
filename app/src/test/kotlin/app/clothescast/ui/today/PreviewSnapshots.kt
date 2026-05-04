@@ -105,6 +105,17 @@ class PreviewSnapshots {
 
     private fun capture(content: @Composable () -> Unit) {
         composeRule.setContent { content() }
+        // Drain any async side-effects (e.g. Vico's CartesianChartModelProducer
+        // transaction, which runs in a LaunchedEffect and delivers data to the chart
+        // host via a separate coroutine hop). Without this, the chart snapshot can
+        // race and produce a near-blank PNG. waitForIdle() works if Vico dispatches
+        // on the composition's coroutine scope; if it still flakes, the robust fix
+        // is to pre-populate the producer synchronously in the test with runBlocking
+        // before setContent, which requires hoisting it out of ForecastChart into a
+        // parameter so the test can inject it.
+        // TODO: if forecast_chart snapshots flake again, implement the runBlocking
+        //  pre-population approach instead.
+        composeRule.waitForIdle()
         composeRule.onRoot().captureRoboImage(filePath = "$outputDir/${testName.methodName}.png")
     }
 
