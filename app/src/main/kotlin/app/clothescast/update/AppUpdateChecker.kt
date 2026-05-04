@@ -85,6 +85,18 @@ class AppUpdateChecker(private val context: Context) {
             info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
                 info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE) ->
                 UpdateState.Available(info.availableVersionCode(), info)
+            // In-flight download: Play returns DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+            // while the FLEXIBLE download is still pending or in progress. Preserve the
+            // current Available state (or re-establish it) so the install-state listener
+            // can still promote to ReadyToInstall when DOWNLOADED arrives. Without this,
+            // a resume-triggered refresh() during a download clears Available to UpToDate
+            // and the listener's `_state.value as? Available` cast fails — leaving the
+            // banner dark until the user backgrounds and foregrounds again after the
+            // download completes.
+            info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS &&
+                info.installStatus() in setOf(InstallStatus.PENDING, InstallStatus.DOWNLOADING) ->
+                (_state.value as? UpdateState.Available)
+                    ?: UpdateState.Available(info.availableVersionCode(), info)
             else -> UpdateState.UpToDate
         }
     }

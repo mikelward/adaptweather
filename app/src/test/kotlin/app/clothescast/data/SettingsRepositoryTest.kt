@@ -444,6 +444,17 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `dismissedLocalBuildSha defaults to empty and round-trips`() = runTest {
+        subject.dismissedLocalBuildSha.first() shouldBe ""
+
+        subject.setDismissedLocalBuildSha("abc1234")
+        subject.dismissedLocalBuildSha.first() shouldBe "abc1234"
+
+        subject.setDismissedLocalBuildSha("def5678")
+        subject.dismissedLocalBuildSha.first() shouldBe "def5678"
+    }
+
+    @Test
     fun `zoneId is resolved fresh on each emission`() = runTest {
         val zones = mutableListOf(ZoneId.of("UTC"), ZoneId.of("America/New_York"))
         val rotating = SettingsRepository(

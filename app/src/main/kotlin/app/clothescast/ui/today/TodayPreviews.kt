@@ -492,6 +492,7 @@ internal fun LocalBuildBannerPreview() {
             sha = "3cb1b3c",
             dirty = false,
             buildTimestampMs = 1_746_360_000_000L, // 2026-05-04 11:00 UTC
+            onDismiss = {},
             nowProvider = { 1_746_367_200_000L },  // +2h00
         )
     }
@@ -506,6 +507,7 @@ internal fun LocalBuildBannerDirtyPreview() {
             sha = "3cb1b3c",
             dirty = true,
             buildTimestampMs = 1_746_366_000_000L, // 2026-05-04 12:40 UTC
+            onDismiss = {},
             nowProvider = { 1_746_367_200_000L },  // +20 min
         )
     }

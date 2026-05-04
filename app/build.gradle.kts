@@ -103,7 +103,7 @@ android {
         // Defined for all variants so the composable compiles regardless of
         // which buildType is active.
         buildConfigField("boolean", "IS_LOCAL_BUILD", (!isCiBuild).toString())
-        buildConfigField("String", "GIT_BRANCH", "\"$gitBranch\"")
+        buildConfigField("String", "GIT_BRANCH", "\"${gitBranch.replace("\"", "\\\"")}\"")
         buildConfigField("String", "GIT_SHA", "\"$gitShortSha\"")
         buildConfigField("boolean", "GIT_DIRTY", gitDirty.toString())
         buildConfigField("long", "BUILD_TIMESTAMP_MS", "${buildTimestampMs}L")
