@@ -484,4 +484,156 @@ they diverge from BR ("Polonês" → "Polaco", "Holandês" →
     <string name="insight_time_hour">%1$dh</string>
     <string name="insight_time_hour_minutes">%1$dh%2$02d</string>
 
+    <!-- "Why this outfit?" rationale dialog. -->
+    <string name="today_rationale_title">Porque este outfit?</string>
+    <string name="today_rationale_show">Porquê?</string>
+    <string name="today_rationale_dismiss">Entendido</string>
+    <string name="today_rationale_threshold_decrease">Diminuir limite em 1 grau</string>
+    <string name="today_rationale_threshold_increase">Aumentar limite em 1 grau</string>
+    <string name="today_rationale_threshold_changed_hint">Atualiza para ver a nova roupa.</string>
+    <string name="today_rationale_unavailable">Nenhuma justificação disponível — abre a aplicação após a próxima atualização.</string>
+    <string name="today_rationale_min_below_with_time">Sensação mínima de %1$s%2$s às %3$s, abaixo de %4$s%2$s</string>
+    <string name="today_rationale_min_below">Sensação mínima de %1$s%2$s, abaixo de %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">Sensação mínima de %1$s%2$s às %3$s, pelo menos %4$s%2$s</string>
+    <string name="today_rationale_min_above">Sensação mínima de %1$s%2$s, pelo menos %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">Sensação máxima de apenas %1$s%2$s às %3$s, abaixo de %4$s%2$s</string>
+    <string name="today_rationale_max_below">Sensação máxima de apenas %1$s%2$s, abaixo de %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">Sensação máxima de %1$s%2$s às %3$s, pelo menos %4$s%2$s</string>
+    <string name="today_rationale_max_above">Sensação máxima de %1$s%2$s, pelo menos %3$s%2$s</string>
+
+    <!-- Today screen: location prompts and status. -->
+    <string name="today_location_required_title">Configura a tua localização</string>
+    <string name="today_location_required_body">O ClothesCast precisa de saber onde estás para ir buscar a previsão. Concede permissão de localização permanente ou escolhe uma cidade.</string>
+    <string name="today_location_required_action">Abrir definições de localização</string>
+    <string name="today_failed_no_location">Não foi possível obter a tua localização. Concede permissão de localização permanente ou define uma cidade nas Definições.</string>
+
+    <!-- Fallback label for the maps link when GPS coords are known but no
+         city name could be resolved. -->
+    <string name="today_location_unknown">A tua localização</string>
+
+    <!-- Shown while WorkManager is in exponential back-off between retries. -->
+    <string name="today_retrying">A última tentativa falhou — a tentar novamente…</string>
+
+    <!-- Crash-report banner shown on the Today screen after a previous crash. -->
+    <string name="today_crash_banner_title">O último arranque falhou com erro</string>
+    <string name="today_crash_banner_body">Um relatório de erro foi guardado no teu dispositivo. Partilhá-lo para corrigir o problema? Nada é enviado até escolheres um destino.</string>
+    <string name="today_crash_banner_share">Partilhar relatório</string>
+    <string name="today_crash_banner_dismiss">Fechar</string>
+
+    <!-- In-app update banner: shown when a newer build is on the Play Store. -->
+    <string name="today_update_available_title">Atualização disponível</string>
+    <string name="today_update_available_body">Uma versão mais recente do ClothesCast está na Play Store.</string>
+    <string name="today_update_available_action">Atualizar</string>
+    <string name="today_update_available_dismiss">Agora não</string>
+    <string name="today_update_downloaded_body">Atualização transferida. Reinicia para concluir a instalação.</string>
+    <string name="today_update_downloaded_action">Reiniciar</string>
+
+    <!-- TV-specific onboarding subtitle (two steps instead of three). -->
+    <string name="onboarding_subtitle_tv">Duas escolhas rápidas e estás pronto. Todo o resto pode ser ajustado nas definições mais tarde.</string>
+
+    <!-- Onboarding — background location step. -->
+    <string name="onboarding_location_grant_background">Permitir sempre</string>
+    <string name="onboarding_location_background_needed">Mais um passo: o ClothesCast precisa de \'Permitir sempre\' para que a previsão matinal possa ler a tua localização enquanto a aplicação está fechada.</string>
+    <string name="onboarding_location_enter_manual_hint">Podes introduzir a tua localização manualmente se recusares o acesso à localização ou se a localização do dispositivo estiver incorreta.</string>
+
+    <!-- Onboarding — TV pairing step. -->
+    <string name="onboarding_pair_from_phone">Emparelhar pelo telemóvel</string>
+
+    <!-- Pairing screen (Android TV). -->
+    <string name="pairing_title">Escanear para emparelhar</string>
+    <string name="pairing_instructions">Escaneia este código QR com o teu telemóvel e cola a tua chave de API do Gemini no formulário que abrir. A chave será enviada diretamente para esta TV pela tua rede Wi-Fi doméstica — sem retransmissão na nuvem.</string>
+    <string name="pairing_qr_description">Código QR com ligação para %1$s</string>
+    <string name="pairing_cancel">Cancelar</string>
+    <string name="pairing_received">Chave recebida — a guardar…</string>
+    <string name="pairing_timeout_title">Janela de emparelhamento expirada</string>
+    <string name="pairing_timeout_body">A janela de emparelhamento de 5 minutos foi fechada. Toca em Tentar novamente para abrir uma nova.</string>
+    <string name="pairing_error_title">Não foi possível iniciar o emparelhamento</string>
+    <string name="pairing_error_body">Certifica-te de que a TV está ligada ao Wi-Fi e tenta novamente.</string>
+    <string name="pairing_retry">Tentar novamente</string>
+
+    <!-- Settings root — rows not yet translated. -->
+    <string name="settings_root_display">Ecrã</string>
+    <string name="settings_root_location">Localização</string>
+    <string name="settings_root_calendar">Calendário</string>
+    <string name="settings_root_display_subtitle">Tema</string>
+    <string name="settings_root_location_subtitle">Automático ou escolhe uma cidade</string>
+    <string name="settings_root_calendar_subtitle">Compromissos de hoje</string>
+    <string name="settings_root_clothes_subtitle">Temperaturas e roupas</string>
+    <string name="settings_root_region_subtitle">Idiomas e unidades</string>
+    <string name="settings_root_schedule_subtitle">Notificações e horários</string>
+    <string name="settings_root_voice_subtitle">Fornecedores e sotaques</string>
+
+    <!-- Display / theme settings. -->
+    <string name="settings_display_theme_title">Tema</string>
+    <string name="settings_display_theme_system">Definição do sistema</string>
+    <string name="settings_display_theme_light">Claro</string>
+    <string name="settings_display_theme_dark">Escuro</string>
+
+    <!-- API key screen — Gemini section header. -->
+    <string name="settings_api_key_gemini_header">Usa o Gemini para vozes de alta qualidade.</string>
+
+    <!-- Location screen — additional strings. -->
+    <string name="settings_location_use_device_description">Última localização aproximada</string>
+    <string name="settings_location_detecting">A detetar…</string>
+    <string name="settings_location_background_banner_title">Localização permanente necessária</string>
+    <string name="settings_location_background_banner_body">Sem ela, a previsão matinal não consegue ler a tua localização.</string>
+    <string name="settings_location_manual_override">Localização errada? Definir manualmente</string>
+    <string name="settings_location_manual_override_disclosure">Se escolheres uma cidade, a deteção automática será desativada.</string>
+
+    <!-- Location permission rationale dialogs. -->
+    <string name="settings_location_rationale_title">Acesso à localização</string>
+    <string name="settings_location_rationale_body">O ClothesCast lê a tua localização para ir buscar a previsão local.</string>
+    <string name="settings_location_rationale_continue">Continuar</string>
+    <string name="settings_location_rationale_dismiss">Agora não</string>
+    <string name="settings_location_background_rationale_title">Permitir sempre</string>
+    <string name="settings_location_background_rationale_body">O ClothesCast vai buscar a tua previsão em segundo plano todas as manhãs e precisa do acesso à localização \'Permitir sempre\'. Serás redirecionado para as Definições do sistema para o conceder.</string>
+    <string name="settings_location_background_rationale_continue">Abrir Definições</string>
+    <string name="settings_location_background_rationale_dismiss">Agora não</string>
+    <string name="settings_location_background_denied_title">Acesso permanente não concedido</string>
+    <string name="settings_location_background_denied_body">Sem \'Permitir sempre\', a previsão matinal usará a tua localização guardada. Abrir as Definições do sistema para o conceder?</string>
+    <string name="settings_location_background_denied_open">Abrir Definições</string>
+    <string name="settings_location_background_denied_keep">Continuar a usar a localização guardada</string>
+
+    <!-- TTS engine selection — description beneath the Gemini/Device toggle. -->
+    <string name="settings_tts_engine_description">O Gemini soa muito mais natural do que a voz do dispositivo, mas requer uma chamada de rede no momento da síntese e usa a tua chave de API para a síntese (uma chamada curta por ClothesCast reproduzido). Usa a voz do dispositivo se o Gemini falhar.</string>
+
+    <!-- TTS device voice picker. -->
+    <string name="settings_tts_device_voice_label">Voz do dispositivo</string>
+    <string name="settings_tts_device_voice_auto">Automático (melhor para sotaque)</string>
+    <string name="settings_tts_device_voice_currently">Atualmente: %1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">A carregar…</string>
+    <string name="settings_tts_device_voice_network">Rede</string>
+    <string name="settings_tts_device_voice_offline">Sem ligação</string>
+    <string name="settings_tts_install_google_hint">Instala o mecanismo de texto em voz do Google para vozes de maior qualidade.</string>
+    <string name="settings_tts_install_google_button">Instalar Google TTS</string>
+
+    <!-- Language picker — newly added locales not yet in pt-PT file. -->
+    <string name="settings_region_language_am_et">Amárico (Etiópia)</string>
+    <string name="settings_region_language_bg_bg">Búlgaro (Bulgária)</string>
+    <string name="settings_region_language_cs_cz">Checo (Chéquia)</string>
+    <string name="settings_region_language_da_dk">Dinamarquês (Dinamarca)</string>
+    <string name="settings_region_language_el_gr">Grego (Grécia)</string>
+    <string name="settings_region_language_hu_hu">Húngaro (Hungria)</string>
+    <string name="settings_region_language_nb_no">Norueguês Bokmål (Noruega)</string>
+    <string name="settings_region_language_ro_ro">Romeno (Roménia)</string>
+    <string name="settings_region_language_sk_sk">Eslovaco (Eslováquia)</string>
+    <string name="settings_region_language_sq_al">Albanês (Albânia)</string>
+    <string name="settings_region_language_sr_cyrl_rs">Sérvio (cirílico)</string>
+    <string name="settings_region_language_sr_rs">Sérvio (latino)</string>
+    <string name="settings_region_language_sw_ke">Suaíli (Quénia)</string>
+
+    <!-- TTS voice locale picker — newly added locales. -->
+    <string name="settings_tts_voice_locale_am_et">Amárico (Etiópia)</string>
+    <string name="settings_tts_voice_locale_bg_bg">Búlgaro (Bulgária)</string>
+    <string name="settings_tts_voice_locale_cs_cz">Checo (Chéquia)</string>
+    <string name="settings_tts_voice_locale_da_dk">Dinamarquês (Dinamarca)</string>
+    <string name="settings_tts_voice_locale_el_gr">Grego (Grécia)</string>
+    <string name="settings_tts_voice_locale_hu_hu">Húngaro (Hungria)</string>
+    <string name="settings_tts_voice_locale_nb_no">Norueguês Bokmål (Noruega)</string>
+    <string name="settings_tts_voice_locale_ro_ro">Romeno (Roménia)</string>
+    <string name="settings_tts_voice_locale_sk_sk">Eslovaco (Eslováquia)</string>
+    <string name="settings_tts_voice_locale_sq_al">Albanês (Albânia)</string>
+    <string name="settings_tts_voice_locale_sr_cyrl_rs">Sérvio (cirílico)</string>
+    <string name="settings_tts_voice_locale_sr_rs">Sérvio (latino)</string>
+    <string name="settings_tts_voice_locale_sw_ke">Suaíli (Quénia)</string>
 </resources>
