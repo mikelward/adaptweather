@@ -527,4 +527,66 @@ label localizes.
     <string name="today_rationale_max_below">体感最高气温仅 %1$s%2$s，低于 %3$s%2$s</string>
     <string name="today_rationale_max_above_with_time">体感最高气温 %1$s%2$s（%3$s），至少 %4$s%2$s</string>
     <string name="today_rationale_max_above">体感最高气温 %1$s%2$s，至少 %3$s%2$s</string>
+
+
+    <!-- Today screen — additions: location-unknown label, retry banner,
+         crash-report banner (post-crash share prompt), and Play Store
+         in-app update prompts (available + downloaded states). -->
+    <string name="today_location_unknown">当前位置</string>
+    <string name="today_retrying">上次尝试失败 — 重试中…</string>
+
+    <string name="today_crash_banner_title">上次运行已崩溃</string>
+    <string name="today_crash_banner_body">崩溃报告已保存在你的设备上。要分享出来以便修复 bug 吗？在你选择发送目标之前不会发送任何内容。</string>
+    <string name="today_crash_banner_share">分享报告</string>
+    <string name="today_crash_banner_dismiss">关闭</string>
+
+    <string name="today_update_available_title">有可用更新</string>
+    <string name="today_update_available_body">Play 商店上有 ClothesCast 的新版本。</string>
+    <string name="today_update_available_action">更新</string>
+    <string name="today_update_available_dismiss">暂不</string>
+    <string name="today_update_downloaded_body">更新已下载。重启以完成安装。</string>
+    <string name="today_update_downloaded_action">重启</string>
+
+    <!-- Onboarding additions — TV-shorter subtitle (TV onboarding has
+         less screen real-estate), the always-on location step, and the
+         manual-entry hint shown on the location screen. -->
+    <string name="onboarding_subtitle_tv">两个快速选择即可开始。之后可在设置里调整。</string>
+    <string name="onboarding_location_grant_background">授予始终开启位置权限</string>
+    <string name="onboarding_location_background_needed">还有一步：ClothesCast 需要"始终允许"权限，以便在应用关闭时也能读取你的位置以生成早晨预报。</string>
+    <string name="onboarding_location_enter_manual_hint">如果你拒绝位置权限或设备位置有误，可以手动输入位置。</string>
+
+    <!-- Settings root list — three new rows (Display / Location /
+         Calendar) and their subtitles. The earlier root rows
+         (Schedule / Clothes / Region / Voice / About) were already
+         translated above. -->
+    <string name="settings_root_display">显示</string>
+    <string name="settings_root_location">位置</string>
+    <string name="settings_root_calendar">日历</string>
+    <string name="settings_root_display_subtitle">主题</string>
+    <string name="settings_root_location_subtitle">自动检测或选择城市</string>
+    <string name="settings_root_calendar_subtitle">今天的日程</string>
+
+    <!-- Display screen — theme picker (system / light / dark). -->
+    <string name="settings_display_theme_title">主题</string>
+    <string name="settings_display_theme_system">跟随系统</string>
+    <string name="settings_display_theme_light">浅色</string>
+    <string name="settings_display_theme_dark">深色</string>
+
+    <!-- API keys screen — header above the Gemini block. -->
+    <string name="settings_api_key_gemini_header">使用 Gemini 获得高质量语音。</string>
+
+    <!-- Location screen additions — device-location subtitle, in-flight
+         "detecting…" state, the always-on banner shown when the
+         background-location permission is missing, and the manual-
+         override link with its disclosure. -->
+    <string name="settings_location_use_device_description">最近的大致位置</string>
+    <string name="settings_location_detecting">检测中…</string>
+    <string name="settings_location_background_banner_title">需要始终开启位置权限</string>
+    <string name="settings_location_background_banner_body">没有该权限，早晨预报无法读取你的位置。</string>
+    <string name="settings_location_manual_override">位置不对？手动设置</string>
+    <string name="settings_location_manual_override_disclosure">选择城市会关闭自动检测。</string>
+
+    <!-- Voice screen — engine-picker description (Device vs Gemini
+         trade-offs). -->
+    <string name="settings_tts_engine_description">Gemini 比设备语音听起来自然得多，但在朗读时需要网络通信，并使用你的 API 密钥进行合成（每次朗读一份 ClothesCast 约一次短请求）。Gemini 失败时会回退到设备语音。</string>
 </resources>

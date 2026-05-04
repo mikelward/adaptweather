@@ -441,4 +441,168 @@ label localises.
     <string name="insight_time_hour">%1$d點</string>
     <string name="insight_time_hour_minutes">%1$d點%2$02d分</string>
 
+
+    <!-- Today screen — additions: location-unknown label, retry banner,
+         crash-report banner (post-crash share prompt), and Play Store
+         in-app update prompts (available + downloaded states). -->
+    <string name="today_location_unknown">目前位置</string>
+    <string name="today_retrying">上次嘗試失敗 — 重試中…</string>
+
+    <string name="today_crash_banner_title">上次執行已當機</string>
+    <string name="today_crash_banner_body">當機回報已儲存在你的裝置上。要分享出來以便修復 bug 嗎？在你選擇傳送目標之前不會傳送任何內容。</string>
+    <string name="today_crash_banner_share">分享回報</string>
+    <string name="today_crash_banner_dismiss">關閉</string>
+
+    <string name="today_update_available_title">有可用更新</string>
+    <string name="today_update_available_body">Play 商店上有 ClothesCast 的新版本。</string>
+    <string name="today_update_available_action">更新</string>
+    <string name="today_update_available_dismiss">暫不</string>
+    <string name="today_update_downloaded_body">更新已下載。請重新啟動以完成安裝。</string>
+    <string name="today_update_downloaded_action">重新啟動</string>
+
+    <!-- Today rationale strip — "Why this outfit?" expandable block
+         that explains which feels-like threshold tipped the rule, plus
+         ±1° threshold-tweak buttons and the "refresh to see new" hint. -->
+    <string name="today_rationale_title">為什麼是這套穿搭？</string>
+    <string name="today_rationale_show">為什麼？</string>
+    <string name="today_rationale_dismiss">了解</string>
+    <string name="today_rationale_threshold_decrease">閾值降低 1 度</string>
+    <string name="today_rationale_threshold_increase">閾值提高 1 度</string>
+    <string name="today_rationale_threshold_changed_hint">重新整理以查看新穿搭。</string>
+    <string name="today_rationale_unavailable">暫無說明 — 下次重新整理後開啟應用程式查看。</string>
+    <string name="today_rationale_min_below_with_time">體感最低氣溫 %1$s%2$s（%3$s），低於 %4$s%2$s</string>
+    <string name="today_rationale_min_below">體感最低氣溫 %1$s%2$s，低於 %3$s%2$s</string>
+    <string name="today_rationale_min_above_with_time">體感最低氣溫 %1$s%2$s（%3$s），至少 %4$s%2$s</string>
+    <string name="today_rationale_min_above">體感最低氣溫 %1$s%2$s，至少 %3$s%2$s</string>
+    <string name="today_rationale_max_below_with_time">體感最高氣溫僅 %1$s%2$s（%3$s），低於 %4$s%2$s</string>
+    <string name="today_rationale_max_below">體感最高氣溫僅 %1$s%2$s，低於 %3$s%2$s</string>
+    <string name="today_rationale_max_above_with_time">體感最高氣溫 %1$s%2$s（%3$s），至少 %4$s%2$s</string>
+    <string name="today_rationale_max_above">體感最高氣溫 %1$s%2$s，至少 %3$s%2$s</string>
+
+    <!-- Today screen — failure state when location is missing, plus
+         the prompt that takes the user to location settings. -->
+    <string name="today_failed_no_location">無法取得你的位置。請授予始終開啟位置權限，或在設定中設定城市。</string>
+    <string name="today_location_required_title">設定你的位置</string>
+    <string name="today_location_required_body">ClothesCast 需要知道你的位置才能取得天氣預報。請授予始終開啟位置權限，或選擇一個城市。</string>
+    <string name="today_location_required_action">開啟位置設定</string>
+
+    <!-- Onboarding additions — TV-shorter subtitle (TV onboarding has
+         less screen real-estate), the always-on location step, the
+         manual-entry hint, and the TV phone-pairing fallback link. -->
+    <string name="onboarding_subtitle_tv">兩個快速選擇即可開始。之後可在設定裡調整。</string>
+    <string name="onboarding_location_grant_background">授予始終開啟位置權限</string>
+    <string name="onboarding_location_background_needed">還有一步：ClothesCast 需要「始終允許」權限，讓早晨預報在應用程式關閉時也能讀取你的位置。</string>
+    <string name="onboarding_location_enter_manual_hint">如果你拒絕位置權限，或裝置位置有誤，可以手動輸入位置。</string>
+    <string name="onboarding_pair_from_phone">改用手機配對</string>
+
+    <!-- TV pairing flow — phone scans the QR, pastes the Gemini API
+         key into a form on the phone, key is sent over local Wi-Fi
+         straight to the TV (no cloud relay). -->
+    <string name="pairing_title">掃描配對</string>
+    <string name="pairing_instructions">用手機掃描此 QR 碼，然後將你的 Gemini API 金鑰貼到開啟的表單中。金鑰會透過你家中的 Wi-Fi 直接傳送到此電視 — 不經雲端轉送。</string>
+    <string name="pairing_qr_description">連到 %1$s 的 QR 碼</string>
+    <string name="pairing_cancel">取消</string>
+    <string name="pairing_received">已收到金鑰 — 儲存中…</string>
+    <string name="pairing_timeout_title">配對視窗已過期</string>
+    <string name="pairing_timeout_body">5 分鐘的配對視窗已關閉。點一下重試以開啟新視窗。</string>
+    <string name="pairing_error_title">無法啟動配對</string>
+    <string name="pairing_error_body">請確認電視已連接 Wi-Fi，然後再試一次。</string>
+    <string name="pairing_retry">重試</string>
+
+    <!-- Settings root list — three new rows (Display / Location /
+         Calendar) and the four newer subtitles for the existing rows
+         (Schedule / Clothes / Region / Voice). -->
+    <string name="settings_root_display">顯示</string>
+    <string name="settings_root_location">位置</string>
+    <string name="settings_root_calendar">行事曆</string>
+    <string name="settings_root_display_subtitle">佈景主題</string>
+    <string name="settings_root_location_subtitle">自動偵測或選擇城市</string>
+    <string name="settings_root_calendar_subtitle">今天的行程</string>
+    <string name="settings_root_schedule_subtitle">通知與時間</string>
+    <string name="settings_root_clothes_subtitle">氣溫與穿搭</string>
+    <string name="settings_root_region_subtitle">語言與單位</string>
+    <string name="settings_root_voice_subtitle">提供者與口音</string>
+
+    <!-- Display screen — theme picker (system / light / dark). -->
+    <string name="settings_display_theme_title">佈景主題</string>
+    <string name="settings_display_theme_system">跟隨系統</string>
+    <string name="settings_display_theme_light">淺色</string>
+    <string name="settings_display_theme_dark">深色</string>
+
+    <!-- API keys screen — header above the Gemini block. -->
+    <string name="settings_api_key_gemini_header">使用 Gemini 獲得高品質語音。</string>
+
+    <!-- Location screen additions — device-location subtitle, in-flight
+         "detecting…" state, the always-on banner shown when the
+         background-location permission is missing, the manual-override
+         link with its disclosure, and the rationale + denied dialogs
+         for the foreground / background location permissions. -->
+    <string name="settings_location_use_device_description">最近的概略位置</string>
+    <string name="settings_location_detecting">偵測中…</string>
+    <string name="settings_location_background_banner_title">需要始終開啟位置權限</string>
+    <string name="settings_location_background_banner_body">沒有該權限，早晨預報無法讀取你的位置。</string>
+    <string name="settings_location_manual_override">位置不對？手動設定</string>
+    <string name="settings_location_manual_override_disclosure">選擇城市會關閉自動偵測。</string>
+
+    <string name="settings_location_rationale_title">位置權限</string>
+    <string name="settings_location_rationale_body">ClothesCast 會讀取你的位置以取得當地天氣預報。</string>
+    <string name="settings_location_rationale_continue">繼續</string>
+    <string name="settings_location_rationale_dismiss">暫不</string>
+
+    <string name="settings_location_background_rationale_title">始終允許</string>
+    <string name="settings_location_background_rationale_body">允許 ClothesCast 在應用程式關閉時也讀取你的位置，讓早晨預報能準時更新。</string>
+    <string name="settings_location_background_rationale_continue">開啟設定</string>
+    <string name="settings_location_background_rationale_dismiss">暫不</string>
+
+    <string name="settings_location_background_denied_title">未授予始終開啟</string>
+    <string name="settings_location_background_denied_body">若沒有「始終允許」，早晨預報就無法自動更新。</string>
+    <string name="settings_location_background_denied_open">開啟設定</string>
+    <string name="settings_location_background_denied_keep">暫不</string>
+
+    <!-- Voice screen — engine-picker description, the device-voice
+         sub-picker with auto / network / offline labels, and the
+         Google-TTS install hint shown when the system has no engine. -->
+    <string name="settings_tts_engine_description">Gemini 比裝置語音聽起來自然得多，但在朗讀時需要網路通訊，並使用你的 API 金鑰進行合成（每次朗讀一份 ClothesCast 約一次短請求）。Gemini 失敗時會回退到裝置語音。</string>
+
+    <string name="settings_tts_device_voice_label">裝置語音</string>
+    <string name="settings_tts_device_voice_auto">自動（最適合口音）</string>
+    <string name="settings_tts_device_voice_currently">目前：%1$s</string>
+    <string name="settings_tts_device_voice_currently_loading">載入中…</string>
+    <string name="settings_tts_device_voice_network">網路</string>
+    <string name="settings_tts_device_voice_offline">離線</string>
+    <string name="settings_tts_install_google_hint">安裝 Google 文字轉語音引擎以獲得更高品質的語音。</string>
+    <string name="settings_tts_install_google_button">安裝 Google TTS</string>
+
+    <!-- Region screen — additional language picker labels for locales
+         that landed after the original zh-TW translation pass. -->
+    <string name="settings_region_language_ca_es">加泰隆尼亞文（西班牙）</string>
+    <string name="settings_region_language_sl_si">斯洛維尼亞文（斯洛維尼亞）</string>
+    <string name="settings_region_language_el_gr">希臘文（希臘）</string>
+    <string name="settings_region_language_da_dk">丹麥文（丹麥）</string>
+    <string name="settings_region_language_nb_no">挪威文 Bokmål（挪威）</string>
+    <string name="settings_region_language_fi_fi">芬蘭文（芬蘭）</string>
+    <string name="settings_region_language_et_ee">愛沙尼亞文（愛沙尼亞）</string>
+    <string name="settings_region_language_lv_lv">拉脫維亞文（拉脫維亞）</string>
+    <string name="settings_region_language_lt_lt">立陶宛文（立陶宛）</string>
+    <string name="settings_region_language_ms_my">馬來文（馬來西亞）</string>
+    <string name="settings_region_language_sw_ke">斯瓦希里文（肯亞）</string>
+    <string name="settings_region_language_th_th">泰文（泰國）</string>
+    <string name="settings_region_language_sq_al">阿爾巴尼亞文（阿爾巴尼亞）</string>
+    <string name="settings_region_language_am_et">阿姆哈拉文（衣索比亞）</string>
+
+    <!-- Voice locale picker — same set, keyed for the Voice screen. -->
+    <string name="settings_tts_voice_locale_ca_es">加泰隆尼亞文（西班牙）</string>
+    <string name="settings_tts_voice_locale_sl_si">斯洛維尼亞文（斯洛維尼亞）</string>
+    <string name="settings_tts_voice_locale_el_gr">希臘文（希臘）</string>
+    <string name="settings_tts_voice_locale_da_dk">丹麥文（丹麥）</string>
+    <string name="settings_tts_voice_locale_nb_no">挪威文 Bokmål（挪威）</string>
+    <string name="settings_tts_voice_locale_fi_fi">芬蘭文（芬蘭）</string>
+    <string name="settings_tts_voice_locale_et_ee">愛沙尼亞文（愛沙尼亞）</string>
+    <string name="settings_tts_voice_locale_lv_lv">拉脫維亞文（拉脫維亞）</string>
+    <string name="settings_tts_voice_locale_lt_lt">立陶宛文（立陶宛）</string>
+    <string name="settings_tts_voice_locale_ms_my">馬來文（馬來西亞）</string>
+    <string name="settings_tts_voice_locale_sw_ke">斯瓦希里文（肯亞）</string>
+    <string name="settings_tts_voice_locale_th_th">泰文（泰國）</string>
+    <string name="settings_tts_voice_locale_sq_al">阿爾巴尼亞文（阿爾巴尼亞）</string>
+    <string name="settings_tts_voice_locale_am_et">阿姆哈拉文（衣索比亞）</string>
 </resources>

@@ -539,4 +539,66 @@ displayed label localizes.
     <string name="today_rationale_max_below">체감 최고 %1$s%2$s에 불과, %3$s%2$s 미만</string>
     <string name="today_rationale_max_above_with_time">체감 최고 %1$s%2$s(%3$s), 최소 %4$s%2$s</string>
     <string name="today_rationale_max_above">체감 최고 %1$s%2$s, 최소 %3$s%2$s</string>
+
+
+    <!-- Today screen — additions: location-unknown label, retry banner,
+         crash-report banner (post-crash share prompt), and Play Store
+         in-app update prompts (available + downloaded states). -->
+    <string name="today_location_unknown">현재 위치</string>
+    <string name="today_retrying">이전 시도 실패 — 재시도 중…</string>
+
+    <string name="today_crash_banner_title">이전 실행이 충돌했습니다</string>
+    <string name="today_crash_banner_body">충돌 보고서가 기기에 저장되었습니다. 버그를 수정할 수 있도록 공유할까요? 보낼 곳을 선택할 때까지 아무것도 전송되지 않습니다.</string>
+    <string name="today_crash_banner_share">보고서 공유</string>
+    <string name="today_crash_banner_dismiss">닫기</string>
+
+    <string name="today_update_available_title">업데이트가 있습니다</string>
+    <string name="today_update_available_body">Play 스토어에 ClothesCast의 새 버전이 있습니다.</string>
+    <string name="today_update_available_action">업데이트</string>
+    <string name="today_update_available_dismiss">나중에</string>
+    <string name="today_update_downloaded_body">업데이트가 다운로드되었습니다. 설치를 완료하려면 다시 시작하세요.</string>
+    <string name="today_update_downloaded_action">다시 시작</string>
+
+    <!-- Onboarding additions — TV-shorter subtitle (TV onboarding has
+         less screen real-estate), the always-on location step, and the
+         manual-entry hint shown on the location screen. -->
+    <string name="onboarding_subtitle_tv">두 가지 빠른 선택으로 준비 완료. 나머지는 나중에 설정에서 조정할 수 있어요.</string>
+    <string name="onboarding_location_grant_background">상시 위치 허용</string>
+    <string name="onboarding_location_background_needed">한 단계 더: 앱이 닫혀 있어도 아침 예보가 위치를 읽을 수 있도록 ClothesCast에 \'항상 허용\'이 필요합니다.</string>
+    <string name="onboarding_location_enter_manual_hint">위치 권한을 거부하거나 기기 위치가 잘못된 경우 위치를 직접 입력할 수 있습니다.</string>
+
+    <!-- Settings root list — three new rows (Display / Location /
+         Calendar) and their subtitles. The earlier root rows
+         (Schedule / Clothes / Region / Voice / About) were already
+         translated above. -->
+    <string name="settings_root_display">디스플레이</string>
+    <string name="settings_root_location">위치</string>
+    <string name="settings_root_calendar">캘린더</string>
+    <string name="settings_root_display_subtitle">테마</string>
+    <string name="settings_root_location_subtitle">자동 감지 또는 도시 선택</string>
+    <string name="settings_root_calendar_subtitle">오늘의 일정</string>
+
+    <!-- Display screen — theme picker (system / light / dark). -->
+    <string name="settings_display_theme_title">테마</string>
+    <string name="settings_display_theme_system">시스템 설정 따르기</string>
+    <string name="settings_display_theme_light">라이트</string>
+    <string name="settings_display_theme_dark">다크</string>
+
+    <!-- API keys screen — header above the Gemini block. -->
+    <string name="settings_api_key_gemini_header">Gemini를 사용하면 고품질 음성을 얻을 수 있습니다.</string>
+
+    <!-- Location screen additions — device-location subtitle, in-flight
+         "detecting…" state, the always-on banner shown when the
+         background-location permission is missing, and the manual-
+         override link with its disclosure. -->
+    <string name="settings_location_use_device_description">마지막 대략적 위치</string>
+    <string name="settings_location_detecting">감지 중…</string>
+    <string name="settings_location_background_banner_title">상시 위치가 필요합니다</string>
+    <string name="settings_location_background_banner_body">허용하지 않으면 아침 예보가 위치를 읽을 수 없습니다.</string>
+    <string name="settings_location_manual_override">위치가 잘못됐나요? 직접 설정</string>
+    <string name="settings_location_manual_override_disclosure">도시를 선택하면 자동 감지가 꺼집니다.</string>
+
+    <!-- Voice screen — engine-picker description (Device vs Gemini
+         trade-offs). -->
+    <string name="settings_tts_engine_description">Gemini는 기기 음성보다 훨씬 자연스럽게 들리지만, 말할 때 네트워크 호출이 필요하고 합성에 회원님의 API 키를 사용합니다 (ClothesCast 한 번 읽을 때마다 짧은 호출 한 번). Gemini가 실패하면 기기 음성으로 대체됩니다.</string>
 </resources>

@@ -3,6 +3,22 @@
 Hindi (India) translation. Scope: insight-prose templates, garment labels,
 clothes-rule editor, outfit-card labels, and region/voice-locale picker names.
 The rest of the UI falls through to values/strings.xml (English).
+
+TODO: expand to full UI coverage like ja / ko / zh-CN / zh-TW. Currently
+~344 of the 412 base keys are not translated and fall through to English —
+chrome (Settings, Today, Onboarding, Pairing, notification channels,
+About) all read in English on a Hindi device. Mirror the structure used
+by the East Asian locales: friendly-polite register (आप-form, not तू),
+Devanagari typography (Devanagari danda । for sentence final where it
+reads naturally; Latin period after Latin script). Brand name
+"ClothesCast" stays in Latin. Picker labels under
+`settings_region_language_*` and `settings_tts_voice_locale_*` should
+give Hindi names for every offered locale (अंग्रेज़ी (अमेरिका), फ़्रेंच (कनाडा),
+चीनी (सरलीकृत), …); the locale tag stored on disk is unchanged, only
+the displayed label localises. As with the other locales, leave
+`app_name` and the English-only `insight_time_am/pm/midnight/noon[_minutes]`
+formatter helpers unoverridden — Hindi already has `insight_time_hour`
+/ `_hour_minutes` translated below.
 -->
 <resources>
     <string name="settings_region_language_hi_in">हिंदी (भारत)</string>
