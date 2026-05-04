@@ -337,6 +337,14 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
+tasks.register<Exec>("installAndRun") {
+    dependsOn("installDebug")
+    commandLine(
+        "adb", "shell", "am", "start",
+        "-n", "app.clothescast.debug/app.clothescast.MainActivity",
+    )
+}
+
 configurations.matching { it.name.startsWith("test") || it.name.startsWith("debugUnitTest") }.all {
     // kotlinx-coroutines-android arrives transitively via androidx.lifecycle. Its
     // AndroidDispatcherFactory is the highest-priority MainDispatcherFactory on the
