@@ -10,6 +10,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.notification.NotificationIconSweaterPreview
 import app.clothescast.notification.NotificationIconTShirtPreview
 import app.clothescast.notification.NotificationIconThickJacketPreview
+import app.clothescast.ui.LauncherIconDevPreview
+import app.clothescast.ui.LauncherIconPreview
 import app.clothescast.ui.onboarding.OnboardingCompletePreview
 import app.clothescast.ui.onboarding.OnboardingFreshPreview
 import app.clothescast.ui.onboarding.OnboardingPartialPreview
@@ -170,6 +172,9 @@ class PreviewSnapshots {
     @Test fun local_build_banner() = capture { LocalBuildBannerPreview() }
     @Test fun local_build_banner_dirty() = capture { LocalBuildBannerDirtyPreview() }
 
+    @Test fun launcher_icon() = capture { LauncherIconPreview() }
+    @Test fun launcher_icon_dev() = capture { LauncherIconDevPreview() }
+
     @Test fun notification_icon_tshirt() = capture { NotificationIconTShirtPreview() }
     @Test fun notification_icon_sweater() = capture { NotificationIconSweaterPreview() }
     @Test fun notification_icon_thick_jacket() = capture { NotificationIconThickJacketPreview() }
@@ -224,6 +229,7 @@ class PreviewSnapshots {
     //   within the run, yielding "tshirt" rather than "t_shirt".
     @Test fun no_preview_without_snapshot() {
         val previewClasses = listOf(
+            "app.clothescast.ui.LauncherIconPreviewsKt",
             "app.clothescast.ui.today.TodayPreviewsKt",
             "app.clothescast.ui.onboarding.OnboardingPreviewsKt",
             "app.clothescast.ui.settings.SettingsPreviewsKt",
