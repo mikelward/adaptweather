@@ -501,4 +501,61 @@ spousal register), matching the existing insight prose ("Ponesi …",
     <string name="today_rationale_max_below">Osjetna maksimalna samo %1$s%2$s, ispod %3$s%2$s</string>
     <string name="today_rationale_max_above_with_time">Osjetna maksimalna %1$s%2$s u %3$s, najmanje %4$s%2$s</string>
     <string name="today_rationale_max_above">Osjetna maksimalna %1$s%2$s, najmanje %3$s%2$s</string>
+
+    <!-- Fallback label for the maps link when GPS coords are known but no
+         city name could be resolved. -->
+    <string name="today_location_unknown">Tvoja lokacija</string>
+
+    <!-- Shown while WorkManager is in exponential back-off between retries. -->
+    <string name="today_retrying">Zadnji pokušaj nije uspio — pokušavam ponovo…</string>
+
+    <!-- Crash-report banner shown on the Today screen after a previous crash. -->
+    <string name="today_crash_banner_title">Zadnje pokretanje srušilo se</string>
+    <string name="today_crash_banner_body">Izvješće o padu spremljeno je na tvom uređaju. Podijeliti ga kako bi se greška ispravila? Ništa se ne šalje dok ne odabereš odredište.</string>
+    <string name="today_crash_banner_share">Podijeli izvješće</string>
+    <string name="today_crash_banner_dismiss">Zatvori</string>
+
+    <!-- TV-specific onboarding subtitle (two steps instead of three). -->
+    <string name="onboarding_subtitle_tv">Dva brza izbora i spreman si. Sve ostalo možeš prilagoditi u postavkama kasnije.</string>
+
+    <!-- Onboarding — background location step. -->
+    <string name="onboarding_location_grant_background">Uvijek dopusti</string>
+    <string name="onboarding_location_background_needed">Još jedan korak: ClothesCast treba \'Uvijek dopusti\' kako bi jutarnja prognoza mogla čitati tvoju lokaciju dok je aplikacija zatvorena.</string>
+    <string name="onboarding_location_enter_manual_hint">Možeš ručno unijeti svoju lokaciju ako odbiješ pristup lokaciji ili ako je lokacija uređaja netočna.</string>
+
+    <!-- Settings root — rows not yet translated. -->
+    <string name="settings_root_display">Zaslon</string>
+    <string name="settings_root_location">Lokacija</string>
+    <string name="settings_root_calendar">Kalendar</string>
+    <string name="settings_root_display_subtitle">Tema</string>
+    <string name="settings_root_location_subtitle">Automatski ili odaberi grad</string>
+    <string name="settings_root_calendar_subtitle">Današnji termini</string>
+
+    <!-- Display / theme settings. -->
+    <string name="settings_display_theme_title">Tema</string>
+    <string name="settings_display_theme_system">Sustavna postavka</string>
+    <string name="settings_display_theme_light">Svijetla</string>
+    <string name="settings_display_theme_dark">Tamna</string>
+
+    <!-- API key screen — Gemini section header. -->
+    <string name="settings_api_key_gemini_header">Koristi Gemini za visokokvalitetne glasove.</string>
+
+    <!-- Location screen — additional strings. -->
+    <string name="settings_location_use_device_description">Zadnja približna lokacija</string>
+    <string name="settings_location_detecting">Otkrivanje…</string>
+    <string name="settings_location_background_banner_title">Potrebna trajna lokacija</string>
+    <string name="settings_location_background_banner_body">Bez nje, jutarnja prognoza ne može čitati tvoju lokaciju.</string>
+    <string name="settings_location_manual_override">Pogrešna lokacija? Postavi ručno</string>
+    <string name="settings_location_manual_override_disclosure">Ako odabereš grad, automatsko otkrivanje bit će onemogućeno.</string>
+
+    <!-- TTS engine selection — description beneath the Gemini/Device toggle. -->
+    <string name="settings_tts_engine_description">Gemini zvuči puno prirodnije od glasa uređaja, ali zahtijeva mrežni poziv u trenutku govora i koristi tvoj API ključ za sintezu (jedan kratki poziv po izgovorenom ClothesCastu). Vraća se na glas uređaja ako Gemini zakaže.</string>
+
+    <!-- In-app update banner: shown when a newer build is on the Play Store. -->
+    <string name="today_update_available_title">Dostupno ažuriranje</string>
+    <string name="today_update_available_body">Novija verzija ClothesCasta dostupna je na Play Storeu.</string>
+    <string name="today_update_available_action">Ažuriraj</string>
+    <string name="today_update_available_dismiss">Ne sada</string>
+    <string name="today_update_downloaded_body">Ažuriranje preuzeto. Ponovo pokreni za dovršetak instalacije.</string>
+    <string name="today_update_downloaded_action">Ponovo pokreni</string>
 </resources>
