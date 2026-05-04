@@ -535,4 +535,66 @@ the displayed label localizes.
     <string name="today_rationale_max_below">体感最高気温わずか %1$s%2$s、%3$s%2$s未満</string>
     <string name="today_rationale_max_above_with_time">体感最高気温 %1$s%2$s（%3$s）、少なくとも %4$s%2$s</string>
     <string name="today_rationale_max_above">体感最高気温 %1$s%2$s、少なくとも %3$s%2$s</string>
+
+
+    <!-- Today screen — additions: location-unknown label, retry banner,
+         crash-report banner (post-crash share prompt), and Play Store
+         in-app update prompts (available + downloaded states). -->
+    <string name="today_location_unknown">現在地</string>
+    <string name="today_retrying">前回の試行に失敗しました — 再試行中…</string>
+
+    <string name="today_crash_banner_title">前回の実行がクラッシュしました</string>
+    <string name="today_crash_banner_body">クラッシュレポートが端末に保存されました。バグを修正できるよう共有しますか？送信先を選ぶまで何も送信されません。</string>
+    <string name="today_crash_banner_share">レポートを共有</string>
+    <string name="today_crash_banner_dismiss">閉じる</string>
+
+    <string name="today_update_available_title">アップデートあり</string>
+    <string name="today_update_available_body">ClothesCast の新しいバージョンが Play ストアで公開されています。</string>
+    <string name="today_update_available_action">アップデート</string>
+    <string name="today_update_available_dismiss">後で</string>
+    <string name="today_update_downloaded_body">アップデートをダウンロードしました。インストールを完了するには再起動してください。</string>
+    <string name="today_update_downloaded_action">再起動</string>
+
+    <!-- Onboarding additions — TV-shorter subtitle (TV onboarding has
+         less screen real-estate), the always-on location step, and the
+         manual-entry hint shown on the location screen. -->
+    <string name="onboarding_subtitle_tv">2つの簡単な選択で準備完了。後から設定で調整できます。</string>
+    <string name="onboarding_location_grant_background">常時位置情報を許可</string>
+    <string name="onboarding_location_background_needed">あと1ステップ：朝の予報がアプリ終了中も位置情報を読み取れるよう、ClothesCast には「常に許可」が必要です。</string>
+    <string name="onboarding_location_enter_manual_hint">位置情報の許可を拒否した場合や、端末の位置が間違っている場合は、位置を手動で入力できます。</string>
+
+    <!-- Settings root list — three new rows (Display / Location /
+         Calendar) and their subtitles. The earlier root rows
+         (Schedule / Clothes / Region / Voice / About) were already
+         translated above. -->
+    <string name="settings_root_display">表示</string>
+    <string name="settings_root_location">位置情報</string>
+    <string name="settings_root_calendar">カレンダー</string>
+    <string name="settings_root_display_subtitle">テーマ</string>
+    <string name="settings_root_location_subtitle">自動検出または都市を選択</string>
+    <string name="settings_root_calendar_subtitle">今日の予定</string>
+
+    <!-- Display screen — theme picker (system / light / dark). -->
+    <string name="settings_display_theme_title">テーマ</string>
+    <string name="settings_display_theme_system">システム設定に従う</string>
+    <string name="settings_display_theme_light">ライト</string>
+    <string name="settings_display_theme_dark">ダーク</string>
+
+    <!-- API keys screen — header above the Gemini block. -->
+    <string name="settings_api_key_gemini_header">Gemini を使うと高品質な音声が利用できます。</string>
+
+    <!-- Location screen additions — device-location subtitle, in-flight
+         "detecting…" state, the always-on banner shown when the
+         background-location permission is missing, and the manual-
+         override link with its disclosure. -->
+    <string name="settings_location_use_device_description">最後のおおよその位置</string>
+    <string name="settings_location_detecting">検出中…</string>
+    <string name="settings_location_background_banner_title">常時位置情報が必要です</string>
+    <string name="settings_location_background_banner_body">これがないと、朝の予報があなたの位置を読み取れません。</string>
+    <string name="settings_location_manual_override">位置が違う？手動で設定</string>
+    <string name="settings_location_manual_override_disclosure">都市を選ぶと自動検出はオフになります。</string>
+
+    <!-- Voice screen — engine-picker description (Device vs Gemini
+         trade-offs). -->
+    <string name="settings_tts_engine_description">Gemini は端末の音声よりずっと自然に聞こえますが、読み上げ時にネットワーク通信が必要で、合成にあなたの API キーを使います（ClothesCast の読み上げ1回につき短いリクエスト1回）。Gemini が失敗した場合は端末の音声にフォールバックします。</string>
 </resources>
