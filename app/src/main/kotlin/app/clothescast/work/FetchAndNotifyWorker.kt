@@ -348,11 +348,12 @@ class FetchAndNotifyWorker(
 
     private suspend fun deliverToday(insight: Insight, prefs: UserPreferences, prose: String) {
         val mode = prefs.deliveryMode
+        val includesTts = mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS
+        if (includesTts) awaitSpeakTime()
         if (mode == DeliveryMode.NOTIFICATION_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
             app.insightNotifier.notify(insight, prose)
         }
-        if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            awaitSpeakTime()
+        if (includesTts) {
             speakWithFallback(prose, prefs)
         }
     }
