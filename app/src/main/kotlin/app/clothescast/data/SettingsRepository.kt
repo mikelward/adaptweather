@@ -24,6 +24,8 @@ import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.core.domain.model.thresholdC
 import app.clothescast.core.domain.model.withThresholdC
+import app.clothescast.diag.SettingsAnalyticsSnapshot
+import app.clothescast.tts.resolve
 import app.clothescast.tts.toJavaLocale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -54,6 +56,16 @@ class SettingsRepository(
     private val json: Json = Json { ignoreUnknownKeys = true },
 ) {
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs -> prefs.toUserPreferences() }
+
+    /**
+     * Default / override / effective view of the language, accent, and TTS
+     * settings, intended for Firebase Analytics user properties. Driven by the
+     * raw DataStore data so that "is this value stored?" — the difference
+     * between [SettingsAnalyticsSnapshot.UNSET] and an explicit choice — is
+     * observable, which [preferences] alone smears over because it always
+     * resolves a default.
+     */
+    val analyticsSnapshot: Flow<SettingsAnalyticsSnapshot> = dataStore.data.map { it.toAnalyticsSnapshot() }
 
     /**
      * The available-version code the user has dismissed the in-app update
@@ -354,6 +366,40 @@ class SettingsRepository(
             dailyMentionEveningEvents = dailyMentionEveningEvents,
             telemetryEnabled = telemetryEnabled,
             telemetryNoticeAcked = telemetryNoticeAcked,
+        )
+    }
+
+    private fun Preferences.toAnalyticsSnapshot(): SettingsAnalyticsSnapshot {
+        val resolved = toUserPreferences()
+        val systemLocale = systemLocaleProvider()
+        // SYSTEM-fallback chain: VoiceLocale.SYSTEM follows the region locale,
+        // and Region.SYSTEM follows the system locale. Capture the locale that
+        // each setting's SYSTEM sentinel would resolve to so the "default"
+        // value reflects what the user actually gets when they leave the
+        // override at SYSTEM, not just a constant string.
+        val regionLocale = resolved.region.toJavaLocale() ?: systemLocale
+        val effectiveVoiceLocale = resolved.voiceLocale.resolve(regionLocale)
+        return SettingsAnalyticsSnapshot(
+            regionDefault = systemLocale.toLanguageTag(),
+            regionOverride = resolved.region.name,
+            regionEffective = regionLocale.toLanguageTag(),
+            voiceLocaleDefault = regionLocale.toLanguageTag(),
+            voiceLocaleOverride = resolved.voiceLocale.name,
+            voiceLocaleEffective = effectiveVoiceLocale.toLanguageTag(),
+            ttsEngineDefault = TtsEngine.DEVICE.name,
+            ttsEngineOverride = this[TTS_ENGINE] ?: SettingsAnalyticsSnapshot.UNSET,
+            ttsEngineEffective = resolved.ttsEngine.name,
+            ttsStyleDefault = TtsStyle.NORMAL.name,
+            ttsStyleOverride = this[TTS_STYLE] ?: SettingsAnalyticsSnapshot.UNSET,
+            ttsStyleEffective = resolved.ttsStyle.name,
+            geminiVoiceDefault = UserPreferences.DEFAULT_GEMINI_VOICE,
+            geminiVoiceOverride = this[GEMINI_VOICE]?.takeIf { it.isNotBlank() }
+                ?: SettingsAnalyticsSnapshot.UNSET,
+            geminiVoiceEffective = resolved.geminiVoice,
+            deviceVoiceDefault = SettingsAnalyticsSnapshot.AUTO,
+            deviceVoiceOverride = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
+                ?: SettingsAnalyticsSnapshot.UNSET,
+            deviceVoiceEffective = resolved.deviceVoice ?: SettingsAnalyticsSnapshot.AUTO,
         )
     }
 

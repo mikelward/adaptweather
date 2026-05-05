@@ -12,13 +12,16 @@ import kotlinx.coroutines.launch
 
 /**
  * Bridges the user's Privacy → "Send crash + usage data" toggle to Firebase
- * Analytics + Crashlytics collection flags.
+ * Analytics + Crashlytics collection flags, and mirrors the user's language /
+ * accent / TTS configuration into Firebase Analytics user properties so
+ * aggregate reports can break usage events down by configuration.
  *
  * The contract for what may / may not appear in those payloads is in
  * PRIVACY.md — calendar event data, location, insight prose, notification
  * text, and API keys are out of scope. This class deliberately does NOT set
- * Crashlytics custom keys from any of those: it only flips collection on or
- * off. Custom-event instrumentation is a follow-up.
+ * Crashlytics custom keys from any of those, and the user properties it does
+ * set are short configuration strings (enum names, BCP-47 locale tags, voice
+ * IDs) — no user content, no identifiers.
  *
  * No-ops if Firebase didn't initialise — i.e. when this build was assembled
  * without `app/google-services.json` (CI). The .gitignore-d JSON is the only
@@ -34,6 +37,11 @@ object Telemetry {
      * collection flag across launches, so a `false` set here also suppresses
      * the very first crash on next process start before this collector
      * attaches.
+     *
+     * Also subscribes to [SettingsRepository.analyticsSnapshot] and mirrors
+     * each value into a Firebase Analytics user property. Properties are set
+     * unconditionally — when collection is disabled the SDK won't send
+     * anything anyway, and the property store is local until an event flushes.
      */
     fun start(context: Context, settings: SettingsRepository, scope: CoroutineScope) {
         if (FirebaseApp.getApps(context).isEmpty()) return
@@ -48,5 +56,39 @@ object Telemetry {
                     crashlytics.setCrashlyticsCollectionEnabled(enabled)
                 }
         }
+        scope.launch {
+            settings.analyticsSnapshot
+                .distinctUntilChanged()
+                .collect { snapshot -> snapshot.applyTo(analytics) }
+        }
     }
 }
+
+/**
+ * Pushes each field of [this] onto [analytics] as a user property. Values are
+ * truncated to Firebase's 36-char per-property limit — voice IDs in particular
+ * can grow beyond that with future engines, and Firebase silently drops
+ * oversized values rather than truncating them itself.
+ */
+internal fun SettingsAnalyticsSnapshot.applyTo(analytics: FirebaseAnalytics) {
+    analytics.setUserProperty("region_default", regionDefault.cap())
+    analytics.setUserProperty("region_override", regionOverride.cap())
+    analytics.setUserProperty("region_effective", regionEffective.cap())
+    analytics.setUserProperty("voice_locale_default", voiceLocaleDefault.cap())
+    analytics.setUserProperty("voice_locale_override", voiceLocaleOverride.cap())
+    analytics.setUserProperty("voice_locale_effective", voiceLocaleEffective.cap())
+    analytics.setUserProperty("tts_engine_default", ttsEngineDefault.cap())
+    analytics.setUserProperty("tts_engine_override", ttsEngineOverride.cap())
+    analytics.setUserProperty("tts_engine_effective", ttsEngineEffective.cap())
+    analytics.setUserProperty("tts_style_default", ttsStyleDefault.cap())
+    analytics.setUserProperty("tts_style_override", ttsStyleOverride.cap())
+    analytics.setUserProperty("tts_style_effective", ttsStyleEffective.cap())
+    analytics.setUserProperty("gemini_voice_default", geminiVoiceDefault.cap())
+    analytics.setUserProperty("gemini_voice_override", geminiVoiceOverride.cap())
+    analytics.setUserProperty("gemini_voice_effective", geminiVoiceEffective.cap())
+    analytics.setUserProperty("device_voice_default", deviceVoiceDefault.cap())
+    analytics.setUserProperty("device_voice_override", deviceVoiceOverride.cap())
+    analytics.setUserProperty("device_voice_effective", deviceVoiceEffective.cap())
+}
+
+private fun String.cap(): String = if (length <= 36) this else take(36)
