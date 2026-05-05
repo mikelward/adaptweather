@@ -152,8 +152,6 @@ en-GB with the newsreader directive. Replaced previous default (Kore).
 
 ---
 
----
-
 ## Weather-report style eval (2026-05)
 
 Tests whether an explicit weather-broadcast directive improves on the
