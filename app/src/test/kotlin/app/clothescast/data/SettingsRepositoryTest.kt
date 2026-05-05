@@ -526,9 +526,9 @@ class SettingsRepositoryTest {
         snap.ttsStyleDefault shouldBe TtsStyle.WEATHER_FORECASTER.name
         snap.ttsStyleOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.ttsStyleEffective shouldBe TtsStyle.WEATHER_FORECASTER.name
-        snap.geminiVoiceDefault shouldBe "Erinome"
+        snap.geminiVoiceDefault shouldBe "Leda"
         snap.geminiVoiceOverride shouldBe SettingsAnalyticsSnapshot.UNSET
-        snap.geminiVoiceEffective shouldBe "Erinome"
+        snap.geminiVoiceEffective shouldBe "Leda"
         snap.deviceVoiceDefault shouldBe SettingsAnalyticsSnapshot.AUTO
         snap.deviceVoiceOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.deviceVoiceEffective shouldBe SettingsAnalyticsSnapshot.AUTO
