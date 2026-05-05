@@ -32,6 +32,9 @@ import java.util.Locale
 // `-preview-` track — see CLAUDE.md's "Don't rename Gemini models from
 // web-search guesses" before swapping it for a GA-sounding name.
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
+// TODO: decide default voice — top candidates from style eval are Aoede,
+//  Charon, Kore (all avg 8.6 on B1+B2 combined). Current default Leda is
+//  6th overall and untested under the updated accent directives.
 const val DEFAULT_GEMINI_TTS_VOICE: String = "Leda"
 
 internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
@@ -55,11 +58,11 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * PIRATE that might otherwise tempt the model to add ocean ambience.
  */
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER: String =
-    "Read the following weather forecast in the style of a national-news " +
-        "weather report. Use a deliberate cadence: unhurried, clearly enunciated, " +
-        "with a natural lift at the end of each sentence. Give a gentle extra " +
-        "emphasis to clothing advice. No audio effects, background noise, or " +
-        "vinyl-style texture:\n\n"
+    "Read the following weather forecast in the style of a weather report on a " +
+        "national news service. Enunciate clearly and use a measured speed. " +
+        "Accentuate the ends of sentences and give a gentle emphasis to clothing " +
+        "recommendations. No audio effects, background noise, or vinyl-style " +
+        "texture:\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_PIRATE: String =
     "Read the following as a swaggering pirate, with hearty nautical flair. " +
@@ -198,7 +201,7 @@ internal fun geminiAccentDirectiveFor(locale: Locale): String? {
 }
 
 private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
-    "en-GB" to "Speak with a Standard Southern British accent.",
+    "en-GB" to "Speak with a Standard British accent — clear and natural.",
     "en-AU" to "Speak with a General Australian accent — clear and natural, not broad.",
     "en-US" to "Speak with a General American accent.",
     "en-CA" to "Speak with a Canadian English accent.",
