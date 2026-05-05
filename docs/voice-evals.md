@@ -161,84 +161,62 @@ real InsightFormatter output:
 > "Today will be cold to cool. Wear a jumper and jacket."
 
 Seven voices × seven candidates × nine locales. en-GB and en-AU-general ran
-all candidates; en-US and en-AU (production) ran B1/B2 only in a focused
-retest.
+all candidates; en-US ran B1/B2 only. The original en-AU (Cultivated) run is
+stale — the prod accent was already changed to General Australian before that
+eval; use en-AU-general results instead.
 
 ### Candidate averages
 
-| Candidate | en-US | en-AU | en-AU-gen | en-GB | Notes |
-|---|---|---|---|---|---|
-| weather-B1-basic | **9.0** | **8.4** | 7.6 | **8.3** | "national news service, measured speed" |
-| weather-B2-with-emphasis | **9.1** | **8.4** | **7.9** | 7.6 | B1 + "gentle emphasis on clothing" |
-| tweak-C1-authoritative | — | — | 7.4 | 7.6 | "authoritative yet approachable" |
-| tweak-C3-with-pauses | — | — | 7.1 | 7.3 | C2 + "pause briefly between segments" |
-| tweak-C2-cadence *(production)* | — | — | 6.7 | 6.9 | current WEATHER_FORECASTER |
-| baseline-A2-newsreader | — | — | 6.3 | 5.9 | prior production directive |
-| baseline-A1-normal | — | — | 5.1 | 5.0 | original "clean, crisp studio voice" |
+| Candidate | en-US | en-AU-gen | en-GB | Notes |
+|---|---|---|---|---|
+| weather-B2-with-emphasis *(→ prod)* | **9.1** | **7.9** | — | B1 + "gentle emphasis on clothing" |
+| weather-B1-basic | 9.0 | 7.6 | **8.3** | "national news service, measured speed" |
+| tweak-C1-authoritative | — | 7.4 | 7.6 | |
+| tweak-C3-with-pauses | — | 7.1 | 7.3 | |
+| tweak-C2-cadence *(was prod)* | — | 6.7 | 6.9 | |
+| baseline-A2-newsreader | — | 6.3 | 5.9 | |
+| baseline-A1-normal | — | 5.1 | 5.0 | |
 
-B1 and B2 beat the production directive (C2) by ~1 point consistently.
-The ranking order is nearly identical across locales, suggesting the
-directive wording matters more than locale interaction.
+B1 and B2 beat the old production directive (C2) by ~1 point consistently.
+B2 wins en-US and en-AU-gen; B1 wins en-GB under the old accent directive.
 
-### B1 vs B2 per voice
+### en-GB accent tuning
 
-Scores across four data points: en-US, en-AU, en-AU-general, en-GB (retest).
+The original en-GB directive ("Standard Southern British") caused B2 to
+underperform vs B1 (7.6 vs 8.3). Three replacements were tested with B2:
 
-**B1 — weather-B1-basic**
+| Accent variant | B2 avg | Notes |
+|---|---|---|
+| en-GB-measured — "Standard British — clear and natural" | **8.3** | Matches B1; no degenerate cases |
+| en-GB-presenter — "clear accent of a British television news presenter" | 7.6 | Charon collapses to 3 |
+| en-GB-bbc — "Standard Southern British, as spoken by a BBC news presenter" | 6.9 | Flat across the board |
 
-| Voice | en-US | en-AU | en-AU-gen | en-GB | Avg |
-|---|---|---|---|---|---|
-| Aoede   | 9 | 9 | 8 | 9 | **8.8** |
-| Kore    | 9 | 8 | 9 | 9 | **8.8** |
-| Leda    | 9 | 9 | 9 | 8 | **8.8** |
-| Charon  | 9 | 8 | 8 | 9 | 8.5 |
-| Erinome | 9 | 8 | 8 | 9 | 8.5 |
-| Despina | 9 | 9 | 5 | 9 | 8.0 |
-| Iapetus | 9 | 8 | 6 | 5 | 7.0 ⚠️ |
+**en-GB-measured fixes B2 in en-GB.** Updated in prod.
 
-**B2 — weather-B2-with-emphasis**
+### Final scores (B2 + updated accent directives)
 
-| Voice | en-US | en-AU | en-AU-gen | en-GB | Avg |
-|---|---|---|---|---|---|
-| Despina | 10 | 9 | 7 | 9 | **8.8** |
-| Charon  | 10 | 9 | 8 | 8 | **8.8** |
-| Aoede   | 10 | 9 | 9 | 6 | 8.5 |
-| Kore    | 9  | 9 | 8 | 8 | 8.5 |
-| Erinome | 9  | 9 | 7 | 8 | 8.3 |
-| Iapetus | 9  | 9 | 8 | 7 | 8.3 |
-| Leda    | 7  | 5 | 8 | 7 | 6.75 ⚠️ |
+| Locale | B2 avg |
+|---|---|
+| en-US | 9.1 |
+| en-AU-general | 7.9 |
+| en-GB-measured | 8.3 |
 
-### Top voices (B1 + B2 combined)
+### Top voices
 
-| Rank | Voice | Avg | Notes |
-|---|---|---|---|
-| 1 | **Aoede** | 8.6 | Consistent; one dip (B2/en-GB: 6) |
-| 1 | **Charon** | 8.6 | Rock-solid across all locale+directive combos |
-| 1 | **Kore** | 8.6 | Consistent; best on B1 |
-| 4 | **Despina** | 8.4 | Strong on B2; one degenerate on B1/en-AU-general |
-| 5 | Erinome | 8.4 | Solid mid-tier |
-| 6 | Leda | 7.75 | Good on B1; degenerate on B2/en-AU |
-| 7 | Iapetus | 7.6 | Weakest; degenerate on B1/en-GB |
+| Rank | Voice | Notes |
+|---|---|---|
+| 1 | **Aoede** | Consistent; one dip on old en-GB B2 (now fixed) |
+| 1 | **Charon** | Rock-solid except en-GB-presenter (avoid that variant) |
+| 1 | **Kore** | Consistent |
+| 4 | **Despina** | Strong on B2; one degenerate on B1/en-AU-general |
+| 5 | Erinome | Solid mid-tier |
+| 6 | Leda | Degenerate on old en-AU (Cultivated) + B2; fine under current accents |
+| 7 | Iapetus | Weakest overall |
 
-### Degenerate cases (score ≤ 5)
+### Shipped
 
-| Voice | Candidate | Locale | Score |
-|---|---|---|---|
-| Leda | B2 | en-AU | 5 — over-emphasises clothing, sounds strained |
-| Iapetus | B1 | en-GB | 5 — accent+directive interaction breaks the read |
-| Despina | B1 | en-AU-general | 5 — directive mismatch with this accent variant |
-
-### Decision: B1 vs B2
-
-Overall averages tie at 8.3. B2's clothing-emphasis clause adds real variance:
-voices that nail it (Charon, Despina) score 10s; Leda produces the worst clip
-in the dataset (5/10). B1 is tighter with no voice averaging below 7.0.
-
-**If restricted to the top 4 voices (Aoede, Charon, Kore, Despina), B2 has no
-degenerate cases and averages 8.7** — a viable choice if you want the
-day-to-day variability without bad clips.
-
-Pending: PR to update `GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER`.
+- `GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER` → B2 wording
+- en-GB accent directive → "Speak with a Standard British accent — clear and natural."
 
 ---
 
