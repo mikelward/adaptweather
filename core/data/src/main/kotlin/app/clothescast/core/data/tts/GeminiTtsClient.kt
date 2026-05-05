@@ -42,7 +42,7 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * documents the input text as a style-steerable prompt — preambles like this
  * are interpreted as direction and not spoken back.
  *
- * Two registers, user-selectable via [TtsStyle]:
+ * The two baseline registers, user-selectable via [TtsStyle]:
  *
  * - [GEMINI_TTS_STYLE_DIRECTIVE_NORMAL] — neutral "studio voice" wording. Lets
  *   each prebuilt voice's own character through. Default. Brought back after
@@ -50,6 +50,13 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * - [GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER] — clear, educated newsreader
  *   register. Suppresses theatrical drift on some voices (e.g. en-AU Kore
  *   sliding broad/nasal) but at the cost of squashing voice character.
+ *
+ * Below the two baselines are character / persona registers (pirate, cowboy,
+ * etc.). Each one starts with "Read the following…" so the model treats it
+ * as delivery direction rather than a rewrite, permits brief in-character
+ * interjections, and ends with the standard "no audio effects, background
+ * noise, or vinyl-style texture" trailer — important for personas like
+ * PIRATE that might otherwise tempt the model to add ocean ambience.
  */
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_NORMAL: String =
     "Read the following in a clean, crisp studio voice with no audio effects, " +
@@ -60,9 +67,122 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER: String =
         "not theatrical or exaggerated. No audio effects, background noise, or " +
         "vinyl-style texture:\n\n"
 
-internal fun styleDirectiveFor(style: TtsStyle): String = when (style) {
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER: String =
+    "Read the following as a friendly TV weather presenter walking the viewer " +
+        "through today's forecast — clear, upbeat, lightly emphatic on the key " +
+        "numbers. Brief asides such as 'and over to the temperatures' are fine. " +
+        "No audio effects, background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_PIRATE: String =
+    "Read the following as a swaggering pirate, with hearty nautical flair. " +
+        "You may add brief in-character exclamations such as 'Arrr' or 'Aye, " +
+        "matey'. No audio effects, background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_COWBOY: String =
+    "Read the following in a slow, friendly American Old West drawl. You may " +
+        "add brief in-character exclamations such as 'Howdy' or 'Well, partner'. " +
+        "No audio effects, background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_SHAKESPEAREAN: String =
+    "Read the following in the theatrical register of an Elizabethan stage " +
+        "actor — measured cadence, rolling vowels. You may add brief " +
+        "in-character interjections such as 'Hark' or 'Forsooth'. No audio " +
+        "effects, background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_SURFER: String =
+    "Read the following as a laid-back Southern California surfer — relaxed " +
+        "pace, easy enthusiasm. You may add brief in-character interjections " +
+        "such as 'Dude' or 'Totally'. No audio effects, background noise, or " +
+        "vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_PARENT: String =
+    "Read the following as a warm, encouraging parent gently reminding their " +
+        "kid before they head out. Calm, caring; brief endearments are fine. " +
+        "No audio effects, background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_CHILD: String =
+    "Read the following as an excited young child sharing news with a friend " +
+        "— bright, eager, simple inflection. You may add brief in-character " +
+        "exclamations such as 'Wow!' or 'Cool!'. No audio effects, background " +
+        "noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_TEENAGER: String =
+    "Read the following as a slightly bored modern teenager — flat-ish " +
+        "affect, occasional rising inflection. You may add brief in-character " +
+        "interjections such as 'literally' or 'I mean…'. No audio effects, " +
+        "background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_GRANDPARENT: String =
+    "Read the following as a kindly grandparent passing on advice — " +
+        "unhurried, warm, slightly wry. Brief endearments are fine. No audio " +
+        "effects, background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_KIDS_HOST: String =
+    "Read the following as the bright, animated host of a children's TV show " +
+        "— high energy, big smiles in the voice, simple vocabulary cadence. " +
+        "Brief enthusiastic interjections welcome. No audio effects, " +
+        "background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_RADIO_HOST: String =
+    "Read the following as a chatty talkback radio host addressing the " +
+        "audience — conversational, opinionated, with a touch of warmth. " +
+        "Brief asides are fine. No audio effects, background noise, or " +
+        "vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_MORNING_DJ: String =
+    "Read the following as an upbeat breakfast-radio DJ — bright, energetic, " +
+        "chatty. Brief interjections such as 'alright!' or 'here's your " +
+        "forecast' are fine. No audio effects, background noise, or " +
+        "vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_SCIENCE_TEACHER: String =
+    "Read the following as an enthusiastic high school science teacher " +
+        "walking the class through today's weather reasoning — clear, " +
+        "curious, mildly excitable about the physics. No audio effects, " +
+        "background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_HISTORIAN: String =
+    "Read the following as the narrator of a serious history documentary — " +
+        "measured, gravely interested, every sentence matters. No audio " +
+        "effects, background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_SPORTSCASTER: String =
+    "Read the following as an animated sportscaster calling a play — " +
+        "building energy, crisp emphasis on the key facts. Brief interjections " +
+        "are fine. No audio effects, background noise, or vinyl-style " +
+        "texture:\n\n"
+
+/**
+ * Resolves the style preamble for [style], honouring [customDirective] when
+ * the user has picked [TtsStyle.CUSTOM]. A blank custom directive falls back
+ * to [GEMINI_TTS_STYLE_DIRECTIVE_NORMAL] so a half-typed CUSTOM doesn't break
+ * TTS for the user — they get a normal-sounding read and the chance to fill
+ * the field in.
+ */
+internal fun styleDirectiveFor(
+    style: TtsStyle,
+    customDirective: String = "",
+): String = when (style) {
     TtsStyle.NORMAL -> GEMINI_TTS_STYLE_DIRECTIVE_NORMAL
     TtsStyle.NEWSREADER -> GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER
+    TtsStyle.WEATHER_FORECASTER -> GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER
+    TtsStyle.PIRATE -> GEMINI_TTS_STYLE_DIRECTIVE_PIRATE
+    TtsStyle.COWBOY -> GEMINI_TTS_STYLE_DIRECTIVE_COWBOY
+    TtsStyle.SHAKESPEAREAN -> GEMINI_TTS_STYLE_DIRECTIVE_SHAKESPEAREAN
+    TtsStyle.SURFER -> GEMINI_TTS_STYLE_DIRECTIVE_SURFER
+    TtsStyle.PARENT -> GEMINI_TTS_STYLE_DIRECTIVE_PARENT
+    TtsStyle.CHILD -> GEMINI_TTS_STYLE_DIRECTIVE_CHILD
+    TtsStyle.TEENAGER -> GEMINI_TTS_STYLE_DIRECTIVE_TEENAGER
+    TtsStyle.GRANDPARENT -> GEMINI_TTS_STYLE_DIRECTIVE_GRANDPARENT
+    TtsStyle.KIDS_HOST -> GEMINI_TTS_STYLE_DIRECTIVE_KIDS_HOST
+    TtsStyle.RADIO_HOST -> GEMINI_TTS_STYLE_DIRECTIVE_RADIO_HOST
+    TtsStyle.MORNING_DJ -> GEMINI_TTS_STYLE_DIRECTIVE_MORNING_DJ
+    TtsStyle.SCIENCE_TEACHER -> GEMINI_TTS_STYLE_DIRECTIVE_SCIENCE_TEACHER
+    TtsStyle.HISTORIAN -> GEMINI_TTS_STYLE_DIRECTIVE_HISTORIAN
+    TtsStyle.SPORTSCASTER -> GEMINI_TTS_STYLE_DIRECTIVE_SPORTSCASTER
+    TtsStyle.CUSTOM -> customDirective.trim().takeIf { it.isNotEmpty() }
+        ?.let { "$it\n\n" }
+        ?: GEMINI_TTS_STYLE_DIRECTIVE_NORMAL
 }
 
 /**
@@ -198,6 +318,7 @@ class GeminiTtsClient(
         voiceName: String = DEFAULT_GEMINI_TTS_VOICE,
         locale: Locale? = null,
         style: TtsStyle = TtsStyle.NORMAL,
+        customStyleDirective: String = "",
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException()
@@ -205,7 +326,7 @@ class GeminiTtsClient(
 
         val accent = locale?.let { geminiAccentDirectiveFor(it) }
         val prompt = buildString {
-            append(styleDirectiveFor(style))
+            append(styleDirectiveFor(style, customStyleDirective))
             if (accent != null) {
                 append(accent)
                 append("\n\n")
