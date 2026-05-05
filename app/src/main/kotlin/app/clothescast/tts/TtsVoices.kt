@@ -14,8 +14,10 @@ data class TtsVoiceOption(
     val displayName: String,
 )
 
-// Curated from listening tests across en-AU and en-GB. Erinome is the default
-// — excellent across both locales. Grouped by character:
+// Curated from listening tests across en-AU and en-GB. Leda is the default —
+// chosen alongside the v505-equivalent "Normal" style preamble being the
+// default style; pending a broader re-audition under Normal. Grouped by
+// character:
 //   Clear/Firm (newsreader-y): Erinome, Iapetus, Kore
 //   Informative/Knowledgeable (male alternatives): Charon, Sadaltager
 //   Gentle/Smooth/Warm: Vindemiatrix, Despina, Algieba, Sulafat

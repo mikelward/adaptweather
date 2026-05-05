@@ -32,7 +32,7 @@ import java.util.Locale
 // `-preview-` track — see CLAUDE.md's "Don't rename Gemini models from
 // web-search guesses" before swapping it for a GA-sounding name.
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
-const val DEFAULT_GEMINI_TTS_VOICE: String = "Erinome"
+const val DEFAULT_GEMINI_TTS_VOICE: String = "Leda"
 
 internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"
@@ -291,8 +291,8 @@ private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
  * `ENCODING_PCM_16BIT` consumes. A previous attempt to byte-swap on decode was
  * reverted because it turned correctly-decoded speech into noise.
  *
- * Default voice is `Kore` (firm). Other prebuilt voices are listed in Google's docs;
- * pass via [voiceName] when calling.
+ * Default voice is [DEFAULT_GEMINI_TTS_VOICE]. Other prebuilt voices are listed
+ * in Google's docs; pass via [voiceName] when calling.
  */
 class GeminiTtsClient(
     private val httpClient: HttpClient,

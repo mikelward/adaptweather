@@ -4,6 +4,14 @@ Results from a manual listening session conducted against real app output
 (en-AU and en-GB, Gemini 2.5 Flash Preview TTS). All scores are subjective
 1–10 ratings by the primary user unless noted.
 
+> **Note (post-PR #323):** the newsreader directive this eval was
+> conducted under is now opt-in via the new "Style" picker, with `Normal`
+> (the v505-equivalent studio-voice preamble) as the default. The default
+> voice has moved from Erinome to Leda alongside that change. A
+> re-audition under Normal is pending — sections below remain the
+> historical record of the newsreader-only eval, not the current
+> recommendation.
+
 ---
 
 ## Problem statement
