@@ -14,7 +14,9 @@ import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.TtsStyle
+import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.core.domain.model.thresholdC
+import app.clothescast.diag.SettingsAnalyticsSnapshot
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -501,6 +503,92 @@ class SettingsRepositoryTest {
 
         subject.setDismissedLocalBuildSha("def5678")
         subject.dismissedLocalBuildSha.first() shouldBe "def5678"
+    }
+
+    @Test
+    fun `analyticsSnapshot reports defaults and UNSET when nothing is stored`() = runTest {
+        // Pinned systemLocaleProvider is Locale.UK → BCP-47 "en-GB". With no
+        // stored region or voice locale, both SYSTEM sentinels resolve to
+        // that, and every TTS field reads UNSET so reports can tell "user
+        // never touched it" apart from "user picked the default value".
+        val snap = subject.analyticsSnapshot.first()
+
+        snap.regionDefault shouldBe "en-GB"
+        snap.regionOverride shouldBe Region.SYSTEM.name
+        snap.regionEffective shouldBe "en-GB"
+        snap.voiceLocaleDefault shouldBe "en-GB"
+        snap.voiceLocaleOverride shouldBe VoiceLocale.SYSTEM.name
+        snap.voiceLocaleEffective shouldBe "en-GB"
+        snap.ttsEngineDefault shouldBe TtsEngine.DEVICE.name
+        snap.ttsEngineOverride shouldBe SettingsAnalyticsSnapshot.UNSET
+        snap.ttsEngineEffective shouldBe TtsEngine.DEVICE.name
+        snap.ttsStyleDefault shouldBe TtsStyle.NORMAL.name
+        snap.ttsStyleOverride shouldBe SettingsAnalyticsSnapshot.UNSET
+        snap.ttsStyleEffective shouldBe TtsStyle.NORMAL.name
+        snap.geminiVoiceDefault shouldBe "Erinome"
+        snap.geminiVoiceOverride shouldBe SettingsAnalyticsSnapshot.UNSET
+        snap.geminiVoiceEffective shouldBe "Erinome"
+        snap.deviceVoiceDefault shouldBe SettingsAnalyticsSnapshot.AUTO
+        snap.deviceVoiceOverride shouldBe SettingsAnalyticsSnapshot.UNSET
+        snap.deviceVoiceEffective shouldBe SettingsAnalyticsSnapshot.AUTO
+    }
+
+    @Test
+    fun `analyticsSnapshot reflects each setting's override and effective`() = runTest {
+        subject.setRegion(Region.EN_US)
+        subject.setVoiceLocale(VoiceLocale.EN_AU)
+        subject.setTtsEngine(TtsEngine.GEMINI)
+        subject.setTtsStyle(TtsStyle.NEWSREADER)
+        subject.setGeminiVoice("Puck")
+        subject.setDeviceVoice("en-us-x-tpc-network")
+
+        val snap = subject.analyticsSnapshot.first()
+
+        // System locale is unchanged by region overrides — region default still
+        // tracks the device locale, not the picked region.
+        snap.regionDefault shouldBe "en-GB"
+        snap.regionOverride shouldBe Region.EN_US.name
+        snap.regionEffective shouldBe "en-US"
+        // VoiceLocale's "default" follows the region locale, so picking a
+        // region shifts the SYSTEM-fallback baseline even though the user
+        // overrode VoiceLocale to something else.
+        snap.voiceLocaleDefault shouldBe "en-US"
+        snap.voiceLocaleOverride shouldBe VoiceLocale.EN_AU.name
+        snap.voiceLocaleEffective shouldBe "en-AU"
+        snap.ttsEngineOverride shouldBe TtsEngine.GEMINI.name
+        snap.ttsEngineEffective shouldBe TtsEngine.GEMINI.name
+        snap.ttsStyleOverride shouldBe TtsStyle.NEWSREADER.name
+        snap.ttsStyleEffective shouldBe TtsStyle.NEWSREADER.name
+        snap.geminiVoiceOverride shouldBe "Puck"
+        snap.geminiVoiceEffective shouldBe "Puck"
+        snap.deviceVoiceOverride shouldBe "en-us-x-tpc-network"
+        snap.deviceVoiceEffective shouldBe "en-us-x-tpc-network"
+    }
+
+    @Test
+    fun `analyticsSnapshot voiceLocale default tracks region override`() = runTest {
+        // VoiceLocale.SYSTEM falls back to the *region* locale, not the
+        // system locale — so changing the region also changes the baseline
+        // an unset voice locale resolves to.
+        subject.setRegion(Region.EN_US)
+
+        val snap = subject.analyticsSnapshot.first()
+        snap.voiceLocaleOverride shouldBe VoiceLocale.SYSTEM.name
+        snap.voiceLocaleDefault shouldBe "en-US"
+        snap.voiceLocaleEffective shouldBe "en-US"
+    }
+
+    @Test
+    fun `analyticsSnapshot SYSTEM override is distinct from UNSET`() = runTest {
+        // Persisting Region.SYSTEM is observably a different story from
+        // never having touched the picker — the user explicitly chose
+        // SYSTEM. The override field surfaces that.
+        subject.setRegion(Region.EN_US)
+        subject.setRegion(Region.SYSTEM)
+
+        val snap = subject.analyticsSnapshot.first()
+        snap.regionOverride shouldBe Region.SYSTEM.name
+        snap.regionEffective shouldBe "en-GB"
     }
 
     @Test
