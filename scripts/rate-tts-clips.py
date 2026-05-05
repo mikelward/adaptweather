@@ -54,12 +54,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", help="Directory containing .wav files")
     parser.add_argument(
-        "--pattern", default="", help="Only play files whose name contains this string"
+        "--pattern", default="", help="Only play files whose path contains this string (locale, candidate, or voice)"
     )
     args = parser.parse_args()
 
     directory = pathlib.Path(args.directory)
-    files = sorted(f for f in directory.glob("*.wav") if args.pattern in f.name)
+    files = sorted(f for f in directory.rglob("*.wav") if args.pattern in str(f))
 
     if not files:
         sys.exit(f"No .wav files found in {directory}" + (f" matching '{args.pattern}'" if args.pattern else ""))
