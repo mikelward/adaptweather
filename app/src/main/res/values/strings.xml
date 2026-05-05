@@ -300,6 +300,10 @@
     <string name="settings_tts_style_science_teacher">Science teacher</string>
     <string name="settings_tts_style_historian">Historian</string>
     <string name="settings_tts_style_sportscaster">Sportscaster</string>
+    <string name="settings_tts_style_stadium_announcer">Stadium announcer</string>
+    <string name="settings_tts_style_storyteller">Storyteller</string>
+    <string name="settings_tts_style_fitness_instructor">Fitness instructor</string>
+    <string name="settings_tts_style_morning_presenter">Morning radio presenter</string>
     <string name="settings_tts_style_custom">Custom…</string>
     <string name="settings_tts_style_custom_label">Custom directive</string>
     <string name="settings_tts_style_custom_placeholder">e.g. Read the following as a stern librarian whispering</string>

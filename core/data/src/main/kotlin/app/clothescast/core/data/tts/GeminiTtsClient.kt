@@ -74,6 +74,29 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE_COWBOY: String =
         "add brief in-character exclamations such as 'Howdy' or 'Well, partner'. " +
         "No audio effects, background noise, or vinyl-style texture.\n\n"
 
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_STADIUM_ANNOUNCER: String =
+    "Read the following as a booming stadium announcer — big voice, dramatic " +
+        "pauses, each fact delivered like a headline moment. Brief interjections " +
+        "such as 'Ladies and gentlemen' are fine. No audio effects, background " +
+        "noise, or vinyl-style texture.\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_STORYTELLER: String =
+    "Read the following as a warm, engaging storyteller drawing the listener " +
+        "in — unhurried pacing, a hint of wonder, gentle rises on important " +
+        "details. No audio effects, background noise, or vinyl-style texture.\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_FITNESS_INSTRUCTOR: String =
+    "Read the following as an upbeat fitness instructor — positive, motivating, " +
+        "crisp diction, energy that makes you want to move. Brief encouraging " +
+        "interjections such as 'Let\\'s go!' are fine. No audio effects, " +
+        "background noise, or vinyl-style texture.\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_MORNING_PRESENTER: String =
+    "Read the following as a cheerful morning radio presenter starting the " +
+        "day — bright, friendly, flowing delivery, the kind of voice that " +
+        "makes getting up worth it. Brief warm interjections are fine. No " +
+        "audio effects, background noise, or vinyl-style texture.\n\n"
+
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_SCIENCE_TEACHER: String =
     "Read the following as an enthusiastic high school science teacher " +
         "walking the class through today's weather reasoning — clear, " +
@@ -98,6 +121,10 @@ internal fun styleDirectiveFor(style: TtsStyle): String = when (style) {
     TtsStyle.SCIENCE_TEACHER -> GEMINI_TTS_STYLE_DIRECTIVE_SCIENCE_TEACHER
     TtsStyle.HISTORIAN -> GEMINI_TTS_STYLE_DIRECTIVE_HISTORIAN
     TtsStyle.SPORTSCASTER -> GEMINI_TTS_STYLE_DIRECTIVE_SPORTSCASTER
+    TtsStyle.STADIUM_ANNOUNCER -> GEMINI_TTS_STYLE_DIRECTIVE_STADIUM_ANNOUNCER
+    TtsStyle.STORYTELLER -> GEMINI_TTS_STYLE_DIRECTIVE_STORYTELLER
+    TtsStyle.FITNESS_INSTRUCTOR -> GEMINI_TTS_STYLE_DIRECTIVE_FITNESS_INSTRUCTOR
+    TtsStyle.MORNING_PRESENTER -> GEMINI_TTS_STYLE_DIRECTIVE_MORNING_PRESENTER
 }
 
 /**

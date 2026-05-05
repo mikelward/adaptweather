@@ -502,6 +502,10 @@ class GeminiTtsClientTest {
             TtsStyle.SCIENCE_TEACHER to "high school science teacher",
             TtsStyle.HISTORIAN to "history documentary",
             TtsStyle.SPORTSCASTER to "animated sportscaster",
+            TtsStyle.STADIUM_ANNOUNCER to "stadium announcer",
+            TtsStyle.STORYTELLER to "storyteller",
+            TtsStyle.FITNESS_INSTRUCTOR to "fitness instructor",
+            TtsStyle.MORNING_PRESENTER to "morning radio presenter",
         )
 
         for ((style, signature) in signatures) {
