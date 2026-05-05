@@ -53,20 +53,9 @@ SAMPLE_RATE = 24_000
 # Realistic clips in each supported language — one temperature read + one
 # clothing call-to-action so we can hear whether emphasis on the recommendation
 # actually fires.
-SAMPLE_TEXT_EN = (
-    "Feels like 9 degrees this morning, with a brisk northerly wind and patchy "
-    "cloud. Grab a warm coat and a waterproof layer — showers are likely through "
-    "midday before clearing by late afternoon. Temperatures recover to around 13 "
-    "degrees this evening, so a light jacket should be fine heading out tonight."
-)
+SAMPLE_TEXT_EN = "Today will be cold to cool. Wear a jumper and jacket."
 
-SAMPLE_TEXT_DE = (
-    "Heute Morgen fühlt es sich wie 9 Grad an, mit frischem Nordwind und "
-    "wechselhafter Bewölkung. Zieh eine warme Jacke und eine wasserdichte Schicht "
-    "an — Schauer sind bis zum Mittag wahrscheinlich, bevor es am späten Nachmittag "
-    "aufklart. Am Abend erholen sich die Temperaturen auf etwa 13 Grad, also reicht "
-    "eine leichte Jacke für den Abend."
-)
+SAMPLE_TEXT_DE = "Heute wird es kalt bis kühl. Trag Pullover und Jacke."
 
 def sample_text_for(locale: str) -> str:
     lang = locale.split("-")[0]
