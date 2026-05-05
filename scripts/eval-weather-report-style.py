@@ -27,15 +27,15 @@ Usage
 
 Output
 ------
-Writes .wav files to /tmp/tts-weather-style/:
-  en-US-<candidate>-<voice>.wav
-  en-AU-<candidate>-<voice>.wav
-  en-GB-<candidate>-<voice>.wav
+Writes .wav files to /tmp/tts-weather-style/<locale>/:
+  en-US/<candidate>-<voice>.wav
+  en-AU/<candidate>-<voice>.wav
+  en-GB/<candidate>-<voice>.wav
 
 Rate with:
   python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/
-  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/ --pattern en-AU
-  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/ --pattern en-GB-weather-B2
+  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/en-AU/
+  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/en-GB/ --pattern weather-B2
 """
 
 import argparse
@@ -241,7 +241,7 @@ def main() -> None:
 
     # Build full clip list, then apply filter
     clips: list[tuple[str, str, str, str, str]] = [  # (slug, directive, accent, voice, sample)
-        (f"{locale}-{label}-{voice.lower()}", directive, accent, voice, sample_text_for(locale))
+        (locale, f"{label}-{voice.lower()}", directive, accent, voice, sample_text_for(locale))
         for locale, accent in LOCALES.items()
         for label, directive in CANDIDATES
         for voice in VOICES
@@ -254,14 +254,14 @@ def main() -> None:
         clips = list(reversed(clips))
 
     out = pathlib.Path("/tmp/tts-weather-style")
-    print(f"Writing {len(clips)} clip(s) to {out}/\n")
+    print(f"Writing {len(clips)} clip(s) to {out}/<locale>/\n")
 
-    for slug, directive, accent, voice, sample in clips:
-        path = out / f"{slug}.wav"
+    for locale, slug, directive, accent, voice, sample in clips:
+        path = out / locale / f"{slug}.wav"
         if path.exists():
-            print(f"  {slug} ... skip (already exists)")
+            print(f"  {locale}/{slug} ... skip (already exists)")
             continue
-        print(f"  {slug} ...", end=" ", flush=True)
+        print(f"  {locale}/{slug} ...", end=" ", flush=True)
         try:
             pcm = synthesize(directive, accent, voice, sample)
             write_wav(path, pcm)
@@ -273,7 +273,7 @@ def main() -> None:
     print(f"  python3 scripts/rate-tts-clips.py {out}/")
     print(f"\nBy locale:")
     for locale in LOCALES:
-        print(f"  python3 scripts/rate-tts-clips.py {out}/ --pattern {locale}")
+        print(f"  python3 scripts/rate-tts-clips.py {out}/{locale}/")
     print(f"\nBy voice:")
     for v in VOICES:
         print(f"  python3 scripts/rate-tts-clips.py {out}/ --pattern {v.lower()}")
