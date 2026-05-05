@@ -5,6 +5,7 @@ import android.util.Log
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.ArrayDeque
 import java.util.Date
@@ -87,8 +88,10 @@ object DiagLog {
      * surface a "share crash report" banner; tapping either button on the
      * banner calls [acknowledgePersistedCrash].
      *
-     * Identity is the crash file's last-modified time, so a fresh crash bumps
-     * mtime and the banner re-appears even if the previous one was acked.
+     * Identity is a content hash of the crash file. Filesystem mtime tick can
+     * be coarser than ms (1s on ext4) and would collide in a fast crash loop;
+     * hashing the bytes — which include a ms-precision timestamp header and
+     * the recent log buffer — gives a fresh identity for each new crash.
      */
     fun hasUnacknowledgedCrash(): Boolean {
         val crash = crashFileProvider?.invoke() ?: return false
@@ -106,17 +109,34 @@ object DiagLog {
     internal fun isCrashUnacknowledged(crashFile: File, ackFile: File): Boolean {
         if (!crashFile.exists() || crashFile.length() == 0L) return false
         if (!ackFile.exists()) return true
-        val ackedMtime = runCatching { ackFile.readText().trim().toLong() }.getOrNull()
+        val ackedHash = runCatching { ackFile.readText().trim() }.getOrNull()
+            ?.takeIf { it.isNotEmpty() }
             ?: return true
-        return ackedMtime != crashFile.lastModified()
+        val currentHash = runCatching { crashIdentity(crashFile) }.getOrNull()
+            ?: return true
+        return ackedHash != currentHash
     }
 
     internal fun writeCrashAcknowledgement(crashFile: File, ackFile: File) {
         if (!crashFile.exists()) return
         runCatching {
+            val hash = crashIdentity(crashFile)
             ackFile.parentFile?.mkdirs()
-            ackFile.writeText(crashFile.lastModified().toString())
+            ackFile.writeText(hash)
         }
+    }
+
+    private fun crashIdentity(file: File): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { stream ->
+            val buf = ByteArray(8192)
+            while (true) {
+                val n = stream.read(buf)
+                if (n <= 0) break
+                digest.update(buf, 0, n)
+            }
+        }
+        return digest.digest().joinToString("") { "%02x".format(it) }
     }
 
     private fun writeCrashLog(thread: Thread, throwable: Throwable) {
