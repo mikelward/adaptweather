@@ -18,7 +18,7 @@ import java.util.Locale
 class GeminiTtsSpeaker(
     private val client: GeminiTtsClient,
     private val voiceName: String = DEFAULT_GEMINI_TTS_VOICE,
-    private val style: TtsStyle = TtsStyle.NORMAL,
+    private val style: TtsStyle = TtsStyle.WEATHER_FORECASTER,
     private val customStyleDirective: String = "",
 ) : TtsSpeaker {
 

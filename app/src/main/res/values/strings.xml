@@ -285,9 +285,7 @@
          a freeform directive — TODO(pre-release) remove before shipping.
          Only shown for the Gemini engine. -->
     <string name="settings_tts_style_label">Style</string>
-    <string name="settings_tts_style_normal">Normal</string>
-    <string name="settings_tts_style_newsreader">Newsreader</string>
-    <string name="settings_tts_style_weather_forecaster">Weather forecaster</string>
+    <string name="settings_tts_style_weather_forecaster">Weather Forecaster</string>
     <string name="settings_tts_style_pirate">Pirate</string>
     <string name="settings_tts_style_cowboy">Cowboy</string>
     <string name="settings_tts_style_shakespearean">Shakespearean</string>

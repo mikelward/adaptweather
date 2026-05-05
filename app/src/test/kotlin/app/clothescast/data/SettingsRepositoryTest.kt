@@ -299,7 +299,7 @@ class SettingsRepositoryTest {
 
     @Test
     fun `tts style defaults to NORMAL when nothing stored`() = runTest {
-        subject.preferences.first().ttsStyle shouldBe TtsStyle.NORMAL
+        subject.preferences.first().ttsStyle shouldBe TtsStyle.WEATHER_FORECASTER
     }
 
     @Test
@@ -523,9 +523,9 @@ class SettingsRepositoryTest {
         snap.ttsEngineDefault shouldBe TtsEngine.DEVICE.name
         snap.ttsEngineOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.ttsEngineEffective shouldBe TtsEngine.DEVICE.name
-        snap.ttsStyleDefault shouldBe TtsStyle.NORMAL.name
+        snap.ttsStyleDefault shouldBe TtsStyle.WEATHER_FORECASTER.name
         snap.ttsStyleOverride shouldBe SettingsAnalyticsSnapshot.UNSET
-        snap.ttsStyleEffective shouldBe TtsStyle.NORMAL.name
+        snap.ttsStyleEffective shouldBe TtsStyle.WEATHER_FORECASTER.name
         snap.geminiVoiceDefault shouldBe "Erinome"
         snap.geminiVoiceOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.geminiVoiceEffective shouldBe "Erinome"
@@ -539,7 +539,7 @@ class SettingsRepositoryTest {
         subject.setRegion(Region.EN_US)
         subject.setVoiceLocale(VoiceLocale.EN_AU)
         subject.setTtsEngine(TtsEngine.GEMINI)
-        subject.setTtsStyle(TtsStyle.NEWSREADER)
+        subject.setTtsStyle(TtsStyle.PIRATE)
         subject.setGeminiVoice("Puck")
         subject.setDeviceVoice("en-us-x-tpc-network")
 
@@ -558,8 +558,8 @@ class SettingsRepositoryTest {
         snap.voiceLocaleEffective shouldBe "en-AU"
         snap.ttsEngineOverride shouldBe TtsEngine.GEMINI.name
         snap.ttsEngineEffective shouldBe TtsEngine.GEMINI.name
-        snap.ttsStyleOverride shouldBe TtsStyle.NEWSREADER.name
-        snap.ttsStyleEffective shouldBe TtsStyle.NEWSREADER.name
+        snap.ttsStyleOverride shouldBe TtsStyle.PIRATE.name
+        snap.ttsStyleEffective shouldBe TtsStyle.PIRATE.name
         snap.geminiVoiceOverride shouldBe "Puck"
         snap.geminiVoiceEffective shouldBe "Puck"
         snap.deviceVoiceOverride shouldBe "en-us-x-tpc-network"

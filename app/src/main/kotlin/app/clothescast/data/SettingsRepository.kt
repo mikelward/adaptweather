@@ -318,7 +318,7 @@ class SettingsRepository(
         val geminiVoice = this[GEMINI_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
         val ttsStyle = this[TTS_STYLE]?.let { runCatching { TtsStyle.valueOf(it) }.getOrNull() }
-            ?: TtsStyle.NORMAL
+            ?: TtsStyle.WEATHER_FORECASTER
         val customTtsStyleDirective = this[CUSTOM_TTS_STYLE_DIRECTIVE].orEmpty()
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
@@ -394,7 +394,7 @@ class SettingsRepository(
             ttsEngineDefault = TtsEngine.DEVICE.name,
             ttsEngineOverride = this[TTS_ENGINE] ?: SettingsAnalyticsSnapshot.UNSET,
             ttsEngineEffective = resolved.ttsEngine.name,
-            ttsStyleDefault = TtsStyle.NORMAL.name,
+            ttsStyleDefault = TtsStyle.WEATHER_FORECASTER.name,
             ttsStyleOverride = this[TTS_STYLE] ?: SettingsAnalyticsSnapshot.UNSET,
             ttsStyleEffective = resolved.ttsStyle.name,
             geminiVoiceDefault = UserPreferences.DEFAULT_GEMINI_VOICE,

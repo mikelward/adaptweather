@@ -22,20 +22,16 @@ enum class TtsEngine { DEVICE, GEMINI }
 /**
  * Steers the global style preamble Gemini TTS prepends to every request.
  *
- * - [NORMAL] is the original "clean, crisp studio voice" wording — neutral
- *   delivery that lets each prebuilt voice's own character through.
- * - [NEWSREADER] biases toward a clear, educated newsreader register.
- *   Suppresses theatrical drift on some voices but flattens character on
- *   others, which is why this is user-selectable.
- * - [WEATHER_FORECASTER] reads the briefing as a friendly TV weather
- *   presenter — clear, upbeat, lightly emphatic on the key numbers.
+ * - [WEATHER_FORECASTER] reads the briefing in a national-news weather
+ *   broadcast register — deliberate cadence, sentence-final lift, gentle
+ *   emphasis on clothing advice. Default.
  * - The remaining entries — [PIRATE], [COWBOY], [SHAKESPEAREAN], [SURFER],
  *   [PARENT], [CHILD], [TEENAGER], [GRANDPARENT], [KIDS_HOST], [RADIO_HOST],
  *   [MORNING_DJ], [SCIENCE_TEACHER], [HISTORIAN], [SPORTSCASTER] — are
  *   character / persona registers. They shape *delivery* (the words read
  *   aloud are unchanged) but the directive permits brief in-character
  *   exclamations like "Arrr" or "Howdy" so the result is more obviously
- *   playful than the flat NORMAL register.
+ *   playful than the default register.
  * - [CUSTOM] uses the free-text directive stored on
  *   [UserPreferences.customTtsStyleDirective]. Development-only knob for
  *   iterating on directive wording at runtime so good ones can be promoted
@@ -45,8 +41,6 @@ enum class TtsEngine { DEVICE, GEMINI }
  * doesn't accept style prompts.
  */
 enum class TtsStyle {
-    NORMAL,
-    NEWSREADER,
     WEATHER_FORECASTER,
     PIRATE,
     COWBOY,
@@ -246,18 +240,17 @@ data class UserPreferences(
      */
     val geminiVoice: String = DEFAULT_GEMINI_VOICE,
     /**
-     * Steers the style preamble for Gemini TTS. Default is [TtsStyle.NORMAL]
-     * (original "studio voice" wording); users who prefer the tighter
-     * newsreader register can switch to [TtsStyle.NEWSREADER], or one of
-     * the character registers (pirate, cowboy, etc.). Only consulted when
-     * [ttsEngine] == [TtsEngine.GEMINI].
+     * Steers the style preamble for Gemini TTS. Default is
+     * [TtsStyle.WEATHER_FORECASTER] — national-news broadcast delivery.
+     * Users can switch to any of the character registers (pirate, cowboy,
+     * etc.). Only consulted when [ttsEngine] == [TtsEngine.GEMINI].
      */
-    val ttsStyle: TtsStyle = TtsStyle.NORMAL,
+    val ttsStyle: TtsStyle = TtsStyle.WEATHER_FORECASTER,
     /**
      * Free-text directive used when [ttsStyle] is [TtsStyle.CUSTOM]. The full
      * preamble — the user's text plus a trailing blank line — is sent to
      * Gemini TTS in place of the canned directive. Blank means "fall back to
-     * [TtsStyle.NORMAL]" so a misconfigured CUSTOM doesn't break TTS.
+     * [TtsStyle.WEATHER_FORECASTER]" so a misconfigured CUSTOM doesn't break TTS.
      *
      * TODO(pre-release): remove this field along with [TtsStyle.CUSTOM] —
      * it's a development knob for iterating on directive wording, not a

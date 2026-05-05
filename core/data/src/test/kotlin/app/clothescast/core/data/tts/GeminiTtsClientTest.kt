@@ -89,11 +89,7 @@ class GeminiTtsClientTest {
     }
 
     @Test
-    fun `request body prepends the normal studio-voice directive by default`() = runTest {
-        // Default style is NORMAL — the user-selectable preamble that brought
-        // back the v505 "studio voice" wording so voices like Leda keep their
-        // character. The newsreader register only kicks in when the user opts
-        // into TtsStyle.NEWSREADER from Settings.
+    fun `request body prepends the weather-forecaster directive by default`() = runTest {
         var capturedBody: String? = null
         val client = GeminiTtsClient(
             httpClient = mockClient(SUCCESS_BODY) {
@@ -108,27 +104,6 @@ class GeminiTtsClientTest {
 
         val body = checkNotNull(capturedBody)
         body.shouldContain("national-news weather report")
-        body.shouldNotContain("newsreader style")
-        body.shouldContain("hello world")
-    }
-
-    @Test
-    fun `request body uses the newsreader directive when style is NEWSREADER`() = runTest {
-        var capturedBody: String? = null
-        val client = GeminiTtsClient(
-            httpClient = mockClient(SUCCESS_BODY) {
-                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
-                    .bytes()
-                    .toString(Charsets.UTF_8)
-            },
-            keyProvider = FakeKeyProvider("test-key"),
-        )
-
-        client.synthesize(text = "hello world", style = TtsStyle.NEWSREADER)
-
-        val body = checkNotNull(capturedBody)
-        body.shouldContain("newsreader style")
-        body.shouldNotContain("national-news weather report")
         body.shouldContain("hello world")
     }
 
@@ -483,7 +458,6 @@ class GeminiTtsClientTest {
         // styleDirectiveFor() — adding a new TtsStyle without adding the
         // map entry here is the regression this catches.
         val signatures: Map<TtsStyle, String> = mapOf(
-            TtsStyle.WEATHER_FORECASTER to "TV weather presenter",
             TtsStyle.PIRATE to "swaggering pirate",
             TtsStyle.COWBOY to "Old West drawl",
             TtsStyle.SHAKESPEAREAN to "Elizabethan stage actor",
