@@ -50,14 +50,27 @@ API_KEY = os.environ.get("GEMINI_API_KEY", "")
 MODEL = "gemini-2.5-flash-preview-tts"
 SAMPLE_RATE = 24_000
 
-# A realistic clip: one temperature read + one clothing call-to-action so we
-# can hear whether the emphasis on the recommendation actually fires.
-SAMPLE_TEXT = (
+# Realistic clips in each supported language — one temperature read + one
+# clothing call-to-action so we can hear whether emphasis on the recommendation
+# actually fires.
+SAMPLE_TEXT_EN = (
     "Feels like 9 degrees this morning, with a brisk northerly wind and patchy "
     "cloud. Grab a warm coat and a waterproof layer — showers are likely through "
     "midday before clearing by late afternoon. Temperatures recover to around 13 "
     "degrees this evening, so a light jacket should be fine heading out tonight."
 )
+
+SAMPLE_TEXT_DE = (
+    "Heute Morgen fühlt es sich wie 9 Grad an, mit frischem Nordwind und "
+    "wechselhafter Bewölkung. Zieh eine warme Jacke und eine wasserdichte Schicht "
+    "an — Schauer sind bis zum Mittag wahrscheinlich, bevor es am späten Nachmittag "
+    "aufklart. Am Abend erholen sich die Temperaturen auf etwa 13 Grad, also reicht "
+    "eine leichte Jacke für den Abend."
+)
+
+def sample_text_for(locale: str) -> str:
+    lang = locale.split("-")[0]
+    return {"de": SAMPLE_TEXT_DE}.get(lang, SAMPLE_TEXT_EN)
 
 # ── locales — same strings as GeminiTtsClient.kt ACCENT_DIRECTIVES ────────────
 #
@@ -80,6 +93,10 @@ LOCALES: dict[str, str] = {
     "en-AU-presenter": "Speak with the clear, natural accent of an Australian broadcast news presenter.",
     "en-AU-minimal":   "Speak with an Australian accent — clear and natural.",
     "en-GB": "Speak with a Standard Southern British accent.",
+    # de-DE falls back to the language-only "de" key in the app (no explicit
+    # de-DE entry in ACCENT_DIRECTIVES); de-AT has its own entry.
+    "de-DE": "Sprich auf Deutsch in einem klaren, hochdeutschen Akzent.",
+    "de-AT": "Sprich auf Deutsch mit einem klaren österreichischen Akzent.",
 }
 
 # ── A: baselines (current production directives) ─────────────────────────────
@@ -170,8 +187,8 @@ VOICES = ["Erinome", "Kore", "Aoede", "Despina", "Iapetus", "Charon", "Leda"]
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
-def synthesize(directive: str, accent: str, voice: str) -> bytes:
-    prompt = directive + accent + "\n\n" + SAMPLE_TEXT
+def synthesize(directive: str, accent: str, voice: str, sample: str) -> bytes:
+    prompt = directive + accent + "\n\n" + sample
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
@@ -234,8 +251,8 @@ def main() -> None:
         raise SystemExit("Set GEMINI_API_KEY env var before running.")
 
     # Build full clip list, then apply filter
-    clips: list[tuple[str, str, str, str]] = [  # (slug, directive, accent, voice)
-        (f"{locale}-{label}-{voice.lower()}", directive, accent, voice)
+    clips: list[tuple[str, str, str, str, str]] = [  # (slug, directive, accent, voice, sample)
+        (f"{locale}-{label}-{voice.lower()}", directive, accent, voice, sample_text_for(locale))
         for locale, accent in LOCALES.items()
         for label, directive in CANDIDATES
         for voice in VOICES
@@ -250,14 +267,14 @@ def main() -> None:
     out = pathlib.Path("/tmp/tts-weather-style")
     print(f"Writing {len(clips)} clip(s) to {out}/\n")
 
-    for slug, directive, accent, voice in clips:
+    for slug, directive, accent, voice, sample in clips:
         path = out / f"{slug}.wav"
         if path.exists():
             print(f"  {slug} ... skip (already exists)")
             continue
         print(f"  {slug} ...", end=" ", flush=True)
         try:
-            pcm = synthesize(directive, accent, voice)
+            pcm = synthesize(directive, accent, voice, sample)
             write_wav(path, pcm)
             print(f"ok  ({len(pcm) // 2 / SAMPLE_RATE:.1f}s)")
         except Exception as exc:
