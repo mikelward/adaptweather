@@ -60,6 +60,56 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
+      - name: Decode google-services.json from secret
+        # The Firebase Gradle plugins (gms-google-services + crashlytics) are
+        # applied conditionally on `app/google-services.json` being present —
+        # see app/build.gradle.kts. Materialising the file here makes the
+        # plugins apply on CI, so unit-tests and android-build see the same
+        # plugin state. Without this, the file is absent in CI sandboxes
+        # (it's .gitignore-d) and the SDKs no-op via
+        # FirebaseApp.getApps(...).isEmpty() at runtime — which is correct,
+        # just silently telemetry-less. Skipped quietly when the secret
+        # isn't set (fork PR / fresh repo).
+        #
+        # Auto-detects whether the secret holds raw JSON or base64. This
+        # repo's other binary secrets (DEBUG_KEYSTORE_BASE64,
+        # UPLOAD_KEYSTORE_BASE64) must be base64 because they're binary;
+        # google-services.json is text, so pasting it raw works too and is
+        # one fewer step at setup time. Either shape is accepted.
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "No GOOGLE_SERVICES_JSON secret available; build will skip Firebase plugins."
+            exit 0
+          fi
+          # Strip surrounding whitespace so a stray newline at the end of a
+          # paste (or default 76-col-wrapped base64) doesn't trip strict
+          # decoders. A leading `{` after stripping means the user pasted
+          # raw JSON — write it through. Otherwise treat as base64.
+          trimmed="$(printf '%s' "$GOOGLE_SERVICES_JSON" | tr -d '[:space:]')"
+          first_char="$(printf '%s' "$trimmed" | head -c 1)"
+          if [ "$first_char" = "{" ]; then
+            echo "Detected raw JSON in secret; writing through without base64 decode."
+            printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          else
+            if ! printf '%s' "$trimmed" | base64 --decode > app/google-services.json 2>/dev/null; then
+              echo "::error::Failed to base64-decode GOOGLE_SERVICES_JSON. Re-create the secret with the OUTPUT of \`base64 -w0 app/google-services.json\` (Linux) or \`base64 -i app/google-services.json | tr -d '\\n'\` (macOS). Or paste the JSON file contents directly — auto-detect handles either shape."
+              exit 1
+            fi
+          fi
+          # Sanity-check the result so a wrong-file paste fails here rather
+          # than as a confusing gms-plugin "JSON parse error" several
+          # minutes into gradle. Report byte count so a truncated paste is
+          # obvious from the log.
+          bytes="$(wc -c < app/google-services.json | tr -d ' ')"
+          if ! grep -q '"project_info"' app/google-services.json || \
+             ! grep -q '"client"'       app/google-services.json; then
+            echo "::error::app/google-services.json (${bytes} bytes) is missing project_info / client keys — secret value isn't a valid Firebase config JSON or paste was truncated."
+            exit 1
+          fi
+          echo "google-services.json materialised (${bytes} bytes)."
+
       - name: Run unit tests
         id: gradle
         run: |
@@ -302,6 +352,36 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Decode google-services.json from secret
+        # See unit-tests job for the rationale and the raw-vs-base64
+        # auto-detect. Decoding both here and there keeps the Firebase
+        # plugin state consistent across jobs.
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "No GOOGLE_SERVICES_JSON secret available; APK will be built without Firebase config."
+            exit 0
+          fi
+          trimmed="$(printf '%s' "$GOOGLE_SERVICES_JSON" | tr -d '[:space:]')"
+          first_char="$(printf '%s' "$trimmed" | head -c 1)"
+          if [ "$first_char" = "{" ]; then
+            echo "Detected raw JSON in secret; writing through without base64 decode."
+            printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          else
+            if ! printf '%s' "$trimmed" | base64 --decode > app/google-services.json 2>/dev/null; then
+              echo "::error::Failed to base64-decode GOOGLE_SERVICES_JSON. Re-create the secret with the OUTPUT of \`base64 -w0 app/google-services.json\` (Linux) or \`base64 -i app/google-services.json | tr -d '\\n'\` (macOS). Or paste the JSON file contents directly — auto-detect handles either shape."
+              exit 1
+            fi
+          fi
+          bytes="$(wc -c < app/google-services.json | tr -d ' ')"
+          if ! grep -q '"project_info"' app/google-services.json || \
+             ! grep -q '"client"'       app/google-services.json; then
+            echo "::error::app/google-services.json (${bytes} bytes) is missing project_info / client keys — secret value isn't a valid Firebase config JSON or paste was truncated."
+            exit 1
+          fi
+          echo "google-services.json materialised (${bytes} bytes)."
 
       - name: Decode debug keystore from secret
         # Stable signing identity across CI builds so the installed app upgrades
