@@ -60,10 +60,25 @@ SAMPLE_TEXT = (
 )
 
 # ── locales — same strings as GeminiTtsClient.kt ACCENT_DIRECTIVES ────────────
+#
+# en-AU has multiple variants to explore whether "Cultivated" and "educated"
+# push the register too formal. The production value is en-AU; the others test
+# lighter touches:
+#   en-AU-general   — General Australian (the mid-tier between Broad and
+#                     Cultivated; most ABC/SBS presenters sit here)
+#   en-AU-natural   — drops the class label, just suppresses broad/nasal
+#   en-AU-presenter — anchors to a concrete reference rather than a
+#                     phonetic/social descriptor
+#   en-AU-minimal   — bare minimum; useful to see how much the extra clauses
+#                     are actually doing vs. the model's default
 
 LOCALES: dict[str, str] = {
     "en-US": "Speak with a General American accent.",
-    "en-AU": "Speak with a Cultivated Australian accent — clear and educated, not broad.",
+    "en-AU":           "Speak with a Cultivated Australian accent — clear and educated, not broad.",
+    "en-AU-general":   "Speak with a General Australian accent — clear and natural, not broad.",
+    "en-AU-natural":   "Speak with a natural Australian accent — clear, not broad or nasal.",
+    "en-AU-presenter": "Speak with the clear, natural accent of an Australian broadcast news presenter.",
+    "en-AU-minimal":   "Speak with an Australian accent — clear and natural.",
     "en-GB": "Speak with a Standard Southern British accent.",
 }
 
