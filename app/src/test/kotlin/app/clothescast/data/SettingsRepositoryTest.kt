@@ -315,20 +315,6 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `custom tts style directive defaults to blank and round-trips`() = runTest {
-        subject.preferences.first().customTtsStyleDirective shouldBe ""
-
-        subject.setCustomTtsStyleDirective("Read as a stern librarian")
-        subject.preferences.first().customTtsStyleDirective shouldBe "Read as a stern librarian"
-
-        // Blank clears the stored directive — same shape as setDeviceVoice's
-        // null/blank handling so a user emptying the field rolls back to
-        // the default rather than persisting an empty string.
-        subject.setCustomTtsStyleDirective("")
-        subject.preferences.first().customTtsStyleDirective shouldBe ""
-    }
-
-    @Test
     fun `device voice defaults to null and round-trips`() = runTest {
         subject.preferences.first().deviceVoice shouldBe null
 

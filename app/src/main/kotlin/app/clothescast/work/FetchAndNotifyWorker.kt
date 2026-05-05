@@ -440,7 +440,6 @@ class FetchAndNotifyWorker(
                             app.geminiTtsClient,
                             voiceName = prefs.geminiVoice,
                             style = prefs.ttsStyle,
-                            customStyleDirective = prefs.customTtsStyleDirective,
                         ).speak(text, locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
