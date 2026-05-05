@@ -81,7 +81,10 @@ LOCALES: dict[str, str] = {
     "en-AU-natural":   "Speak with a natural Australian accent — clear, not broad or nasal.",
     "en-AU-presenter": "Speak with the clear, natural accent of an Australian broadcast news presenter.",
     "en-AU-minimal":   "Speak with an Australian accent — clear and natural.",
-    "en-GB": "Speak with a Standard Southern British accent.",
+    "en-GB":           "Speak with a Standard Southern British accent.",
+    "en-GB-bbc":       "Speak with a Standard Southern British accent, as spoken by a BBC news presenter.",
+    "en-GB-presenter": "Speak with the clear accent of a British television news presenter.",
+    "en-GB-measured":  "Speak with a Standard British accent — clear, measured, and natural.",
     # de-DE falls back to the language-only "de" key in the app (no explicit
     # de-DE entry in ACCENT_DIRECTIVES); de-AT has its own entry.
     "de-DE": "Sprich auf Deutsch in einem klaren, hochdeutschen Akzent.",
