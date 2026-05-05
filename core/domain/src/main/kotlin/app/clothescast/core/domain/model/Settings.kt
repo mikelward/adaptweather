@@ -234,7 +234,7 @@ data class UserPreferences(
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     /**
-     * Prebuilt Gemini voice name (e.g. "Erinome", "Kore"). Only consulted when
+     * Prebuilt Gemini voice name (e.g. "Leda", "Iapetus"). Only consulted when
      * [ttsEngine] == [TtsEngine.GEMINI]. Stored as a free-form string so adding
      * voices doesn't require a domain enum migration.
      */
