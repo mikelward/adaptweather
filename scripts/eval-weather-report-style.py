@@ -219,6 +219,15 @@ def main() -> None:
             "Examples: 'en-AU', 'weather-B2', 'en-GB-baseline', 'erinome'"
         ),
     )
+    parser.add_argument(
+        "--reverse",
+        action="store_true",
+        help=(
+            "Process clips in reverse order. Run two instances in parallel — "
+            "one without --reverse, one with — to work from both ends toward "
+            "the middle without treading on each other."
+        ),
+    )
     args = parser.parse_args()
 
     if not API_KEY:
@@ -234,6 +243,9 @@ def main() -> None:
     ]
     if not clips:
         raise SystemExit(f"No clips match filter '{args.filter}'.")
+
+    if args.reverse:
+        clips = list(reversed(clips))
 
     out = pathlib.Path("/tmp/tts-weather-style")
     print(f"Writing {len(clips)} clip(s) to {out}/\n")
