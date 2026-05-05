@@ -499,15 +499,6 @@ class GeminiTtsClientTest {
         val signatures: Map<TtsStyle, String> = mapOf(
             TtsStyle.PIRATE to "swaggering pirate",
             TtsStyle.COWBOY to "Old West drawl",
-            TtsStyle.SHAKESPEAREAN to "Elizabethan stage actor",
-            TtsStyle.SURFER to "Southern California surfer",
-            TtsStyle.PARENT to "warm, encouraging parent",
-            TtsStyle.CHILD to "excited young child",
-            TtsStyle.TEENAGER to "slightly bored modern teenager",
-            TtsStyle.GRANDPARENT to "kindly grandparent",
-            TtsStyle.KIDS_HOST to "children's TV show",
-            TtsStyle.RADIO_HOST to "talkback radio host",
-            TtsStyle.MORNING_DJ to "breakfast-radio DJ",
             TtsStyle.SCIENCE_TEACHER to "high school science teacher",
             TtsStyle.HISTORIAN to "history documentary",
             TtsStyle.SPORTSCASTER to "animated sportscaster",
@@ -534,59 +525,6 @@ class GeminiTtsClientTest {
                 body.shouldNotContain("national news service")
             }
         }
-    }
-
-    @Test
-    fun `request body uses the user's custom directive when style is CUSTOM`() = runTest {
-        // CUSTOM lets the user iterate on directive wording at runtime.
-        // The full text — plus a trailing blank line so the prose that
-        // follows isn't glued to it — should land verbatim in the prompt.
-        var capturedBody: String? = null
-        val client = GeminiTtsClient(
-            httpClient = mockClient(SUCCESS_BODY) {
-                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
-                    .bytes()
-                    .toString(Charsets.UTF_8)
-            },
-            keyProvider = FakeKeyProvider("test-key"),
-        )
-
-        client.synthesize(
-            text = "hello world",
-            style = TtsStyle.CUSTOM,
-            customStyleDirective = "Read the following as a stern librarian whispering",
-        )
-
-        val body = checkNotNull(capturedBody)
-        body.shouldContain("stern librarian whispering")
-        body.shouldNotContain("national news service")
-        body.shouldContain("hello world")
-    }
-
-    @Test
-    fun `CUSTOM style with blank directive falls back to the normal preamble`() = runTest {
-        // A half-typed CUSTOM shouldn't break TTS — the user gets a normal
-        // delivery and the chance to fill the field in. Whitespace-only is
-        // also "blank" since the directive would be useless.
-        var capturedBody: String? = null
-        val client = GeminiTtsClient(
-            httpClient = mockClient(SUCCESS_BODY) {
-                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
-                    .bytes()
-                    .toString(Charsets.UTF_8)
-            },
-            keyProvider = FakeKeyProvider("test-key"),
-        )
-
-        client.synthesize(
-            text = "hello world",
-            style = TtsStyle.CUSTOM,
-            customStyleDirective = "   \n  ",
-        )
-
-        val body = checkNotNull(capturedBody)
-        body.shouldContain("national news service")
-        body.shouldContain("hello world")
     }
 
     @Test

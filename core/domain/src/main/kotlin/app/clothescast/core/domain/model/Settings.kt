@@ -25,17 +25,12 @@ enum class TtsEngine { DEVICE, GEMINI }
  * - [WEATHER_FORECASTER] reads the briefing in a national-news weather
  *   broadcast register — deliberate cadence, sentence-final lift, gentle
  *   emphasis on clothing advice. Default.
- * - The remaining entries — [PIRATE], [COWBOY], [SHAKESPEAREAN], [SURFER],
- *   [PARENT], [CHILD], [TEENAGER], [GRANDPARENT], [KIDS_HOST], [RADIO_HOST],
- *   [MORNING_DJ], [SCIENCE_TEACHER], [HISTORIAN], [SPORTSCASTER] — are
- *   character / persona registers. They shape *delivery* (the words read
- *   aloud are unchanged) but the directive permits brief in-character
- *   exclamations like "Arrr" or "Howdy" so the result is more obviously
- *   playful than the default register.
- * - [CUSTOM] uses the free-text directive stored on
- *   [UserPreferences.customTtsStyleDirective]. Development-only knob for
- *   iterating on directive wording at runtime so good ones can be promoted
- *   to baked-in entries.
+ * - The remaining entries — [PIRATE], [COWBOY], [SCIENCE_TEACHER],
+ *   [HISTORIAN], [SPORTSCASTER] — are character / persona registers.
+ *   They shape *delivery* (the words read aloud are unchanged) but the
+ *   directive permits brief in-character exclamations like "Arrr" or
+ *   "Howdy" so the result is more obviously playful than the default
+ *   register.
  *
  * Only consulted when [TtsEngine] == [TtsEngine.GEMINI]; the on-device engine
  * doesn't accept style prompts.
@@ -44,21 +39,9 @@ enum class TtsStyle {
     WEATHER_FORECASTER,
     PIRATE,
     COWBOY,
-    SHAKESPEAREAN,
-    SURFER,
-    PARENT,
-    CHILD,
-    TEENAGER,
-    GRANDPARENT,
-    KIDS_HOST,
-    RADIO_HOST,
-    MORNING_DJ,
     SCIENCE_TEACHER,
     HISTORIAN,
     SPORTSCASTER,
-    // TODO(pre-release): remove CUSTOM TtsStyle entry, repository field, and
-    // UI text input — see plan can-we-add-some-imperative-biscuit.md.
-    CUSTOM,
 }
 
 /**
@@ -246,17 +229,6 @@ data class UserPreferences(
      * etc.). Only consulted when [ttsEngine] == [TtsEngine.GEMINI].
      */
     val ttsStyle: TtsStyle = TtsStyle.WEATHER_FORECASTER,
-    /**
-     * Free-text directive used when [ttsStyle] is [TtsStyle.CUSTOM]. The full
-     * preamble — the user's text plus a trailing blank line — is sent to
-     * Gemini TTS in place of the canned directive. Blank means "fall back to
-     * [TtsStyle.WEATHER_FORECASTER]" so a misconfigured CUSTOM doesn't break TTS.
-     *
-     * TODO(pre-release): remove this field along with [TtsStyle.CUSTOM] —
-     * it's a development knob for iterating on directive wording, not a
-     * shipped feature. See plan can-we-add-some-imperative-biscuit.md.
-     */
-    val customTtsStyleDirective: String = "",
     /**
      * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
      * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)

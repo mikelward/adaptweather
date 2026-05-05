@@ -196,18 +196,6 @@ class SettingsRepository(
         dataStore.edit { it[TTS_STYLE] = style.name }
     }
 
-    // TODO(pre-release): remove alongside [TtsStyle.CUSTOM] — see plan
-    // can-we-add-some-imperative-biscuit.md.
-    suspend fun setCustomTtsStyleDirective(value: String) {
-        dataStore.edit { prefs ->
-            if (value.isBlank()) {
-                prefs.remove(CUSTOM_TTS_STYLE_DIRECTIVE)
-            } else {
-                prefs[CUSTOM_TTS_STYLE_DIRECTIVE] = value
-            }
-        }
-    }
-
     suspend fun setDeviceVoice(voice: String?) {
         dataStore.edit {
             // Null clears the pin → speaker reverts to auto-pick; the worker
@@ -319,7 +307,6 @@ class SettingsRepository(
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
         val ttsStyle = this[TTS_STYLE]?.let { runCatching { TtsStyle.valueOf(it) }.getOrNull() }
             ?: TtsStyle.WEATHER_FORECASTER
-        val customTtsStyleDirective = this[CUSTOM_TTS_STYLE_DIRECTIVE].orEmpty()
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
         val deviceVoice = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
@@ -355,7 +342,6 @@ class SettingsRepository(
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
             ttsStyle = ttsStyle,
-            customTtsStyleDirective = customTtsStyleDirective,
             deviceVoice = deviceVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
@@ -449,10 +435,6 @@ class SettingsRepository(
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
         private val TTS_STYLE = stringPreferencesKey("tts_style")
-
-        // TODO(pre-release): remove alongside [TtsStyle.CUSTOM] — see plan
-        // can-we-add-some-imperative-biscuit.md.
-        private val CUSTOM_TTS_STYLE_DIRECTIVE = stringPreferencesKey("custom_tts_style_directive")
         private val DEVICE_VOICE = stringPreferencesKey("device_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")

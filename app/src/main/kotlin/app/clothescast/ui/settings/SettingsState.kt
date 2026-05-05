@@ -44,14 +44,6 @@ data class SettingsState(
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
     val ttsStyle: TtsStyle = TtsStyle.WEATHER_FORECASTER,
     /**
-     * Free-text directive used when [ttsStyle] is [TtsStyle.CUSTOM]. Empty
-     * means "fall back to the [TtsStyle.WEATHER_FORECASTER] preamble". Mirrors
-     * [UserPreferences.customTtsStyleDirective].
-     *
-     * TODO(pre-release): remove alongside [TtsStyle.CUSTOM].
-     */
-    val customTtsStyleDirective: String = "",
-    /**
      * On-device voice ID the user has pinned, or `null` for "auto-pick the
      * highest-quality voice for [voiceLocale]" (the default for installs
      * that haven't opened the device-voice picker).
