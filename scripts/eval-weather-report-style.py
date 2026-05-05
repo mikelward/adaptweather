@@ -10,25 +10,32 @@ Candidates move in three steps:
      the sentence/clothing-emphasis clause
   C) tweaks — minor wording changes that may sharpen or soften the effect
 
+Each candidate is tested across three locales (en-US, en-AU, en-GB) using the
+same accent directives the app injects, so style × accent interactions are
+visible.
+
 Usage
 -----
   export GEMINI_API_KEY=your_key_here
   python3 scripts/eval-weather-report-style.py
 
-  # only test certain clips:
-  python3 scripts/eval-weather-report-style.py --filter weather-B
+  # only one locale:
+  python3 scripts/eval-weather-report-style.py --filter en-AU
+
+  # one candidate across all locales/voices:
+  python3 scripts/eval-weather-report-style.py --filter weather-B2
 
 Output
 ------
 Writes .wav files to /tmp/tts-weather-style/:
-  baseline-A*  — current app defaults
-  weather-B*   — user's explicit weather-broadcast proposal
-  tweak-C*     — suggested variants worth comparing
+  en-US-<candidate>-<voice>.wav
+  en-AU-<candidate>-<voice>.wav
+  en-GB-<candidate>-<voice>.wav
 
 Rate with:
   python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/
-  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/ --pattern erinome
-  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/ --pattern iapetus
+  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/ --pattern en-AU
+  python3 scripts/rate-tts-clips.py /tmp/tts-weather-style/ --pattern en-GB-weather-B2
 """
 
 import argparse
@@ -51,6 +58,14 @@ SAMPLE_TEXT = (
     "midday before clearing by late afternoon. Temperatures recover to around 13 "
     "degrees this evening, so a light jacket should be fine heading out tonight."
 )
+
+# ── locales — same strings as GeminiTtsClient.kt ACCENT_DIRECTIVES ────────────
+
+LOCALES: dict[str, str] = {
+    "en-US": "Speak with a General American accent.",
+    "en-AU": "Speak with a Cultivated Australian accent — clear and educated, not broad.",
+    "en-GB": "Speak with a Standard Southern British accent.",
+}
 
 # ── A: baselines (current production directives) ─────────────────────────────
 
@@ -140,8 +155,8 @@ VOICES = ["Erinome", "Kore", "Aoede", "Despina", "Iapetus", "Charon", "Leda"]
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
-def synthesize(directive: str, voice: str) -> bytes:
-    prompt = directive + SAMPLE_TEXT
+def synthesize(directive: str, accent: str, voice: str) -> bytes:
+    prompt = directive + accent + "\n\n" + SAMPLE_TEXT
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
@@ -184,52 +199,51 @@ def main() -> None:
         "--filter",
         default="",
         metavar="SUBSTRING",
-        help="Only generate clips whose label contains this string (e.g. 'weather-B')",
+        help=(
+            "Only generate clips whose slug contains this string. "
+            "Examples: 'en-AU', 'weather-B2', 'en-GB-baseline', 'erinome'"
+        ),
     )
     args = parser.parse_args()
 
     if not API_KEY:
         raise SystemExit("Set GEMINI_API_KEY env var before running.")
 
-    candidates = [
-        (label, directive)
+    # Build full clip list, then apply filter
+    clips: list[tuple[str, str, str, str]] = [  # (slug, directive, accent, voice)
+        (f"{locale}-{label}-{voice.lower()}", directive, accent, voice)
+        for locale, accent in LOCALES.items()
         for label, directive in CANDIDATES
-        if args.filter in label
+        for voice in VOICES
+        if args.filter in f"{locale}-{label}-{voice.lower()}"
     ]
-    if not candidates:
-        raise SystemExit(f"No candidates match filter '{args.filter}'.")
+    if not clips:
+        raise SystemExit(f"No clips match filter '{args.filter}'.")
 
     out = pathlib.Path("/tmp/tts-weather-style")
-    total = len(candidates) * len(VOICES)
-    print(f"Writing {total} clip(s) to {out}/\n")
+    print(f"Writing {len(clips)} clip(s) to {out}/\n")
 
-    for label, directive in candidates:
-        for voice in VOICES:
-            slug = f"{label}-{voice.lower()}"
-            path = out / f"{slug}.wav"
-            if path.exists():
-                print(f"  {slug} ... skip (already exists)")
-                continue
-            print(f"  {slug} ...", end=" ", flush=True)
-            try:
-                pcm = synthesize(directive, voice)
-                write_wav(path, pcm)
-                print(f"ok  ({len(pcm) // 2 / SAMPLE_RATE:.1f}s)")
-            except Exception as exc:
-                print(f"FAIL  {exc}")
+    for slug, directive, accent, voice in clips:
+        path = out / f"{slug}.wav"
+        if path.exists():
+            print(f"  {slug} ... skip (already exists)")
+            continue
+        print(f"  {slug} ...", end=" ", flush=True)
+        try:
+            pcm = synthesize(directive, accent, voice)
+            write_wav(path, pcm)
+            print(f"ok  ({len(pcm) // 2 / SAMPLE_RATE:.1f}s)")
+        except Exception as exc:
+            print(f"FAIL  {exc}")
 
     print(f"\nDone. Rate with:")
     print(f"  python3 scripts/rate-tts-clips.py {out}/")
-    print(f"\nTo compare just one voice:")
+    print(f"\nBy locale:")
+    for locale in LOCALES:
+        print(f"  python3 scripts/rate-tts-clips.py {out}/ --pattern {locale}")
+    print(f"\nBy voice:")
     for v in VOICES:
         print(f"  python3 scripts/rate-tts-clips.py {out}/ --pattern {v.lower()}")
-    print(f"\nDirective summary (copy-paste for the app's CUSTOM field):")
-    print()
-    for label, directive in candidates:
-        first_line = directive.split("\n")[0]
-        print(f"  {label}:")
-        print(f"    {first_line}")
-    print()
 
 
 if __name__ == "__main__":
