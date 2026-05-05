@@ -302,11 +302,28 @@ class SettingsRepositoryTest {
 
     @Test
     fun `tts style setter round-trips`() = runTest {
-        subject.setTtsStyle(TtsStyle.NEWSREADER)
-        subject.preferences.first().ttsStyle shouldBe TtsStyle.NEWSREADER
+        // Cover every TtsStyle value so that adding a new entry (or
+        // dropping one) without keeping the persistence path in sync
+        // shows up here. DataStore stores the enum name, so this is
+        // effectively a contract test for the name → enum decode path.
+        for (style in TtsStyle.entries) {
+            subject.setTtsStyle(style)
+            subject.preferences.first().ttsStyle shouldBe style
+        }
+    }
 
-        subject.setTtsStyle(TtsStyle.NORMAL)
-        subject.preferences.first().ttsStyle shouldBe TtsStyle.NORMAL
+    @Test
+    fun `custom tts style directive defaults to blank and round-trips`() = runTest {
+        subject.preferences.first().customTtsStyleDirective shouldBe ""
+
+        subject.setCustomTtsStyleDirective("Read as a stern librarian")
+        subject.preferences.first().customTtsStyleDirective shouldBe "Read as a stern librarian"
+
+        // Blank clears the stored directive — same shape as setDeviceVoice's
+        // null/blank handling so a user emptying the field rolls back to
+        // the default rather than persisting an empty string.
+        subject.setCustomTtsStyleDirective("")
+        subject.preferences.first().customTtsStyleDirective shouldBe ""
     }
 
     @Test

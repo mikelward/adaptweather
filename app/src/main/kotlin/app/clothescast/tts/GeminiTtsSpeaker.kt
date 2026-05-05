@@ -19,6 +19,7 @@ class GeminiTtsSpeaker(
     private val client: GeminiTtsClient,
     private val voiceName: String = DEFAULT_GEMINI_TTS_VOICE,
     private val style: TtsStyle = TtsStyle.NORMAL,
+    private val customStyleDirective: String = "",
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
@@ -27,6 +28,7 @@ class GeminiTtsSpeaker(
             voiceName = voiceName,
             locale = locale,
             style = style,
+            customStyleDirective = customStyleDirective,
         )
         PcmAudioPlayer.play(audio)
     }

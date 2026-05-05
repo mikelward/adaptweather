@@ -113,6 +113,7 @@ class SettingsViewModel(
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
                         ttsStyle = prefs.ttsStyle,
+                        customTtsStyleDirective = prefs.customTtsStyleDirective,
                         deviceVoice = prefs.deviceVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
@@ -203,6 +204,16 @@ class SettingsViewModel(
 
     fun setTtsStyle(style: TtsStyle) {
         viewModelScope.launch { settingsRepository.setTtsStyle(style) }
+    }
+
+    // TODO(pre-release): remove alongside [TtsStyle.CUSTOM] — see plan
+    // can-we-add-some-imperative-biscuit.md.
+    fun setCustomTtsStyleDirective(value: String) {
+        // Update _state synchronously so the TextField echoes the user's
+        // typing within the same frame, instead of waiting on the DataStore
+        // round-trip — same pattern as setDeviceVoice().
+        _state.update { it.copy(customTtsStyleDirective = value) }
+        viewModelScope.launch { settingsRepository.setCustomTtsStyleDirective(value) }
     }
 
     fun setDeviceVoice(voice: String?) {

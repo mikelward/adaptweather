@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -65,6 +66,7 @@ internal fun VoiceContent(
     selected: TtsEngine,
     geminiVoice: String,
     ttsStyle: TtsStyle,
+    customTtsStyleDirective: String,
     deviceVoice: String?,
     deviceVoices: List<DeviceVoice>,
     effectiveDeviceVoice: DeviceVoice?,
@@ -75,6 +77,7 @@ internal fun VoiceContent(
     onSetTtsEngine: (TtsEngine) -> Unit,
     onSetGeminiVoice: (String) -> Unit,
     onSetTtsStyle: (TtsStyle) -> Unit,
+    onSetCustomTtsStyleDirective: (String) -> Unit,
     onSetDeviceVoice: (String?) -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
     onSetGeminiKey: (String) -> Unit,
@@ -95,6 +98,7 @@ internal fun VoiceContent(
         engine: TtsEngine,
         gVoice: String,
         style: TtsStyle,
+        customDirective: String,
         dVoice: String?,
         locale: VoiceLocale,
     ) {
@@ -107,6 +111,7 @@ internal fun VoiceContent(
                     engine = engine,
                     geminiVoice = gVoice,
                     ttsStyle = style,
+                    customTtsStyleDirective = customDirective,
                     deviceVoice = dVoice,
                     voiceLocale = locale,
                     region = region,
@@ -137,7 +142,7 @@ internal fun VoiceContent(
                 enabled = !isPreviewing,
                 onSelect = {
                     onSetVoiceLocale(it)
-                    preview(selected, geminiVoice, ttsStyle, deviceVoice, it)
+                    preview(selected, geminiVoice, ttsStyle, customTtsStyleDirective, deviceVoice, it)
                 },
             )
         }
@@ -155,7 +160,7 @@ internal fun VoiceContent(
                     enabled = !isPreviewing,
                     onSelect = {
                         onSetTtsEngine(engine)
-                        preview(engine, geminiVoice, ttsStyle, deviceVoice, voiceLocale)
+                        preview(engine, geminiVoice, ttsStyle, customTtsStyleDirective, deviceVoice, voiceLocale)
                     },
                 )
             }
@@ -185,7 +190,7 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = {
                             onSetGeminiVoice(it)
-                            preview(TtsEngine.GEMINI, it, ttsStyle, deviceVoice, voiceLocale)
+                            preview(TtsEngine.GEMINI, it, ttsStyle, customTtsStyleDirective, deviceVoice, voiceLocale)
                         },
                     )
                     StylePicker(
@@ -193,11 +198,22 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = { picked ->
                             onSetTtsStyle(picked)
-                            preview(TtsEngine.GEMINI, geminiVoice, picked, deviceVoice, voiceLocale)
+                            preview(TtsEngine.GEMINI, geminiVoice, picked, customTtsStyleDirective, deviceVoice, voiceLocale)
                         },
                     )
+                    if (ttsStyle == TtsStyle.CUSTOM) {
+                        // TODO(pre-release): remove this whole block alongside
+                        // [TtsStyle.CUSTOM]. Free-text directive lets the user
+                        // iterate on wording at runtime so good ones can be
+                        // promoted to baked-in TtsStyle entries.
+                        CustomDirectiveField(
+                            value = customTtsStyleDirective,
+                            enabled = !isPreviewing,
+                            onValueChange = onSetCustomTtsStyleDirective,
+                        )
+                    }
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, ttsStyle, deviceVoice, voiceLocale)
+                        preview(selected, geminiVoice, ttsStyle, customTtsStyleDirective, deviceVoice, voiceLocale)
                     }
                 }
                 TtsEngine.DEVICE -> {
@@ -211,11 +227,11 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = { picked ->
                             onSetDeviceVoice(picked)
-                            preview(selected, geminiVoice, ttsStyle, picked, voiceLocale)
+                            preview(selected, geminiVoice, ttsStyle, customTtsStyleDirective, picked, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, ttsStyle, deviceVoice, voiceLocale)
+                        preview(selected, geminiVoice, ttsStyle, customTtsStyleDirective, deviceVoice, voiceLocale)
                     }
                 }
             }
@@ -398,6 +414,40 @@ private fun StylePicker(
 private fun ttsStyleLabel(style: TtsStyle): Int = when (style) {
     TtsStyle.NORMAL -> R.string.settings_tts_style_normal
     TtsStyle.NEWSREADER -> R.string.settings_tts_style_newsreader
+    TtsStyle.WEATHER_FORECASTER -> R.string.settings_tts_style_weather_forecaster
+    TtsStyle.PIRATE -> R.string.settings_tts_style_pirate
+    TtsStyle.COWBOY -> R.string.settings_tts_style_cowboy
+    TtsStyle.SHAKESPEAREAN -> R.string.settings_tts_style_shakespearean
+    TtsStyle.SURFER -> R.string.settings_tts_style_surfer
+    TtsStyle.PARENT -> R.string.settings_tts_style_parent
+    TtsStyle.CHILD -> R.string.settings_tts_style_child
+    TtsStyle.TEENAGER -> R.string.settings_tts_style_teenager
+    TtsStyle.GRANDPARENT -> R.string.settings_tts_style_grandparent
+    TtsStyle.KIDS_HOST -> R.string.settings_tts_style_kids_host
+    TtsStyle.RADIO_HOST -> R.string.settings_tts_style_radio_host
+    TtsStyle.MORNING_DJ -> R.string.settings_tts_style_morning_dj
+    TtsStyle.SCIENCE_TEACHER -> R.string.settings_tts_style_science_teacher
+    TtsStyle.HISTORIAN -> R.string.settings_tts_style_historian
+    TtsStyle.SPORTSCASTER -> R.string.settings_tts_style_sportscaster
+    TtsStyle.CUSTOM -> R.string.settings_tts_style_custom
+}
+
+// TODO(pre-release): remove this composable alongside [TtsStyle.CUSTOM] —
+// see plan can-we-add-some-imperative-biscuit.md.
+@Composable
+private fun CustomDirectiveField(
+    value: String,
+    enabled: Boolean,
+    onValueChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        enabled = enabled,
+        label = { Text(stringResource(R.string.settings_tts_style_custom_label)) },
+        placeholder = { Text(stringResource(R.string.settings_tts_style_custom_placeholder)) },
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 @Composable
@@ -604,6 +654,7 @@ private suspend fun runTtsPreview(
     engine: TtsEngine,
     geminiVoice: String,
     ttsStyle: TtsStyle,
+    customTtsStyleDirective: String,
     deviceVoice: String?,
     voiceLocale: VoiceLocale,
     region: Region,
@@ -627,6 +678,7 @@ private suspend fun runTtsPreview(
                             app.geminiTtsClient,
                             voiceName = geminiVoice,
                             style = ttsStyle,
+                            customStyleDirective = customTtsStyleDirective,
                         ).speak(text, locale)
                     TtsEngine.DEVICE ->
                         app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
