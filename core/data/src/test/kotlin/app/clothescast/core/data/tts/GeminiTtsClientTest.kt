@@ -372,6 +372,45 @@ class GeminiTtsClientTest {
     }
 
     @Test
+    fun `character styles get a bare language hint not the full accent directive`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", locale = Locale.UK, style = TtsStyle.PIRATE)
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("Speak in British English.")
+        // Full accent directive must not appear — it conflicts with the persona.
+        body.shouldNotContain("Standard British accent")
+    }
+
+    @Test
+    fun `weather forecaster still gets the full accent directive not the bare language hint`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", locale = Locale.UK, style = TtsStyle.WEATHER_FORECASTER)
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("Standard British accent")
+        body.shouldNotContain("Speak in British English.")
+    }
+
+    @Test
     fun `decodes inline pcm and parses sample rate from mime type`() = runTest {
         val client = GeminiTtsClient(
             httpClient = mockClient(SUCCESS_BODY),

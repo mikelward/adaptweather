@@ -62,86 +62,86 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER: String =
         "national news service. Enunciate clearly and use a measured speed. " +
         "Accentuate the ends of sentences and give a gentle emphasis to clothing " +
         "recommendations. No audio effects, background noise, or vinyl-style " +
-        "texture:\n\n"
+        "texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_PIRATE: String =
     "Read the following as a swaggering pirate, with hearty nautical flair. " +
         "You may add brief in-character exclamations such as 'Arrr' or 'Aye, " +
-        "matey'. No audio effects, background noise, or vinyl-style texture:\n\n"
+        "matey'. No audio effects, background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_COWBOY: String =
     "Read the following in a slow, friendly American Old West drawl. You may " +
         "add brief in-character exclamations such as 'Howdy' or 'Well, partner'. " +
-        "No audio effects, background noise, or vinyl-style texture:\n\n"
+        "No audio effects, background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_SHAKESPEAREAN: String =
     "Read the following in the theatrical register of an Elizabethan stage " +
         "actor — measured cadence, rolling vowels. You may add brief " +
         "in-character interjections such as 'Hark' or 'Forsooth'. No audio " +
-        "effects, background noise, or vinyl-style texture:\n\n"
+        "effects, background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_SURFER: String =
     "Read the following as a laid-back Southern California surfer — relaxed " +
         "pace, easy enthusiasm. You may add brief in-character interjections " +
         "such as 'Dude' or 'Totally'. No audio effects, background noise, or " +
-        "vinyl-style texture:\n\n"
+        "vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_PARENT: String =
     "Read the following as a warm, encouraging parent gently reminding their " +
         "kid before they head out. Calm, caring; brief endearments are fine. " +
-        "No audio effects, background noise, or vinyl-style texture:\n\n"
+        "No audio effects, background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_CHILD: String =
     "Read the following as an excited young child sharing news with a friend " +
         "— bright, eager, simple inflection. You may add brief in-character " +
         "exclamations such as 'Wow!' or 'Cool!'. No audio effects, background " +
-        "noise, or vinyl-style texture:\n\n"
+        "noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_TEENAGER: String =
     "Read the following as a slightly bored modern teenager — flat-ish " +
         "affect, occasional rising inflection. You may add brief in-character " +
         "interjections such as 'literally' or 'I mean…'. No audio effects, " +
-        "background noise, or vinyl-style texture:\n\n"
+        "background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_GRANDPARENT: String =
     "Read the following as a kindly grandparent passing on advice — " +
         "unhurried, warm, slightly wry. Brief endearments are fine. No audio " +
-        "effects, background noise, or vinyl-style texture:\n\n"
+        "effects, background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_KIDS_HOST: String =
     "Read the following as the bright, animated host of a children's TV show " +
         "— high energy, big smiles in the voice, simple vocabulary cadence. " +
         "Brief enthusiastic interjections welcome. No audio effects, " +
-        "background noise, or vinyl-style texture:\n\n"
+        "background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_RADIO_HOST: String =
     "Read the following as a chatty talkback radio host addressing the " +
         "audience — conversational, opinionated, with a touch of warmth. " +
         "Brief asides are fine. No audio effects, background noise, or " +
-        "vinyl-style texture:\n\n"
+        "vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_MORNING_DJ: String =
     "Read the following as an upbeat breakfast-radio DJ — bright, energetic, " +
         "chatty. Brief interjections such as 'alright!' or 'here's your " +
         "forecast' are fine. No audio effects, background noise, or " +
-        "vinyl-style texture:\n\n"
+        "vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_SCIENCE_TEACHER: String =
     "Read the following as an enthusiastic high school science teacher " +
         "walking the class through today's weather reasoning — clear, " +
         "curious, mildly excitable about the physics. No audio effects, " +
-        "background noise, or vinyl-style texture:\n\n"
+        "background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_HISTORIAN: String =
     "Read the following as the narrator of a serious history documentary — " +
         "measured, gravely interested, every sentence matters. No audio " +
-        "effects, background noise, or vinyl-style texture:\n\n"
+        "effects, background noise, or vinyl-style texture.\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_SPORTSCASTER: String =
     "Read the following as an animated sportscaster calling a play — " +
         "building energy, crisp emphasis on the key facts. Brief interjections " +
         "are fine. No audio effects, background noise, or vinyl-style " +
-        "texture:\n\n"
+        "texture.\n\n"
 
 /**
  * Resolves the style preamble for [style], honouring [customDirective] when
@@ -173,6 +173,77 @@ internal fun styleDirectiveFor(
         ?.let { "$it\n\n" }
         ?: GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER
 }
+
+/**
+ * Returns a bare language hint ("Speak in British English.") for character /
+ * persona TTS styles. Unlike [geminiAccentDirectiveFor] this carries no
+ * register, accent, or clarity words that could conflict with the persona.
+ * Returns null for locales where the model's default (North American English)
+ * is acceptable.
+ */
+internal fun geminiLanguageDirectiveFor(locale: Locale): String? {
+    val country = locale.country
+    if (country.isNotEmpty()) {
+        LANGUAGE_DIRECTIVES["${locale.language}-$country"]?.let { return it }
+    }
+    return LANGUAGE_DIRECTIVES[locale.language]
+}
+
+private val LANGUAGE_DIRECTIVES: Map<String, String> = mapOf(
+    "en-GB" to "Speak in British English.",
+    "en-AU" to "Speak in Australian English.",
+    "en-CA" to "Speak in Canadian English.",
+    "en-ZA" to "Speak in South African English.",
+    "de" to "Speak in German.",
+    "de-AT" to "Speak in Austrian German.",
+    "de-CH" to "Speak in Swiss German.",
+    "fr" to "Speak in French.",
+    "fr-CA" to "Speak in Canadian French.",
+    "it" to "Speak in Italian.",
+    "es-ES" to "Speak in Spanish.",
+    "es-MX" to "Speak in Mexican Spanish.",
+    "ca" to "Speak in Catalan.",
+    "ru" to "Speak in Russian.",
+    "pl" to "Speak in Polish.",
+    "hr" to "Speak in Croatian.",
+    "sl" to "Speak in Slovenian.",
+    "sr" to "Speak in Serbian.",
+    "bg" to "Speak in Bulgarian.",
+    "cs" to "Speak in Czech.",
+    "sk" to "Speak in Slovak.",
+    "hu" to "Speak in Hungarian.",
+    "ro" to "Speak in Romanian.",
+    "el" to "Speak in Greek.",
+    "uk" to "Speak in Ukrainian.",
+    "pt-BR" to "Speak in Brazilian Portuguese.",
+    "pt-PT" to "Speak in European Portuguese.",
+    "pt" to "Speak in Portuguese.",
+    "nl" to "Speak in Dutch.",
+    "sv" to "Speak in Swedish.",
+    "da" to "Speak in Danish.",
+    "nb" to "Speak in Norwegian.",
+    "fi" to "Speak in Finnish.",
+    "et" to "Speak in Estonian.",
+    "lv" to "Speak in Latvian.",
+    "lt" to "Speak in Lithuanian.",
+    "tr" to "Speak in Turkish.",
+    "id" to "Speak in Indonesian.",
+    "ms" to "Speak in Malay.",
+    "fil" to "Speak in Filipino.",
+    "sw" to "Speak in Swahili.",
+    "vi" to "Speak in Vietnamese.",
+    "th" to "Speak in Thai.",
+    "zh-CN" to "Speak in Mandarin Chinese.",
+    "zh-TW" to "Speak in Mandarin Chinese.",
+    "zh" to "Speak in Mandarin Chinese.",
+    "hi" to "Speak in Hindi.",
+    "bn" to "Speak in Bengali.",
+    "ja" to "Speak in Japanese.",
+    "ko" to "Speak in Korean.",
+    "ar" to "Speak in Arabic.",
+    "he" to "Speak in Hebrew.",
+    "fa" to "Speak in Persian.",
+)
 
 /**
  * Returns a one-line accent / language instruction for Gemini's TTS prompt, or
@@ -313,7 +384,15 @@ class GeminiTtsClient(
             if (it.isBlank()) throw MissingApiKeyException()
         }
 
-        val accent = locale?.let { geminiAccentDirectiveFor(it) }
+        // WEATHER_FORECASTER gets the full accent directive ("Speak with a
+        // Standard British accent — clear and natural."). Character styles get
+        // only a bare language hint ("Speak in British English.") so the accent
+        // words don't conflict with the persona.
+        val accent = if (style == TtsStyle.WEATHER_FORECASTER) {
+            locale?.let { geminiAccentDirectiveFor(it) }
+        } else {
+            locale?.let { geminiLanguageDirectiveFor(it) }
+        }
         val prompt = buildString {
             append(styleDirectiveFor(style, customStyleDirective))
             if (accent != null) {
