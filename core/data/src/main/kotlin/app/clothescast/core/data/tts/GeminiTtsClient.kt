@@ -42,39 +42,24 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * documents the input text as a style-steerable prompt — preambles like this
  * are interpreted as direction and not spoken back.
  *
- * The two baseline registers, user-selectable via [TtsStyle]:
+ * [GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER] is the default register —
+ * national-news broadcast delivery, deliberate cadence, sentence-final lift,
+ * gentle emphasis on clothing advice. Chosen via listening eval over a neutral
+ * "studio voice" and a newsreader variant.
  *
- * - [GEMINI_TTS_STYLE_DIRECTIVE_NORMAL] — neutral "studio voice" wording. Lets
- *   each prebuilt voice's own character through. Default. Brought back after
- *   the newsreader-only rewrite was found to flatten voices like Leda.
- * - [GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER] — clear, educated newsreader
- *   register. Suppresses theatrical drift on some voices (e.g. en-AU Kore
- *   sliding broad/nasal) but at the cost of squashing voice character.
- *
- * Below the two baselines are character / persona registers (pirate, cowboy,
- * etc.). Each one starts with "Read the following…" so the model treats it
- * as delivery direction rather than a rewrite, permits brief in-character
+ * Below the default are character / persona registers (pirate, cowboy, etc.).
+ * Each one starts with "Read the following…" so the model treats it as
+ * delivery direction rather than a rewrite, permits brief in-character
  * interjections, and ends with the standard "no audio effects, background
  * noise, or vinyl-style texture" trailer — important for personas like
  * PIRATE that might otherwise tempt the model to add ocean ambience.
  */
-internal const val GEMINI_TTS_STYLE_DIRECTIVE_NORMAL: String =
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER: String =
     "Read the following weather forecast in the style of a national-news " +
         "weather report. Use a deliberate cadence: unhurried, clearly enunciated, " +
         "with a natural lift at the end of each sentence. Give a gentle extra " +
         "emphasis to clothing advice. No audio effects, background noise, or " +
         "vinyl-style texture:\n\n"
-
-internal const val GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER: String =
-    "Read the following in a clear, educated newsreader style — articulate but " +
-        "not theatrical or exaggerated. No audio effects, background noise, or " +
-        "vinyl-style texture:\n\n"
-
-internal const val GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER: String =
-    "Read the following as a friendly TV weather presenter walking the viewer " +
-        "through today's forecast — clear, upbeat, lightly emphatic on the key " +
-        "numbers. Brief asides such as 'and over to the temperatures' are fine. " +
-        "No audio effects, background noise, or vinyl-style texture:\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_PIRATE: String =
     "Read the following as a swaggering pirate, with hearty nautical flair. " +
@@ -158,16 +143,14 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE_SPORTSCASTER: String =
 /**
  * Resolves the style preamble for [style], honouring [customDirective] when
  * the user has picked [TtsStyle.CUSTOM]. A blank custom directive falls back
- * to [GEMINI_TTS_STYLE_DIRECTIVE_NORMAL] so a half-typed CUSTOM doesn't break
- * TTS for the user — they get a normal-sounding read and the chance to fill
- * the field in.
+ * to [GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER] so a half-typed CUSTOM
+ * doesn't break TTS for the user — they get a normal-sounding read and the
+ * chance to fill the field in.
  */
 internal fun styleDirectiveFor(
     style: TtsStyle,
     customDirective: String = "",
 ): String = when (style) {
-    TtsStyle.NORMAL -> GEMINI_TTS_STYLE_DIRECTIVE_NORMAL
-    TtsStyle.NEWSREADER -> GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER
     TtsStyle.WEATHER_FORECASTER -> GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER
     TtsStyle.PIRATE -> GEMINI_TTS_STYLE_DIRECTIVE_PIRATE
     TtsStyle.COWBOY -> GEMINI_TTS_STYLE_DIRECTIVE_COWBOY
@@ -185,7 +168,7 @@ internal fun styleDirectiveFor(
     TtsStyle.SPORTSCASTER -> GEMINI_TTS_STYLE_DIRECTIVE_SPORTSCASTER
     TtsStyle.CUSTOM -> customDirective.trim().takeIf { it.isNotEmpty() }
         ?.let { "$it\n\n" }
-        ?: GEMINI_TTS_STYLE_DIRECTIVE_NORMAL
+        ?: GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER
 }
 
 /**
@@ -320,7 +303,7 @@ class GeminiTtsClient(
         text: String,
         voiceName: String = DEFAULT_GEMINI_TTS_VOICE,
         locale: Locale? = null,
-        style: TtsStyle = TtsStyle.NORMAL,
+        style: TtsStyle = TtsStyle.WEATHER_FORECASTER,
         customStyleDirective: String = "",
     ): PcmAudio {
         val key = keyProvider.get().also {

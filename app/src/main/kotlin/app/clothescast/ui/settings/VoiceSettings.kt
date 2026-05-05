@@ -412,8 +412,6 @@ private fun StylePicker(
 }
 
 private fun ttsStyleLabel(style: TtsStyle): Int = when (style) {
-    TtsStyle.NORMAL -> R.string.settings_tts_style_normal
-    TtsStyle.NEWSREADER -> R.string.settings_tts_style_newsreader
     TtsStyle.WEATHER_FORECASTER -> R.string.settings_tts_style_weather_forecaster
     TtsStyle.PIRATE -> R.string.settings_tts_style_pirate
     TtsStyle.COWBOY -> R.string.settings_tts_style_cowboy

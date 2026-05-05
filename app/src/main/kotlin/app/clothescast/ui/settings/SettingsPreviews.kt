@@ -151,7 +151,7 @@ internal fun SettingsVoiceDevicePreview() {
         VoiceContent(
             selected = TtsEngine.DEVICE,
             geminiVoice = UserPreferences.DEFAULT_GEMINI_VOICE,
-            ttsStyle = TtsStyle.NORMAL,
+            ttsStyle = TtsStyle.WEATHER_FORECASTER,
             customTtsStyleDirective = "",
             deviceVoice = null,
             deviceVoices = emptyList(),
@@ -179,7 +179,7 @@ internal fun SettingsVoiceGeminiPreview() {
         VoiceContent(
             selected = TtsEngine.GEMINI,
             geminiVoice = UserPreferences.DEFAULT_GEMINI_VOICE,
-            ttsStyle = TtsStyle.NORMAL,
+            ttsStyle = TtsStyle.WEATHER_FORECASTER,
             customTtsStyleDirective = "",
             deviceVoice = null,
             deviceVoices = emptyList(),

@@ -42,10 +42,10 @@ data class SettingsState(
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
-    val ttsStyle: TtsStyle = TtsStyle.NORMAL,
+    val ttsStyle: TtsStyle = TtsStyle.WEATHER_FORECASTER,
     /**
      * Free-text directive used when [ttsStyle] is [TtsStyle.CUSTOM]. Empty
-     * means "fall back to the [TtsStyle.NORMAL] preamble". Mirrors
+     * means "fall back to the [TtsStyle.WEATHER_FORECASTER] preamble". Mirrors
      * [UserPreferences.customTtsStyleDirective].
      *
      * TODO(pre-release): remove alongside [TtsStyle.CUSTOM].
