@@ -107,7 +107,7 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello world")
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("clean, crisp studio voice")
+        body.shouldContain("national-news weather report")
         body.shouldNotContain("newsreader style")
         body.shouldContain("hello world")
     }
@@ -128,7 +128,7 @@ class GeminiTtsClientTest {
 
         val body = checkNotNull(capturedBody)
         body.shouldContain("newsreader style")
-        body.shouldNotContain("clean, crisp studio voice")
+        body.shouldNotContain("national-news weather report")
         body.shouldContain("hello world")
     }
 
@@ -165,7 +165,7 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("Cultivated Australian accent")
+        body.shouldContain("General Australian accent")
     }
 
     @Test
@@ -518,7 +518,7 @@ class GeminiTtsClientTest {
                 body.shouldContain(signature)
                 body.shouldContain("hello world")
                 // Baseline NORMAL phrasing must not leak into a non-NORMAL style.
-                body.shouldNotContain("clean, crisp studio voice")
+                body.shouldNotContain("national-news weather report")
             }
         }
     }
@@ -546,7 +546,7 @@ class GeminiTtsClientTest {
 
         val body = checkNotNull(capturedBody)
         body.shouldContain("stern librarian whispering")
-        body.shouldNotContain("clean, crisp studio voice")
+        body.shouldNotContain("national-news weather report")
         body.shouldContain("hello world")
     }
 
@@ -572,7 +572,7 @@ class GeminiTtsClientTest {
         )
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("clean, crisp studio voice")
+        body.shouldContain("national-news weather report")
         body.shouldContain("hello world")
     }
 

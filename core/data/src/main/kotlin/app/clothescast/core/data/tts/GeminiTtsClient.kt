@@ -59,8 +59,11 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * PIRATE that might otherwise tempt the model to add ocean ambience.
  */
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_NORMAL: String =
-    "Read the following in a clean, crisp studio voice with no audio effects, " +
-        "background noise, or vinyl-style texture:\n\n"
+    "Read the following weather forecast in the style of a national-news " +
+        "weather report. Use a deliberate cadence: unhurried, clearly enunciated, " +
+        "with a natural lift at the end of each sentence. Give a gentle extra " +
+        "emphasis to clothing advice. No audio effects, background noise, or " +
+        "vinyl-style texture:\n\n"
 
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER: String =
     "Read the following in a clear, educated newsreader style — articulate but " +
@@ -213,7 +216,7 @@ internal fun geminiAccentDirectiveFor(locale: Locale): String? {
 
 private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "en-GB" to "Speak with a Standard Southern British accent.",
-    "en-AU" to "Speak with a Cultivated Australian accent — clear and educated, not broad.",
+    "en-AU" to "Speak with a General Australian accent — clear and natural, not broad.",
     "en-US" to "Speak with a General American accent.",
     "en-CA" to "Speak with a Canadian English accent.",
     // Language-only fallback for Standard German (de-DE) and any de-* variant
