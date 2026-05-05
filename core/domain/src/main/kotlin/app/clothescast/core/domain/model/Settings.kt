@@ -277,6 +277,6 @@ data class UserPreferences(
     val dailyMentionEveningEvents: Boolean = true,
 ) {
     companion object {
-        const val DEFAULT_GEMINI_VOICE = "Erinome"
+        const val DEFAULT_GEMINI_VOICE = "Leda"
     }
 }
