@@ -117,6 +117,7 @@ class SettingsViewModel(
                         deviceVoice = prefs.deviceVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
+                        telemetryEnabled = prefs.telemetryEnabled,
                     )
                 }
                 // Re-enumerate on first observation and whenever the effective
@@ -326,6 +327,10 @@ class SettingsViewModel(
 
     fun setUseCalendarEvents(enabled: Boolean) {
         viewModelScope.launch { settingsRepository.setUseCalendarEvents(enabled) }
+    }
+
+    fun setTelemetryEnabled(enabled: Boolean) {
+        viewModelScope.launch { settingsRepository.setTelemetryEnabled(enabled) }
     }
 
     /** Used by the data-sources page's location dialog; safe to call from any dispatcher. */

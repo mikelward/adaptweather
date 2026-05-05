@@ -6,6 +6,30 @@ plugins {
     alias(libs.plugins.roborazzi)
 }
 
+// Firebase plugins are only applied when the developer has dropped their
+// `google-services.json` into app/. CI sandboxes don't carry the file (it's
+// in .gitignore — Firebase config is per-developer / per-environment), so
+// applying the gms plugin unconditionally would fail the build with
+// "File google-services.json is missing" the moment Firebase is wired up.
+//
+// Skipping the plugins also means the runtime SDKs find no FirebaseApp —
+// the Telemetry controller guards on FirebaseApp.getApps(...).isEmpty()
+// and no-ops in that case, so the app still launches and the Settings
+// toggle still flips the persisted preference (it just has no SDK to
+// hand the choice off to). User-built APKs with the JSON in place report
+// as expected.
+val hasGoogleServices = file("google-services.json").exists()
+if (hasGoogleServices) {
+    apply(plugin = libs.plugins.gms.google.services.get().pluginId)
+    apply(plugin = libs.plugins.firebase.crashlytics.get().pluginId)
+} else {
+    logger.lifecycle(
+        "clothescast: app/google-services.json not found — Firebase plugins skipped " +
+            "and the app will run without Analytics/Crashlytics. Drop the file in " +
+            "app/ to enable telemetry on this build.",
+    )
+}
+
 /**
  * Runs `git` and returns its trimmed stdout. Throws — loudly — when git is
  * unavailable or the working tree isn't a repo, rather than silently shipping
@@ -312,6 +336,17 @@ dependencies {
     // PackageManager.getInstallSourceInfo to skip the round-trip on F-Droid /
     // sideloaded builds.
     implementation(libs.play.app.update.ktx)
+
+    // Firebase Analytics + Crashlytics. The BoM aligns SDK versions; the
+    // dependencies compile and link without google-services.json, but
+    // FirebaseApp.initializeApp() needs config from the gms plugin's
+    // generated resources to actually connect at runtime — see the
+    // conditional plugin apply at the top of this file. The Telemetry
+    // controller guards initialization on FirebaseApp.getApps(...) so the
+    // SDK calls aren't reached when Firebase didn't init.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     testImplementation(platform("org.junit:junit-bom:5.11.3"))
     testImplementation(libs.junit.jupiter.api)

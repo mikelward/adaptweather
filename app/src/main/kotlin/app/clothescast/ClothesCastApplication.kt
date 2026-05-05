@@ -15,6 +15,7 @@ import app.clothescast.data.InsightCache
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
 import app.clothescast.diag.DiagLog
+import app.clothescast.diag.Telemetry
 import app.clothescast.locale.AppLocale
 import app.clothescast.location.LocationResolver
 import app.clothescast.location.ReverseGeocoder
@@ -106,6 +107,12 @@ class ClothesCastApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         DiagLog.install(this)
+        // Bridge the user's Privacy toggle to Firebase. No-ops on builds
+        // assembled without google-services.json (CI). Crashlytics's own
+        // UncaughtExceptionHandler is auto-installed by FirebaseInitProvider
+        // before Application.onCreate runs, so it sits between the OS handler
+        // and DiagLog's wrapper above — no manual chaining needed here.
+        Telemetry.start(this, settingsRepository, applicationScope)
         NotificationChannelRegistrar.register(this)
         applicationScope.launch {
             try {

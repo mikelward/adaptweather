@@ -35,6 +35,14 @@ junit4 = "4.13.2"
 # + "Restart to install" prompt). Used to surface the update-available banner on
 # the Today screen for Play-Store installs only.
 playAppUpdate = "2.1.0"
+# Firebase Analytics + Crashlytics. The BoM aligns SDK versions; the two Gradle
+# plugins (gms-google-services, firebase-crashlytics) are applied conditionally
+# in app/build.gradle.kts based on app/google-services.json's presence so CI
+# (which doesn't carry the file) still compiles. See PRIVACY.md for the data
+# boundary contract these SDKs operate under.
+firebaseBom = "33.7.0"
+gmsGoogleServices = "4.4.2"
+firebaseCrashlyticsPlugin = "3.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -96,6 +104,10 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -105,3 +117,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+gms-google-services = { id = "com.google.gms.google-services", version.ref = "gmsGoogleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }

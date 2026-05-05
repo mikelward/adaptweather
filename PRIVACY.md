@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-05-03_
+_Last updated: 2026-05-05_
 
 ClothesCast is a daily weather-insight app for Android. This policy
 describes what data the app handles, where it goes, and what control you
@@ -226,6 +226,13 @@ email the address listed on the Play Store listing.
 
 ## Changelog
 
+- **2026-05-05** — Wired the previously-anticipated Firebase Crashlytics
+  + Google Analytics for Firebase integration into the app. Default-on
+  with a one-time non-blocking notice on the Today screen pointing the
+  user at the new Settings → Privacy toggle to turn it off. The hard
+  limits described in "Analytics and crash reporting" above are
+  unchanged; this entry just records that the SDKs are now actually
+  loaded (provided the developer has supplied `app/google-services.json`).
 - **2026-05-03** — Permitted automatic crash reporting and aggregate
   usage analytics in all builds and for all users, with hard limits on
   what those payloads may include (no calendar data, location, insight

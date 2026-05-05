@@ -192,6 +192,10 @@ private fun ClothesCastNav(app: ClothesCastApplication, navigateToTodayVersion: 
                     settingsInitialRoute = SettingsRoute.Location.name
                     screen = Screen.Settings
                 },
+                onNavigateToPrivacy = {
+                    settingsInitialRoute = SettingsRoute.Privacy.name
+                    screen = Screen.Settings
+                },
             )
         }
         Screen.Settings -> {

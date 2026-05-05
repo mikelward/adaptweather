@@ -479,6 +479,20 @@ internal fun UpdateDownloadedBannerPreview() {
     }
 }
 
+@Preview(name = "Banner · telemetry notice", widthDp = 360)
+@Composable
+internal fun TelemetryNoticeBannerPreview() {
+    // Renders the stateless card variant directly so the snapshot doesn't
+    // depend on a live SettingsRepository read on the Robolectric app at
+    // test time.
+    Frame {
+        TelemetryNoticeBannerCard(
+            onOpenSettings = {},
+            onDismiss = {},
+        )
+    }
+}
+
 @Preview(name = "Banner · local build (clean)", widthDp = 360)
 @Composable
 internal fun LocalBuildBannerPreview() {

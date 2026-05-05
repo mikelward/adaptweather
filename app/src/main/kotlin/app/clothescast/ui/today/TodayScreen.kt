@@ -97,6 +97,7 @@ fun TodayScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToAbout: () -> Unit,
     onNavigateToLocation: () -> Unit = onNavigateToSettings,
+    onNavigateToPrivacy: () -> Unit = onNavigateToSettings,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -181,6 +182,7 @@ fun TodayScreen(
             isWorking = isWorking,
             onRefresh = { triggerRefresh(context, state.morningTime, state.tonightTime) },
             onSetUpLocation = onNavigateToLocation,
+            onOpenPrivacy = onNavigateToPrivacy,
             onAdjustThreshold = viewModel::adjustClothesRuleThreshold,
         )
     }
@@ -193,6 +195,7 @@ private fun TodayContent(
     isWorking: Boolean,
     onRefresh: () -> Unit,
     onSetUpLocation: () -> Unit,
+    onOpenPrivacy: () -> Unit,
     onAdjustThreshold: (String, Double) -> Unit,
 ) {
     val context = LocalContext.current
@@ -235,6 +238,12 @@ private fun TodayContent(
         UpdateAvailableBanner()
         LocalBuildBanner()
         LastCrashBanner()
+        // One-shot privacy disclosure for the default-on Firebase telemetry,
+        // so the default isn't silent. Auto-hides once the user dismisses it
+        // (or taps through to Privacy from it). Stays out of the way of the
+        // crash banner: that's a current problem to action; this is just
+        // disclosure.
+        TelemetryNoticeBanner(onOpenPrivacy = onOpenPrivacy)
         if (locationActionRequired) {
             LocationActionRequiredBanner(onSetUpLocation = onSetUpLocation)
         }

@@ -468,6 +468,31 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `telemetryEnabled defaults to true and round-trips`() = runTest {
+        // Default-on so the long tail of installs report crashes without the
+        // user having to find the toggle. The Today banner exists to make
+        // this default visible; flipping the switch persists across launches.
+        subject.preferences.first().telemetryEnabled shouldBe true
+
+        subject.setTelemetryEnabled(false)
+        subject.preferences.first().telemetryEnabled shouldBe false
+
+        subject.setTelemetryEnabled(true)
+        subject.preferences.first().telemetryEnabled shouldBe true
+    }
+
+    @Test
+    fun `telemetryNoticeAcked defaults to false and round-trips`() = runTest {
+        // Default false so the one-time disclosure banner surfaces on first
+        // launch. Acked separately from telemetryEnabled so a user who turns
+        // telemetry off and on again doesn't see the disclosure twice.
+        subject.preferences.first().telemetryNoticeAcked shouldBe false
+
+        subject.setTelemetryNoticeAcked(true)
+        subject.preferences.first().telemetryNoticeAcked shouldBe true
+    }
+
+    @Test
     fun `dismissedLocalBuildSha defaults to empty and round-trips`() = runTest {
         subject.dismissedLocalBuildSha.first() shouldBe ""
 

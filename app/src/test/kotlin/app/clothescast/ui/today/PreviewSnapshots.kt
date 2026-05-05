@@ -20,6 +20,7 @@ import app.clothescast.ui.settings.SettingsClothesFahrenheitPreview
 import app.clothescast.ui.settings.SettingsClothesPreview
 import app.clothescast.ui.settings.SettingsDisplayPreview
 import app.clothescast.ui.settings.SettingsLocationPreview
+import app.clothescast.ui.settings.SettingsPrivacyPreview
 import app.clothescast.ui.settings.SettingsRegionPreview
 import app.clothescast.ui.settings.SettingsRootPreview
 import app.clothescast.ui.settings.SettingsSchedulePreview
@@ -172,6 +173,7 @@ class PreviewSnapshots {
     @Test fun update_downloaded_banner() = capture { UpdateDownloadedBannerPreview() }
     @Test fun local_build_banner() = capture { LocalBuildBannerPreview() }
     @Test fun local_build_banner_dirty() = capture { LocalBuildBannerDirtyPreview() }
+    @Test fun telemetry_notice_banner() = capture { TelemetryNoticeBannerPreview() }
 
     @Test fun launcher_icon() = capture { LauncherIconPreview() }
     @Test fun launcher_icon_dev() = capture { LauncherIconDevPreview() }
@@ -196,6 +198,7 @@ class PreviewSnapshots {
     @Test fun settings_voice_gemini() = capture { SettingsVoiceGeminiPreview() }
     @Test fun settings_location() = capture { SettingsLocationPreview() }
     @Test fun settings_calendar() = capture { SettingsCalendarPreview() }
+    @Test fun settings_privacy() = capture { SettingsPrivacyPreview() }
 
     // Onboarding's notification + location step cards derive their "complete"
     // checkmark from runtime permission state (POST_NOTIFICATIONS,

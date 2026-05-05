@@ -212,6 +212,14 @@ class SettingsRepository(
         dataStore.edit { it[USE_CALENDAR_EVENTS] = enabled }
     }
 
+    suspend fun setTelemetryEnabled(enabled: Boolean) {
+        dataStore.edit { it[TELEMETRY_ENABLED] = enabled }
+    }
+
+    suspend fun setTelemetryNoticeAcked(acked: Boolean) {
+        dataStore.edit { it[TELEMETRY_NOTICE_ACKED] = acked }
+    }
+
     /**
      * Atomically nudges the temperature threshold of the [ClothesRule] keyed
      * `ruleItem` by [deltaC] degrees Celsius. Used by the rationale dialog's
@@ -316,6 +324,10 @@ class SettingsRepository(
         val tonightEnabled = this[TONIGHT_ENABLED] != false
         val tonightNotifyOnlyOnEvents = this[TONIGHT_NOTIFY_ONLY_ON_EVENTS] == true
         val dailyMentionEveningEvents = this[DAILY_MENTION_EVENING_EVENTS] != false
+        // Default on for installs that predate the toggle, matching the new-install
+        // default; the one-time Today banner is what surfaces the choice to the user.
+        val telemetryEnabled = this[TELEMETRY_ENABLED] != false
+        val telemetryNoticeAcked = this[TELEMETRY_NOTICE_ACKED] == true
         val zone = zoneIdProvider()
 
         return UserPreferences(
@@ -340,6 +352,8 @@ class SettingsRepository(
             tonightDeliveryMode = tonightDeliveryMode,
             tonightNotifyOnlyOnEvents = tonightNotifyOnlyOnEvents,
             dailyMentionEveningEvents = dailyMentionEveningEvents,
+            telemetryEnabled = telemetryEnabled,
+            telemetryNoticeAcked = telemetryNoticeAcked,
         )
     }
 
@@ -399,6 +413,8 @@ class SettingsRepository(
         private val DAILY_MENTION_EVENING_EVENTS = booleanPreferencesKey("daily_mention_evening_events")
         private val DISMISSED_UPDATE_VERSION = intPreferencesKey("dismissed_update_version")
         private val DISMISSED_LOCAL_BUILD_SHA = stringPreferencesKey("dismissed_local_build_sha")
+        private val TELEMETRY_ENABLED = booleanPreferencesKey("telemetry_enabled")
+        private val TELEMETRY_NOTICE_ACKED = booleanPreferencesKey("telemetry_notice_acked")
 
         private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val DEFAULT_TIME: LocalTime = LocalTime.of(7, 0)

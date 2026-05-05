@@ -10,4 +10,9 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.roborazzi) apply false
+    // Firebase plugins. Loaded onto the classpath here but only applied in
+    // :app, and there only when app/google-services.json is present — CI
+    // builds without the JSON still assemble. See app/build.gradle.kts.
+    alias(libs.plugins.gms.google.services) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }
