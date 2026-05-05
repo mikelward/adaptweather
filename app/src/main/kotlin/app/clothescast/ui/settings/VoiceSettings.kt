@@ -402,6 +402,10 @@ private fun ttsStyleLabel(style: TtsStyle): Int = when (style) {
     TtsStyle.SCIENCE_TEACHER -> R.string.settings_tts_style_science_teacher
     TtsStyle.HISTORIAN -> R.string.settings_tts_style_historian
     TtsStyle.SPORTSCASTER -> R.string.settings_tts_style_sportscaster
+    TtsStyle.STADIUM_ANNOUNCER -> R.string.settings_tts_style_stadium_announcer
+    TtsStyle.STORYTELLER -> R.string.settings_tts_style_storyteller
+    TtsStyle.FITNESS_INSTRUCTOR -> R.string.settings_tts_style_fitness_instructor
+    TtsStyle.MORNING_PRESENTER -> R.string.settings_tts_style_morning_presenter
 }
 
 @Composable

@@ -26,7 +26,9 @@ enum class TtsEngine { DEVICE, GEMINI }
  *   broadcast register — deliberate cadence, sentence-final lift, gentle
  *   emphasis on clothing advice. Default.
  * - The remaining entries — [PIRATE], [COWBOY], [SCIENCE_TEACHER],
- *   [HISTORIAN], [SPORTSCASTER] — are character / persona registers.
+ *   [HISTORIAN], [SPORTSCASTER], [STADIUM_ANNOUNCER], [STORYTELLER],
+ *   [FITNESS_INSTRUCTOR], [MORNING_PRESENTER] — are character / persona
+ *   registers.
  *   They shape *delivery* (the words read aloud are unchanged) but the
  *   directive permits brief in-character exclamations like "Arrr" or
  *   "Howdy" so the result is more obviously playful than the default
@@ -42,6 +44,10 @@ enum class TtsStyle {
     SCIENCE_TEACHER,
     HISTORIAN,
     SPORTSCASTER,
+    STADIUM_ANNOUNCER,
+    STORYTELLER,
+    FITNESS_INSTRUCTOR,
+    MORNING_PRESENTER,
 }
 
 /**
