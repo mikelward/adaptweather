@@ -381,10 +381,15 @@ class SettingsRepository(
         val effectiveVoiceLocale = resolved.voiceLocale.resolve(regionLocale)
         return SettingsAnalyticsSnapshot(
             regionDefault = systemLocale.toLanguageTag(),
-            regionOverride = resolved.region.name,
+            // Read the raw key rather than `resolved.region.name`: the resolved
+            // value collapses "no DataStore key" into Region.SYSTEM, which would
+            // make a never-touched picker indistinguishable from an explicit
+            // SYSTEM pick in reports — exactly the distinction this snapshot is
+            // meant to surface.
+            regionOverride = this[REGION] ?: SettingsAnalyticsSnapshot.UNSET,
             regionEffective = regionLocale.toLanguageTag(),
             voiceLocaleDefault = regionLocale.toLanguageTag(),
-            voiceLocaleOverride = resolved.voiceLocale.name,
+            voiceLocaleOverride = this[VOICE_LOCALE] ?: SettingsAnalyticsSnapshot.UNSET,
             voiceLocaleEffective = effectiveVoiceLocale.toLanguageTag(),
             ttsEngineDefault = TtsEngine.DEVICE.name,
             ttsEngineOverride = this[TTS_ENGINE] ?: SettingsAnalyticsSnapshot.UNSET,

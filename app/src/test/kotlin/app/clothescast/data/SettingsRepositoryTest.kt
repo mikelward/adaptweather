@@ -508,16 +508,17 @@ class SettingsRepositoryTest {
     @Test
     fun `analyticsSnapshot reports defaults and UNSET when nothing is stored`() = runTest {
         // Pinned systemLocaleProvider is Locale.UK → BCP-47 "en-GB". With no
-        // stored region or voice locale, both SYSTEM sentinels resolve to
-        // that, and every TTS field reads UNSET so reports can tell "user
-        // never touched it" apart from "user picked the default value".
+        // stored keys, both SYSTEM sentinels resolve to that for the
+        // *effective* values, but every override field reads UNSET so reports
+        // can tell "user never touched it" apart from "user picked SYSTEM /
+        // the default value explicitly".
         val snap = subject.analyticsSnapshot.first()
 
         snap.regionDefault shouldBe "en-GB"
-        snap.regionOverride shouldBe Region.SYSTEM.name
+        snap.regionOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.regionEffective shouldBe "en-GB"
         snap.voiceLocaleDefault shouldBe "en-GB"
-        snap.voiceLocaleOverride shouldBe VoiceLocale.SYSTEM.name
+        snap.voiceLocaleOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.voiceLocaleEffective shouldBe "en-GB"
         snap.ttsEngineDefault shouldBe TtsEngine.DEVICE.name
         snap.ttsEngineOverride shouldBe SettingsAnalyticsSnapshot.UNSET
@@ -580,15 +581,21 @@ class SettingsRepositoryTest {
 
     @Test
     fun `analyticsSnapshot SYSTEM override is distinct from UNSET`() = runTest {
-        // Persisting Region.SYSTEM is observably a different story from
-        // never having touched the picker — the user explicitly chose
-        // SYSTEM. The override field surfaces that.
+        // Persisting Region.SYSTEM / VoiceLocale.SYSTEM is observably a
+        // different story from never having touched the picker. The override
+        // field surfaces that distinction: "user actively kept the default" vs
+        // "default fell out as SYSTEM". An UNSET-vs-SYSTEM breakdown is the
+        // whole point of this snapshot, so this is contract-level.
         subject.setRegion(Region.EN_US)
         subject.setRegion(Region.SYSTEM)
+        subject.setVoiceLocale(VoiceLocale.EN_AU)
+        subject.setVoiceLocale(VoiceLocale.SYSTEM)
 
         val snap = subject.analyticsSnapshot.first()
         snap.regionOverride shouldBe Region.SYSTEM.name
         snap.regionEffective shouldBe "en-GB"
+        snap.voiceLocaleOverride shouldBe VoiceLocale.SYSTEM.name
+        snap.voiceLocaleEffective shouldBe "en-GB"
     }
 
     @Test
