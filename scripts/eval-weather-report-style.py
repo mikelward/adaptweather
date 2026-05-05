@@ -85,6 +85,12 @@ LOCALES: dict[str, str] = {
     "en-GB-bbc":       "Speak with a Standard Southern British accent, as spoken by a BBC news presenter.",
     "en-GB-presenter": "Speak with the clear accent of a British television news presenter.",
     "en-GB-measured":  "Speak with a Standard British accent — clear, measured, and natural.",
+    # en-GB-prod: the shipped string (control for the "trim clarity" eval).
+    # en-GB-bare: candidate trim — relies on the WEATHER_FORECASTER directive's
+    # "Enunciate clearly" to carry the clarity hint instead of duplicating it
+    # in the accent clause.
+    "en-GB-prod":      "Speak with a Standard British accent — clear and natural.",
+    "en-GB-bare":      "Speak with a Standard British accent.",
     # de-DE falls back to the language-only "de" key in the app (no explicit
     # de-DE entry in ACCENT_DIRECTIVES); de-AT has its own entry.
     "de-DE": "Sprich auf Deutsch in einem klaren, hochdeutschen Akzent.",
