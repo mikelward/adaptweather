@@ -25,22 +25,18 @@ enum class TtsEngine { DEVICE, GEMINI }
  * - [WEATHER_FORECASTER] reads the briefing in a national-news weather
  *   broadcast register — deliberate cadence, sentence-final lift, gentle
  *   emphasis on clothing advice. Default.
- * - The remaining entries — [PIRATE], [COWBOY], [SCIENCE_TEACHER],
- *   [HISTORIAN], [SPORTSCASTER], [STADIUM_ANNOUNCER], [STORYTELLER],
- *   [FITNESS_INSTRUCTOR], [MORNING_PRESENTER] — are character / persona
- *   registers.
- *   They shape *delivery* (the words read aloud are unchanged) but the
- *   directive permits brief in-character exclamations like "Arrr" or
- *   "Howdy" so the result is more obviously playful than the default
- *   register.
+ * - [SCIENCE_TEACHER], [HISTORIAN], [SPORTSCASTER], [STADIUM_ANNOUNCER],
+ *   [STORYTELLER], [FITNESS_INSTRUCTOR], [MORNING_PRESENTER] — persona
+ *   registers that shape *delivery* without rewriting the text.
+ * - [PIRATE] and [COWBOY] are novelty registers at the end of the picker;
+ *   their directives permit brief in-character exclamations ("Arrr",
+ *   "Howdy") so the result is more obviously playful.
  *
  * Only consulted when [TtsEngine] == [TtsEngine.GEMINI]; the on-device engine
  * doesn't accept style prompts.
  */
 enum class TtsStyle {
     WEATHER_FORECASTER,
-    PIRATE,
-    COWBOY,
     SCIENCE_TEACHER,
     HISTORIAN,
     SPORTSCASTER,
@@ -48,6 +44,8 @@ enum class TtsStyle {
     STORYTELLER,
     FITNESS_INSTRUCTOR,
     MORNING_PRESENTER,
+    PIRATE,
+    COWBOY,
 }
 
 /**
