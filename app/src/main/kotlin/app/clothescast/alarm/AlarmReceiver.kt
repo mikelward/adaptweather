@@ -54,7 +54,11 @@ class AlarmReceiver : BroadcastReceiver() {
                     scheduler.cancel(ForecastPeriod.TONIGHT)
                     return@launch
                 }
-                FetchAndNotifyWorker.enqueueOneShot(appCtx, period = period)
+                FetchAndNotifyWorker.enqueueOneShot(
+                    appCtx,
+                    period = period,
+                    alarmFiredAtMs = System.currentTimeMillis(),
+                )
                 val schedule = when (period) {
                     ForecastPeriod.TODAY -> prefs.schedule
                     ForecastPeriod.TONIGHT -> prefs.tonightSchedule
@@ -65,7 +69,11 @@ class AlarmReceiver : BroadcastReceiver() {
                 // Best-effort: still enqueue the worker even if pref read failed,
                 // so the user gets *something* if it's the morning slot.
                 if (period == ForecastPeriod.TODAY) {
-                    FetchAndNotifyWorker.enqueueOneShot(appCtx, period = period)
+                    FetchAndNotifyWorker.enqueueOneShot(
+                    appCtx,
+                    period = period,
+                    alarmFiredAtMs = System.currentTimeMillis(),
+                )
                 }
             } finally {
                 pending.finish()

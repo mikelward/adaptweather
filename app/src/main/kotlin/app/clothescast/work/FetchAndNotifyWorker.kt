@@ -35,6 +35,8 @@ import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import java.io.IOException
 import java.time.LocalDate
@@ -170,6 +172,7 @@ class FetchAndNotifyWorker(
             return runCatching { deliver(cached, prefs, formatProse(cached, prefs)) }
                 .map { Result.success() }
                 .getOrElse {
+                    if (it is CancellationException) throw it
                     DiagLog.e(TAG, "Cached delivery failed; falling through to fresh generate.", it)
                     fresh(location, prefs, period)
                 }
@@ -244,6 +247,8 @@ class FetchAndNotifyWorker(
             // card.
             DiagLog.w(TAG, "Content-type mismatch from upstream (likely 5xx HTML body); retrying.", e)
             Result.retry()
+        } catch (e: CancellationException) {
+            throw e
         } catch (t: Throwable) {
             DiagLog.e(TAG, "Unhandled error; failing.", t)
             Result.failure(reason(REASON_UNHANDLED, summarize(t)))
@@ -347,7 +352,30 @@ class FetchAndNotifyWorker(
             app.insightNotifier.notify(insight, prose)
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
+            awaitSpeakTime()
             speakWithFallback(prose, prefs)
+        }
+    }
+
+    /**
+     * Delays TTS until [TTS_DEFER_AFTER_ALARM_MS] past the alarm-fire timestamp so
+     * the spoken briefing doesn't overlap the ringing alarm. Alarm audio uses
+     * STREAM_ALARM which bypasses AudioFocus entirely, so focus-based ducking has no
+     * effect on alarm volume; a time-based gap is the only reliable approach.
+     *
+     * The target time is derived from [KEY_ALARM_FIRED_AT_MS] set by [AlarmReceiver].
+     * If the key is absent (force-refresh tap, location-cache run) or the target has
+     * already passed (slow fetch, retry backoff), the wait is skipped so TTS starts
+     * immediately.
+     */
+    private suspend fun awaitSpeakTime() {
+        val alarmFiredAtMs = inputData.getLong(KEY_ALARM_FIRED_AT_MS, 0L)
+        if (alarmFiredAtMs == 0L) return
+        val speakAfterMs = alarmFiredAtMs + TTS_DEFER_AFTER_ALARM_MS
+        val waitMs = speakAfterMs - System.currentTimeMillis()
+        if (waitMs > 0) {
+            DiagLog.i(TAG, "Deferring TTS for ${waitMs}ms (alarm + ${TTS_DEFER_AFTER_ALARM_MS}ms window).")
+            delay(waitMs)
         }
     }
 
@@ -461,6 +489,22 @@ class FetchAndNotifyWorker(
         private const val KEY_FORCE_REFRESH = "force_refresh"
 
         /**
+         * Wall-clock millis at which the alarm fired. Set by [AlarmReceiver] for
+         * scheduled morning runs; absent (0) for force-refresh taps and other
+         * non-alarm-triggered enqueues. Read by [awaitSpeakTime] to compute the
+         * earliest moment TTS should start speaking.
+         */
+        private const val KEY_ALARM_FIRED_AT_MS = "alarm_fired_at_ms"
+
+        /**
+         * How long after the alarm fires before TTS is allowed to speak. One minute
+         * gives the user time to silence the alarm before the briefing begins.
+         * STREAM_ALARM bypasses AudioFocus so this time-based gap is the only
+         * reliable way to avoid talking over a ringing alarm.
+         */
+        private const val TTS_DEFER_AFTER_ALARM_MS = 30_000L
+
+        /**
          * Epoch-day of the calendar date the force-refresh was requested for. Used
          * to drop a stale force flag if the worker only runs after midnight (e.g. a
          * tap at 23:59 that retried offline until 00:05).
@@ -483,6 +527,7 @@ class FetchAndNotifyWorker(
             context: Context,
             force: Boolean = false,
             period: ForecastPeriod = ForecastPeriod.TODAY,
+            alarmFiredAtMs: Long = 0L,
         ) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -502,6 +547,7 @@ class FetchAndNotifyWorker(
                         KEY_FORCE_REFRESH to force,
                         KEY_REQUESTED_EPOCH_DAY to LocalDate.now().toEpochDay(),
                         KEY_PERIOD to period.name,
+                        KEY_ALARM_FIRED_AT_MS to alarmFiredAtMs,
                     )
                 )
                 .build()
