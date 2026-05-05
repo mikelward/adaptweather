@@ -570,11 +570,12 @@ class SettingsRepositoryTest {
     fun `analyticsSnapshot voiceLocale default tracks region override`() = runTest {
         // VoiceLocale.SYSTEM falls back to the *region* locale, not the
         // system locale — so changing the region also changes the baseline
-        // an unset voice locale resolves to.
+        // an unset voice locale resolves to. Voice locale itself is UNSET
+        // here because the user only touched the region picker.
         subject.setRegion(Region.EN_US)
 
         val snap = subject.analyticsSnapshot.first()
-        snap.voiceLocaleOverride shouldBe VoiceLocale.SYSTEM.name
+        snap.voiceLocaleOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.voiceLocaleDefault shouldBe "en-US"
         snap.voiceLocaleEffective shouldBe "en-US"
     }
