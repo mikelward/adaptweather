@@ -407,7 +407,11 @@ class FetchAndNotifyWorker(
             when (prefs.ttsEngine) {
                 TtsEngine.GEMINI -> {
                     try {
-                        GeminiTtsSpeaker(app.geminiTtsClient, voiceName = prefs.geminiVoice).speak(text, locale)
+                        GeminiTtsSpeaker(
+                            app.geminiTtsClient,
+                            voiceName = prefs.geminiVoice,
+                            style = prefs.ttsStyle,
+                        ).speak(text, locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
                         DiagLog.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)

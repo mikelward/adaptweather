@@ -16,6 +16,7 @@ import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
+import app.clothescast.core.domain.model.TtsStyle
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.SecureKeyStore
 import app.clothescast.data.SettingsRepository
@@ -111,6 +112,7 @@ class SettingsViewModel(
                         useDeviceLocation = prefs.useDeviceLocation,
                         ttsEngine = prefs.ttsEngine,
                         geminiVoice = prefs.geminiVoice,
+                        ttsStyle = prefs.ttsStyle,
                         deviceVoice = prefs.deviceVoice,
                         voiceLocale = prefs.voiceLocale,
                         useCalendarEvents = prefs.useCalendarEvents,
@@ -197,6 +199,10 @@ class SettingsViewModel(
 
     fun setGeminiVoice(voice: String) {
         viewModelScope.launch { settingsRepository.setGeminiVoice(voice) }
+    }
+
+    fun setTtsStyle(style: TtsStyle) {
+        viewModelScope.launch { settingsRepository.setTtsStyle(style) }
     }
 
     fun setDeviceVoice(voice: String?) {

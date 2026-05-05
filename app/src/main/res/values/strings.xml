@@ -253,6 +253,12 @@
     <string name="settings_tts_engine_gemini">Gemini (high quality, online)</string>
     <string name="settings_tts_voice_label">Voice</string>
     <string name="settings_tts_voice_dismiss">Done</string>
+    <!-- Style preamble for Gemini TTS. "Normal" is the original studio-voice
+         wording; "Newsreader" tightens delivery into a newsreader register.
+         Only shown for the Gemini engine. -->
+    <string name="settings_tts_style_label">Style</string>
+    <string name="settings_tts_style_normal">Normal</string>
+    <string name="settings_tts_style_newsreader">Newsreader</string>
     <!-- Device-voice picker (TtsEngine.DEVICE only). %1$s is a voice id like
          "en-us-x-tpc-network · Network · q400". -->
     <string name="settings_tts_device_voice_label">Device voice</string>

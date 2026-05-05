@@ -15,11 +15,18 @@ data class TtsVoiceOption(
 )
 
 // Curated from listening tests across en-AU and en-GB. Erinome is the default
-// — excellent across both locales. Clear/Firm (Erinome, Iapetus, Kore) for a
-// crisp newsreader delivery; Gentle/Smooth (Vindemiatrix, Despina) for softer;
-// Informative/Knowledgeable (Charon, Sadaltager) as male alternatives.
-// Dropped: Orus (theatrical), Aoede (Alan Rickman with newsreader+en-GB),
-// Achird, and the remaining 9 that were theatrical or had vowel issues.
+// — excellent across both locales. Grouped by character:
+//   Clear/Firm (newsreader-y): Erinome, Iapetus, Kore
+//   Informative/Knowledgeable (male alternatives): Charon, Sadaltager
+//   Gentle/Smooth/Warm: Vindemiatrix, Despina, Algieba, Sulafat
+//   Breezy/Youthful: Aoede, Leda
+// Aoede and Leda were dropped in the previous curation under the newsreader
+// directive (Aoede sounded "Alan Rickman" on en-GB+newsreader; Leda flattened
+// in newsreader register). Both come back now that the user can pick the
+// "Normal" style preamble — Leda is the originating ask. Sulafat / Algieba
+// re-added as additional warm/smooth options. Still dropped: Orus
+// (theatrical), Achird (vowel issues), Zephyr / Puck / Fenrir (theatrical /
+// excitable) — those are voice-character traits not fixed by switching style.
 val GEMINI_VOICES: List<TtsVoiceOption> = listOf(
     TtsVoiceOption("Erinome", "Erinome — Clear"),
     TtsVoiceOption("Iapetus", "Iapetus — Clear"),
@@ -28,4 +35,8 @@ val GEMINI_VOICES: List<TtsVoiceOption> = listOf(
     TtsVoiceOption("Sadaltager", "Sadaltager — Knowledgeable"),
     TtsVoiceOption("Vindemiatrix", "Vindemiatrix — Gentle"),
     TtsVoiceOption("Despina", "Despina — Smooth"),
+    TtsVoiceOption("Algieba", "Algieba — Smooth"),
+    TtsVoiceOption("Sulafat", "Sulafat — Warm"),
+    TtsVoiceOption("Aoede", "Aoede — Breezy"),
+    TtsVoiceOption("Leda", "Leda — Youthful"),
 )

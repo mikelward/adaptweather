@@ -2,6 +2,7 @@ package app.clothescast.core.data.tts
 
 import app.clothescast.core.data.insight.KeyProvider
 import app.clothescast.core.data.insight.MissingApiKeyException
+import app.clothescast.core.domain.model.TtsStyle
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -87,7 +88,11 @@ class GeminiTtsClientTest {
     }
 
     @Test
-    fun `request body prepends the newsreader style directive to the user text`() = runTest {
+    fun `request body prepends the normal studio-voice directive by default`() = runTest {
+        // Default style is NORMAL — the user-selectable preamble that brought
+        // back the v505 "studio voice" wording so voices like Leda keep their
+        // character. The newsreader register only kicks in when the user opts
+        // into TtsStyle.NEWSREADER from Settings.
         var capturedBody: String? = null
         val client = GeminiTtsClient(
             httpClient = mockClient(SUCCESS_BODY) {
@@ -101,7 +106,28 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello world")
 
         val body = checkNotNull(capturedBody)
+        body.shouldContain("clean, crisp studio voice")
+        body.shouldNotContain("newsreader style")
+        body.shouldContain("hello world")
+    }
+
+    @Test
+    fun `request body uses the newsreader directive when style is NEWSREADER`() = runTest {
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello world", style = TtsStyle.NEWSREADER)
+
+        val body = checkNotNull(capturedBody)
         body.shouldContain("newsreader style")
+        body.shouldNotContain("clean, crisp studio voice")
         body.shouldContain("hello world")
     }
 

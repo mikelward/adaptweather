@@ -9,6 +9,7 @@ import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
+import app.clothescast.core.domain.model.TtsStyle
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.data.defaultDistanceUnitFor
@@ -41,6 +42,7 @@ data class SettingsState(
     val useDeviceLocation: Boolean = false,
     val ttsEngine: TtsEngine = TtsEngine.DEVICE,
     val geminiVoice: String = UserPreferences.DEFAULT_GEMINI_VOICE,
+    val ttsStyle: TtsStyle = TtsStyle.NORMAL,
     /**
      * On-device voice ID the user has pinned, or `null` for "auto-pick the
      * highest-quality voice for [voiceLocale]" (the default for installs

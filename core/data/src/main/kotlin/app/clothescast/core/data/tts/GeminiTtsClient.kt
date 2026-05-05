@@ -2,6 +2,7 @@ package app.clothescast.core.data.tts
 
 import app.clothescast.core.data.insight.KeyProvider
 import app.clothescast.core.data.insight.MissingApiKeyException
+import app.clothescast.core.domain.model.TtsStyle
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -37,19 +38,32 @@ internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"
 
 /**
- * Natural-language style instruction prepended to every TTS request. Gemini
+ * Natural-language style instructions prepended to every TTS request. Gemini
  * documents the input text as a style-steerable prompt — preambles like this
  * are interpreted as direction and not spoken back.
  *
- * "Newsreader style" sets a clear, educated delivery register that applies
- * regardless of which accent directive follows — it suppresses theatrical
- * over-dramatisation and the lo-fi "vinyl crackle" the model otherwise bakes
- * in, without pushing into posh/formal territory.
+ * Two registers, user-selectable via [TtsStyle]:
+ *
+ * - [GEMINI_TTS_STYLE_DIRECTIVE_NORMAL] — neutral "studio voice" wording. Lets
+ *   each prebuilt voice's own character through. Default. Brought back after
+ *   the newsreader-only rewrite was found to flatten voices like Leda.
+ * - [GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER] — clear, educated newsreader
+ *   register. Suppresses theatrical drift on some voices (e.g. en-AU Kore
+ *   sliding broad/nasal) but at the cost of squashing voice character.
  */
-internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_NORMAL: String =
+    "Read the following in a clean, crisp studio voice with no audio effects, " +
+        "background noise, or vinyl-style texture:\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER: String =
     "Read the following in a clear, educated newsreader style — articulate but " +
         "not theatrical or exaggerated. No audio effects, background noise, or " +
         "vinyl-style texture:\n\n"
+
+internal fun styleDirectiveFor(style: TtsStyle): String = when (style) {
+    TtsStyle.NORMAL -> GEMINI_TTS_STYLE_DIRECTIVE_NORMAL
+    TtsStyle.NEWSREADER -> GEMINI_TTS_STYLE_DIRECTIVE_NEWSREADER
+}
 
 /**
  * Returns a one-line accent / language instruction for Gemini's TTS prompt, or
@@ -58,8 +72,9 @@ internal const val GEMINI_TTS_STYLE_DIRECTIVE: String =
  *
  * Gemini's prebuilt voices are language-agnostic and accept natural-language
  * accent steering in the same prompt that carries the spoken text. The
- * instruction is prepended to the user text alongside [GEMINI_TTS_STYLE_DIRECTIVE]
- * and is interpreted as direction, not spoken back.
+ * instruction is prepended to the user text alongside the chosen style
+ * directive (see [styleDirectiveFor]) and is interpreted as direction, not
+ * spoken back.
  *
  * Lookup is two-step: an exact `language-COUNTRY` match wins (so variants like
  * en-GB / en-AU / en-US can carry their own directive), otherwise a
@@ -182,6 +197,7 @@ class GeminiTtsClient(
         text: String,
         voiceName: String = DEFAULT_GEMINI_TTS_VOICE,
         locale: Locale? = null,
+        style: TtsStyle = TtsStyle.NORMAL,
     ): PcmAudio {
         val key = keyProvider.get().also {
             if (it.isBlank()) throw MissingApiKeyException()
@@ -189,7 +205,7 @@ class GeminiTtsClient(
 
         val accent = locale?.let { geminiAccentDirectiveFor(it) }
         val prompt = buildString {
-            append(GEMINI_TTS_STYLE_DIRECTIVE)
+            append(styleDirectiveFor(style))
             if (accent != null) {
                 append(accent)
                 append("\n\n")

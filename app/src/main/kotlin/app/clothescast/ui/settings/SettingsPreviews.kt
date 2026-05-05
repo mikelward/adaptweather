@@ -15,6 +15,7 @@ import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
+import app.clothescast.core.domain.model.TtsStyle
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.ui.theme.ClothesCastTheme
@@ -150,6 +151,7 @@ internal fun SettingsVoiceDevicePreview() {
         VoiceContent(
             selected = TtsEngine.DEVICE,
             geminiVoice = UserPreferences.DEFAULT_GEMINI_VOICE,
+            ttsStyle = TtsStyle.NORMAL,
             deviceVoice = null,
             deviceVoices = emptyList(),
             effectiveDeviceVoice = null,
@@ -159,6 +161,33 @@ internal fun SettingsVoiceDevicePreview() {
             padding = PaddingValues(0.dp),
             onSetTtsEngine = {},
             onSetGeminiVoice = {},
+            onSetTtsStyle = {},
+            onSetDeviceVoice = {},
+            onSetVoiceLocale = {},
+            onSetGeminiKey = {},
+            onClearGeminiKey = {},
+        )
+    }
+}
+
+@Preview(name = "Settings · Voice (Gemini engine)", widthDp = 360)
+@Composable
+internal fun SettingsVoiceGeminiPreview() {
+    SettingsFrame {
+        VoiceContent(
+            selected = TtsEngine.GEMINI,
+            geminiVoice = UserPreferences.DEFAULT_GEMINI_VOICE,
+            ttsStyle = TtsStyle.NORMAL,
+            deviceVoice = null,
+            deviceVoices = emptyList(),
+            effectiveDeviceVoice = null,
+            geminiKeyConfigured = true,
+            voiceLocale = VoiceLocale.SYSTEM,
+            region = Region.SYSTEM,
+            padding = PaddingValues(0.dp),
+            onSetTtsEngine = {},
+            onSetGeminiVoice = {},
+            onSetTtsStyle = {},
             onSetDeviceVoice = {},
             onSetVoiceLocale = {},
             onSetGeminiKey = {},
