@@ -20,6 +20,20 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
 enum class TtsEngine { DEVICE, GEMINI }
 
 /**
+ * Steers the global style preamble Gemini TTS prepends to every request.
+ *
+ * - [NORMAL] is the original "clean, crisp studio voice" wording — neutral
+ *   delivery that lets each prebuilt voice's own character through.
+ * - [NEWSREADER] biases toward a clear, educated newsreader register.
+ *   Suppresses theatrical drift on some voices but flattens character on
+ *   others, which is why this is user-selectable.
+ *
+ * Only consulted when [TtsEngine] == [TtsEngine.GEMINI]; the on-device engine
+ * doesn't accept style prompts.
+ */
+enum class TtsStyle { NORMAL, NEWSREADER }
+
+/**
  * User-selectable accent / language preference for spoken playback. Used by
  * each engine as best fits its capabilities:
  *
@@ -197,6 +211,13 @@ data class UserPreferences(
      * voices doesn't require a domain enum migration.
      */
     val geminiVoice: String = DEFAULT_GEMINI_VOICE,
+    /**
+     * Steers the style preamble for Gemini TTS. Default is [TtsStyle.NORMAL]
+     * (original "studio voice" wording); users who prefer the tighter
+     * newsreader register can switch to [TtsStyle.NEWSREADER]. Only
+     * consulted when [ttsEngine] == [TtsEngine.GEMINI].
+     */
+    val ttsStyle: TtsStyle = TtsStyle.NORMAL,
     /**
      * On-device TextToSpeech voice ID (e.g. "en-us-x-tpc-network"). Only
      * consulted when [ttsEngine] == [TtsEngine.DEVICE]. `null` (the default)

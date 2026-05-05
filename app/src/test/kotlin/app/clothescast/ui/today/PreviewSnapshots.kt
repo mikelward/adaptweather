@@ -24,6 +24,7 @@ import app.clothescast.ui.settings.SettingsRegionPreview
 import app.clothescast.ui.settings.SettingsRootPreview
 import app.clothescast.ui.settings.SettingsSchedulePreview
 import app.clothescast.ui.settings.SettingsVoiceDevicePreview
+import app.clothescast.ui.settings.SettingsVoiceGeminiPreview
 import app.clothescast.widget.WidgetEmptyPreview
 import app.clothescast.widget.WidgetTodayJacketPantsPreview
 import app.clothescast.widget.WidgetTodayTShirtShortsPreview
@@ -192,6 +193,7 @@ class PreviewSnapshots {
     @Test fun settings_region() = capture { SettingsRegionPreview() }
     @Test fun settings_display() = capture { SettingsDisplayPreview() }
     @Test fun settings_voice_device() = capture { SettingsVoiceDevicePreview() }
+    @Test fun settings_voice_gemini() = capture { SettingsVoiceGeminiPreview() }
     @Test fun settings_location() = capture { SettingsLocationPreview() }
     @Test fun settings_calendar() = capture { SettingsCalendarPreview() }
 

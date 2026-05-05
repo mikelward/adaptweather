@@ -128,6 +128,7 @@ object BugReport {
         appendLine("TTS engine: ${prefs.ttsEngine}")
         appendLine("Voice locale: ${prefs.voiceLocale}")
         appendLine("Gemini voice: ${prefs.geminiVoice}")
+        appendLine("TTS style: ${prefs.ttsStyle}")
         appendLine("Device voice: ${prefs.deviceVoice ?: "(auto)"}")
         appendLine("Use device location: ${prefs.useDeviceLocation}")
         val locDesc = prefs.location?.let { loc ->

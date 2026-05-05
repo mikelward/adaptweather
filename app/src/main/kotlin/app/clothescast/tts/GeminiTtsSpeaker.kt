@@ -2,6 +2,7 @@ package app.clothescast.tts
 
 import app.clothescast.core.data.tts.DEFAULT_GEMINI_TTS_VOICE
 import app.clothescast.core.data.tts.GeminiTtsClient
+import app.clothescast.core.domain.model.TtsStyle
 import java.util.Locale
 
 /**
@@ -17,10 +18,16 @@ import java.util.Locale
 class GeminiTtsSpeaker(
     private val client: GeminiTtsClient,
     private val voiceName: String = DEFAULT_GEMINI_TTS_VOICE,
+    private val style: TtsStyle = TtsStyle.NORMAL,
 ) : TtsSpeaker {
 
     override suspend fun speak(text: String, locale: Locale) {
-        val audio = client.synthesize(text = prepareForTts(text), voiceName = voiceName, locale = locale)
+        val audio = client.synthesize(
+            text = prepareForTts(text),
+            voiceName = voiceName,
+            locale = locale,
+            style = style,
+        )
         PcmAudioPlayer.play(audio)
     }
 }

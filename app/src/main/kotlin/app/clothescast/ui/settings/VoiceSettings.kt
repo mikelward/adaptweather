@@ -42,6 +42,7 @@ import app.clothescast.core.domain.model.InsightSummary
 import app.clothescast.core.domain.model.TemperatureBand
 import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TtsEngine
+import app.clothescast.core.domain.model.TtsStyle
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.insight.InsightFormatter
 import app.clothescast.tts.DeviceVoice
@@ -63,6 +64,7 @@ import kotlinx.coroutines.withContext
 internal fun VoiceContent(
     selected: TtsEngine,
     geminiVoice: String,
+    ttsStyle: TtsStyle,
     deviceVoice: String?,
     deviceVoices: List<DeviceVoice>,
     effectiveDeviceVoice: DeviceVoice?,
@@ -72,6 +74,7 @@ internal fun VoiceContent(
     padding: PaddingValues,
     onSetTtsEngine: (TtsEngine) -> Unit,
     onSetGeminiVoice: (String) -> Unit,
+    onSetTtsStyle: (TtsStyle) -> Unit,
     onSetDeviceVoice: (String?) -> Unit,
     onSetVoiceLocale: (VoiceLocale) -> Unit,
     onSetGeminiKey: (String) -> Unit,
@@ -91,6 +94,7 @@ internal fun VoiceContent(
     fun preview(
         engine: TtsEngine,
         gVoice: String,
+        style: TtsStyle,
         dVoice: String?,
         locale: VoiceLocale,
     ) {
@@ -102,6 +106,7 @@ internal fun VoiceContent(
                     context = context,
                     engine = engine,
                     geminiVoice = gVoice,
+                    ttsStyle = style,
                     deviceVoice = dVoice,
                     voiceLocale = locale,
                     region = region,
@@ -132,7 +137,7 @@ internal fun VoiceContent(
                 enabled = !isPreviewing,
                 onSelect = {
                     onSetVoiceLocale(it)
-                    preview(selected, geminiVoice, deviceVoice, it)
+                    preview(selected, geminiVoice, ttsStyle, deviceVoice, it)
                 },
             )
         }
@@ -150,7 +155,7 @@ internal fun VoiceContent(
                     enabled = !isPreviewing,
                     onSelect = {
                         onSetTtsEngine(engine)
-                        preview(engine, geminiVoice, deviceVoice, voiceLocale)
+                        preview(engine, geminiVoice, ttsStyle, deviceVoice, voiceLocale)
                     },
                 )
             }
@@ -180,11 +185,19 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = {
                             onSetGeminiVoice(it)
-                            preview(TtsEngine.GEMINI, it, deviceVoice, voiceLocale)
+                            preview(TtsEngine.GEMINI, it, ttsStyle, deviceVoice, voiceLocale)
+                        },
+                    )
+                    StylePicker(
+                        selected = ttsStyle,
+                        enabled = !isPreviewing,
+                        onSelect = { picked ->
+                            onSetTtsStyle(picked)
+                            preview(TtsEngine.GEMINI, geminiVoice, picked, deviceVoice, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, deviceVoice, voiceLocale)
+                        preview(selected, geminiVoice, ttsStyle, deviceVoice, voiceLocale)
                     }
                 }
                 TtsEngine.DEVICE -> {
@@ -198,11 +211,11 @@ internal fun VoiceContent(
                         enabled = !isPreviewing,
                         onSelect = { picked ->
                             onSetDeviceVoice(picked)
-                            preview(selected, geminiVoice, picked, voiceLocale)
+                            preview(selected, geminiVoice, ttsStyle, picked, voiceLocale)
                         },
                     )
                     TestVoiceButton(isPreviewing = isPreviewing) {
-                        preview(selected, geminiVoice, deviceVoice, voiceLocale)
+                        preview(selected, geminiVoice, ttsStyle, deviceVoice, voiceLocale)
                     }
                 }
             }
@@ -338,6 +351,53 @@ private fun voiceLocaleLabel(locale: VoiceLocale): Int = when (locale) {
     VoiceLocale.FA_IR -> R.string.settings_tts_voice_locale_fa_ir
     VoiceLocale.SQ_AL -> R.string.settings_tts_voice_locale_sq_al
     VoiceLocale.AM_ET -> R.string.settings_tts_voice_locale_am_et
+}
+
+@Composable
+private fun StylePicker(
+    selected: TtsStyle,
+    onSelect: (TtsStyle) -> Unit,
+    enabled: Boolean = true,
+) {
+    var dialogOpen by remember { mutableStateOf(false) }
+    val title = stringResource(R.string.settings_tts_style_label)
+    OutlinedButton(
+        onClick = { dialogOpen = true },
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text("$title: ${stringResource(ttsStyleLabel(selected))}")
+    }
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen = false },
+            title = { Text(title) },
+            text = {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    TtsStyle.entries.forEach { option ->
+                        RadioRow(
+                            label = stringResource(ttsStyleLabel(option)),
+                            selected = option == selected,
+                            onSelect = {
+                                onSelect(option)
+                                dialogOpen = false
+                            },
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { dialogOpen = false }) {
+                    Text(stringResource(R.string.settings_tts_voice_dismiss))
+                }
+            },
+        )
+    }
+}
+
+private fun ttsStyleLabel(style: TtsStyle): Int = when (style) {
+    TtsStyle.NORMAL -> R.string.settings_tts_style_normal
+    TtsStyle.NEWSREADER -> R.string.settings_tts_style_newsreader
 }
 
 @Composable
@@ -543,6 +603,7 @@ private suspend fun runTtsPreview(
     context: android.content.Context,
     engine: TtsEngine,
     geminiVoice: String,
+    ttsStyle: TtsStyle,
     deviceVoice: String?,
     voiceLocale: VoiceLocale,
     region: Region,
@@ -562,7 +623,11 @@ private suspend fun runTtsPreview(
             try {
                 when (engine) {
                     TtsEngine.GEMINI ->
-                        GeminiTtsSpeaker(app.geminiTtsClient, voiceName = geminiVoice).speak(text, locale)
+                        GeminiTtsSpeaker(
+                            app.geminiTtsClient,
+                            voiceName = geminiVoice,
+                            style = ttsStyle,
+                        ).speak(text, locale)
                     TtsEngine.DEVICE ->
                         app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
                 }

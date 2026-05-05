@@ -19,6 +19,7 @@ import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.ThemeMode
 import app.clothescast.core.domain.model.TtsEngine
+import app.clothescast.core.domain.model.TtsStyle
 import app.clothescast.core.domain.model.UserPreferences
 import app.clothescast.core.domain.model.VoiceLocale
 import app.clothescast.core.domain.model.thresholdC
@@ -179,6 +180,10 @@ class SettingsRepository(
         dataStore.edit { it[GEMINI_VOICE] = voice }
     }
 
+    suspend fun setTtsStyle(style: TtsStyle) {
+        dataStore.edit { it[TTS_STYLE] = style.name }
+    }
+
     suspend fun setDeviceVoice(voice: String?) {
         dataStore.edit {
             // Null clears the pin → speaker reverts to auto-pick; the worker
@@ -280,6 +285,8 @@ class SettingsRepository(
             ?: TtsEngine.DEVICE
         val geminiVoice = this[GEMINI_VOICE]?.takeIf { it.isNotBlank() }
             ?: UserPreferences.DEFAULT_GEMINI_VOICE
+        val ttsStyle = this[TTS_STYLE]?.let { runCatching { TtsStyle.valueOf(it) }.getOrNull() }
+            ?: TtsStyle.NORMAL
         val voiceLocale = this[VOICE_LOCALE]?.let { runCatching { VoiceLocale.valueOf(it) }.getOrNull() }
             ?: VoiceLocale.SYSTEM
         val deviceVoice = this[DEVICE_VOICE]?.takeIf { it.isNotBlank() }
@@ -310,6 +317,7 @@ class SettingsRepository(
             useDeviceLocation = useDeviceLocation,
             ttsEngine = ttsEngine,
             geminiVoice = geminiVoice,
+            ttsStyle = ttsStyle,
             deviceVoice = deviceVoice,
             voiceLocale = voiceLocale,
             useCalendarEvents = useCalendarEvents,
@@ -361,6 +369,7 @@ class SettingsRepository(
         private val USE_DEVICE_LOCATION = booleanPreferencesKey("use_device_location")
         private val TTS_ENGINE = stringPreferencesKey("tts_engine")
         private val GEMINI_VOICE = stringPreferencesKey("gemini_voice")
+        private val TTS_STYLE = stringPreferencesKey("tts_style")
         private val DEVICE_VOICE = stringPreferencesKey("device_voice")
         private val VOICE_LOCALE = stringPreferencesKey("voice_locale")
         private val USE_CALENDAR_EVENTS = booleanPreferencesKey("use_calendar_events")

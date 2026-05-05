@@ -153,6 +153,7 @@ fun SettingsScreen(
             SettingsRoute.Voice -> VoiceContent(
                 selected = state.ttsEngine,
                 geminiVoice = state.geminiVoice,
+                ttsStyle = state.ttsStyle,
                 deviceVoice = state.deviceVoice,
                 deviceVoices = state.deviceVoices,
                 effectiveDeviceVoice = state.effectiveDeviceVoice,
@@ -162,6 +163,7 @@ fun SettingsScreen(
                 padding = padding,
                 onSetTtsEngine = viewModel::setTtsEngine,
                 onSetGeminiVoice = viewModel::setGeminiVoice,
+                onSetTtsStyle = viewModel::setTtsStyle,
                 onSetDeviceVoice = viewModel::setDeviceVoice,
                 onSetVoiceLocale = viewModel::setVoiceLocale,
                 onSetGeminiKey = viewModel::setApiKey,

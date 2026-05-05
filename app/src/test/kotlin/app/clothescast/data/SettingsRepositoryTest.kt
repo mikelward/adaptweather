@@ -13,6 +13,7 @@ import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.Schedule
 import app.clothescast.core.domain.model.TemperatureUnit
 import app.clothescast.core.domain.model.TtsEngine
+import app.clothescast.core.domain.model.TtsStyle
 import app.clothescast.core.domain.model.thresholdC
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
@@ -292,6 +293,20 @@ class SettingsRepositoryTest {
     @Test
     fun `gemini voice defaults to Erinome when nothing stored`() = runTest {
         subject.preferences.first().geminiVoice shouldBe "Erinome"
+    }
+
+    @Test
+    fun `tts style defaults to NORMAL when nothing stored`() = runTest {
+        subject.preferences.first().ttsStyle shouldBe TtsStyle.NORMAL
+    }
+
+    @Test
+    fun `tts style setter round-trips`() = runTest {
+        subject.setTtsStyle(TtsStyle.NEWSREADER)
+        subject.preferences.first().ttsStyle shouldBe TtsStyle.NEWSREADER
+
+        subject.setTtsStyle(TtsStyle.NORMAL)
+        subject.preferences.first().ttsStyle shouldBe TtsStyle.NORMAL
     }
 
     @Test
