@@ -321,6 +321,25 @@ data class UserPreferences(
      * one clothes rule triggers against the evening hourly slice. On by default.
      */
     val dailyMentionEveningEvents: Boolean = true,
+    /**
+     * Master switch for sending Firebase Analytics + Crashlytics payloads off
+     * device. Default on so crash reports for the long tail of installs reach
+     * the developer without each user finding the toggle, but a non-blocking
+     * banner on Today on first launch surfaces the setting and a one-tap path
+     * to flip it off (see Privacy in Settings). The contract for what may /
+     * may not appear in those payloads is in PRIVACY.md — calendar event
+     * data, location, insight prose, and API keys are all out of scope.
+     */
+    val telemetryEnabled: Boolean = true,
+    /**
+     * True once the user has dismissed the one-time telemetry-notice banner on
+     * Today. The banner exists to make the default-on choice transparent — it
+     * disappears for good after a single tap, regardless of whether the user
+     * left telemetry on or flipped it off in Settings. Stored separately from
+     * [telemetryEnabled] so a user who turns telemetry off and on again
+     * doesn't see the banner re-surface; once they've seen it once, it's done.
+     */
+    val telemetryNoticeAcked: Boolean = false,
 ) {
     companion object {
         const val DEFAULT_GEMINI_VOICE = "Erinome"

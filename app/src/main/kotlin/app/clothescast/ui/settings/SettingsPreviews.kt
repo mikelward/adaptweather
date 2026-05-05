@@ -237,6 +237,18 @@ internal fun SettingsCalendarPreview() {
     }
 }
 
+@Preview(name = "Settings · Privacy", widthDp = 360)
+@Composable
+internal fun SettingsPrivacyPreview() {
+    SettingsFrame {
+        PrivacyContent(
+            telemetryEnabled = true,
+            padding = PaddingValues(0.dp),
+            onSetTelemetryEnabled = {},
+        )
+    }
+}
+
 // AboutContent intentionally not previewed: it reads BuildConfig.VERSION_NAME
 // and VERSION_CODE, both derived from `git rev-list --count` + short SHA, so a
 // snapshot would re-record on every commit and drown PR diffs in unrelated

@@ -77,6 +77,7 @@ data class SettingsState(
     val effectiveDeviceVoice: DeviceVoice? = null,
     val voiceLocale: VoiceLocale = VoiceLocale.SYSTEM,
     val useCalendarEvents: Boolean = false,
+    val telemetryEnabled: Boolean = true,
     val apiKeyConfigured: Boolean = false,
     /**
      * True while the WorkManager location-cache-refresh job is ENQUEUED,

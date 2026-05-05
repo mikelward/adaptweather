@@ -125,6 +125,17 @@
     <string name="today_update_downloaded_body">Update downloaded. Restart to finish installing.</string>
     <string name="today_update_downloaded_action">Restart</string>
 
+    <!-- Banner surfaced once on the Today screen so the user knows ClothesCast is
+         sending anonymous crash + usage data to Firebase by default. Tapping the
+         button deep-links to Settings → Privacy where they can flip the switch
+         off; tapping the X just dismisses the banner. Either path marks the
+         notice as acknowledged so it doesn't reappear. PRIVACY.md spells out
+         the hard limits on what may / may not be sent. -->
+    <string name="today_telemetry_notice_title">Crash + usage reports are on</string>
+    <string name="today_telemetry_notice_body">ClothesCast sends anonymous crash reports and usage analytics to help fix bugs. No calendar data, location, or insight text is included. Turn it off any time in Settings.</string>
+    <string name="today_telemetry_notice_open_settings">Open Privacy settings</string>
+    <string name="today_telemetry_notice_dismiss">Dismiss</string>
+
     <string name="onboarding_title">Welcome to ClothesCast</string>
     <string name="onboarding_subtitle">Three quick choices and you\'re set. Tweak later in Settings.</string>
     <string name="onboarding_subtitle_tv">Two quick choices and you\'re set. Tweak later in Settings.</string>
@@ -171,6 +182,7 @@
     <string name="settings_root_display">Display</string>
     <string name="settings_root_location">Location</string>
     <string name="settings_root_calendar">Calendar</string>
+    <string name="settings_root_privacy">Privacy</string>
     <string name="settings_root_about">About</string>
 
     <string name="settings_root_schedule_subtitle">Notifications and Times</string>
@@ -191,6 +203,18 @@
     <string name="settings_display_theme_dark">Dark</string>
     <string name="settings_root_location_subtitle">Auto-detect or pick a city</string>
     <string name="settings_root_calendar_subtitle">Today\'s events</string>
+    <string name="settings_root_privacy_subtitle">Crash + usage reports</string>
+
+    <!-- Privacy settings sub-page. The toggle controls Firebase Analytics +
+         Crashlytics collection at runtime; PRIVACY.md spells out the data
+         boundary contract. The "limits" line below repeats the most-asked
+         questions ("does it send my calendar?") inline so the user doesn't
+         have to leave the app to find out. -->
+    <string name="settings_privacy_telemetry_title">Crash + usage reports</string>
+    <string name="settings_privacy_telemetry_label">Send crash + usage data</string>
+    <string name="settings_privacy_telemetry_description">Sends anonymous crash reports and aggregate usage stats to help the developer fix bugs and decide which features to keep.</string>
+    <string name="settings_privacy_telemetry_limits">Never sent: calendar events, location coordinates or place names, insight text or notification text, API keys, precise GPS, advertising IDs.</string>
+    <string name="settings_privacy_open_policy">Read full privacy policy</string>
 
     <string name="settings_api_key_gemini_label">Gemini</string>
 

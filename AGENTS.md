@@ -158,6 +158,22 @@ new rule the first time something bites you, not the third.
   even if it seems harmless. The TTS endpoints log requests; "the user's
   3pm standup" landing in someone's logs is exactly the surprise the user
   doesn't want.
+- **Firebase Analytics + Crashlytics: hard payload limits.** PRIVACY.md
+  spells out what may / may not appear in Firebase payloads — calendar
+  data, location, insight prose, notification text, API keys, precise
+  GPS, and ad identifiers are all out of scope. Do **not** call
+  `FirebaseCrashlytics.setCustomKey(...)` with any of those, and don't
+  feed user content into Analytics event params either. The runtime
+  toggle (`SettingsRepository.setTelemetryEnabled`) controls *whether*
+  Firebase reports; that contract controls *what's in* a report.
+- **`google-services.json` is per-developer / per-environment.** It's in
+  `.gitignore` and never checked in. The Firebase Gradle plugins in
+  `app/build.gradle.kts` are applied conditionally on the JSON's
+  presence — CI builds without it still assemble (Telemetry no-ops at
+  runtime via `FirebaseApp.getApps(...).isEmpty()`). To enable Firebase
+  on a build: create / configure your Firebase project against
+  applicationId `app.clothescast`, download `google-services.json`,
+  drop it at `app/google-services.json`, and rebuild. Don't commit it.
 
 ## Domain conventions
 

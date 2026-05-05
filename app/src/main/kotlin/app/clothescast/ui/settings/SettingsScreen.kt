@@ -50,6 +50,7 @@ enum class SettingsRoute(@StringRes val titleRes: Int, @StringRes val subtitleRe
     Display(R.string.settings_root_display, R.string.settings_root_display_subtitle),
     Location(R.string.settings_root_location, R.string.settings_root_location_subtitle),
     Calendar(R.string.settings_root_calendar, R.string.settings_root_calendar_subtitle),
+    Privacy(R.string.settings_root_privacy, R.string.settings_root_privacy_subtitle),
     About(R.string.settings_root_about),
 }
 
@@ -190,6 +191,11 @@ fun SettingsScreen(
                 useCalendarEvents = state.useCalendarEvents,
                 padding = padding,
                 onSetUseCalendarEvents = viewModel::setUseCalendarEvents,
+            )
+            SettingsRoute.Privacy -> PrivacyContent(
+                telemetryEnabled = state.telemetryEnabled,
+                padding = padding,
+                onSetTelemetryEnabled = viewModel::setTelemetryEnabled,
             )
             SettingsRoute.About -> AboutContent(padding = padding)
         }
