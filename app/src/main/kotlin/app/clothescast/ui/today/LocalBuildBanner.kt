@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.clothescast.BuildConfig
@@ -95,6 +96,7 @@ internal fun LocalBuildBannerCard(
         DateUtils.FORMAT_ABBREV_RELATIVE,
     ).toString()
     val shaSuffix = if (dirty) "$sha (dirty)" else sha
+    val shortBranch = branch.substringAfterLast('/')
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -123,10 +125,20 @@ internal fun LocalBuildBannerCard(
                     )
                 }
             }
-            Text(
-                text = "$branch · $shaSuffix · $relative",
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            Row {
+                Text(
+                    text = shortBranch,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                Text(
+                    text = " · $shaSuffix · $relative",
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }
