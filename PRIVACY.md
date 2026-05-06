@@ -19,8 +19,7 @@ have over it.
   user-content data the app sends off your device by default.
 - If you opt in to **online text-to-speech**, the short spoken sentence
   (e.g. _"50% chance of rain at 3pm — take an umbrella"_) is sent to the
-  TTS provider you chose (Google Gemini, OpenAI, or ElevenLabs) so it can
-  return the audio.
+  TTS provider you chose (Google Gemini) so it can return the audio.
 - If you opt in to **calendar tie-in**, the app reads today's events on
   your device. The event title may appear inside the spoken sentence
   (e.g. _"Bring a jacket for your concert tonight"_), and is therefore
@@ -114,11 +113,11 @@ The source code is at <https://github.com/mikelward/clothescast>.
 
 ### API keys you provide
 
-- If you use online TTS, you supply your own Google Gemini, OpenAI,
-  and / or ElevenLabs API key. Keys are stored on your device,
-  encrypted at rest using a key sealed by the Android Keystore. They
-  are sent only to the corresponding provider on requests you initiate,
-  and are never shared with us or any third party.
+- If you use online TTS, you supply your own Google Gemini API key.
+  Keys are stored on your device, encrypted at rest using a key sealed
+  by the Android Keystore. They are sent only to the corresponding
+  provider on requests you initiate, and are never shared with us or
+  any third party.
 
 ## Third-party services
 
@@ -129,19 +128,15 @@ policies apply to anything they receive:
 |---|---|---|
 | [Open-Meteo](https://open-meteo.com/en/terms) | Coarse coordinate | Always (forecast + geocoding) |
 | [Google Gemini API](https://ai.google.dev/gemini-api/terms) | The short rendered insight sentence | Only if you select Gemini TTS |
-| [OpenAI API](https://openai.com/policies/privacy-policy) | The short rendered insight sentence | Only if you select OpenAI TTS |
-| [ElevenLabs API](https://elevenlabs.io/privacy) | The short rendered insight sentence | Only if you select ElevenLabs TTS |
 | Analytics / crash-reporting service (e.g. Firebase Crashlytics + Google Analytics for Firebase) | Aggregate usage events and crash diagnostics — see "Analytics and crash reporting" below for what's in and out | Possibly always, in all builds |
 
 These providers act as service providers fulfilling a single request and
 returning the result. The TTS providers receive only the sentence to be
 spoken, with no user identifier attached beyond the API key you supplied.
 
-Note on OpenAI: under OpenAI's API terms, request inputs may be retained
-for up to 30 days for abuse monitoring before being deleted, and are not
-used to train OpenAI's models by default for API traffic. Gemini API and
-ElevenLabs API do not retain prompts for training by default. See each
-provider's policy linked above for the authoritative terms.
+Note on Gemini API: request inputs are not retained for training by
+default. See the provider's policy linked above for the authoritative
+terms.
 
 ## What we do _not_ collect
 

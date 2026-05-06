@@ -8,8 +8,7 @@ actual weather, today's forecast, and the clothes thresholds you've
 configured.
 
 It can also speak the insight aloud — through the platform TTS engine, or
-through an online voice (Gemini, OpenAI, or ElevenLabs) if you'd rather a
-more natural read.
+through an online voice (Gemini) if you'd rather a more natural read.
 
 See [PRIVACY.md](PRIVACY.md) for what data leaves the device and when.
 
@@ -40,9 +39,9 @@ artifact (see below) for sideload installs.
   template-fillable rules over the forecast, clothes thresholds, weather
   alerts, and (optionally) today's calendar events. No LLM round trip.
 - **TTS — your choice of engine**: the platform `TextToSpeech` engine
-  (default, fully on-device), or an online voice via the Gemini, OpenAI,
-  or ElevenLabs API. Online engines are BYOK; keys are encrypted on-device
-  via Tink + Android Keystore + DataStore Preferences.
+  (default, fully on-device), or an online voice via the Gemini API.
+  Online engines are BYOK; keys are encrypted on-device via Tink +
+  Android Keystore + DataStore Preferences.
 - **Optional calendar tie-in**: with `READ_CALENDAR` granted, the daily
   sentence can name the event the clothes advice is for —
   _"Bring an umbrella for your 3pm meeting."_
@@ -58,7 +57,7 @@ artifact (see below) for sideload installs.
 | Module | Status |
 |---|---|
 | `:core:domain` | Pure-Kotlin models, use cases (insight rendering, clothes rules), repository interfaces |
-| `:core:data` | Open-Meteo forecast + geocoding clients, Gemini / OpenAI / ElevenLabs TTS clients, parser tests |
+| `:core:data` | Open-Meteo forecast + geocoding clients, Gemini TTS client, parser tests |
 | `:app` | Compose UI, manifest, receivers, worker, alarm scheduler, DI, platform TTS, calendar reader, encrypted key store |
 
 ## Installing on a phone
@@ -95,8 +94,8 @@ Three options, in roughly increasing order of friction:
    `shorts`, `umbrella`) are a sensible starting set. Add your own — e.g.
    `gloves` when temperature drops below 5°C.
 5. **Voice** (optional): the platform TTS engine works out of the box. To
-   use a more natural online voice, pick Gemini / OpenAI / ElevenLabs in
-   Settings → Voice and paste the matching API key in Settings → API Keys.
+   use a more natural online voice, pick Gemini in Settings → Voice and
+   paste your API key in Settings → API Keys.
 6. **Calendar tie-in** (optional): toggle _Use calendar events_ in
    Settings → Data Sources and grant `READ_CALENDAR` to let the daily
    sentence reference an overlapping event by name.
@@ -128,10 +127,10 @@ suppresses it is a vendor-side override.
 
 ## Roadmap
 
-- **v0.x** _(now)_: daily insight notification + TTS (device / Gemini /
-  OpenAI / ElevenLabs), full Settings UI, optional calendar tie-in and
-  device location, sideload via CI artifacts, Firebase App Distribution
-  for testers, Play Store internal track for testers.
+- **v0.x** _(now)_: daily insight notification + TTS (device / Gemini),
+  full Settings UI, optional calendar tie-in and device location,
+  sideload via CI artifacts, Firebase App Distribution for testers,
+  Play Store internal track for testers.
 - **v1.0**: Play Store listing + public release (production track);
   24-hour cost cap on online TTS calls.
 - **v2.0**: hourly / 3-hourly forecast UI, Google Home integration.

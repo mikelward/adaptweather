@@ -95,7 +95,7 @@ val buildTimestampMs: Long = System.currentTimeMillis()
 android {
     // Pinned to app.clothescast. Renamed from app.adaptweather as part of the
     // product rename; existing FAD testers had to uninstall + reinstall,
-    // losing their encrypted API keys (Gemini, OpenAI, ElevenLabs), schedule,
+    // losing their encrypted API keys (Gemini), schedule,
     // location, and clothes rules. Once a sideloaded build with applicationId
     // X is in the wild, switching to Y means installs of Y are a different
     // app — the applicationId is the install identity; do not change it again
