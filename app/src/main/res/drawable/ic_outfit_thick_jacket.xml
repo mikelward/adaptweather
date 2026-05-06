@@ -1,32 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Glanceable thick / puffy jacket icon. A taller hood, wider shoulders,
-    longer un-tapered sleeves and a lower hem so it reads visibly bulkier
-    than the sweater next to it. Centre zipper line + two horizontal seams
-    suggest puff panels. Deep navy fill pairs with the sweater's coral and
-    the t-shirt's sky blue so the three tops are easy to tell apart at a
-    glance.
--->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="96dp"
     android:height="90dp"
     android:viewportWidth="96"
     android:viewportHeight="90">
     <path
-        android:fillColor="#1E88E5"
-        android:strokeColor="#0D47A1"
-        android:strokeWidth="2.5"
+        android:fillColor="#7E57C2"
+        android:strokeColor="#4527A0"
+        android:strokeWidth="2.25"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="M28,24 L36,12 Q48,0 60,12 L68,24 L92,32 L92,80 L74,80 L70,46 L70,90 L26,90 L26,46 L22,80 L4,80 L4,32 Z" />
+        android:pathData="M18,21 L35,13 Q39,7 48,7 Q57,7 61,13 L78,21 L93,68 L78,76 L68,43 L68,96 L28,96 L28,43 L18,76 L3,68 Z" />
     <path
-        android:strokeColor="#0D47A1"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:pathData="M48,46 L48,90" />
+        android:fillColor="#4527A0"
+        android:pathData="M35,13 Q39,7 48,7 Q57,7 61,13 Q56,28 48,28 Q40,28 35,13 Z" />
     <path
-        android:strokeColor="#0D47A1"
-        android:strokeWidth="1.2"
-        android:strokeLineCap="round"
-        android:pathData="M26,60 L70,60 M26,76 L70,76" />
+        android:fillColor="#4527A0"
+        android:pathData="M46,28 L50,28 L50,96 L46,96 Z" />
+    <path
+        android:fillColor="#4527A0"
+        android:pathData="M3,68 L18,76 L15,84 L1,76 Z" />
+    <path
+        android:fillColor="#4527A0"
+        android:pathData="M93,68 L78,76 L81,84 L95,76 Z" />
 </vector>

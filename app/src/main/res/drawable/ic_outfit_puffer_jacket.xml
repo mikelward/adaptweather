@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Placeholder puffer/quilted jacket icon. Same coldness tier as the thick coat.
-    Horizontal quilting seams across the body signal "puffer" at a glance.
-    Teal fill distinguishes it from the navy thick jacket and charcoal coat.
-    Replace with a ChatGPT-generated version when available.
--->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="96dp"
-    android:height="90dp"
+    android:height="96dp"
     android:viewportWidth="96"
-    android:viewportHeight="90">
+    android:viewportHeight="96">
     <path
-        android:fillColor="#00ACC1"
-        android:strokeColor="#006064"
-        android:strokeWidth="2.5"
+        android:fillColor="#F5F7FA"
+        android:strokeColor="#90A4AE"
+        android:strokeWidth="2.25"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="M28,24 L36,12 Q48,0 60,12 L68,24 L92,32 L92,80 L74,80 L70,46 L70,90 L26,90 L26,46 L22,80 L4,80 L4,32 Z" />
+        android:pathData="M17,21 L35,13 Q39,4 48,4 Q57,4 61,13 L79,21 L94,68 L79,77 L68,43 L68,96 L28,96 L28,43 L17,77 L2,68 Z" />
     <path
-        android:strokeColor="#006064"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:pathData="M48,46 L48,90" />
+        android:fillColor="#CFD8DC"
+        android:pathData="M35,13 Q39,4 48,4 Q57,4 61,13 Q56,30 48,30 Q40,30 35,13 Z" />
     <path
-        android:strokeColor="#006064"
-        android:strokeWidth="1.5"
-        android:strokeLineCap="round"
-        android:pathData="M26,56 L70,56 M26,66 L70,66 M26,76 L70,76" />
+        android:fillColor="#CFD8DC"
+        android:pathData="M28,38 L68,38 L68,43 L28,43 Z" />
     <path
-        android:strokeColor="#006064"
-        android:strokeWidth="1.5"
-        android:strokeLineCap="round"
-        android:pathData="M4,44 L22,44 M74,44 L92,44 M4,56 L22,56 M74,56 L92,56 M4,68 L22,68 M74,68 L92,68" />
+        android:fillColor="#CFD8DC"
+        android:pathData="M28,56 L68,56 L68,61 L28,61 Z" />
+    <path
+        android:fillColor="#CFD8DC"
+        android:pathData="M28,74 L68,74 L68,79 L28,79 Z" />
+    <path
+        android:fillColor="#90A4AE"
+        android:pathData="M46,30 L50,30 L50,96 L46,96 Z" />
+    <path
+        android:fillColor="#90A4AE"
+        android:pathData="M2,68 L17,77 L14,85 L0,76 Z" />
+    <path
+        android:fillColor="#90A4AE"
+        android:pathData="M94,68 L79,77 L82,85 L96,76 Z" />
 </vector>
