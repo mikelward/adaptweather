@@ -26,8 +26,8 @@ import app.clothescast.insight.InsightFormatter
 import app.clothescast.location.hasBackgroundLocationPermission
 import app.clothescast.location.hasCoarseLocationPermission
 import app.clothescast.tts.GeminiTtsSpeaker
-import app.clothescast.tts.resolve
-import app.clothescast.tts.toJavaLocale
+import app.clothescast.tts.InsightTtsUtterance
+import app.clothescast.tts.insightTtsUtterance
 import app.clothescast.tts.withSpeechAudioFocus
 import app.clothescast.widget.OutfitWidget
 import io.ktor.client.call.NoTransformationFoundException
@@ -40,7 +40,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import java.io.IOException
 import java.time.LocalDate
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
@@ -354,7 +353,7 @@ class FetchAndNotifyWorker(
             app.insightNotifier.notify(insight, prose)
         }
         if (includesTts) {
-            speakWithFallback(prose, prefs)
+            speakWithFallback(ttsUtterance(insight, prefs), prefs)
         }
     }
 
@@ -392,14 +391,25 @@ class FetchAndNotifyWorker(
      *    events tonight. If the evening is empty there's nothing to interrupt
      *    for, even on a TTS-enabled mode.
      */
+    // Region-language prose for notification text and the audit log. Spoken
+    // playback is rendered separately through ttsUtterance() so explicit voice
+    // locales like de-AT speak German even when the app UI remains English.
+    private fun formatProse(insight: Insight, prefs: UserPreferences): String =
+        InsightFormatter.forRegion(applicationContext, prefs.region).format(insight.summary)
+
     // TODO(brand-intro): consider prepending "Today's ClothesCast: " / "Tonight's ClothesCast: "
     // here (and mirror it in the SAMPLE_SUMMARY render used by the top-level
     // runTtsPreview function in ui/settings/VoiceSettings.kt) once the voice
     // preview's phrasing settles — the brand-name pronunciation check that the
     // per-locale settings_tts_test_sample used to give us is currently absent
     // from both the preview and the real briefing.
-    private fun formatProse(insight: Insight, prefs: UserPreferences): String =
-        InsightFormatter.forRegion(applicationContext, prefs.region).format(insight.summary)
+    private fun ttsUtterance(insight: Insight, prefs: UserPreferences): InsightTtsUtterance =
+        insightTtsUtterance(
+            context = applicationContext,
+            summary = insight.summary,
+            region = prefs.region,
+            voiceLocale = prefs.voiceLocale,
+        )
 
     private suspend fun deliverTonight(insight: Insight, prefs: UserPreferences, prose: String) {
         val mode = prefs.tonightDeliveryMode
@@ -419,7 +429,7 @@ class FetchAndNotifyWorker(
             return
         }
         if (mode == DeliveryMode.TTS_ONLY || mode == DeliveryMode.NOTIFICATION_AND_TTS) {
-            speakWithFallback(prose, prefs)
+            speakWithFallback(ttsUtterance(insight, prefs), prefs)
         }
     }
 
@@ -429,9 +439,7 @@ class FetchAndNotifyWorker(
      * something. We never let a TTS error fail the worker — the notification
      * path is the primary delivery channel and has already fired by this point.
      */
-    private suspend fun speakWithFallback(text: String, prefs: UserPreferences) {
-        val regionLocale = prefs.region.toJavaLocale() ?: Locale.getDefault()
-        val locale = prefs.voiceLocale.resolve(regionLocale)
+    private suspend fun speakWithFallback(utterance: InsightTtsUtterance, prefs: UserPreferences) {
         withSpeechAudioFocus(applicationContext) {
             when (prefs.ttsEngine) {
                 TtsEngine.GEMINI -> {
@@ -440,7 +448,7 @@ class FetchAndNotifyWorker(
                             app.geminiTtsClient,
                             voiceName = prefs.geminiVoice,
                             style = prefs.ttsStyle,
-                        ).speak(text, locale)
+                        ).speak(utterance.text, utterance.locale)
                         return@withSpeechAudioFocus
                     } catch (t: Throwable) {
                         DiagLog.w(TAG, "Gemini TTS failed; falling back to device TTS.", t)
@@ -449,7 +457,7 @@ class FetchAndNotifyWorker(
                 TtsEngine.DEVICE -> Unit
             }
             try {
-                app.deviceTtsSpeaker(prefs.deviceVoice).speak(text, locale)
+                app.deviceTtsSpeaker(prefs.deviceVoice).speak(utterance.text, utterance.locale)
             } catch (t: Throwable) {
                 DiagLog.w(TAG, "Device TTS failed; insight is still posted as notification.", t)
             }

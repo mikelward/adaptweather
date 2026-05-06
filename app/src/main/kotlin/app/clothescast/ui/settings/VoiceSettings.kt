@@ -44,17 +44,16 @@ import app.clothescast.core.domain.model.Region
 import app.clothescast.core.domain.model.TtsEngine
 import app.clothescast.core.domain.model.TtsStyle
 import app.clothescast.core.domain.model.VoiceLocale
-import app.clothescast.insight.InsightFormatter
 import app.clothescast.tts.DeviceVoice
 import app.clothescast.tts.GEMINI_VOICES
 import app.clothescast.tts.GOOGLE_TTS_PACKAGE
 import app.clothescast.tts.GeminiTtsSpeaker
 import app.clothescast.tts.TtsVoiceOption
+import app.clothescast.tts.insightTtsUtterance
 import app.clothescast.tts.resolve
 import app.clothescast.tts.toJavaLocale
 import app.clothescast.tts.withSpeechAudioFocus
 import java.text.Collator
-import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -591,7 +590,7 @@ private fun TestVoiceButton(isPreviewing: Boolean, onClick: () -> Unit) {
 
 /**
  * Plays a preview through the chosen engine + voice. Builds a fixed canned
- * [InsightSummary] and renders it through the same [InsightFormatter] the
+ * [InsightSummary] and renders it through the same TTS-utterance formatter the
  * real briefing pipeline uses, so the preview reads exactly like a real
  * morning briefing in the chosen voice locale — no separate per-locale
  * sample string to keep in sync with the prose templates. The summary is
@@ -621,12 +620,12 @@ private suspend fun runTtsPreview(
     // suspends off-Main internally, but AudioTrack.write/play are JNI calls and
     // we don't want a hot stack of preview work running on the UI dispatcher.
     withContext(Dispatchers.IO) {
-        val locale = voiceLocale.resolve(region.toJavaLocale() ?: Locale.getDefault())
-        // Render the canned sample in the *voice* locale, not the app's UI
-        // locale — playing English prose through a Japanese voice is exactly
-        // the mismatch the user picked the locale to avoid. The formatter
-        // resolves to values/strings.xml for any locale without an override.
-        val text = InsightFormatter.forContext(context, locale).format(SAMPLE_SUMMARY)
+        val utterance = insightTtsUtterance(
+            context = context,
+            summary = SAMPLE_SUMMARY,
+            region = region,
+            voiceLocale = voiceLocale,
+        )
         withSpeechAudioFocus(context) {
             try {
                 when (engine) {
@@ -635,9 +634,9 @@ private suspend fun runTtsPreview(
                             app.geminiTtsClient,
                             voiceName = geminiVoice,
                             style = ttsStyle,
-                        ).speak(text, locale)
+                        ).speak(utterance.text, utterance.locale)
                     TtsEngine.DEVICE ->
-                        app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
+                        app.deviceTtsSpeaker(deviceVoice).speak(utterance.text, utterance.locale)
                 }
             } catch (_: CancellationException) {
                 // Composable scope cancelled (user navigated away mid-preview); not an error.
@@ -655,7 +654,7 @@ private suspend fun runTtsPreview(
                 // and can confirm audio output is working — mirrors FetchAndNotifyWorker.
                 if (engine != TtsEngine.DEVICE) {
                     try {
-                        app.deviceTtsSpeaker(deviceVoice).speak(text, locale)
+                        app.deviceTtsSpeaker(deviceVoice).speak(utterance.text, utterance.locale)
                     } catch (_: CancellationException) {
                         // user moved on; fine
                     } catch (fallback: Throwable) {
