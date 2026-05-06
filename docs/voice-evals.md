@@ -325,6 +325,135 @@ Schwiizerdütsch render is also a defensible choice.
 
 ---
 
+## B3 register-in-directive eval (2026-05)
+
+Tests whether the per-locale variety descriptors in `ACCENT_DIRECTIVES`
+("Standard British", "General Australian", "in einem hochdeutschen Akzent")
+can collapse into the directive once the directive itself carries the
+register signal. Hypothesis: with the directive instructing "Use the
+language's standard variety, not a regional dialect", the per-locale
+"Standard / General" qualifiers become redundant.
+
+Run via `scripts/eval-weather-report-style.py`. Two conditions per locale:
+
+- **B2 + with-variety** (control): current shipped, e.g. en-AU =
+  `"Speak with a General Australian accent, not broad."`
+- **B3 + bare** (treatment): directive gains
+  `"Use the language's standard variety, not a regional dialect."`,
+  accent drops the variety qualifier (e.g.
+  `"Speak with an Australian accent, not broad."`)
+
+Two locales tested formally; a third spot-checked.
+
+### en-AU — clear win
+
+| Voice | B2 + prod | B3 + bare | Δ |
+|---|---|---|---|
+| Aoede | 9 | 9 | 0 |
+| Charon | 9 | 9 | 0 |
+| Despina | 9 | 9 (re-rolls 8/8/9) | 0 |
+| Erinome | 7 | 9 | +2 |
+| Iapetus | **5** | 9 | **+4** |
+| Kore | 6 | 8 | +2 |
+| Leda | 7 | 5/7.5/8/7 (avg ~6.9) | mixed |
+| **avg** | 7.4 | 8.3 | +0.9 |
+
+Iapetus 5 → 9 is the standout — lifts a near-degenerate voice into the
+shipping band. Leda showed wide variance (5 to 8) on en-AU under B3 but
+stays in the picker only via PR #338 considerations; see "Leda dropped"
+below.
+
+### en-GB — slight regression, off-brand
+
+| Voice | B2 + prod | B3 + bare | Δ |
+|---|---|---|---|
+| Aoede | 8 | 7 | −1 |
+| Charon | 9 | 9 | 0 |
+| Despina | 9 | 9 | 0 |
+| Erinome | 8 | 9 | +1 |
+| Iapetus | 8 | 8 | 0 |
+| Kore | 9 | 8 | −1 |
+| Leda | 9 | 8 | −1 |
+| **avg** | 8.6 | 8.3 | −0.3 |
+
+Numerically a mild −0.3, but **qualitatively worse than the numbers
+suggest** — voices under B3 read as "serviceable but not on-brand" for the
+cultivated Weather Forecaster identity. The "Standard British" qualifier
+was doing real work on en-GB; the directive sentence couldn't replace it.
+
+### de-CH spot check (one voice each)
+
+The directive change does *not* fix de-CH's broader register question; the
+post-#351 clarity trim alone produces clean Schwiizerdütsch dialect. B3 +
+bare-er accent (drop the "deutsch-" prefix from `deutschschweizerischen`)
+nudged Leda toward Hochdeutsch but isn't shipping in this PR — kept
+de-CH on the post-#351 string.
+
+### Asymmetry interpretation
+
+The directive sentence helps when the locale's accent anchor is
+comparatively weak (en-AU "General Australian" is a less common phrase
+in Gemini training than the en-GB equivalent) and adds noise when the
+anchor is already strong (en-GB "Standard British" carries cultivated
+broadcast register on its own). One directive change isn't the right
+shape for both locales — hence the per-locale routing rather than a
+global update.
+
+### Negative findings (kept for posterity)
+
+Single-voice tests on Despina + en-AU + B3 against several "more
+newsreader feel" expansions. **All caused regressions on at least one
+shipping voice** while only marginally helping Despina:
+
+| Variant added on top of B3 | Despina | Charon | Iapetus |
+|---|---|---|---|
+| `+ "engaged, articulate, professional, not theatrical"` | 8.5 | **7.5** (British "jackit") | 8.5 (a bit fast) |
+| `+ "engaged…" + "unhurried, measured pace"` | 9 (single roll) | **5** (too regional) | 9 (still slightly fast) |
+| `+ "pausing briefly between key points"` | **5** | (untested) | (untested) |
+
+Same pattern as the historical en-GB-presenter eval (`voice-evals.md`
+above): every additional shaping clause has pulled some voice off-register
+or off-accent. The directive prose is at the variance ceiling — single-
+word tweaks are at or below the noise floor on the voices that respond
+well, and reliably regress voices that were already at 9.
+
+### Despina-as-default decision
+
+After Leda showed wide variance on en-AU under B3 (rolls 5, 7.5, 8, 7 — only
+1/4 hits user's ≥8 acceptance bar), Despina was probed as the default-voice
+replacement:
+
+| Locale | Despina score |
+|---|---|
+| en-GB B2 prod | 9 |
+| en-GB B3 bare | 9 |
+| en-AU B2 prod | 9 / 8.5–9 / 8 / 6–7 (4-roll variance) |
+| en-AU B3 bare | 9 / 8 / 8 / 9 (4-roll, all ≥8) |
+| en-US B2 prod | 8 |
+| de B2 prod | 8.5–9 |
+
+Despina is reliable, not dazzling — distribution clusters at 8–9 with a
+single outlier at 6–7 on en-AU B2 prod (the condition we're moving away
+from). Under the actual en-AU shipping condition (B3 + bare), all four
+rolls were ≥8.
+
+**Leda dropped from picker** (PR #338 amendment): default goes Leda →
+Despina. Leda's 5–8 lottery on en-AU under B3 is the immediate trigger;
+the broader pattern (Leda below the user's ≥8 bar across multiple
+configurations) supports the broader picker decision.
+
+### Shipped
+
+- Per-locale directive routing in `directiveFor(style, locale)`:
+  WEATHER_FORECASTER on en-AU gets `GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER_REGISTER`
+  (B2 + the explicit "standard variety, not regional dialect" sentence);
+  every other locale stays on the existing `GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER`.
+- `ACCENT_DIRECTIVES["en-AU"]` drops "General": `"Speak with an Australian accent, not broad."`
+- All other locales unchanged from the post-#351 clarity-trimmed strings.
+- Picker amended in PR #338: Leda dropped; default voice → Despina.
+
+---
+
 ## Scripts
 
 | Script | Purpose |

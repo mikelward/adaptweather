@@ -140,7 +140,78 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
 
         val body = checkNotNull(capturedBody)
-        body.shouldContain("General Australian accent")
+        body.shouldContain("Australian accent")
+        // "General" was dropped — the per-locale register sentence in the
+        // directive carries the standard-variety signal instead.
+        body.shouldNotContain("General Australian")
+    }
+
+    @Test
+    fun `weather forecaster on en-AU uses the register-in-directive variant`() = runTest {
+        // en-AU is the only locale where directiveFor returns the variant with
+        // the "standard variety, not regional dialect" sentence — empirically
+        // needed to rescue Iapetus on en-AU. See docs/voice-evals.md →
+        // "B3 register-in-directive eval".
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-AU"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldContain("standard variety, not a regional dialect")
+    }
+
+    @Test
+    fun `weather forecaster on en-GB uses the default directive without the register sentence`() = runTest {
+        // en-GB stays on the B2 directive — adding the register sentence
+        // empirically nudged en-GB voices off-brand. See voice-evals.md.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(text = "hello", locale = Locale.forLanguageTag("en-GB"))
+
+        val body = checkNotNull(capturedBody)
+        body.shouldNotContain("standard variety, not a regional dialect")
+    }
+
+    @Test
+    fun `character style on en-AU does not get the register-in-directive variant`() = runTest {
+        // The register sentence is WEATHER_FORECASTER-specific. Persona styles
+        // (PIRATE here) get their own directive verbatim — adding register
+        // direction would conflict with persona delivery.
+        var capturedBody: String? = null
+        val client = GeminiTtsClient(
+            httpClient = mockClient(SUCCESS_BODY) {
+                capturedBody = (it.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+                    .bytes()
+                    .toString(Charsets.UTF_8)
+            },
+            keyProvider = FakeKeyProvider("test-key"),
+        )
+
+        client.synthesize(
+            text = "ahoy",
+            locale = Locale.forLanguageTag("en-AU"),
+            style = TtsStyle.PIRATE,
+        )
+
+        val body = checkNotNull(capturedBody)
+        body.shouldNotContain("standard variety, not a regional dialect")
+        body.shouldContain("swaggering pirate")
     }
 
     @Test
