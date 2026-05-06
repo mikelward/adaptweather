@@ -261,6 +261,40 @@ locale only. Two accent variants:
   this run. Bare is uniformly in the 8–9 band so the conclusion holds even on
   the optimistic 8.3 read of prod.
 
+### en-AU spot check (on-device, shipping voices only)
+
+Tested on the Firebase APK against the trimmed
+`"Speak with a General Australian accent, not broad."` and the same B2
+directive. Just the four voices in PR #338's keep-list — single read per
+voice, no re-rolls.
+
+| Voice | Trim today | Historical (B2 + "— clear and natural, not broad.") | Verdict |
+|---|---|---|---|
+| Charon | 9 | "Rock-solid" (tied #1 overall) | consistent |
+| Iapetus | 8.5–9 | "Weakest overall" (#7) | **improvement** |
+| Leda | 8 | "Fine under current accents" (#6) | consistent |
+| Despina | flat | "One degenerate on B1/en-AU-general" (#4) | pre-existing |
+
+Average across the three non-flat voices ≈ 8.5 — right in line with the
+en-GB trimmed average of 8.6. The trim generalises well from en-GB to
+en-AU on three of four voices.
+
+**No new regression.** Despina-on-en-AU was already flagged in the prior
+en-AU-general eval as the one degenerate combo for that voice; what
+on-device testing surfaced is the same voice-anchor limitation surviving
+through the trim, not a new flaw the trim introduced. Iapetus actually
+improved (from "weakest overall" to 8.5–9). Charon and Leda are stable.
+
+A `"...General Australian accent — natural, not broad."` partial-trim
+(drop "clear" only, keep "natural" as positive shaping) is worth a
+follow-up sniff test if we want to specifically rescue Despina-on-en-AU;
+otherwise users who want en-AU liveliness pick Charon, Iapetus, or Leda.
+
+Erinome was also tested ad hoc — flagged as flat on en-AU and as
+having an over-rhotic "sweater" on en-US. Both look like Erinome's
+phonetic anchor leaking through; PR #338 drops Erinome from the picker,
+so this isn't a shipping concern.
+
 ### Bonus finding: de-CH
 
 Single-voice spot check (Leda, German weather text):
