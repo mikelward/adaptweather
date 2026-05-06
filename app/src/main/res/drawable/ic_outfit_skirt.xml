@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Placeholder A-line skirt icon. Waistband at y=0 (top of viewport) so it
-    joins cleanly with any top icon when stacked in the outfit card. The
-    silhouette flares from the waist to about knee length.
-    Replace with a ChatGPT-generated version when available.
--->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="96dp"
-    android:height="50dp"
+    android:height="96dp"
     android:viewportWidth="96"
-    android:viewportHeight="50">
+    android:viewportHeight="96">
     <path
-        android:fillColor="#AB47BC"
-        android:strokeColor="#6A1B9A"
-        android:strokeWidth="2.5"
+        android:fillColor="#F06292"
+        android:strokeColor="#C2185B"
+        android:strokeWidth="2.25"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="M28,0 L68,0 L80,50 L16,50 Z" />
+        android:pathData="M30,0 L66,0 L83,96 L13,96 Z" />
     <path
-        android:strokeColor="#6A1B9A"
-        android:strokeWidth="1.5"
-        android:strokeLineCap="round"
-        android:pathData="M28,10 L68,10" />
+        android:fillColor="#C2185B"
+        android:pathData="M30,0 L66,0 L66,11 L30,11 Z" />
 </vector>
