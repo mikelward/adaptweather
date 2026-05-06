@@ -42,9 +42,15 @@
     <string name="today_outfit_label_tonight">Tonight</string>
     <string name="today_outfit_label_tomorrow">Tomorrow</string>
     <string name="today_outfit_top_tshirt">T-shirt</string>
+    <string name="today_outfit_top_polo">Polo</string>
     <string name="today_outfit_top_sweater">Sweater</string>
+    <string name="today_outfit_top_thin_jacket">Thin jacket</string>
     <string name="today_outfit_top_thick_jacket">Thick jacket</string>
+    <string name="today_outfit_top_thick_coat">Thick coat</string>
+    <string name="today_outfit_top_puffer_jacket">Puffer jacket</string>
     <string name="today_outfit_bottom_shorts">Shorts</string>
+    <string name="today_outfit_bottom_skirt">Skirt</string>
+    <string name="today_outfit_bottom_jeans">Jeans</string>
     <string name="today_outfit_bottom_long_pants">Long pants</string>
 
     <!-- "Why this outfit?" rationale dialog. Tapping the outfit card opens this.
@@ -467,8 +473,12 @@
     <string name="garment_hoodie">Hoodie</string>
     <string name="garment_jacket">Jacket</string>
     <string name="garment_coat">Coat</string>
+    <string name="garment_puffer">Puffer jacket</string>
+    <string name="garment_thin_jacket">Thin jacket</string>
     <string name="garment_shorts">Shorts</string>
+    <string name="garment_skirt">Skirt</string>
     <string name="garment_tshirt">T-shirt</string>
+    <string name="garment_polo">Polo</string>
     <string name="garment_shirt">Shirt</string>
     <string name="garment_pants">Pants</string>
     <string name="garment_jeans">Jeans</string>

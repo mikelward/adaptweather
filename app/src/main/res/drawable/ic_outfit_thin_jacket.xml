@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Placeholder thin/light jacket icon. Sits at the sweater temperature tier.
+    Silhouette similar to the sweater but with an open-front zipper line and
+    straighter sleeves to read as a jacket rather than a knit top.
+    Warm amber fill distinguishes it from the coral sweater and sky-blue tshirt.
+    Replace with a ChatGPT-generated version when available.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="86dp"
+    android:viewportWidth="96"
+    android:viewportHeight="86">
+    <path
+        android:fillColor="#FFA726"
+        android:strokeColor="#E65100"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M36,10 L36,6 L60,6 L60,10 L84,26 L80,64 L68,64 L68,86 L28,86 L28,64 L16,64 L12,26 Z" />
+    <path
+        android:strokeColor="#E65100"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M48,10 L48,86" />
+    <path
+        android:strokeColor="#E65100"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M36,10 Q48,18 60,10" />
+</vector>

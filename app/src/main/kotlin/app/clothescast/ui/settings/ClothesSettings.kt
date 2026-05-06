@@ -226,9 +226,13 @@ private fun garmentLabelRes(garment: Garment): Int = when (garment) {
     Garment.HOODIE -> R.string.garment_hoodie
     Garment.JACKET -> R.string.garment_jacket
     Garment.COAT -> R.string.garment_coat
+    Garment.PUFFER -> R.string.garment_puffer
+    Garment.THIN_JACKET -> R.string.garment_thin_jacket
     Garment.TSHIRT -> R.string.garment_tshirt
+    Garment.POLO -> R.string.garment_polo
     Garment.SHIRT -> R.string.garment_shirt
     Garment.SHORTS -> R.string.garment_shorts
+    Garment.SKIRT -> R.string.garment_skirt
     Garment.PANTS -> R.string.garment_pants
     Garment.JEANS -> R.string.garment_jeans
 }

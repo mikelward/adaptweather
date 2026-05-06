@@ -158,22 +158,34 @@ private fun periodLabelRes(period: ForecastPeriod): Int = when (period) {
 
 private fun topIconRes(top: OutfitSuggestion.Top): Int = when (top) {
     OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt
+    OutfitSuggestion.Top.POLO -> R.drawable.ic_outfit_polo
     OutfitSuggestion.Top.SWEATER -> R.drawable.ic_outfit_sweater
+    OutfitSuggestion.Top.THIN_JACKET -> R.drawable.ic_outfit_thin_jacket
     OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_outfit_thick_jacket
+    OutfitSuggestion.Top.THICK_COAT -> R.drawable.ic_outfit_thick_coat
+    OutfitSuggestion.Top.PUFFER_JACKET -> R.drawable.ic_outfit_puffer_jacket
 }
 
 private fun topLabelRes(top: OutfitSuggestion.Top): Int = when (top) {
     OutfitSuggestion.Top.TSHIRT -> R.string.today_outfit_top_tshirt
+    OutfitSuggestion.Top.POLO -> R.string.today_outfit_top_polo
     OutfitSuggestion.Top.SWEATER -> R.string.today_outfit_top_sweater
+    OutfitSuggestion.Top.THIN_JACKET -> R.string.today_outfit_top_thin_jacket
     OutfitSuggestion.Top.THICK_JACKET -> R.string.today_outfit_top_thick_jacket
+    OutfitSuggestion.Top.THICK_COAT -> R.string.today_outfit_top_thick_coat
+    OutfitSuggestion.Top.PUFFER_JACKET -> R.string.today_outfit_top_puffer_jacket
 }
 
 private fun bottomIconRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
     OutfitSuggestion.Bottom.SHORTS -> R.drawable.ic_outfit_shorts
+    OutfitSuggestion.Bottom.SKIRT -> R.drawable.ic_outfit_skirt
+    OutfitSuggestion.Bottom.JEANS -> R.drawable.ic_outfit_jeans
     OutfitSuggestion.Bottom.LONG_PANTS -> R.drawable.ic_outfit_long_pants
 }
 
 private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
     OutfitSuggestion.Bottom.SHORTS -> R.string.today_outfit_bottom_shorts
+    OutfitSuggestion.Bottom.SKIRT -> R.string.today_outfit_bottom_skirt
+    OutfitSuggestion.Bottom.JEANS -> R.string.today_outfit_bottom_jeans
     OutfitSuggestion.Bottom.LONG_PANTS -> R.string.today_outfit_bottom_long_pants
 }

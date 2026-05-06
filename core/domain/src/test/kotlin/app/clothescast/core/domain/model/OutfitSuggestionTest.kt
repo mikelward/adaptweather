@@ -58,15 +58,17 @@ class OutfitSuggestionTest {
 
     @Test
     fun `thick jacket rationale cites the jacket rule`() {
-        val hourly = listOf(hour(LocalTime.of(6, 0), 4.0), hour(LocalTime.of(15, 0), 9.0))
+        // 8°C is below the jacket threshold (12°C) but above the coat threshold (6°C),
+        // so only the jacket rule fires and the rationale should cite "jacket".
+        val hourly = listOf(hour(LocalTime.of(6, 0), 8.0), hour(LocalTime.of(15, 0), 9.0))
         val rationale = OutfitSuggestion.explainFromForecast(
-            forecast(feelsLikeMin = 4.0, feelsLikeMax = 9.0, hourly = hourly),
+            forecast(feelsLikeMin = 8.0, feelsLikeMax = 9.0, hourly = hourly),
             rules,
         )
         val fact = rationale.top.facts.single()
         fact.thresholdC shouldBe 12.0
         fact.ruleItem shouldBe "jacket"
-        fact.observedC shouldBe 4.0
+        fact.observedC shouldBe 8.0
         fact.observedAt shouldBe LocalTime.of(6, 0)
         fact.comparison shouldBe Fact.Comparison.BELOW
     }
@@ -203,15 +205,14 @@ class OutfitSuggestionTest {
     }
 
     @Test
-    fun `coat rule alone still drives THICK_JACKET when it fires`() {
-        // User who deleted sweater and jacket but kept coat: the icon still
-        // promotes to THICK_JACKET when the coat rule (6°C) fires.
+    fun `coat rule alone drives THICK_COAT when it fires`() {
+        // Coat has its own icon tier (THICK_COAT) separate from jacket (THICK_JACKET).
         val coatOnly = listOf(ClothesRule("coat", ClothesRule.TemperatureBelow(6.0)))
         val outfit = OutfitSuggestion.fromForecast(
             forecast(feelsLikeMin = 3.0, feelsLikeMax = 8.0),
             coatOnly,
         )
-        outfit.top shouldBe OutfitSuggestion.Top.THICK_JACKET
+        outfit.top shouldBe OutfitSuggestion.Top.THICK_COAT
         OutfitSuggestion.explainFromForecast(
             forecast(feelsLikeMin = 3.0, feelsLikeMax = 8.0),
             coatOnly,

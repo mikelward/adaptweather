@@ -5,15 +5,16 @@ import java.time.LocalTime
 /**
  * A glanceable two-piece outfit pairing — one [Top] and one [Bottom] — derived from the
  * forecast so the home screen can render two big icons instead of a comma-separated word
- * list. The set is intentionally tiny (3 tops × 2 bottoms) because the goal is "tell me
- * at a glance", not "build my closet".
+ * list.
  *
  * The picker is driven entirely by the user's [ClothesRule] list — the same rules that
- * populate [Insight.recommendedItems]. Specifically: a firing `jacket`/`coat` rule
- * promotes the top to [Top.THICK_JACKET], a firing `sweater`/`hoodie` rule promotes it
- * to [Top.SWEATER], and a firing `shorts` rule swaps the bottom to [Bottom.SHORTS].
- * That keeps the home-screen icon and the bulleted recommendations honest about the
- * same set of cutoffs — no second mental model, no shadow defaults.
+ * populate [Insight.recommendedItems]. Top tier (coldest first): a firing `jacket` rule
+ * promotes to [Top.THICK_JACKET]; a firing `coat` rule promotes to [Top.THICK_COAT]; a
+ * firing `sweater`/`hoodie` rule promotes to [Top.SWEATER]; a firing `polo` rule lands
+ * on [Top.POLO]; otherwise [Top.TSHIRT]. Bottom tier: a firing `shorts` rule picks
+ * [Bottom.SHORTS]; `skirt` picks [Bottom.SKIRT]; `jeans` picks [Bottom.JEANS]; otherwise
+ * [Bottom.LONG_PANTS]. That keeps the home-screen icon and the bulleted recommendations
+ * honest about the same set of cutoffs — no second mental model, no shadow defaults.
  *
  * Rule conditions are checked against feels-like temperatures (wind chill / humidity
  * adjusted) — that's what people experience on the way out the door, and it's already
@@ -23,37 +24,47 @@ data class OutfitSuggestion(
     val top: Top,
     val bottom: Bottom,
 ) {
-    enum class Top { TSHIRT, SWEATER, THICK_JACKET }
+    enum class Top { TSHIRT, POLO, SWEATER, THIN_JACKET, THICK_JACKET, THICK_COAT, PUFFER_JACKET }
 
-    enum class Bottom { SHORTS, LONG_PANTS }
+    enum class Bottom { SHORTS, SKIRT, JEANS, LONG_PANTS }
 
     companion object {
         // Catalog item keys (see [Garment.itemKey]) that drive each icon tier.
-        // The top tiers are layered: any firing `jacket` / `coat` rule promotes
-        // the icon to THICK_JACKET, otherwise a firing `sweater` / `hoodie` lands
-        // on SWEATER. Order within each list also drives which rule the
-        // rationale cites when multiple fire — the canonical key (`jacket` /
-        // `sweater`) comes first because that's the icon-boundary the user
-        // crossed. A `coat` rule that fires alongside `jacket` only gets
-        // surfaced when `jacket` is missing from the user's list. A user who
-        // deleted everything in the cold half gets TSHIRT for any temperature.
-        private val THICK_JACKET_KEYS = listOf("jacket", "coat")
+        // Top tiers (coldest first): coat → THICK_COAT, puffer → PUFFER_JACKET,
+        // jacket → THICK_JACKET, thin-jacket/sweater/hoodie → mid-layer, polo → POLO,
+        // fallback → TSHIRT. Colder tiers are checked before warmer ones so that when
+        // multiple rules fire simultaneously (e.g. both coat ≤6°C and jacket ≤12°C fire
+        // at 4°C), the heavier garment icon wins rather than the first match.
+        // Bottom tiers: shorts → SHORTS, skirt → SKIRT, jeans → JEANS, fallback → LONG_PANTS.
+        // A user who deleted all cold rules gets TSHIRT regardless of temperature.
+        private val THICK_JACKET_KEYS = listOf("jacket")
+        private val THICK_COAT_KEYS = listOf("coat")
+        private val PUFFER_JACKET_KEYS = listOf("puffer")
+        private val THIN_JACKET_KEYS = listOf("thin-jacket")
         private val SWEATER_KEYS = listOf("sweater", "hoodie")
+        private val POLO_KEYS = listOf("polo")
         private val SHORTS_KEYS = listOf("shorts")
+        private val SKIRT_KEYS = listOf("skirt")
+        private val JEANS_KEYS = listOf("jeans")
 
         fun fromForecast(
             forecast: DailyForecast,
             clothesRules: List<ClothesRule>,
         ): OutfitSuggestion {
             val top = when {
+                clothesRules.firstFiring(forecast, THICK_COAT_KEYS) != null -> Top.THICK_COAT
+                clothesRules.firstFiring(forecast, PUFFER_JACKET_KEYS) != null -> Top.PUFFER_JACKET
                 clothesRules.firstFiring(forecast, THICK_JACKET_KEYS) != null -> Top.THICK_JACKET
+                clothesRules.firstFiring(forecast, THIN_JACKET_KEYS) != null -> Top.THIN_JACKET
                 clothesRules.firstFiring(forecast, SWEATER_KEYS) != null -> Top.SWEATER
+                clothesRules.firstFiring(forecast, POLO_KEYS) != null -> Top.POLO
                 else -> Top.TSHIRT
             }
-            val bottom = if (clothesRules.firstFiring(forecast, SHORTS_KEYS) != null) {
-                Bottom.SHORTS
-            } else {
-                Bottom.LONG_PANTS
+            val bottom = when {
+                clothesRules.firstFiring(forecast, SHORTS_KEYS) != null -> Bottom.SHORTS
+                clothesRules.firstFiring(forecast, SKIRT_KEYS) != null -> Bottom.SKIRT
+                clothesRules.firstFiring(forecast, JEANS_KEYS) != null -> Bottom.JEANS
+                else -> Bottom.LONG_PANTS
             }
             return OutfitSuggestion(top, bottom)
         }
@@ -85,15 +96,20 @@ data class OutfitSuggestion(
             rules: List<ClothesRule>,
             coldestHour: LocalTime?,
         ): Fact {
-            // The deciding rule, in priority order: the firing thick-jacket rule;
-            // otherwise the firing sweater rule; otherwise the warmest cold rule
-            // we *aren't* below (the "above the sweater cutoff" case for TSHIRT).
-            // The default sweater rule is the last-resort anchor so we always have
-            // something to cite, even if the user deleted every cold rule.
-            val rule = rules.firstFiring(forecast, THICK_JACKET_KEYS)
+            // The deciding rule, in priority order across all top tiers. If no
+            // cold rule fires (TSHIRT/POLO), cite the sweater threshold that
+            // wasn't crossed so the rationale dialog still has something to show.
+            val rule = rules.firstFiring(forecast, THICK_COAT_KEYS)
+                ?: rules.firstFiring(forecast, PUFFER_JACKET_KEYS)
+                ?: rules.firstFiring(forecast, THICK_JACKET_KEYS)
+                ?: rules.firstFiring(forecast, THIN_JACKET_KEYS)
                 ?: rules.firstFiring(forecast, SWEATER_KEYS)
+                ?: rules.firstFiring(forecast, POLO_KEYS)
                 ?: rules.firstByKey(SWEATER_KEYS)
+                ?: rules.firstByKey(THIN_JACKET_KEYS)
                 ?: rules.firstByKey(THICK_JACKET_KEYS)
+                ?: rules.firstByKey(THICK_COAT_KEYS)
+                ?: rules.firstByKey(PUFFER_JACKET_KEYS)
                 ?: ClothesRule.DEFAULTS.first { it.item == "sweater" }
             return rule.toMinFact(forecast, coldestHour)
         }
@@ -103,11 +119,14 @@ data class OutfitSuggestion(
             rules: List<ClothesRule>,
             warmestHour: LocalTime?,
         ): Fact {
-            // Same idea on the warm side: a firing shorts rule wins; otherwise we
-            // cite whichever shorts rule the user has on file (or the catalog
-            // default) so the dialog can still show the cutoff that wasn't met.
+            // The deciding rule across all bottom tiers. If no warm rule fires
+            // (LONG_PANTS), cite the shorts threshold that wasn't crossed.
             val rule = rules.firstFiring(forecast, SHORTS_KEYS)
+                ?: rules.firstFiring(forecast, SKIRT_KEYS)
+                ?: rules.firstFiring(forecast, JEANS_KEYS)
                 ?: rules.firstByKey(SHORTS_KEYS)
+                ?: rules.firstByKey(SKIRT_KEYS)
+                ?: rules.firstByKey(JEANS_KEYS)
                 ?: ClothesRule.DEFAULTS.first { it.item == "shorts" }
             return rule.toMaxFact(forecast, warmestHour)
         }
