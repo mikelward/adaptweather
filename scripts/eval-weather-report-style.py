@@ -7,7 +7,8 @@ measured pace, accentuate clothing recommendations."
 Candidates move in three steps:
   A) baselines — current NORMAL and NEWSREADER directives
   B) core proposal — the user's explicit weather-report idea, with and without
-     the sentence/clothing-emphasis clause
+     the sentence/clothing-emphasis clause; B3 also adds a "standard variety,
+     not regional dialect" sentence (paired with the no-variety locales)
   C) tweaks — minor wording changes that may sharpen or soften the effect
 
 Each candidate is tested across three locales (en-US, en-AU, en-GB) using the
@@ -24,6 +25,13 @@ Usage
 
   # one candidate across all locales/voices:
   python3 scripts/eval-weather-report-style.py --filter weather-B2
+
+  # the B3 register-in-directive eval (control = post-#351 shipped pair;
+  # treatment = bare-variety accent + B3 directive):
+  python3 scripts/eval-weather-report-style.py --filter en-GB-bare-weather-B2-with-emphasis
+  python3 scripts/eval-weather-report-style.py --filter en-GB-no-variety-weather-B3
+  python3 scripts/eval-weather-report-style.py --filter en-AU-prod-weather-B2-with-emphasis
+  python3 scripts/eval-weather-report-style.py --filter en-AU-no-variety-weather-B3
 
 Output
 ------
@@ -91,10 +99,22 @@ LOCALES: dict[str, str] = {
     # in the accent clause.
     "en-GB-prod":      "Speak with a Standard British accent — clear and natural.",
     "en-GB-bare":      "Speak with a Standard British accent.",
+    # en-GB-no-variety / en-AU-no-variety / en-AU-prod: the "B3 register-in-
+    # directive" eval. Hypothesis: with the WEATHER_FORECASTER directive
+    # carrying "Use the language's standard variety, not a regional dialect."
+    # the per-locale variety descriptors ("Standard", "General") become
+    # redundant and the accent strings can drop them. Pair the bare-variety
+    # locale with the B3 directive candidate; the prod locale with B2.
+    "en-AU-prod":         "Speak with a General Australian accent, not broad.",
+    "en-AU-no-variety":   "Speak with an Australian accent, not broad.",
+    "en-GB-no-variety":   "Speak with a British accent.",
     # de-DE falls back to the language-only "de" key in the app (no explicit
     # de-DE entry in ACCENT_DIRECTIVES); de-AT has its own entry.
     "de-DE": "Sprich auf Deutsch in einem klaren, hochdeutschen Akzent.",
     "de-AT": "Sprich auf Deutsch mit einem klaren österreichischen Akzent.",
+    # de-no-variety: B3 candidate — drops "in einem hochdeutschen Akzent",
+    # relying on the directive to convey the standard register.
+    "de-no-variety":      "Sprich auf Deutsch.",
 }
 
 # ── A: baselines (current production directives) ─────────────────────────────
@@ -168,16 +188,35 @@ TWEAK_C3_WITH_PAUSES = (
     "texture:\n\n"
 )
 
+# ── B3: register-in-directive (paired with no-variety accents) ───────────────
+#
+# B3 — adds an explicit "use the language's standard variety, not a regional
+#      dialect" sentence early in the directive. Hypothesis: the per-locale
+#      variety descriptors in ACCENT_DIRECTIVES ("Standard British", "General
+#      Australian", "hochdeutsch") become redundant once the directive carries
+#      this signal, and the accent strings can collapse to just the language /
+#      regional flavour. Test against the no-variety locales above.
+
+WEATHER_B3_REGISTER_IN_DIRECTIVE = (
+    "Read the following weather forecast in the style of a weather report on a "
+    "national news service. Use the language's standard variety, not a "
+    "regional dialect. Enunciate clearly and use a measured speed. "
+    "Accentuate the ends of sentences and give a gentle emphasis to clothing "
+    "recommendations. No audio effects, background noise, or vinyl-style "
+    "texture:\n\n"
+)
+
 # ── candidate table ───────────────────────────────────────────────────────────
 
 CANDIDATES: list[tuple[str, str]] = [
-    ("baseline-A1-normal",          BASELINE_NORMAL),
-    ("baseline-A2-newsreader",      BASELINE_NEWSREADER),
-    ("weather-B1-basic",            WEATHER_B1_BASIC),
-    ("weather-B2-with-emphasis",    WEATHER_B2_WITH_EMPHASIS),
-    ("tweak-C1-authoritative",      TWEAK_C1_AUTHORITATIVE),
-    ("tweak-C2-cadence",            TWEAK_C2_CADENCE),
-    ("tweak-C3-with-pauses",        TWEAK_C3_WITH_PAUSES),
+    ("baseline-A1-normal",                  BASELINE_NORMAL),
+    ("baseline-A2-newsreader",              BASELINE_NEWSREADER),
+    ("weather-B1-basic",                    WEATHER_B1_BASIC),
+    ("weather-B2-with-emphasis",            WEATHER_B2_WITH_EMPHASIS),
+    ("weather-B3-register-in-directive",    WEATHER_B3_REGISTER_IN_DIRECTIVE),
+    ("tweak-C1-authoritative",              TWEAK_C1_AUTHORITATIVE),
+    ("tweak-C2-cadence",                    TWEAK_C2_CADENCE),
+    ("tweak-C3-with-pauses",                TWEAK_C3_WITH_PAUSES),
 ]
 
 VOICES = ["Erinome", "Kore", "Aoede", "Despina", "Iapetus", "Charon", "Leda"]
