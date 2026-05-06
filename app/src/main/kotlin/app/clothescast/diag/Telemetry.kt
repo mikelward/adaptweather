@@ -1,6 +1,7 @@
 package app.clothescast.diag
 
 import android.content.Context
+import android.os.Build
 import app.clothescast.data.SettingsRepository
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -29,6 +30,11 @@ import kotlinx.coroutines.launch
  * "no JSON, no SDK calls" is the natural quiet path. The Settings toggle
  * still flips the persisted preference in that case so a later build that
  * does have the JSON inherits the user's choice.
+ *
+ * On virtual devices (Android emulator, Genymotion) collection is forced off
+ * regardless of the user's preference so dev / instrumentation runs don't
+ * pollute the dashboards. The persisted preference is left alone so the same
+ * install booted on real hardware still honours the user's choice.
  */
 object Telemetry {
     /**
@@ -47,6 +53,16 @@ object Telemetry {
         if (FirebaseApp.getApps(context).isEmpty()) return
         val analytics = FirebaseAnalytics.getInstance(context)
         val crashlytics = FirebaseCrashlytics.getInstance()
+        if (isProbablyEmulator()) {
+            // Virtual devices report as "unknown" / "google_sdk" / etc. and pollute
+            // crash + analytics dashboards with noise that doesn't reflect any real
+            // user. Force collection off here without touching the user's
+            // persisted preference, so the same install on real hardware still
+            // honours their Settings → Privacy choice.
+            analytics.setAnalyticsCollectionEnabled(false)
+            crashlytics.setCrashlyticsCollectionEnabled(false)
+            return
+        }
         scope.launch {
             settings.preferences
                 .map { it.telemetryEnabled }
@@ -61,6 +77,29 @@ object Telemetry {
                 .distinctUntilChanged()
                 .collect { snapshot -> snapshot.applyTo(analytics) }
         }
+    }
+
+    private fun isProbablyEmulator(): Boolean {
+        val fp = Build.FINGERPRINT
+        val model = Build.MODEL
+        val product = Build.PRODUCT
+        val hardware = Build.HARDWARE
+        return fp.startsWith("generic")
+            || fp.startsWith("unknown")
+            || fp.contains("emulator", ignoreCase = true)
+            || model.contains("google_sdk")
+            || model.contains("Emulator")
+            || model.contains("Android SDK built for")
+            || product.contains("sdk_gphone")
+            || product == "google_sdk"
+            || product == "sdk"
+            || product == "sdk_x86"
+            || product == "sdk_x86_64"
+            || product == "vbox86p"
+            || hardware == "goldfish"
+            || hardware == "ranchu"
+            || Build.MANUFACTURER.contains("Genymotion")
+            || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
     }
 }
 

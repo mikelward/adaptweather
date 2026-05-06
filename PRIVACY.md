@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-05-05_
+_Last updated: 2026-05-06_
 
 ClothesCast is a daily weather-insight app for Android. This policy
 describes what data the app handles, where it goes, and what control you
@@ -203,6 +203,10 @@ so you can audit exactly what's instrumented at
 <https://github.com/mikelward/clothescast> — or build a copy with the
 reporting calls stripped out, if you'd rather not participate.
 
+Runs on virtual devices (Android emulator, Genymotion) never report —
+collection is forced off there regardless of the in-app toggle, so dev
+and instrumentation builds don't show up in dashboards.
+
 ## Children
 
 ClothesCast is not directed at children under 13 and does not knowingly
@@ -226,6 +230,12 @@ email the address listed on the Play Store listing.
 
 ## Changelog
 
+- **2026-05-06** — Suppress Firebase Analytics + Crashlytics collection on
+  virtual devices (Android emulator, Genymotion) regardless of the user's
+  Privacy toggle, to keep dashboards free of dev / instrumentation noise.
+  Reduces what leaves the device; the persisted user preference is
+  unchanged so the same install on real hardware still honours the
+  toggle.
 - **2026-05-05** — Wired the previously-anticipated Firebase Crashlytics
   + Google Analytics for Firebase integration into the app. Default-on
   with a one-time non-blocking notice on the Today screen pointing the
