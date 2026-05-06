@@ -49,6 +49,7 @@ import json
 import os
 import pathlib
 import subprocess
+import urllib.error
 import urllib.request
 import wave
 
@@ -93,8 +94,19 @@ def synthesize(prompt: str, voice: str, model: str, api_key: str) -> bytes:
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req) as resp:
-        body = json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req) as resp:
+            body = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        # Surface Gemini's actual error message (e.g. "voice not found",
+        # auth failure, quota) instead of a bare "HTTP 400". Mirrors the
+        # GeminiTtsHttpException treatment in GeminiTtsClient.kt.
+        raw = e.read().decode("utf-8", "replace")
+        try:
+            msg = json.loads(raw).get("error", {}).get("message", raw)
+        except json.JSONDecodeError:
+            msg = raw
+        raise SystemExit(f"Gemini TTS HTTP {e.code}: {msg}") from None
     inline = body["candidates"][0]["content"]["parts"][0]["inlineData"]
     return base64.b64decode(inline["data"])
 
