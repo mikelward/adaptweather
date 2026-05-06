@@ -295,6 +295,14 @@ Both look like Erinome's phonetic anchor leaking through; the
 clarity-trim eval below rescues en-GB (2 → 8) and the B3 eval rescues
 en-AU (7 → 9), so Erinome stays in the picker after #353.
 
+A follow-up en-US sniff-test under the current shipping config —
+B2 directive + `"Speak with a General American accent."` (post-#351
+trim, no "clear and natural") — rated **10/10**. The over-rhotic
+"sweater" issue was a casualty of the old "clear and natural" accent
+prod string and is fixed by the trim. Erinome on en-US is now a
+strong shipping candidate (and a strong contender for default-voice;
+see the TODO at the end of this doc).
+
 ### Bonus finding: de-CH
 
 Single-voice spot check (Leda, German weather text):
@@ -517,12 +525,23 @@ distribution but stays in the picker for users who want her character.
 ### TODO: revisit default — Despina vs. Erinome head-to-head
 
 Erinome was rescued twice in this eval arc — clarity-trim on en-GB
-(2 → 8 in #351) and B3 routing on en-AU (7 → 9 in #353). She may now
-actually be the winner over Despina under the post-#353 shipping
-configuration. Needs a dedicated head-to-head across the same six
-locales we used for Despina (en-GB / en-AU B3 / en-US / de / de-AT /
-de-CH), multiple rolls per cell, before any default switch. Tracked in
-`GeminiTtsClient.kt` next to `DEFAULT_GEMINI_TTS_VOICE`.
+(2 → 8 in #351) and B3 routing on en-AU (7 → 9 in #353) — and a
+follow-up en-US sniff-test under the current shipping config rated
+**10/10**, fixing the historical over-rhotic "sweater" anchor. She
+may now actually be the winner over Despina under the post-#353
+shipping configuration. Needs a dedicated head-to-head across the
+same six locales we used for Despina (en-GB / en-AU B3 / en-US / de /
+de-AT / de-CH), multiple rolls per cell, before any default switch.
+Tracked in `GeminiTtsClient.kt` next to `DEFAULT_GEMINI_TTS_VOICE`.
+
+| Locale | Despina | Erinome |
+|---|---|---|
+| en-GB B2 prod | 9 | 8 (post-#351 bare; was 2 under old "clear and natural") |
+| en-AU B3 bare | 9 / 8 / 8 / 9 (4-roll) | 9 (single roll) |
+| en-US B2 prod | 8 | **10** (post-#351 trim, single roll) |
+| de B2 prod | 8.5–9 | untested |
+| de-AT B2 prod | 9 | untested |
+| de-CH (post-#351) | 9 | untested |
 
 ---
 
