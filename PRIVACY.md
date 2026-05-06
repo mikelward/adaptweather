@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-05-05_
+_Last updated: 2026-05-06_
 
 ClothesCast is a daily weather-insight app for Android. This policy
 describes what data the app handles, where it goes, and what control you
@@ -221,6 +221,11 @@ email the address listed on the Play Store listing.
 
 ## Changelog
 
+- **2026-05-06** — Removed OpenAI and ElevenLabs as TTS provider options;
+  Google Gemini is now the only online TTS provider. Removed the
+  corresponding rows from the third-party services table and the note on
+  OpenAI's 30-day input retention. Updated the API-key storage description
+  accordingly. No change to what data leaves the device or when.
 - **2026-05-05** — Wired the previously-anticipated Firebase Crashlytics
   + Google Analytics for Firebase integration into the app. Default-on
   with a one-time non-blocking notice on the Today screen pointing the
