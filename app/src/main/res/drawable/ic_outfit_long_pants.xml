@@ -6,19 +6,19 @@
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="96dp"
-    android:height="96dp"
+    android:height="74dp"
     android:viewportWidth="96"
-    android:viewportHeight="96">
+    android:viewportHeight="74">
     <path
         android:fillColor="#5C6BC0"
         android:strokeColor="#1A237E"
         android:strokeWidth="2.5"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="M24,12 L72,12 L70,86 L52,86 L52,44 L48,42 L44,44 L44,86 L26,86 Z" />
+        android:pathData="M24,0 L72,0 L70,74 L52,74 L52,32 L48,30 L44,32 L44,74 L26,74 Z" />
     <path
         android:strokeColor="#1A237E"
         android:strokeWidth="1.5"
         android:strokeLineCap="round"
-        android:pathData="M24,22 L72,22" />
+        android:pathData="M24,10 L72,10" />
 </vector>

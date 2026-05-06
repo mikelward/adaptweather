@@ -67,9 +67,13 @@ class InsightNotifier(private val context: Context) {
         // insights without an outfit). Each variant gets its own explicit branch so
         // the mapping is easy to scan and the t-shirt-vs-null sharing is obvious.
         internal fun smallIconFor(top: OutfitSuggestion.Top?): Int = when (top) {
-            OutfitSuggestion.Top.SWEATER -> R.drawable.ic_notification_top_sweater
-            OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_notification_top_thick_jacket
-            OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_notification_insight
+            OutfitSuggestion.Top.SWEATER,
+            OutfitSuggestion.Top.THIN_JACKET -> R.drawable.ic_notification_top_sweater
+            OutfitSuggestion.Top.THICK_JACKET,
+            OutfitSuggestion.Top.THICK_COAT,
+            OutfitSuggestion.Top.PUFFER_JACKET -> R.drawable.ic_notification_top_thick_jacket
+            OutfitSuggestion.Top.TSHIRT,
+            OutfitSuggestion.Top.POLO -> R.drawable.ic_notification_insight
             null -> R.drawable.ic_notification_insight
         }
 
@@ -100,8 +104,12 @@ class InsightNotifier(private val context: Context) {
         @DrawableRes
         private fun largeTopDrawable(top: OutfitSuggestion.Top?): Int? = when (top) {
             OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt
+            OutfitSuggestion.Top.POLO -> R.drawable.ic_outfit_polo
             OutfitSuggestion.Top.SWEATER -> R.drawable.ic_outfit_sweater
+            OutfitSuggestion.Top.THIN_JACKET -> R.drawable.ic_outfit_thin_jacket
             OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_outfit_thick_jacket
+            OutfitSuggestion.Top.THICK_COAT -> R.drawable.ic_outfit_thick_coat
+            OutfitSuggestion.Top.PUFFER_JACKET -> R.drawable.ic_outfit_puffer_jacket
             null -> null
         }
     }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Placeholder polo-shirt icon. Same family as ic_outfit_tshirt: flat fill +
+    darker outline. Distinguished by a short placket collar at the neckline.
+    Sage green fill so it reads distinctly from the sky-blue t-shirt.
+    Replace with a ChatGPT-generated version when available.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="86dp"
+    android:viewportWidth="96"
+    android:viewportHeight="86">
+    <path
+        android:fillColor="#66BB6A"
+        android:strokeColor="#1B5E20"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M38,12 L42,20 L48,22 L54,20 L58,12 L84,28 L76,42 L68,38 L68,86 L28,86 L28,38 L20,42 L12,28 Z" />
+    <path
+        android:fillColor="#66BB6A"
+        android:strokeColor="#1B5E20"
+        android:strokeWidth="1.8"
+        android:strokeLineJoin="round"
+        android:pathData="M44,12 L44,22 L48,22 L52,22 L52,12 Z" />
+    <path
+        android:strokeColor="#1B5E20"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M48,12 L48,22" />
+</vector>

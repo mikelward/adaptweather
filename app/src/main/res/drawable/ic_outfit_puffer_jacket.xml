@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Placeholder puffer/quilted jacket icon. Same coldness tier as the thick coat.
+    Horizontal quilting seams across the body signal "puffer" at a glance.
+    Teal fill distinguishes it from the navy thick jacket and charcoal coat.
+    Replace with a ChatGPT-generated version when available.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="90dp"
+    android:viewportWidth="96"
+    android:viewportHeight="90">
+    <path
+        android:fillColor="#00ACC1"
+        android:strokeColor="#006064"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M28,24 L36,12 Q48,0 60,12 L68,24 L92,32 L92,80 L74,80 L70,46 L70,90 L26,90 L26,46 L22,80 L4,80 L4,32 Z" />
+    <path
+        android:strokeColor="#006064"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M48,46 L48,90" />
+    <path
+        android:strokeColor="#006064"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M26,56 L70,56 M26,66 L70,66 M26,76 L70,76" />
+    <path
+        android:strokeColor="#006064"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M4,44 L22,44 M74,44 L92,44 M4,56 L22,56 M74,56 L92,56 M4,68 L22,68 M74,68 L92,68" />
+</vector>

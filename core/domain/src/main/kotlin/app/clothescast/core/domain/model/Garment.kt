@@ -30,11 +30,15 @@ enum class Garment(val itemKey: String) {
     HOODIE("hoodie"),
     JACKET("jacket"),
     COAT("coat"),
+    PUFFER("puffer"),
+    THIN_JACKET("thin-jacket"),
     TSHIRT("t-shirt"),
+    POLO("polo"),
     SHIRT("shirt"),
 
     // Bottoms. Shorts is shipped as a default; en-GB renders "pants" as "Trousers".
     SHORTS("shorts"),
+    SKIRT("skirt"),
     PANTS("pants"),
     JEANS("jeans");
 

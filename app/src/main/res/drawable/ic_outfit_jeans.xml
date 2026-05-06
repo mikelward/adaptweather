@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Placeholder jeans icon. Same silhouette as long pants but denim blue with
+    a contrasting seam detail so it reads as jeans rather than trousers.
+    Waistband is at the top of the viewport (y=0) so it joins cleanly with
+    any top icon when stacked in the outfit card.
+    Replace with a ChatGPT-generated version when available.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="74dp"
+    android:viewportWidth="96"
+    android:viewportHeight="74">
+    <path
+        android:fillColor="#1565C0"
+        android:strokeColor="#0D47A1"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M24,0 L72,0 L70,74 L52,74 L52,32 L48,30 L44,32 L44,74 L26,74 Z" />
+    <path
+        android:strokeColor="#0D47A1"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M24,10 L72,10" />
+    <path
+        android:strokeColor="#1976D2"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:pathData="M36,10 L32,40 M60,10 L64,40" />
+</vector>

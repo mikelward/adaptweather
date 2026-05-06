@@ -49,6 +49,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -500,18 +501,18 @@ internal fun OutfitPreviewCard(
                 textAlign = TextAlign.Center,
             )
             Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
                     painter = painterResource(id = topIconRes(outfit.top)),
                     contentDescription = stringResource(topLabelRes(outfit.top)),
-                    modifier = Modifier.height(96.dp),
+                    modifier = Modifier.width(80.dp),
                 )
                 Image(
                     painter = painterResource(id = bottomIconRes(outfit.bottom)),
                     contentDescription = stringResource(bottomLabelRes(outfit.bottom)),
-                    modifier = Modifier.height(96.dp),
+                    modifier = Modifier.width(80.dp),
                 )
             }
             Text(
@@ -780,23 +781,35 @@ private val ONE_DECIMAL_FORMAT: java.text.NumberFormat =
 
 private fun topIconRes(top: OutfitSuggestion.Top): Int = when (top) {
     OutfitSuggestion.Top.TSHIRT -> R.drawable.ic_outfit_tshirt
+    OutfitSuggestion.Top.POLO -> R.drawable.ic_outfit_polo
     OutfitSuggestion.Top.SWEATER -> R.drawable.ic_outfit_sweater
+    OutfitSuggestion.Top.THIN_JACKET -> R.drawable.ic_outfit_thin_jacket
     OutfitSuggestion.Top.THICK_JACKET -> R.drawable.ic_outfit_thick_jacket
+    OutfitSuggestion.Top.THICK_COAT -> R.drawable.ic_outfit_thick_coat
+    OutfitSuggestion.Top.PUFFER_JACKET -> R.drawable.ic_outfit_puffer_jacket
 }
 
 private fun topLabelRes(top: OutfitSuggestion.Top): Int = when (top) {
     OutfitSuggestion.Top.TSHIRT -> R.string.today_outfit_top_tshirt
+    OutfitSuggestion.Top.POLO -> R.string.today_outfit_top_polo
     OutfitSuggestion.Top.SWEATER -> R.string.today_outfit_top_sweater
+    OutfitSuggestion.Top.THIN_JACKET -> R.string.today_outfit_top_thin_jacket
     OutfitSuggestion.Top.THICK_JACKET -> R.string.today_outfit_top_thick_jacket
+    OutfitSuggestion.Top.THICK_COAT -> R.string.today_outfit_top_thick_coat
+    OutfitSuggestion.Top.PUFFER_JACKET -> R.string.today_outfit_top_puffer_jacket
 }
 
 private fun bottomIconRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
     OutfitSuggestion.Bottom.SHORTS -> R.drawable.ic_outfit_shorts
+    OutfitSuggestion.Bottom.SKIRT -> R.drawable.ic_outfit_skirt
+    OutfitSuggestion.Bottom.JEANS -> R.drawable.ic_outfit_jeans
     OutfitSuggestion.Bottom.LONG_PANTS -> R.drawable.ic_outfit_long_pants
 }
 
 private fun bottomLabelRes(bottom: OutfitSuggestion.Bottom): Int = when (bottom) {
     OutfitSuggestion.Bottom.SHORTS -> R.string.today_outfit_bottom_shorts
+    OutfitSuggestion.Bottom.SKIRT -> R.string.today_outfit_bottom_skirt
+    OutfitSuggestion.Bottom.JEANS -> R.string.today_outfit_bottom_jeans
     OutfitSuggestion.Bottom.LONG_PANTS -> R.string.today_outfit_bottom_long_pants
 }
 

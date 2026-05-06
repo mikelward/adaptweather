@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Placeholder thick coat icon. Longer and wider than the thick jacket to read
+    as an overcoat. Charcoal fill distinguishes it from the navy thick jacket.
+    The longer body (to viewport bottom) signals "heavy outerwear" at a glance.
+    Replace with a ChatGPT-generated version when available.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="90dp"
+    android:viewportWidth="96"
+    android:viewportHeight="90">
+    <path
+        android:fillColor="#546E7A"
+        android:strokeColor="#263238"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M30,22 L38,10 Q48,0 58,10 L66,22 L90,32 L90,78 L72,78 L70,44 L70,90 L26,90 L26,44 L24,78 L6,78 L6,32 Z" />
+    <path
+        android:strokeColor="#263238"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M48,44 L48,90" />
+    <path
+        android:strokeColor="#263238"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M26,58 L70,58 M26,74 L70,74" />
+    <path
+        android:strokeColor="#263238"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M38,10 Q48,20 58,10" />
+</vector>

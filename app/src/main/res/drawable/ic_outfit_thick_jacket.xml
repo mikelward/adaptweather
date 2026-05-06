@@ -9,9 +9,9 @@
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="96dp"
-    android:height="96dp"
+    android:height="90dp"
     android:viewportWidth="96"
-    android:viewportHeight="96">
+    android:viewportHeight="90">
     <path
         android:fillColor="#1E88E5"
         android:strokeColor="#0D47A1"
