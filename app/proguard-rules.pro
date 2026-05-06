@@ -6,3 +6,11 @@
 # release build succeeds; the debug-detector code path is unreachable on Android.
 -dontwarn io.ktor.util.debug.**
 -dontwarn java.lang.management.**
+
+# Compose's FontWeightAdjustmentHelper uses reflection to safely access
+# Configuration.fontWeightAdjustment on API 31+ devices. Some OEM Android 12
+# builds omit this field despite reporting API 31. Without this keep rule, R8
+# can inline or devirtualize the helper in release builds in ways that replace
+# the reflection guard with a direct GETFIELD, causing NoSuchFieldError on
+# those devices. Keeping the class prevents that optimization path.
+-keep class androidx.compose.ui.text.font.FontWeightAdjustmentHelper { *; }
