@@ -150,7 +150,7 @@ new rule the first time something bites you, not the third.
 
 - **Surface any change to what we send off device.** When a change touches
   data that crosses the device boundary — anything in the rendered insight
-  prose (it's fed to Gemini / OpenAI / ElevenLabs TTS over BYOK keys),
+  prose (it's fed to Gemini TTS over BYOK keys),
   weather / geocoding requests, or future analytics / error reporting —
   call it out explicitly in the PR description and commit message. Calendar
   event titles, locations, contacts, identifiers: default is "less, not
@@ -219,5 +219,5 @@ new rule the first time something bites you, not the third.
   available beyond compiler warnings.
 - **This is a client-only Android app.** No backend server, database, or
   Docker containers to start. The app calls Open-Meteo (free, keyless) and
-  optionally Gemini/OpenAI/ElevenLabs (BYOK). Testing is purely JVM-based.
+  optionally Gemini (BYOK). Testing is purely JVM-based.
 - **`CLAUDE.md` is a symlink** to `AGENTS.md` — editing either edits both.
