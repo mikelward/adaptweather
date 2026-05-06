@@ -50,7 +50,14 @@ internal const val GEMINI_API_VERSION = "v1beta"
  * gentle emphasis on clothing advice. Chosen via listening eval over a neutral
  * "studio voice" and a newsreader variant.
  *
- * Below the default are character / persona registers (pirate, cowboy, etc.).
+ * [GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER_REGISTER] is the same with
+ * an extra "Use the language's standard variety, not a regional dialect"
+ * sentence. Empirically rescues Iapetus on en-AU (5 → 9) and lifts other
+ * voices that were below the user's quality bar; on en-GB it nudged voices
+ * off-brand and is **not** used there. [directiveFor] picks the variant per
+ * locale. See docs/voice-evals.md → "B3 register-in-directive eval".
+ *
+ * Below the defaults are character / persona registers (pirate, cowboy, etc.).
  * Each one starts with "Read the following…" so the model treats it as
  * delivery direction rather than a rewrite, permits brief in-character
  * interjections, and ends with the standard "no audio effects, background
@@ -60,6 +67,14 @@ internal const val GEMINI_API_VERSION = "v1beta"
 internal const val GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER: String =
     "Read the following weather forecast in the style of a weather report on a " +
         "national news service. Enunciate clearly and use a measured speed. " +
+        "Accentuate the ends of sentences and give a gentle emphasis to clothing " +
+        "recommendations. No audio effects, background noise, or vinyl-style " +
+        "texture.\n\n"
+
+internal const val GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER_REGISTER: String =
+    "Read the following weather forecast in the style of a weather report on a " +
+        "national news service. Use the language's standard variety, not a " +
+        "regional dialect. Enunciate clearly and use a measured speed. " +
         "Accentuate the ends of sentences and give a gentle emphasis to clothing " +
         "recommendations. No audio effects, background noise, or vinyl-style " +
         "texture.\n\n"
@@ -125,6 +140,29 @@ internal fun styleDirectiveFor(style: TtsStyle): String = when (style) {
     TtsStyle.STORYTELLER -> GEMINI_TTS_STYLE_DIRECTIVE_STORYTELLER
     TtsStyle.FITNESS_INSTRUCTOR -> GEMINI_TTS_STYLE_DIRECTIVE_FITNESS_INSTRUCTOR
     TtsStyle.MORNING_PRESENTER -> GEMINI_TTS_STYLE_DIRECTIVE_MORNING_PRESENTER
+}
+
+/**
+ * Picks the right WEATHER_FORECASTER variant for [locale]. Most locales get
+ * [GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER] (B2 wording). en-AU gets
+ * [GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER_REGISTER] (B2 + the explicit
+ * "standard variety, not regional dialect" sentence), which empirically
+ * rescues Iapetus on en-AU from a near-degenerate 5/10 to 9/10 and lifts
+ * other voices that were below the user's quality bar. The same change on
+ * en-GB nudged voices off-brand, hence the per-locale routing rather than a
+ * global directive update. See docs/voice-evals.md.
+ *
+ * Character styles (PIRATE, COWBOY, etc.) ignore the locale routing and use
+ * the persona's directive verbatim — adding a register-direction sentence
+ * would conflict with persona delivery.
+ */
+internal fun directiveFor(style: TtsStyle, locale: Locale?): String {
+    if (style == TtsStyle.WEATHER_FORECASTER &&
+        locale?.language == "en" && locale.country == "AU"
+    ) {
+        return GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER_REGISTER
+    }
+    return styleDirectiveFor(style)
 }
 
 /**
@@ -235,7 +273,13 @@ internal fun geminiAccentDirectiveFor(locale: Locale): String? {
 // to a bare language directive.
 private val ACCENT_DIRECTIVES: Map<String, String> = mapOf(
     "en-GB" to "Speak with a Standard British accent.",
-    "en-AU" to "Speak with a General Australian accent, not broad.",
+    // en-AU drops "General" — paired with the per-locale register sentence in
+    // GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER_REGISTER (selected by
+    // directiveFor for en-AU only). The combination empirically rescues
+    // Iapetus on en-AU; "General" was redundant once the directive carries
+    // "standard variety, not regional dialect" for this locale. See
+    // docs/voice-evals.md → "B3 register-in-directive eval".
+    "en-AU" to "Speak with an Australian accent, not broad.",
     "en-US" to "Speak with a General American accent.",
     "en-CA" to "Speak with a Canadian English accent.",
     // Language-only fallback for Standard German (de-DE) and any de-* variant
@@ -365,7 +409,7 @@ class GeminiTtsClient(
             locale?.let { geminiLanguageDirectiveFor(it) }
         }
         val prompt = buildString {
-            append(styleDirectiveFor(style))
+            append(directiveFor(style, locale))
             if (accent != null) {
                 append(accent)
                 append("\n\n")
