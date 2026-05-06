@@ -8,7 +8,7 @@ package app.clothescast.diag
  *  - [_default_]: the value that would apply if the user hasn't overridden it.
  *    For [Region] / [VoiceLocale] this is the BCP-47 tag the SYSTEM sentinel
  *    resolves to on this device; for the remaining settings it's the in-code
- *    default (DEVICE / NORMAL / "Erinome" / "AUTO").
+ *    default (DEVICE / NORMAL / "Leda" / "AUTO").
  *  - [_override_]: the user's persisted choice. [UNSET] when no DataStore key
  *    exists; otherwise the enum name for [Region] / [VoiceLocale] / [TtsEngine]
  *    / [TtsStyle], or the raw string for the voice IDs. The SYSTEM enum entry
