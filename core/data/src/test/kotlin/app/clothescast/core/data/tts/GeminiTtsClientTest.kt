@@ -343,8 +343,11 @@ class GeminiTtsClientTest {
         client.synthesize(text = "hi", locale = Locale.forLanguageTag("ar-LB"))
 
         val body = checkNotNull(capturedBody)
-        // Bare `ar` directive omits the country adjective.
-        body.shouldContain("اقرأ النص التالي بالعربية بنطق")
+        // Bare `ar` directive omits both the country adjective and the
+        // "الفصحى" (MSA) marker — the trailing period right after "بالعربية"
+        // is unique to this fallback (country variants continue with
+        // " الفصحى بنطق <country>." and have a space, not a period, there).
+        body.shouldContain("اقرأ النص التالي بالعربية.")
         body.shouldNotContain("سعودي")
         body.shouldNotContain("مصري")
     }

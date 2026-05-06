@@ -217,6 +217,77 @@ underperform vs B1 (7.6 vs 8.3). Three replacements were tested with B2:
 
 - `GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER` → B2 wording
 - en-GB accent directive → "Speak with a Standard British accent — clear and natural."
+  *(Superseded by the clarity-trim eval below — now "Speak with a Standard
+  British accent.")*
+
+---
+
+## Accent clarity-trim eval (2026-05)
+
+Tests whether the "clear and natural" / "klaren" / "claro" / etc. clarity
+adjectives in `ACCENT_DIRECTIVES` add value, given that the WEATHER_FORECASTER
+directive already says "Enunciate clearly and use a measured speed."
+
+Run via `scripts/eval-weather-report-style.py --filter en-GB-prod-weather-B2`
+and `--filter en-GB-bare-weather-B2`. Same 7 voices, same B2 directive, en-GB
+locale only. Two accent variants:
+
+- **prod:** "Speak with a Standard British accent — clear and natural." (was shipped)
+- **bare:** "Speak with a Standard British accent." (clarity trimmed)
+
+### Per-voice scores (en-GB, B2 directive)
+
+| Voice | prod | bare | Δ |
+|---|---|---|---|
+| Aoede | 8 | 8 | 0 |
+| Charon | 8 | 9 | +1 |
+| Despina | 8 | 9 | +1 |
+| Erinome | 2 | 8 | +6 |
+| Iapetus | 5 | 8 | +3 |
+| Kore | 5 | 9 | +4 |
+| Leda | 7 | 9 | +2 |
+| **avg** | **6.1** | **8.6** | **+2.5** |
+
+### Findings
+
+- **No voice regressed** under the clarity trim; every voice was same-or-better.
+- **Erinome (2/10 → 8/10) was the most striking lift** — degenerate under prod,
+  fine under bare. Iapetus (5 → 8) and Kore (5 → 9) — voices most prone to
+  RP/villain register — also lifted significantly. The clarity adjectives appear
+  to actively destabilise some voices, likely by pushing toward
+  over-articulation.
+- The prior eval (Weather-report style eval above) recorded prod en-GB at 8.3
+  avg vs. 6.1 here — TTS run-to-run variance, mainly Erinome going degenerate
+  this run. Bare is uniformly in the 8–9 band so the conclusion holds even on
+  the optimistic 8.3 read of prod.
+
+### Bonus finding: de-CH
+
+Single-voice spot check (Leda, German weather text):
+
+- Original (`klaren deutschschweizerischen Akzent`): weird mishmash of Swiss
+  German and Hochdeutsch — neither register, just confused.
+- Clarity-trimmed (`deutschschweizerischen Akzent`): clean Schwiizerdütsch
+  dialect.
+
+The clarity word was the destabiliser. Trimming it lets the model commit to a
+register. Schwiizerdütsch isn't standard broadcast Swiss-German for weather
+(Schweizer Hochdeutsch would be), but the dialect is recognisable and pleasant
+and the previous mishmash was the actual bug. A separate follow-up could push
+de-CH toward Schweizer Hochdeutsch via directive shaping; keeping the cute
+Schwiizerdütsch render is also a defensible choice.
+
+### Shipped
+
+- Clarity adjectives ("clear and natural", "klaren", "claro", чёткий, jasnim,
+  selkeällä, 清晰, स्पष्ट, واضح, etc.) removed from every entry in
+  `ACCENT_DIRECTIVES`. Variety descriptors ("Standard", "General",
+  "hochdeutsch", "castellano", "neutro", "标准", "Fuṣḥā", literary/literary
+  register markers in Russian / Ukrainian / Swahili) remain — those carry
+  per-locale work that the directive doesn't.
+- For locales where the only thing left after the trim was a tautology
+  (e.g. "Italian with an Italian accent"), the entry simplifies to a bare
+  language directive (`"Parla in italiano."`).
 
 ---
 
@@ -228,3 +299,4 @@ underperform vs B1 (7.6 vs 8.3). Three replacements were tested with B2:
 | `scripts/compare-gemini-voices.py` | Generate one clip per voice for a single directive |
 | `scripts/eval-weather-report-style.py` | Generate clips for 7 candidates × 7 voices × 9 locales |
 | `scripts/rate-tts-clips.py` | Play each clip with `aplay`, prompt for a score + notes |
+| `scripts/say.py` | One-shot helper for rapid prompt iteration (prints / plays a single clip) |
