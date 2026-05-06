@@ -32,10 +32,17 @@ import java.util.Locale
 // `-preview-` track — see CLAUDE.md's "Don't rename Gemini models from
 // web-search guesses" before swapping it for a GA-sounding name.
 const val DEFAULT_GEMINI_TTS_MODEL: String = "gemini-2.5-flash-preview-tts"
-// TODO: decide default voice — top candidates from style eval are Aoede,
-//  Charon, Kore (all avg 8.6 on B1+B2 combined). Current default Leda is
-//  6th overall and untested under the updated accent directives.
-const val DEFAULT_GEMINI_TTS_VOICE: String = "Leda"
+// Despina chosen via the post-#353 evals: clears the user's ≥8 bar across
+// en-GB, en-AU (B3, four rolls all ≥8), en-US, de, de-AT, de-CH. Reliable
+// rather than dazzling — it's the most consistently-acceptable voice across
+// the languages we ship. See docs/voice-evals.md → "Despina-as-default
+// decision".
+// TODO: revisit default — Erinome may actually be the winner now that the
+//  clarity-trim (#351) and B3 routing (#353) have rescued her on en-GB and
+//  en-AU. Needs a head-to-head Despina vs. Erinome eval across the same
+//  six locales (en-GB / en-AU B3 / en-US / de / de-AT / de-CH) before any
+//  switch.
+const val DEFAULT_GEMINI_TTS_VOICE: String = "Despina"
 
 internal const val GEMINI_HOST = "generativelanguage.googleapis.com"
 internal const val GEMINI_API_VERSION = "v1beta"

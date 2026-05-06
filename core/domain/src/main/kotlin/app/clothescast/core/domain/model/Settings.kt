@@ -311,6 +311,6 @@ data class UserPreferences(
     val telemetryNoticeAcked: Boolean = false,
 ) {
     companion object {
-        const val DEFAULT_GEMINI_VOICE = "Leda"
+        const val DEFAULT_GEMINI_VOICE = "Despina"
     }
 }

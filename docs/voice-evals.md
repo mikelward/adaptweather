@@ -265,8 +265,7 @@ locale only. Two accent variants:
 
 Tested on the Firebase APK against the trimmed
 `"Speak with a General Australian accent, not broad."` and the same B2
-directive. Just the four voices in PR #338's keep-list — single read per
-voice, no re-rolls.
+directive. Single read per voice, no re-rolls.
 
 | Voice | Trim today | Historical (B2 + "— clear and natural, not broad.") | Verdict |
 |---|---|---|---|
@@ -291,9 +290,10 @@ follow-up sniff test if we want to specifically rescue Despina-on-en-AU;
 otherwise users who want en-AU liveliness pick Charon, Iapetus, or Leda.
 
 Erinome was also tested ad hoc — flagged as flat on en-AU and as
-having an over-rhotic "sweater" on en-US. Both look like Erinome's
-phonetic anchor leaking through; PR #338 drops Erinome from the picker,
-so this isn't a shipping concern.
+having an over-rhotic "sweater" on en-US under the old prod accent.
+Both look like Erinome's phonetic anchor leaking through; the
+clarity-trim eval below rescues en-GB (2 → 8) and the B3 eval rescues
+en-AU (7 → 9), so Erinome stays in the picker after #353.
 
 ### Bonus finding: de-CH
 
@@ -359,9 +359,8 @@ Two locales tested formally; a third spot-checked.
 | **avg** | 7.4 | 8.3 | +0.9 |
 
 Iapetus 5 → 9 is the standout — lifts a near-degenerate voice into the
-shipping band. Leda showed wide variance (5 to 8) on en-AU under B3 but
-stays in the picker only via PR #338 considerations; see "Leda dropped"
-below.
+shipping band. Leda showed wide variance (5 to 8) on en-AU under B3; see
+"Leda dropped" below.
 
 ### en-GB — slight regression, off-brand
 
@@ -437,10 +436,10 @@ single outlier at 6–7 on en-AU B2 prod (the condition we're moving away
 from). Under the actual en-AU shipping condition (B3 + bare), all four
 rolls were ≥8.
 
-**Leda dropped from picker** (PR #338 amendment): default goes Leda →
-Despina. Leda's 5–8 lottery on en-AU under B3 is the immediate trigger;
-the broader pattern (Leda below the user's ≥8 bar across multiple
-configurations) supports the broader picker decision.
+**Leda dropped from picker** (see picker section below): default goes
+Leda → Despina. Leda's 5–8 lottery on en-AU under B3 is the immediate
+trigger; the broader pattern (Leda below the user's ≥8 bar across
+multiple configurations) supports the broader picker decision.
 
 ### Shipped
 
@@ -450,7 +449,80 @@ configurations) supports the broader picker decision.
   every other locale stays on the existing `GEMINI_TTS_STYLE_DIRECTIVE_WEATHER_FORECASTER`.
 - `ACCENT_DIRECTIVES["en-AU"]` drops "General": `"Speak with an Australian accent, not broad."`
 - All other locales unchanged from the post-#351 clarity-trimmed strings.
-- Picker amended in PR #338: Leda dropped; default voice → Despina.
+
+---
+
+## Picker + default (2026-05, post-#353)
+
+After the directive landscape stabilised (clarity-trim in #351, en-AU
+register routing in #353), re-evaluated the full 11-voice picker against
+the shipping configuration: the user's bar is ≥8/10 on every roll, with
+single-roll degeneracies disqualifying.
+
+### Cross-voice German spot check
+
+Three voices were probed across the German locales we ship — driven by
+the question of whether the picker needs a "weather forecaster" male
+alternative beyond Charon. Single read per cell.
+
+| Voice | de | de-AT | de-CH |
+|---|---|---|---|
+| Despina | 9 | 9 | 9 |
+| Charon | 9 | 8.5 | fine |
+| Iapetus | 9 | 8 | fine |
+
+All three clear the bar across all three German locales. Confirms
+Despina-as-default extends to German territory and gives the picker two
+shipping male alternatives (Charon + Iapetus).
+
+### Picker decision
+
+Trimmed picker from 11 voices to 7, ordered with default first then by
+character cluster:
+
+| Voice | Label | Status |
+|---|---|---|
+| **Despina** | Smooth | Default. Validated en-GB / en-AU B3 (4-roll all ≥8) / en-US / de / de-AT / de-CH |
+| Charon | Informative | Solid across locales; user's preferred male voice |
+| Iapetus | Clear | Rescued by B3 routing on en-AU (5 → 9); solid elsewhere |
+| Kore | Firm | Lifted by clarity-trim on en-GB (5 → 9); solid on B3 en-AU (8) |
+| Erinome | Clear | Rescued twice — clarity-trim on en-GB (2 → 8), B3 on en-AU (7 → 9) |
+| Aoede | Breezy | Strong consistent voice across locales |
+| Leda | Youthful | Loses default slot to Despina but kept on user preference (see note) |
+
+**Note on Leda:** the en-AU B3 4-roll variance (5 / 7.5 / 8 / 7, only
+1/4 above the ≥8 bar) put her on the drop list during this eval. She
+came back after a real-world listen on an older build where the user
+rated her qualitatively strong. The variance data is real; the user's
+preference is the spec. She loses the default slot to Despina's tighter
+distribution but stays in the picker for users who want her character.
+
+**Dropped:**
+
+- **Sadaltager, Vindemiatrix, Algieba, Sulafat** — untested under the
+  post-#351 + post-#353 shipping config. Trim-rather-than-extend approach:
+  better to ship a smaller picker of voices the eval has actually
+  validated than carry voices forward unchecked. Re-add follows a
+  sniff-test if a real use case surfaces.
+
+### Shipped
+
+- `GEMINI_VOICES` trimmed to the seven above, Despina first.
+- `DEFAULT_GEMINI_TTS_VOICE` and `UserPreferences.DEFAULT_GEMINI_VOICE`
+  → "Despina".
+- Existing user picks are persisted by id; users on any of the four
+  dropped voices keep their pick (no migration), they just won't see
+  those entries in the picker if they reset to default.
+
+### TODO: revisit default — Despina vs. Erinome head-to-head
+
+Erinome was rescued twice in this eval arc — clarity-trim on en-GB
+(2 → 8 in #351) and B3 routing on en-AU (7 → 9 in #353). She may now
+actually be the winner over Despina under the post-#353 shipping
+configuration. Needs a dedicated head-to-head across the same six
+locales we used for Despina (en-GB / en-AU B3 / en-US / de / de-AT /
+de-CH), multiple rolls per cell, before any default switch. Tracked in
+`GeminiTtsClient.kt` next to `DEFAULT_GEMINI_TTS_VOICE`.
 
 ---
 

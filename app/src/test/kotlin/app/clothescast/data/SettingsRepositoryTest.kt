@@ -293,8 +293,8 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun `gemini voice defaults to Leda when nothing stored`() = runTest {
-        subject.preferences.first().geminiVoice shouldBe "Leda"
+    fun `gemini voice defaults to Despina when nothing stored`() = runTest {
+        subject.preferences.first().geminiVoice shouldBe "Despina"
     }
 
     @Test
@@ -512,9 +512,9 @@ class SettingsRepositoryTest {
         snap.ttsStyleDefault shouldBe TtsStyle.WEATHER_FORECASTER.name
         snap.ttsStyleOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.ttsStyleEffective shouldBe TtsStyle.WEATHER_FORECASTER.name
-        snap.geminiVoiceDefault shouldBe "Leda"
+        snap.geminiVoiceDefault shouldBe "Despina"
         snap.geminiVoiceOverride shouldBe SettingsAnalyticsSnapshot.UNSET
-        snap.geminiVoiceEffective shouldBe "Leda"
+        snap.geminiVoiceEffective shouldBe "Despina"
         snap.deviceVoiceDefault shouldBe SettingsAnalyticsSnapshot.AUTO
         snap.deviceVoiceOverride shouldBe SettingsAnalyticsSnapshot.UNSET
         snap.deviceVoiceEffective shouldBe SettingsAnalyticsSnapshot.AUTO
