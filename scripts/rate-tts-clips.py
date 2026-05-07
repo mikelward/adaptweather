@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Plays each .wav in a directory via aplay, prompts for a rating and optional
-notes, then prints a summary you can paste back for recommendations.
+Plays each .wav in a directory via aplay, prompts for a pair of ratings
+(yours + Eva's) and optional notes, then prints a summary you can paste back
+for recommendations.
 
 Usage
 -----
@@ -10,15 +11,17 @@ Usage
 
 Rating format
 -------------
-  <score>            e.g.  7
-  <score> - <notes>  e.g.  8 - sounds a bit robotic
-  s                  skip (no rating recorded)
-  r                  replay the clip, then re-prompt
-  q                  quit early (prints results so far)
+  <you> <eva>            e.g.  8 9    (space-separated)
+  <you>+<eva>            e.g.  8+9    (plus-separated)
+  <you>+<eva> - <notes>  e.g.  8+9 - sounds a bit robotic
+  s                      skip (no rating recorded)
+  r                      replay the clip, then re-prompt
+  q                      quit early (prints results so far)
 """
 
 import argparse
 import pathlib
+import re
 import subprocess
 import sys
 
@@ -27,27 +30,37 @@ def play(path: pathlib.Path) -> None:
     subprocess.run(["aplay", "-q", str(path)], check=False)
 
 
-def prompt_rating(path: pathlib.Path) -> tuple[str, str] | None:
-    """Returns (score, notes) or None if skipped."""
+def parse_pair(raw: str) -> tuple[str, str] | None:
+    """Returns (you, eva) if raw parses as two 1–10 integers; else None."""
+    parts = re.split(r"[+\s/,]+", raw.strip())
+    if len(parts) != 2:
+        return None
+    a, b = parts
+    if a.isdigit() and b.isdigit() and 1 <= int(a) <= 10 and 1 <= int(b) <= 10:
+        return (a, b)
+    return None
+
+
+def prompt_rating(path: pathlib.Path) -> tuple[str, str, str] | None:
+    """Returns (score_you, score_eva, notes) or None if skipped/quit."""
     while True:
         try:
-            raw = input("  Rating [1-10 / s=skip / r=replay / q=quit]: ").strip()
+            raw = input("  Rating [you eva (1-10 each) / s=skip / r=replay / q=quit]: ").strip()
         except (EOFError, KeyboardInterrupt):
             return None
         if raw.lower() == "q":
             return None
         if raw.lower() == "s":
-            return ("s", "")
+            return ("s", "s", "")
         if raw.lower() == "r":
             print("  Replaying...")
             play(path)
             continue
-        parts = raw.split("-", 1)
-        score = parts[0].strip()
-        notes = parts[1].strip() if len(parts) > 1 else ""
-        if score.isdigit() and 1 <= int(score) <= 10:
-            return (score, notes)
-        print("  Enter a number 1–10, 's', 'r', or 'q'.")
+        score_part, _, notes = raw.partition("-")
+        pair = parse_pair(score_part)
+        if pair is not None:
+            return (pair[0], pair[1], notes.strip())
+        print("  Enter two numbers 1–10 (e.g. '8 9' or '8+9'), 's', 'r', or 'q'.")
 
 
 def main() -> None:
@@ -64,33 +77,39 @@ def main() -> None:
     if not files:
         sys.exit(f"No .wav files found in {directory}" + (f" matching '{args.pattern}'" if args.pattern else ""))
 
-    results: list[tuple[str, str, str]] = []  # (filename, score, notes)
+    results: list[tuple[str, str, str, str]] = []  # (relpath, score_you, score_eva, notes)
 
     print(f"\nFound {len(files)} clip(s). Press Enter after aplay finishes.\n")
 
     for i, path in enumerate(files, 1):
-        print(f"[{i}/{len(files)}] {path.name}")
+        relpath = str(path.relative_to(directory))
+        print(f"[{i}/{len(files)}] {relpath}")
         play(path)
         result = prompt_rating(path)
         if result is None:
             print("\n--- quit ---")
             break
-        score, notes = result
-        if score != "s":
-            results.append((path.name, score, notes))
+        score_you, score_eva, notes = result
+        if score_you != "s":
+            results.append((relpath, score_you, score_eva, notes))
         print()
 
     if not results:
         return
 
     print("\n" + "=" * 60)
-    print("RESULTS — paste this back:")
+    print("RESULTS — your ratings:")
     print("=" * 60)
-    for name, score, notes in results:
-        line = f"  {name}: {score}"
+    for relpath, score_you, _, notes in results:
+        line = f"  {relpath}: {score_you}"
         if notes:
             line += f" — {notes}"
         print(line)
+    print("=" * 60)
+    print("RESULTS — Eva's ratings:")
+    print("=" * 60)
+    for relpath, _, score_eva, _ in results:
+        print(f"  {relpath}: {score_eva}")
     print("=" * 60)
 
 
