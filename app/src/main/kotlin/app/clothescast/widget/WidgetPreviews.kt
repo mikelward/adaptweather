@@ -66,7 +66,7 @@ private fun WidgetSurface(content: @Composable () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(4.dp),
             contentAlignment = Alignment.Center,
         ) { content() }
     }

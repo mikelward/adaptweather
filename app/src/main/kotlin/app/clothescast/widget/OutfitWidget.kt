@@ -71,7 +71,7 @@ private fun OutfitWidgetContent(insight: Insight?) {
             .background(GlanceTheme.colors.widgetBackground)
             .cornerRadius(16.dp)
             .clickable(actionStartActivity<MainActivity>())
-            .padding(8.dp),
+            .padding(4.dp),
         contentAlignment = Alignment.Center,
     ) {
         if (insight == null || outfit == null) {
