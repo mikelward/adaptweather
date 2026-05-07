@@ -1,6 +1,5 @@
 package app.clothescast.ui
 
-import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,15 +13,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import app.clothescast.R
 
 // Renders the two-layer adaptive icon composition (background + foreground)
 // clipped to a circle to approximate how the launcher displays the icon.
-// Captured by PreviewSnapshots so badge and icon changes are visible in PR diffs.
-//
-// The dev icon foreground is a layer-list, which painterResource() doesn't support
-// (only VectorDrawables and rasters). AndroidView + ImageView handles it correctly.
+// Captured by PreviewSnapshots so icon changes are visible in PR diffs.
 
 @Composable
 private fun AdaptiveIconFrame(foreground: @Composable () -> Unit) {
@@ -51,22 +46,6 @@ internal fun LauncherIconPreview() {
             painter = painterResource(R.mipmap.ic_launcher_foreground),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
-}
-
-@Preview(name = "Launcher icon · dev (local build)", widthDp = 120)
-@Composable
-internal fun LauncherIconDevPreview() {
-    AdaptiveIconFrame {
-        AndroidView(
-            factory = { context ->
-                ImageView(context).also {
-                    it.setImageResource(R.drawable.ic_launcher_foreground_construction)
-                    it.scaleType = ImageView.ScaleType.FIT_XY
-                }
-            },
             modifier = Modifier.fillMaxSize(),
         )
     }

@@ -10,7 +10,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.clothescast.notification.NotificationIconSweaterPreview
 import app.clothescast.notification.NotificationIconTShirtPreview
 import app.clothescast.notification.NotificationIconThickJacketPreview
-import app.clothescast.ui.LauncherIconDevPreview
 import app.clothescast.ui.LauncherIconPreview
 import app.clothescast.ui.onboarding.OnboardingCompletePreview
 import app.clothescast.ui.onboarding.OnboardingFreshPreview
@@ -176,7 +175,6 @@ class PreviewSnapshots {
     @Test fun telemetry_notice_banner() = capture { TelemetryNoticeBannerPreview() }
 
     @Test fun launcher_icon() = capture { LauncherIconPreview() }
-    @Test fun launcher_icon_dev() = capture { LauncherIconDevPreview() }
 
     @Test fun notification_icon_tshirt() = capture { NotificationIconTShirtPreview() }
     @Test fun notification_icon_sweater() = capture { NotificationIconSweaterPreview() }

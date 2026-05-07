@@ -59,31 +59,17 @@ val gitCommitCount: Int = git("rev-list", "--count", "HEAD").toInt()
 val versionNameBase = "0.1.0"
 val gitShortSha: String = git("rev-parse", "--short", "HEAD")
 
-// "Is this a CI build?" CI builds keep the unmodified launcher icon; any
-// build run outside CI gets an under-construction badge overlaid on the icon.
-// The `CI=true` env var is set by GitHub Actions and most other CI providers,
-// so the rule is simply: if the environment looks like CI, no badge;
-// otherwise, badge.
-//
-// This keeps the rule trivial to reason about — "the APK on my phone came
-// from CI" is exactly the question the badge answers — at the cost of
-// over-badging the rare case where a developer runs `CI=true` locally.
-//
-// Both icon variants live in src/main/res (`@mipmap/ic_launcher` and
-// `@mipmap/ic_launcher_construction`); we swap which one the manifest
-// references via a manifest placeholder rather than juggling source-set
-// res.srcDirs (which would error on duplicate resources within a single
-// source set). The unused variant is stripped from release APKs by the
-// resource shrinker since nothing references it.
+// "Is this a CI build?" The Today-screen local-build banner is shown only
+// outside CI so developer-installed APKs can identify their branch and commit
+// without changing app/launcher iconography.
 val isCiBuild: Boolean = System.getenv("CI") == "true"
-val launcherIconRes: String = if (isCiBuild) "@mipmap/ic_launcher" else "@mipmap/ic_launcher_construction"
-println("clothescast: isCiBuild=$isCiBuild, launcherIcon=$launcherIconRes (versionCode=$gitCommitCount, HEAD=$gitShortSha)")
+println("clothescast: isCiBuild=$isCiBuild (versionCode=$gitCommitCount, HEAD=$gitShortSha)")
 
-// Today-screen local-build banner: shown on non-CI builds (gated on the same
-// `isCiBuild` flag the launcher icon uses) so a developer can see at a glance
-// which APK is installed and how fresh it is — "claude/foo · abc1234 (dirty)
-// · 2 hours ago". Detached HEAD shows up as a literal "HEAD" from rev-parse;
-// translate that to the short SHA so CI debug builds (rare) read sensibly.
+// Today-screen local-build banner: shown on non-CI builds so a developer can
+// see at a glance which APK is installed and how fresh it is — "claude/foo ·
+// abc1234 (dirty) · 2 hours ago". Detached HEAD shows up as a literal "HEAD"
+// from rev-parse; translate that to the short SHA so CI debug builds (rare)
+// read sensibly.
 val gitBranchRaw: String = git("rev-parse", "--abbrev-ref", "HEAD")
 val gitBranch: String = if (gitBranchRaw == "HEAD") "detached@$gitShortSha" else gitBranchRaw
 val gitDirty: Boolean = git("status", "--porcelain").isNotEmpty()
@@ -114,16 +100,9 @@ android {
         // identifies the build everywhere.
         versionName = "$versionNameBase+$gitCommitCount.$gitShortSha"
 
-        // Manifest-merger placeholder consumed by AndroidManifest.xml's
-        // android:icon attribute. See the launcherIconRes block above for
-        // the rule.
-        manifestPlaceholders["launcherIconRes"] = launcherIconRes
-
         // Dev banner fields surfaced on the Today screen for local (non-CI)
-        // builds. IS_LOCAL_BUILD piggybacks on the same `isCiBuild` flag the
-        // launcher icon uses, so the badge and the banner agree on which
-        // APKs are "the developer's own machine" — FAD-distributed debug
-        // APKs and Play release builds (both built on CI) get neither.
+        // builds. FAD-distributed debug APKs and Play release builds (both
+        // built on CI) keep the banner hidden.
         // Defined for all variants so the composable compiles regardless of
         // which buildType is active.
         buildConfigField("boolean", "IS_LOCAL_BUILD", (!isCiBuild).toString())
